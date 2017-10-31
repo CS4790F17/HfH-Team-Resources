@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using HabitatForHumanity.ViewModels;
+using System.Data.Entity;
 
 namespace HabitatForHumanity.Models
 {
@@ -15,6 +17,14 @@ namespace HabitatForHumanity.Models
         public string firstName { get; set; }
         public string lastName { get; set; }
         public string email { get; set; }
+
+        public static bool AuthenticateUser(LoginVM loginVm)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
         public string password { get; set; }
         public DateTime birthDate { get; set; }
         public string gender { get; set; }
@@ -24,5 +34,31 @@ namespace HabitatForHumanity.Models
         public string zip { get; set; }
         public string homePhone { get; set; }
         public string workPhone { get; set; }
+
+        public static bool EmailExists(string email)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.users.Any(u => u.email.Equals(email));
+        }
+        public static User GetUser(string email)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            var users = db.users.Where(u => u.email.Equals(email));
+            return users.FirstOrDefault();
+        }
+
+        public static void CreateUser(User user)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            db.users.Add(user);
+            db.SaveChanges();
+        }
+
+        public static void EditUser(User user)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            db.Entry(user).State = EntityState.Modified;
+            db.SaveChanges();
+        }
     }
 }
