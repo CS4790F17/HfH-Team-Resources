@@ -143,6 +143,7 @@
     <Compile Include="Models\Waiver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\SignWaiverVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\HabitatAllModels.mdf" />
@@ -212,13 +213,13 @@
     <Content Include="Views\TimeSheet\Details.cshtml" />
     <Content Include="Views\TimeSheet\Edit.cshtml" />
     <Content Include="Views\TimeSheet\Index.cshtml" />
+    <Content Include="Views\User\Login.cshtml" />
+    <Content Include="Views\User\ForgotPassword.cshtml" />
     <Content Include="Views\Waiver\Create.cshtml" />
     <Content Include="Views\Waiver\Delete.cshtml" />
     <Content Include="Views\Waiver\Details.cshtml" />
     <Content Include="Views\Waiver\Edit.cshtml" />
     <Content Include="Views\Waiver\Index.cshtml" />
-    <Content Include="Views\User\Login.cshtml" />
-    <Content Include="Views\User\ForgotPassword.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

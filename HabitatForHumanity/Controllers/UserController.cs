@@ -55,6 +55,8 @@ namespace HabitatForHumanity.Controllers
                 if (!Repository.EmailExists(user.email))
                 {
                     Repository.CreateUser(user);
+                    Session["role"] = "volunteer";
+                    Session["Username"] = user.email;
                 }
                 else
                 {

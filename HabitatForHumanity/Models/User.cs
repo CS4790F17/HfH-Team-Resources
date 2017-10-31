@@ -40,7 +40,7 @@ namespace HabitatForHumanity.Models
             VolunteerDbContext db = new VolunteerDbContext();
             return db.users.Any(u => u.email.Equals(email));
         }
-        public static User GetUser(string email)
+        public static User GetUserByEmail(string email)
         {
             VolunteerDbContext db = new VolunteerDbContext();
             var users = db.users.Where(u => u.email.Equals(email));

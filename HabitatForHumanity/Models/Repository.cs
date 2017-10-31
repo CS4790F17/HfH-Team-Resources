@@ -18,7 +18,7 @@ namespace HabitatForHumanity.Models
         public static bool AuthenticateUser(LoginVM loginVm)
         {
             bool exists = false;
-            User user = User.GetUser(loginVm.email);
+            User user = User.GetUserByEmail(loginVm.email);
             if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
             {
                 exists = true;
@@ -28,23 +28,57 @@ namespace HabitatForHumanity.Models
 
         public static User GetUser(string email)
         {
-            return User.GetUser(email);
+            return User.GetUserByEmail(email);
         }
 
         // this not only changes the password, it also hashes it
         public static void ChangePassword(string email, string newPW)
         {
             User user = new User();
-            user = User.GetUser(email);
+            user = User.GetUserByEmail(email);
             if (user != null && !String.IsNullOrEmpty(newPW) && !String.IsNullOrWhiteSpace(newPW))
             {
                 user.password = Crypto.HashPassword(newPW);
                 EditUser(user);
             }
         }
+
         public static void EditUser(User user)
         {
             User.EditUser(user);
+        }
+
+        //  WAIVER BUSINESS ///////////////////////////
+        public static SignWaiverVM GetUserWaiver(string email)
+        {
+            SignWaiverVM sw = new SignWaiverVM();
+            User user = User.GetUserByEmail(email);
+            sw.userId = user.Id;
+            sw.email = user.email;
+            sw.firstName = user.firstName;
+            sw.lastName = user.lastName;
+            sw.streetAddress = user.streetAddress;
+            sw.city = user.city;
+            sw.zip = user.zip;
+            sw.phone = user.homePhone;
+            sw.signDate = DateTime.Today;
+            return sw;
+        }
+
+        public static void AddWaiver(SignWaiverVM svm)
+        {
+            Waiver w = new Waiver();
+            w.userId = svm.userId;
+            w.signDate = svm.signDate;
+            w.emContFirstName = svm.emContFirstName;
+            w.emContLastName = svm.emContLastName;
+            w.relation = svm.relation;
+            w.emContHomePhone = svm.emContHomePhone;
+            w.emContWorkPhone = svm.emContWorkPhone;
+            w.consent = svm.consent;
+            w.signature = svm.signature;
+
+            Waiver.AddWaiver(w);
         }
 
         public static void CreateUser(User user)

@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -36,9 +37,15 @@ namespace HabitatForHumanity.Controllers
         }
 
         // GET: Waiver/Create
-        public ActionResult Create()
+        public ActionResult Create(string email)
         {
-            return View();
+            SignWaiverVM signWaiverVm = new SignWaiverVM();
+            if (Session["Username"].Equals(email))
+            {
+                signWaiverVm = Repository.GetUserWaiver(email);
+
+            }
+            return View(signWaiverVm);
         }
 
         // POST: Waiver/Create
@@ -46,16 +53,16 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,userId,signDate,emContFirstName,emContLastName,relation,emContHomePhone,emContWorkPhone")] Waiver waiver)
+        public ActionResult Create(SignWaiverVM signWaiverVM)
         {
             if (ModelState.IsValid)
             {
-                db.waivers.Add(waiver);
-                db.SaveChanges();
+                Repository.AddWaiver(signWaiverVM);
+           
                 return RedirectToAction("Index");
             }
 
-            return View(waiver);
+            return View(signWaiverVM);
         }
 
         // GET: Waiver/Edit/5
@@ -78,7 +85,7 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,userId,signDate,emContFirstName,emContLastName,relation,emContHomePhone,emContWorkPhone")] Waiver waiver)
+        public ActionResult Edit([Bind(Include = "Id,userId,signDate,emContFirstName,emContLastName,relation,emContHomePhone,emContWorkPhone,signature,consent")] Waiver waiver)
         {
             if (ModelState.IsValid)
             {
