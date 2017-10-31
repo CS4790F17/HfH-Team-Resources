@@ -134,10 +134,15 @@
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\TimeSheet.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\VolunteerDbContext.cs" />
     <Compile Include="Models\Waiver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\HabitatAllModels.mdf" />
+    <Content Include="App_Data\HabitatAllModels_log.ldf">
+      <DependentUpon>HabitatAllModels.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -187,9 +192,7 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
