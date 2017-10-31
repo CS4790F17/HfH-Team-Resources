@@ -43,10 +43,14 @@ namespace HabitatForHumanity.Models
             }
         }
 
+
+
         public static void EditUser(User user)
         {
             User.EditUser(user);
         }
+
+
 
         //  WAIVER BUSINESS ///////////////////////////
         public static SignWaiverVM GetUserWaiver(string email)
@@ -87,6 +91,49 @@ namespace HabitatForHumanity.Models
             user.role = "volunteer";
             User.CreateUser(user);
 
+        }
+
+        /////////////////////     time sheet business ///////////////
+        public static PunchInVM GetPunchInVM(int id)
+        {
+            PunchInVM punch = new PunchInVM();
+            punch.userId = id;
+            punch.projects = GetProjectNames();
+            return punch;
+        }
+
+        public static void PunchIn(PunchInVM punchInVM)
+        {
+            TimeSheet t = new TimeSheet();
+            t.userId = punchInVM.userId;
+            t.projectId = GetProjectIdByName(punchInVM.projectName);
+            t.timeIn = DateTime.Today;
+            TimeSheet.PunchIn(t);
+
+        }
+
+        /////////////////////    project business    ////////////////////////
+        public static List<string> GetProjectNames()
+        {
+            List<Project> projects = new List<Project>();
+            projects = Project.GetProjects();
+            List<string> projectNames = new List<string>();
+            foreach(Project p in projects)
+            {
+                projectNames.Add(p.name);
+            }
+            return projectNames;
+        }
+
+        public static int GetProjectIdByName(string name)
+        {
+            return Project.GetProjectIdByName(name);
+        }
+
+        public static List<Project> GetProjects()
+        {
+            List<Project> projects = new List<Project>();
+            return Project.GetProjects();  
         }
     }
 

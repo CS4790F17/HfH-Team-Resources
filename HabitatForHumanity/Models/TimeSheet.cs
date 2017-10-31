@@ -12,8 +12,16 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
+        public int userId { get; set; }
         public int projectId { get; set; }
         public DateTime timeIn { get; set; }
         public DateTime timeOut { get; set; }
+
+        public static void PunchIn(TimeSheet t)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            db.timeSheets.Add(t);
+            db.SaveChanges();
+        }
     }
 }

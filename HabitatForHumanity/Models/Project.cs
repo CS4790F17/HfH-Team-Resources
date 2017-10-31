@@ -17,5 +17,18 @@ namespace HabitatForHumanity.Models
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public string category { get; set; }
+
+        public static List<Project> GetProjects()
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.projects.ToList();
+        }
+
+        public static int GetProjectIdByName(string name)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            var ps = db.projects.Where(p => p.name.Equals(name));
+            return ps.FirstOrDefault().Id;
+        }
     }
 }
