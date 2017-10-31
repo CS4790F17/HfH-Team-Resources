@@ -1,0 +1,42 @@
+﻿@model HabitatForHumanity.Models.TimeSheet
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>TimeSheet</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.projectId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.projectId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.timeIn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.timeIn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.timeOut)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.timeOut)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
