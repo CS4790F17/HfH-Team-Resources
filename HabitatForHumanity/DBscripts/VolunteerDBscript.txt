@@ -4,7 +4,7 @@ CREATE TABLE [dbo].[User] (
     [lastName]               VARCHAR (50)  NULL,
     [homePhoneNumber]        VARCHAR (10)  NULL,
     [workPhoneNumber]        VARCHAR (10)  NULL,
-    [emailAddress]           VARCHAR (50)  NULL,
+    [emailAddress]           VARCHAR (50)  NULL UNIQUE,
     [streetAddress]          VARCHAR (50)  NULL,
     [city]                   VARCHAR (50)  NULL,
     [zip]                    VARCHAR (50)  NULL,
@@ -30,7 +30,8 @@ CREATE TABLE [dbo].[TimeSheet] (
     [project_Id]   INT      NOT NULL,
     [clockInTime]  DATETIME DEFAULT (getdate()) NOT NULL,
     [clockOutTime] DATETIME DEFAULT (CONVERT (DATETIME, CONVERT (DATE, getdate() + (1)))) NOT NULL,
-    PRIMARY KEY CLUSTERED ([Id] ASC)
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT PK_TimeSheet PRIMARY KEY (user_Id, project_Id, clockInTime)
 );
 
 CREATE TABLE [dbo].[Project] (
@@ -39,12 +40,13 @@ CREATE TABLE [dbo].[Project] (
     [description] VARCHAR (MAX) NULL,
     [beginDate]   DATETIME      NULL,
     [status]      INT           DEFAULT ((1)) NOT NULL,
-    PRIMARY KEY CLUSTERED ([Id] ASC)
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT PK_Project PRIMARY KEY (name, beginDate)
 );
 
 CREATE TABLE [dbo].[Organization] (
     [Id]   INT           IDENTITY (1, 1) NOT NULL,
-    [name] VARCHAR (100) NULL,
+    [name] VARCHAR (100) NULL UNIQUE,
     PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -52,6 +54,7 @@ CREATE TABLE [dbo].[Org_User] (
     [Id]      INT IDENTITY (1, 1) NOT NULL,
     [org_Id]  INT NULL,
     [user_Id] INT NULL,
-    PRIMARY KEY CLUSTERED ([Id] ASC)
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT PK_Org_User PRIMARY KEY (org_Id, user_Id)
 );
 
