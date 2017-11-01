@@ -46,7 +46,7 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,name,description,startDate,endDate,category")] Project project)
+        public ActionResult Create([Bind(Include = "Id,name,description,beginDate")] Project project)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,name,description,startDate,endDate,category")] Project project)
+        public ActionResult Edit([Bind(Include = "Id,name,description,beginDate")] Project project)
         {
             if (ModelState.IsValid)
             {

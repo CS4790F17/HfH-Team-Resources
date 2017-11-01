@@ -12,13 +12,16 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.projectId)
+            @Html.DisplayNameFor(model => model.user_Id)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.timeIn)
+            @Html.DisplayNameFor(model => model.project_Id)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.timeOut)
+            @Html.DisplayNameFor(model => model.clockInTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.clockOutTime)
         </th>
         <th></th>
     </tr>
@@ -26,13 +29,16 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.projectId)
+            @Html.DisplayFor(modelItem => item.user_Id)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.timeIn)
+            @Html.DisplayFor(modelItem => item.project_Id)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.timeOut)
+            @Html.DisplayFor(modelItem => item.clockInTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.clockOutTime)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

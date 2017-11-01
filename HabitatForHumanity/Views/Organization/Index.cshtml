@@ -1,4 +1,4 @@
-﻿@model IEnumerable<HabitatForHumanity.Models.Project>
+﻿@model IEnumerable<HabitatForHumanity.Models.Organization>
 
 @{
     ViewBag.Title = "Index";
@@ -14,12 +14,6 @@
         <th>
             @Html.DisplayNameFor(model => model.name)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.beginDate)
-        </th>
         <th></th>
     </tr>
 
@@ -27,12 +21,6 @@
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.beginDate)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

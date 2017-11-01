@@ -18,19 +18,13 @@
             @Html.DisplayNameFor(model => model.lastName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.email)
+            @Html.DisplayNameFor(model => model.homePhoneNumber)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.password)
+            @Html.DisplayNameFor(model => model.workPhoneNumber)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.birthDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.gender)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.role)
+            @Html.DisplayNameFor(model => model.emailAddress)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.streetAddress)
@@ -42,10 +36,37 @@
             @Html.DisplayNameFor(model => model.zip)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.homePhone)
+            @Html.DisplayNameFor(model => model.password)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.workPhone)
+            @Html.DisplayNameFor(model => model.birthDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverSignDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.emergencyFirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.emergencyLastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.relation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.emergencyHomePhone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.emergencyWorkPhone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.emergencyStreetAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.emergencyCity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.emergencyZip)
         </th>
         <th></th>
     </tr>
@@ -59,19 +80,13 @@
             @Html.DisplayFor(modelItem => item.lastName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.email)
+            @Html.DisplayFor(modelItem => item.homePhoneNumber)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.password)
+            @Html.DisplayFor(modelItem => item.workPhoneNumber)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.birthDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.gender)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.role)
+            @Html.DisplayFor(modelItem => item.emailAddress)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.streetAddress)
@@ -83,10 +98,37 @@
             @Html.DisplayFor(modelItem => item.zip)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.homePhone)
+            @Html.DisplayFor(modelItem => item.password)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.workPhone)
+            @Html.DisplayFor(modelItem => item.birthDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.waiverSignDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.emergencyFirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.emergencyLastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.relation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.emergencyHomePhone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.emergencyWorkPhone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.emergencyStreetAddress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.emergencyCity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.emergencyZip)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

@@ -7,117 +7,110 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
-using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Controllers
 {
-    public class WaiverController : Controller
+    public class OrganizationController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
 
-        // GET: Waiver
+        // GET: Organization
         public ActionResult Index()
         {
-            return View(db.waivers.ToList());
+            return View(db.organizations.ToList());
         }
 
-        // GET: Waiver/Details/5
+        // GET: Organization/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Waiver waiver = db.waivers.Find(id);
-            if (waiver == null)
+            Organization organization = db.organizations.Find(id);
+            if (organization == null)
             {
                 return HttpNotFound();
             }
-            return View(waiver);
+            return View(organization);
         }
 
-        // GET: Waiver/Create
-        public ActionResult Create(string email)
+        // GET: Organization/Create
+        public ActionResult Create()
         {
-            SignWaiverVM signWaiverVm = new SignWaiverVM();
-            if (Session["Username"].Equals(email))
-            {
-                signWaiverVm = Repository.GetUserWaiver(email);
-
-            }
-            return View(signWaiverVm);
+            return View();
         }
 
-        // POST: Waiver/Create
+        // POST: Organization/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(SignWaiverVM signWaiverVM)
+        public ActionResult Create([Bind(Include = "Id,name")] Organization organization)
         {
             if (ModelState.IsValid)
             {
-                Repository.AddWaiver(signWaiverVM);
-           
+                db.organizations.Add(organization);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(signWaiverVM);
+            return View(organization);
         }
 
-        // GET: Waiver/Edit/5
+        // GET: Organization/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Waiver waiver = db.waivers.Find(id);
-            if (waiver == null)
+            Organization organization = db.organizations.Find(id);
+            if (organization == null)
             {
                 return HttpNotFound();
             }
-            return View(waiver);
+            return View(organization);
         }
 
-        // POST: Waiver/Edit/5
+        // POST: Organization/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,userId,signDate,emContFirstName,emContLastName,relation,emContHomePhone,emContWorkPhone,signature,consent")] Waiver waiver)
+        public ActionResult Edit([Bind(Include = "Id,name")] Organization organization)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(waiver).State = EntityState.Modified;
+                db.Entry(organization).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(waiver);
+            return View(organization);
         }
 
-        // GET: Waiver/Delete/5
+        // GET: Organization/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Waiver waiver = db.waivers.Find(id);
-            if (waiver == null)
+            Organization organization = db.organizations.Find(id);
+            if (organization == null)
             {
                 return HttpNotFound();
             }
-            return View(waiver);
+            return View(organization);
         }
 
-        // POST: Waiver/Delete/5
+        // POST: Organization/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Waiver waiver = db.waivers.Find(id);
-            db.waivers.Remove(waiver);
+            Organization organization = db.organizations.Find(id);
+            db.organizations.Remove(organization);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

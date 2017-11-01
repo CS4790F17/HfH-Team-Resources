@@ -7,14 +7,12 @@ using System.Web;
 
 namespace HabitatForHumanity.Models
 {
-    [Table("TimeSheet")]
-    public class TimeSheet
+    [Table("Organization")]
+    public class Organization
     {
         [Key]
         public int Id { get; set; }
-        public int user_Id { get; set; }
-        public int project_Id { get; set; }
-        public DateTime clockInTime { get; set; }
-        public DateTime clockOutTime { get; set; }
+        public string name { get; set; }
+
     }
 }
