@@ -28,5 +28,24 @@ namespace HabitatForHumanity.Models
             db.waivers.Add(w);
             db.SaveChanges();
         }
+
+        public static bool HasWaiver(int userId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            var waivers = db.waivers.Where(w => w.userId == userId);
+            bool isValid = false;
+            if(waivers.Count() > 0)
+            {
+                foreach (Waiver w in waivers)
+                {
+                    if(DateTime.Today.AddDays(-365) < w.signDate && w.consent)
+                    {
+                        isValid = true;
+                    }
+                }
+            }
+          
+            return isValid;
+        }
     }
 }

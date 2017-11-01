@@ -15,6 +15,13 @@ namespace HabitatForHumanity.Models
             return User.EmailExists(email);
         }
 
+        public static void CreateUser(User user)
+        {
+            user.password = Crypto.HashPassword(user.password);
+            user.role = "volunteer";
+            User.CreateUser(user);
+
+        }
         public static bool AuthenticateUser(LoginVM loginVm)
         {
             bool exists = false;
@@ -26,9 +33,14 @@ namespace HabitatForHumanity.Models
             return exists;
         }
 
-        public static User GetUser(string email)
+        public static User GetUserByEmail(string email)
         {
             return User.GetUserByEmail(email);
+        }
+
+        public static User GetUser(int id)
+        {
+            return User.GetUser(id);
         }
 
         // this not only changes the password, it also hashes it
@@ -84,14 +96,12 @@ namespace HabitatForHumanity.Models
 
             Waiver.AddWaiver(w);
         }
-
-        public static void CreateUser(User user)
+        public static bool HasWaiver(int userId)
         {
-            user.password = Crypto.HashPassword(user.password);
-            user.role = "volunteer";
-            User.CreateUser(user);
-
+            return Waiver.HasWaiver(userId);
         }
+
+
 
         /////////////////////     time sheet business ///////////////
         public static PunchInVM GetPunchInVM(int id)

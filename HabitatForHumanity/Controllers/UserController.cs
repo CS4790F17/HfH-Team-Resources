@@ -37,6 +37,20 @@ namespace HabitatForHumanity.Controllers
             return View(user);
         }
 
+        // GET: VOLUNTEER PORTAL
+        //
+        public ActionResult VolunteerPortal(int id)
+        {
+            //if (id == null)
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
+            VolPortalVM portalVM = new VolPortalVM();
+            portalVM.user = Repository.GetUser(id);
+            portalVM.hasWaiver = Repository.HasWaiver(id);
+            return View(portalVM);
+        }
+
         // GET: User/Create
         public ActionResult Create()
         {
@@ -52,18 +66,30 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
+                
                 if (!Repository.EmailExists(user.email))
                 {
+                    int userId = 0;
                     Repository.CreateUser(user);
                     Session["role"] = "volunteer";
                     Session["Username"] = user.email;
+
+                    User newUser = new User();
+                    newUser = Repository.GetUserByEmail(user.email);
+                    userId = newUser.Id;
+                    if(userId > 0)
+                    {
+                        return RedirectToAction("VolunteerPortal", new { id = userId });
+                    }
+                    
+
                 }
                 else
                 {
                     ViewBag.status = "That email already exists in out system. Click the link below.";
                     return View(user);
                 }
-                return RedirectToAction("Index", "Home");
+               
             }
 
             return View(user);
@@ -126,8 +152,6 @@ namespace HabitatForHumanity.Controllers
             return RedirectToAction("Index");
         }
 
-        /*  LOG IN AND SIGN UP ACTIONS **/
-
         // GET: Users/Login/5
         public ActionResult Login()
         {
@@ -148,10 +172,11 @@ namespace HabitatForHumanity.Controllers
                 {
                     if (Repository.AuthenticateUser(loginVm))
                     {
-                        User user = Repository.GetUser(loginVm.email);
+                        User user = Repository.GetUserByEmail(loginVm.email);
                         Session["role"] = user.role;
                         Session["Username"] = user.email;
-                        return RedirectToAction("Index", "Home");
+                        //return RedirectToAction("VolunteerPortal");
+                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
                     }
                     else
                     {
