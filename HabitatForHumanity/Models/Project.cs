@@ -15,6 +15,6 @@ namespace HabitatForHumanity.Models
         public string name { get; set; }
         public string description { get; set; }
         public DateTime beginDate { get; set; }
-        public char status { get; set; } // i - inactive, a - active
+        public int status { get; set; } // 0 - inactive, 1 - active
     }
 }

@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
 using HabitatForHumanity.ViewModels;
+using System.Web.Helpers;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -58,7 +59,7 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(
-            Include = "Id,firstName,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate,emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
+            Include = "Id,firstName,gender, isAdmin,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate,emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -127,6 +128,67 @@ namespace HabitatForHumanity.Controllers
                 }
             }
             // model was bad
+            return RedirectToAction("Login", "Volunteer");
+        }
+
+        // 
+        public ActionResult ForgotPassword()
+        {
+            LoginVM loginVm = new LoginVM();
+            return View(loginVm);
+        }
+
+
+
+        // POST: Users/forgotPassword/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ForgotPassword([Bind(Include = "email")] LoginVM forgot)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Repository.EmailExists(forgot.email))
+                {
+                    try
+                    {
+                        //Configuring webMail class to send emails  
+                        //gmail smtp server  
+                        WebMail.SmtpServer = "smtp.gmail.com";
+                        //gmail port to send emails  
+                        WebMail.SmtpPort = 587;
+                        WebMail.SmtpUseDefaultCredentials = true;
+                        //sending emails with secure protocol  
+                        WebMail.EnableSsl = true;
+                        //EmailId used to send emails from application  
+                        WebMail.UserName = "hfhdwvolunteer@gmail.com";
+                        WebMail.Password = "3BlindMice";
+
+                        //Sender email address.  
+                        WebMail.From = "hfhdwvolunteer@gmail.com";
+                        //Reset code
+                        Random rand = new Random();
+                        string resetCode = rand.Next(1000, 9999).ToString();
+                        string newPW = resetCode + "W1!uk";
+                        string pwStr = "New TEMPORARY password is: " + newPW;
+                        //Send email  
+                        WebMail.Send(to: forgot.email, subject: "Password Reset", body: pwStr, isBodyHtml: false);
+                        ViewBag.status = "Email Sent Successfully.";
+                        ViewBag.em = forgot.email;
+                        Repository.ChangePassword(forgot.email, newPW);
+                    }
+                    catch (Exception)
+                    {
+                        ViewBag.Status = "Problem while sending email, Please check details.";
+                        return View("Login");
+                    }
+                    return View("Login");
+                }
+                ViewBag.status = "No record of provided email address.";
+                return RedirectToAction("Login", "Volunteer");
+            }
+            ViewBag.status = "Please provide a valid email address.";
             return RedirectToAction("Login", "Volunteer");
         }
 

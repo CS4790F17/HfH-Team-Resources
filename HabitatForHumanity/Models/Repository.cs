@@ -38,5 +38,22 @@ namespace HabitatForHumanity.Models
         {
             return User.GetUserByEmail(email);
         }
+
+        // this not only changes the password, it also hashes it
+        public static void ChangePassword(string email, string newPW)
+        {
+            User user = new User();
+            user = User.GetUserByEmail(email);
+            if (user != null && !String.IsNullOrEmpty(newPW) && !String.IsNullOrWhiteSpace(newPW))
+            {
+                user.password = Crypto.HashPassword(newPW);
+                EditUser(user);
+            }
+        }
+
+        public static void EditUser(User user)
+        {
+            User.EditUser(user);
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using HabitatForHumanity.ViewModels;
 using System.Data.Entity;
+using System.Web.Helpers;
 
 namespace HabitatForHumanity.Models
 {
@@ -35,11 +36,17 @@ namespace HabitatForHumanity.Models
         public string emergencyStreetAddress { get; set; }
         public string emergencyCity { get; set; }
         public string emergencyZip { get; set; }
-      
+
 
         public static bool AuthenticateUser(LoginVM loginVm)
         {
-            throw new NotImplementedException();
+            bool exists = false;
+            User user = User.GetUserByEmail(loginVm.email);
+            if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+            {
+                exists = true;
+            }
+            return exists;
         }
         public static bool EmailExists(string email)
         {
