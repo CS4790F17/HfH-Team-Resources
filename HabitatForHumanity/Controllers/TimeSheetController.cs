@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -36,8 +37,10 @@ namespace HabitatForHumanity.Controllers
         }
 
         // GET: TimeSheet/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
+            PunchInVM punch = new PunchInVM();
+            punch = Repository.GetPunchInVM(id);
             return View();
         }
 
@@ -46,16 +49,17 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,projectId,timeIn,timeOut")] TimeSheet timeSheet)
+        public ActionResult Create(PunchInVM punchInVM)
+        //public ActionResult Create([Bind(Include = "Id,projectId,timeIn,timeOut")] TimeSheet timeSheet)
         {
             if (ModelState.IsValid)
             {
-                db.timeSheets.Add(timeSheet);
-                db.SaveChanges();
+                Repository.PunchIn(punchInVM);
+      
                 return RedirectToAction("Index");
             }
 
-            return View(timeSheet);
+            return View(punchInVM);
         }
 
         // GET: TimeSheet/Edit/5

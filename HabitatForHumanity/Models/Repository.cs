@@ -15,6 +15,13 @@ namespace HabitatForHumanity.Models
             return User.EmailExists(email);
         }
 
+        public static void CreateUser(User user)
+        {
+            user.password = Crypto.HashPassword(user.password);
+            user.role = "volunteer";
+            User.CreateUser(user);
+
+        }
         public static bool AuthenticateUser(LoginVM loginVm)
         {
             bool exists = false;
@@ -26,9 +33,14 @@ namespace HabitatForHumanity.Models
             return exists;
         }
 
-        public static User GetUser(string email)
+        public static User GetUserByEmail(string email)
         {
             return User.GetUserByEmail(email);
+        }
+
+        public static User GetUser(int id)
+        {
+            return User.GetUser(id);
         }
 
         // this not only changes the password, it also hashes it
@@ -43,10 +55,14 @@ namespace HabitatForHumanity.Models
             }
         }
 
+
+
         public static void EditUser(User user)
         {
             User.EditUser(user);
         }
+
+
 
         //  WAIVER BUSINESS ///////////////////////////
         public static SignWaiverVM GetUserWaiver(string email)
@@ -80,13 +96,54 @@ namespace HabitatForHumanity.Models
 
             Waiver.AddWaiver(w);
         }
-
-        public static void CreateUser(User user)
+        public static bool HasWaiver(int userId)
         {
-            user.password = Crypto.HashPassword(user.password);
-            user.role = "volunteer";
-            User.CreateUser(user);
+            return Waiver.HasWaiver(userId);
+        }
 
+
+
+        /////////////////////     time sheet business ///////////////
+        public static PunchInVM GetPunchInVM(int id)
+        {
+            PunchInVM punch = new PunchInVM();
+            punch.userId = id;
+            punch.projects = GetProjectNames();
+            return punch;
+        }
+
+        public static void PunchIn(PunchInVM punchInVM)
+        {
+            TimeSheet t = new TimeSheet();
+            t.userId = punchInVM.userId;
+            t.projectId = GetProjectIdByName(punchInVM.projectName);
+            t.timeIn = DateTime.Today;
+            TimeSheet.PunchIn(t);
+
+        }
+
+        /////////////////////    project business    ////////////////////////
+        public static List<string> GetProjectNames()
+        {
+            List<Project> projects = new List<Project>();
+            projects = Project.GetProjects();
+            List<string> projectNames = new List<string>();
+            foreach(Project p in projects)
+            {
+                projectNames.Add(p.name);
+            }
+            return projectNames;
+        }
+
+        public static int GetProjectIdByName(string name)
+        {
+            return Project.GetProjectIdByName(name);
+        }
+
+        public static List<Project> GetProjects()
+        {
+            List<Project> projects = new List<Project>();
+            return Project.GetProjects();  
         }
     }
 

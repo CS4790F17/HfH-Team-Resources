@@ -143,7 +143,9 @@
     <Compile Include="Models\Waiver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\PunchInVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
+    <Compile Include="ViewModels\VolPortalVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\HabitatAllModels.mdf" />
@@ -220,6 +222,7 @@
     <Content Include="Views\Waiver\Details.cshtml" />
     <Content Include="Views\Waiver\Edit.cshtml" />
     <Content Include="Views\Waiver\Index.cshtml" />
+    <Content Include="Views\User\VolunteerPortal.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

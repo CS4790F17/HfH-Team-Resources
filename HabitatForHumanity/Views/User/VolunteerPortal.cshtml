@@ -1,0 +1,124 @@
+﻿@model HabitatForHumanity.ViewModels.VolPortalVM
+
+@{
+    ViewBag.Title = "Volunteer Portal";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.user.firstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.firstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.lastName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.lastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.password)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.password)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.birthDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.birthDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.gender)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.gender)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.role)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.role)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.streetAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.streetAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.city)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.city)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.zip)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.zip)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.homePhone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.homePhone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.user.workPhone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.user.workPhone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.hasWaiver)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.hasWaiver)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.user.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+
