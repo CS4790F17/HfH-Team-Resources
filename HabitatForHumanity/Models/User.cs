@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using HabitatForHumanity.ViewModels;
 using System.Data.Entity;
+using System.Web.Helpers;
 
 namespace HabitatForHumanity.Models
 {
@@ -24,8 +25,8 @@ namespace HabitatForHumanity.Models
         public string zip { get; set; }
         public string password { get; set; }
         public DateTime birthDate { get; set; }
-        public char? gender { get; set; }
-        public char isAdmin { get; set; } // a - admin, r - read only, v - volunteer
+        public string gender { get; set; }
+        public int isAdmin { get; set; } // 0 - volunteer, 1 - admin
         public DateTime waiverSignDate { get; set; }
         public string emergencyFirstName { get; set; }
         public string emergencyLastName { get; set; }
@@ -35,11 +36,17 @@ namespace HabitatForHumanity.Models
         public string emergencyStreetAddress { get; set; }
         public string emergencyCity { get; set; }
         public string emergencyZip { get; set; }
-      
+
 
         public static bool AuthenticateUser(LoginVM loginVm)
         {
-            throw new NotImplementedException();
+            bool exists = false;
+            User user = User.GetUserByEmail(loginVm.email);
+            if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+            {
+                exists = true;
+            }
+            return exists;
         }
         public static bool EmailExists(string email)
         {
@@ -53,11 +60,19 @@ namespace HabitatForHumanity.Models
             return users.FirstOrDefault();
         }
 
-        public static void CreateUser(User user)
+        public static int CreateUser(User user)
         {
+            int userId = 0;
             VolunteerDbContext db = new VolunteerDbContext();
             db.users.Add(user);
             db.SaveChanges();
+            var users = db.users.Where(u => u.emailAddress.Equals(user.emailAddress));
+            User newUser = users.FirstOrDefault();
+            if (newUser != null)
+            {
+                userId = newUser.Id;
+            }
+            return userId;
         }
 
         public static void EditUser(User user)
