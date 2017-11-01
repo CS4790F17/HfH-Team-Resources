@@ -1,0 +1,56 @@
+CREATE TABLE [dbo].[Org_User] (
+    [Id]      INT IDENTITY (1, 1) NOT NULL,
+    [org_Id]  INT NULL,
+    [user_Id] INT NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+CREATE TABLE [dbo].[Organization] (
+    [Id]   INT           IDENTITY (1, 1) NOT NULL,
+    [name] VARCHAR (100) NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+CREATE TABLE [dbo].[Project] (
+    [Id]          INT           IDENTITY (1, 1) NOT NULL,
+    [name]        VARCHAR (50)  NULL,
+    [description] VARCHAR (MAX) NULL,
+    [beginDate]   DATETIME      NULL,
+    [status]      CHAR (1)      DEFAULT ('a') NOT NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+CREATE TABLE [dbo].[TimeSheet] (
+    [Id]           INT      IDENTITY (1, 1) NOT NULL,
+    [user_Id]      INT      NOT NULL,
+    [project_Id]   INT      NOT NULL,
+    [clockInTime]  DATETIME DEFAULT (getdate()) NOT NULL,
+    [clockOutTime] DATETIME DEFAULT (CONVERT([datetime],CONVERT([date],getdate()+(1)))) NOT NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+CREATE TABLE [dbo].[User] (
+    [Id]                     INT           IDENTITY (1, 1) NOT NULL,
+    [firstName]              VARCHAR (50)  NULL,
+    [lastName]               VARCHAR (50)  NULL,
+    [homePhoneNumber]        VARCHAR (10)  NULL,
+    [workPhoneNumber]        VARCHAR (10)  NULL,
+    [emailAddress]           VARCHAR (50)  NULL,
+    [streetAddress]          VARCHAR (50)  NULL,
+    [city]                   VARCHAR (50)  NULL,
+    [zip]                    VARCHAR (50)  NULL,
+    [password]               VARCHAR (MAX) NULL,
+    [birthDate]              DATETIME      NULL,
+    [gender]                 CHAR (1)      NULL,
+    [isAdmin]                CHAR (1)      DEFAULT ('v') NOT NULL,
+    [waiverSignDate]         DATETIME      NULL,
+    [emergencyFirstName]     VARCHAR (50)  NULL,
+    [emergencyLastName]      VARCHAR (50)  NULL,
+    [relation]               VARCHAR (50)  NULL,
+    [emergencyHomePhone]     VARCHAR (10)  NULL,
+    [emergencyWorkPhone]     VARCHAR (10)  NULL,
+    [emergencyStreetAddress] VARCHAR (50)  NULL,
+    [emergencyCity]          VARCHAR (50)  NULL,
+    [emergencyZip]           VARCHAR (50)  NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
