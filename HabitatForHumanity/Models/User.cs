@@ -53,11 +53,19 @@ namespace HabitatForHumanity.Models
             return users.FirstOrDefault();
         }
 
-        public static void CreateUser(User user)
+        public static int CreateUser(User user)
         {
+            int userId = 0;
             VolunteerDbContext db = new VolunteerDbContext();
             db.users.Add(user);
             db.SaveChanges();
+            var users = db.users.Where(u => u.emailAddress.Equals(user.emailAddress));
+            User newUser = users.FirstOrDefault();
+            if (newUser != null)
+            {
+                userId = newUser.Id;
+            }
+            return userId;
         }
 
         public static void EditUser(User user)

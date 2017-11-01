@@ -46,13 +46,13 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,firstName,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate,emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
+        public ActionResult Create([Bind(
+            Include = "Id,firstName,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate,emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
         {
             if (ModelState.IsValid)
             {
-                db.users.Add(user);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                int userId = Repository.CreateUser(user);
+                return RedirectToAction("Index", "Home");
             }
 
             return View(user);
