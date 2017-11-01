@@ -1,0 +1,50 @@
+CREATE TABLE [dbo].[Waiver] (
+    [Id]              INT          IDENTITY (1, 1) NOT NULL,
+    [userId]          INT          NULL,
+    [signDate]        DATETIME     NULL,
+    [emContFirstName] VARCHAR (50) NULL,
+    [emContLastName]  VARCHAR (50) NULL,
+    [relation]        VARCHAR (50) NULL,
+    [emContHomePhone] VARCHAR (50) NULL,
+    [emContWorkPhone] VARCHAR (50) NULL,
+    [consent]         BIT          DEFAULT ((0)) NULL,
+    [signature]       VARCHAR (50) NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+CREATE TABLE [dbo].[User] (
+    [Id]            INT           IDENTITY (1, 1) NOT NULL,
+    [firstName]     VARCHAR (50)  NULL,
+    [lastName]      VARCHAR (50)  NULL,
+    [email]         VARCHAR (50)  NULL,
+    [password]      VARCHAR (MAX) NULL,
+    [birthDate]     DATETIME      NULL,
+    [gender]        VARCHAR (50)  NULL,
+    [role]          VARCHAR (50)  NULL,
+    [streetAddress] VARCHAR (50)  NULL,
+    [city]          VARCHAR (50)  NULL,
+    [zip]           NCHAR (10)    NULL,
+    [homePhone]     VARCHAR (50)  NULL,
+    [workPhone]     VARCHAR (50)  NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+CREATE TABLE [dbo].[TimeSheet] (
+    [Id]        INT      IDENTITY (1, 1) NOT NULL,
+    [userId]    INT      NULL,
+    [projectId] INT      NULL,
+    [timeIn]    DATETIME NULL,
+    [timeOut]   DATETIME NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+CREATE TABLE [dbo].[Project] (
+    [Id]          INT           IDENTITY (1, 1) NOT NULL,
+    [name]        VARCHAR (50)  NULL,
+    [description] VARCHAR (MAX) NULL,
+    [startDate]   DATETIME      NULL,
+    [endDate]     DATETIME      NULL,
+    [category]    VARCHAR (50)  NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
