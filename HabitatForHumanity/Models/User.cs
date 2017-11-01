@@ -24,8 +24,8 @@ namespace HabitatForHumanity.Models
         public string zip { get; set; }
         public string password { get; set; }
         public DateTime birthDate { get; set; }
-        public char? gender { get; set; }
-        public char isAdmin { get; set; } // a - admin, r - read only, v - volunteer
+        public string gender { get; set; }
+        public int isAdmin { get; set; } // 0 - volunteer, 1 - admin
         public DateTime waiverSignDate { get; set; }
         public string emergencyFirstName { get; set; }
         public string emergencyLastName { get; set; }

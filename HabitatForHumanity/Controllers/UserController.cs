@@ -51,8 +51,28 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                int userId = Repository.CreateUser(user);
-                return RedirectToAction("Index", "Home");
+                if(Repository.EmailExists(user.emailAddress) == false)
+                {
+                    int userId = Repository.CreateUser(user);
+                    if (userId > 0)
+                    {
+                        Session["isAdmin"] = 0; // if you're admin, you have to have an admin change isAdmin to 1, then log in
+                        Session["Username"] = user.emailAddress;
+                        // pass the user id to user portal view maker
+                        return RedirectToAction("Index", "Home"); // change this to pass the user id to user portal view maker
+                    }
+                    else
+                    {
+                        ViewBag.status = "An error occurred during account creation please try again.";
+                        return View(user);
+                    }        
+                }
+                else
+                {
+                    // this needs some kind of notification
+                    ViewBag.status = "That email already exists in out system. Click the link below.";
+                    return RedirectToAction("Login", "User");
+                }
             }
 
             return View(user);
