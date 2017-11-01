@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -34,6 +35,16 @@ namespace HabitatForHumanity.Controllers
             }
             return View(user);
         }
+        public ActionResult VolunteerPortal(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            return View();
+        }
+
 
         // GET: User/Create
         public ActionResult Create()
@@ -58,8 +69,7 @@ namespace HabitatForHumanity.Controllers
                     {
                         Session["isAdmin"] = 0; // if you're admin, you have to have an admin change isAdmin to 1, then log in
                         Session["Username"] = user.emailAddress;
-                        // pass the user id to user portal view maker
-                        return RedirectToAction("Index", "Home"); // change this to pass the user id to user portal view maker
+                        return RedirectToAction("VolunteerPortal", new { id = userId });
                     }
                     else
                     {
@@ -76,6 +86,48 @@ namespace HabitatForHumanity.Controllers
             }
 
             return View(user);
+        }
+
+        // GET: Users/Login/5
+        public ActionResult Login()
+        {
+            LoginVM loginVm = new LoginVM();
+            return View(loginVm);
+        }
+
+        // POST: Users/Login/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login([Bind(Include = "email,password")] LoginVM loginVm)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Repository.EmailExists(loginVm.email))
+                {
+                    if (Repository.AuthenticateUser(loginVm))
+                    {
+                        User user = Repository.GetUserByEmail(loginVm.email);
+                        Session["isAdmin"] = user.isAdmin;
+                        Session["Username"] = user.emailAddress;
+                        //return RedirectToAction("VolunteerPortal");
+                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                    }
+                    else
+                    {
+                        ViewBag.status = "The password provided is not valid.";
+                        return View(loginVm);
+                    }
+                }
+                else
+                {
+                    ViewBag.status = "The email address provided is not in our system.";
+                    return View(loginVm);
+                }
+            }
+            // model was bad
+            return RedirectToAction("Login", "Volunteer");
         }
 
         // GET: User/Edit/5
