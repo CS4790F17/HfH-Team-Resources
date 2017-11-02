@@ -3,14 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using HabitatForHumanity.ViewModels;
+using HabitatForHumanity.Models;
 
 namespace HabitatForHumanity.Controllers
 {
     public class HomeController : Controller
     {
+
+ 
+
         public ActionResult Index()
         {
-            return View();
+            ProjectDropDownList pdl = new ProjectDropDownList();
+            pdl.getListItems(Repository.getAllProjects());
+            
+
+            return View(pdl);
         }
 
         public ActionResult About()

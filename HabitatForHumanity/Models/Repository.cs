@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Helpers;
 using HabitatForHumanity.ViewModels;
+using HabitatForHumanity.Models;
 
 namespace HabitatForHumanity.Models
 {
@@ -54,6 +55,11 @@ namespace HabitatForHumanity.Models
         public static void EditUser(User user)
         {
             User.EditUser(user);
+        }
+
+        public static List<Project> getAllProjects()
+        {
+            return Project.getAllProjects();
         }
     }
 }

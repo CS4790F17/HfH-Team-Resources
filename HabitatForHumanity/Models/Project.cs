@@ -16,5 +16,11 @@ namespace HabitatForHumanity.Models
         public string description { get; set; }
         public DateTime beginDate { get; set; }
         public int status { get; set; } // 0 - inactive, 1 - active
+
+        public static List<Project> getAllProjects()
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.projects.ToList();
+        }
     }
 }
