@@ -10,6 +10,7 @@ namespace HabitatForHumanity.Models
 {
     public class Repository
     {
+        #region User functions
         // user stuff
         public static int CreateUser(User user)
         {
@@ -56,15 +57,30 @@ namespace HabitatForHumanity.Models
         {
             User.EditUser(user);
         }
+        #endregion
 
+        #region Project functions
         public static List<Project> getAllProjects()
         {
             return Project.getAllProjects();
         }
+        #endregion
 
+        #region Organization functions
         public static List<Organization> getAllOrganizations()
         {
-            return Organization.getAllOrganizations();
+            return Organization.GetAllOrganizations();
         }
+
+        public static Organization GetOrganizationById(int id)
+        {
+            return Organization.GetOrganizationById(id);
+        }
+
+        public static Organization GetOrganizationByName(string name)
+        {
+            return Organization.GetOrganizationByName(name);
+        }
+        #endregion
     }
 }
