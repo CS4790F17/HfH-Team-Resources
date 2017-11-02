@@ -60,19 +60,19 @@ namespace HabitatForHumanity.Models
         #endregion
 
         #region Project functions
-        public static List<Project> getAllProjects()
+        public static List<Project> GetAllProjects()
         {
-            return Project.getAllProjects();
+            return Project.GetAllProjects();
         }
 
-        public static Project getProjectById(int id)
+        public static Project GetProjectById(int id)
         {
-            return Project.getProjectById(id);
+            return Project.GetProjectById(id);
         }
 
-        public static List<Project> getActiveProjects()
+        public static List<Project> GetActiveProjects()
         {
-            return Project.getActiveProjects();
+            return Project.GetActiveProjects();
         }
 
         /// <summary>
@@ -81,14 +81,14 @@ namespace HabitatForHumanity.Models
         /// <param name="name">Name of the project</param>
         /// <param name="date">MM/DD/YYYY</param>
         /// <returns></returns>
-        public static Project getProjectByNameAndDate(string name, string date)
+        public static Project GetProjectByNameAndDate(string name, string date)
         {
-            return Project.getProjectByNameAndDate(name, date);
+            return Project.GetProjectByNameAndDate(name, date);
         }
         #endregion
 
         #region Organization functions
-        public static List<Organization> getAllOrganizations()
+        public static List<Organization> GetAllOrganizations()
         {
             return Organization.GetAllOrganizations();
         }

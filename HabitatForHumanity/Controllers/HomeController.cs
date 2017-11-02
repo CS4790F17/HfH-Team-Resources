@@ -21,11 +21,11 @@ namespace HabitatForHumanity.Controllers
         public ActionResult Examples()
         {
             ToolKitExampleVM model = new ToolKitExampleVM();
-            model.odd.createDropDownList(Repository.getAllOrganizations());
-            model.pdd.createDropDownList(Repository.getAllProjects());
+            model.odd.createDropDownList(Repository.GetAllOrganizations());
+            model.pdd.createDropDownList(Repository.GetAllProjects());
 
-            model.projectTest = Project.getProjectByNameAndDate("test", "1/1/2081").name;
-            model.projectTest2 = Project.getProjectByNameAndDate("test2", "1/1/2081").name;
+            model.projectTest = Project.GetProjectByNameAndDate("test", "1/1/2081").name;
+            model.projectTest2 = Project.GetProjectByNameAndDate("test2", "1/1/2081").name;
 
 
 
