@@ -10,20 +10,14 @@ namespace HabitatForHumanity.Models
     [Table("Project")]
     public class Project
     {
-
-        public int Id { get; set; }
-
-        [Key, Column(Order = 0)]
+        [Key]
+        public int Id { get; set; } 
         public string name { get; set; }
-
         public string description { get; set; }
-
-        [Key, Column(Order = 1)]
         public DateTime beginDate { get; set; }
-
         public int status { get; set; } // 0 - inactive, 1 - active
 
-        #region Database Access
+        #region Database Access Methods
         public static List<Project> getAllProjects()
         {
             VolunteerDbContext db = new VolunteerDbContext();
@@ -48,7 +42,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="name">Name of the project</param>
         /// <param name="date">MM/DD/YYYY</param>
-        /// <returns></returns>
+        /// <returns>Project object</returns>
         public static Project getProjectByNameAndDate(string name, string date)
         {
             //parse date into datetime
@@ -58,7 +52,12 @@ namespace HabitatForHumanity.Models
             VolunteerDbContext db = new VolunteerDbContext();
 
             //find the record with PK_name+beginDate
-            return db.projects.Find(name, beginDate);
+            //doesn't work with auto incrementing id field
+            //return db.projects.Find(name, beginDate);
+
+            //work around that lets the db save
+            return db.projects.Where(x => x.name.Equals(name) && x.beginDate.Equals(beginDate)).Single();
+    
         }
         #endregion
     }
