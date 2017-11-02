@@ -143,6 +143,7 @@
     <Compile Include="Models\VolunteerDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\PunchOutVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -225,6 +226,7 @@
     <Content Include="Views\User\Login.cshtml" />
     <Content Include="Views\User\VolunteerPortal.cshtml" />
     <Content Include="Views\User\ForgotPassword.cshtml" />
+    <Content Include="Views\TimeSheet\PunchIn.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

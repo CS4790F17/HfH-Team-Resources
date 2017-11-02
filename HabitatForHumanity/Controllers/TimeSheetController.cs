@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -40,6 +41,62 @@ namespace HabitatForHumanity.Controllers
         {
             return View();
         }
+
+        // GET: TimeSheet/Create
+
+        public ActionResult PunchIn(int? userId)
+        {
+            int id = 2;
+            if (userId != null)
+            {
+                id = (int)userId;
+            }
+            PunchInVM punchIn = new PunchInVM();
+            punchIn = Repository.GetPunchInVM(id);
+            return View("PunchIn", punchIn);
+
+        }
+        //public ActionResult PunchIn()
+        //{
+        //    PunchInVM punchIn = new PunchInVM();
+        //    punchIn = Repository.GetPunchInVM(3);
+        //    return View("PunchIn", punchIn);
+
+        //}
+        // GET: TimeSheet/Create
+        public ActionResult PunchOut(int userId)
+        {
+            PunchOutVM punchOut = new PunchOutVM();
+            punchOut = Repository.GetPunchClockVM(userId);
+            if (punchOut.timeSheet == null)
+            {
+                PunchInVM punchIn = new PunchInVM();
+                punchIn.userId = userId;
+                punchIn.userName = punchOut.userName;
+                punchIn.orgList = punchOut.orgList;
+                punchIn.projectList = punchOut.projectList;
+                return View("PunchIn");
+            }
+            return View("PunchOut", punchOut);
+        }
+
+        // POST: TimeSheet/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PunchIn([Bind(Include = "userId,projectId")] PunchInVM punchInVM)
+        {
+            if (ModelState.IsValid)
+            {
+                Repository.PunchIn(punchInVM);
+            
+                return RedirectToAction("Index");
+            }
+
+            return View(punchInVM);
+        }
+
 
         // POST: TimeSheet/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
