@@ -137,6 +137,7 @@
     </Compile>
     <Compile Include="Models\Organization.cs" />
     <Compile Include="Models\Project.cs" />
+    <Compile Include="Models\Repository.cs" />
     <Compile Include="Models\TimeSheet.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\VolunteerDbContext.cs" />
@@ -145,10 +146,6 @@
     <Compile Include="ViewModels\SignWaiverVM.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\HabitatAllModels.mdf" />
-    <Content Include="App_Data\HabitatAllModels_log.ldf">
-      <DependentUpon>HabitatAllModels.mdf</DependentUpon>
-    </Content>
     <Content Include="App_Data\Volunteer.mdf" />
     <Content Include="App_Data\Volunteer_log.ldf">
       <DependentUpon>Volunteer.mdf</DependentUpon>
@@ -157,6 +154,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="DBscripts\VolunteerDBscript.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -169,7 +167,10 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Images\Volunteer Waiver - adult.docx" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
+    <Content Include="Images\Habitat For Humanity logo.jpg" />
+    <Content Include="Images\hfhwd logo %281%29.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-3.2.1.js" />
@@ -187,7 +188,6 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="DBscripts\VolunteerDBscript.txt" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -222,6 +222,9 @@
     <Content Include="Views\TimeSheet\Details.cshtml" />
     <Content Include="Views\TimeSheet\Edit.cshtml" />
     <Content Include="Views\TimeSheet\Index.cshtml" />
+    <Content Include="Views\User\Login.cshtml" />
+    <Content Include="Views\User\VolunteerPortal.cshtml" />
+    <Content Include="Views\User\ForgotPassword.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
