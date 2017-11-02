@@ -61,5 +61,10 @@ namespace HabitatForHumanity.Models
         {
             return Project.getAllProjects();
         }
+
+        public static List<Organization> getAllOrganizations()
+        {
+            return Organization.getAllOrganizations();
+        }
     }
 }

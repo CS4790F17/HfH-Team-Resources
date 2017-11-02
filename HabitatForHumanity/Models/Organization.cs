@@ -14,5 +14,11 @@ namespace HabitatForHumanity.Models
         public int Id { get; set; }
         public string name { get; set; }
 
+
+        public static List<Organization> getAllOrganizations()
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.organizations.ToList();
+        }
     }
 }
