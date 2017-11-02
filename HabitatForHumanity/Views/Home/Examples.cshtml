@@ -1,0 +1,13 @@
+﻿@model HabitatForHumanity.ViewModels.ToolKitExampleVM
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@Html.DropDownListFor(x => x.pdd.ProjectId, Model.pdd.Projects)
+@Html.DropDownListFor(x => x.odd.OrganizationId, Model.odd.Organizations)
+
+<div>
+    @Html.DisplayFor(x => x.projectTest)
+    @Html.DisplayFor(x => x.projectTest2)
+</div>

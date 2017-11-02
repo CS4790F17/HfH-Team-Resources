@@ -11,15 +11,25 @@ namespace HabitatForHumanity.Controllers
     public class HomeController : Controller
     {
 
- 
+
 
         public ActionResult Index()
         {
-            ProjectDropDownList pdl = new ProjectDropDownList();
-            pdl.getListItems(Repository.getAllProjects());
-            
+            return View();
+        }
 
-            return View(pdl);
+        public ActionResult Examples()
+        {
+            ToolKitExampleVM model = new ToolKitExampleVM();
+            model.odd.createDropDownList(Repository.getAllOrganizations());
+            model.pdd.createDropDownList(Repository.getAllProjects());
+
+            model.projectTest = Project.getProjectByNameAndDate("test", "1/1/2081").name;
+            model.projectTest2 = Project.getProjectByNameAndDate("test2", "1/1/2081").name;
+
+
+
+            return View(model);
         }
 
         public ActionResult About()
