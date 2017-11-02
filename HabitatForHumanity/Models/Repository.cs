@@ -64,6 +64,27 @@ namespace HabitatForHumanity.Models
         {
             return Project.getAllProjects();
         }
+
+        public static Project getProjectById(int id)
+        {
+            return Project.getProjectById(id);
+        }
+
+        public static List<Project> getActiveProjects()
+        {
+            return Project.getActiveProjects();
+        }
+
+        /// <summary>
+        /// Gets a project by its primary key: name+beginDate. Date must be in the format MM/DD/YYYY.
+        /// </summary>
+        /// <param name="name">Name of the project</param>
+        /// <param name="date">MM/DD/YYYY</param>
+        /// <returns></returns>
+        public static Project getProjectByNameAndDate(string name, string date)
+        {
+            return Project.getProjectByNameAndDate(name, date);
+        }
         #endregion
 
         #region Organization functions

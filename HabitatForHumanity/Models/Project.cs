@@ -10,7 +10,7 @@ namespace HabitatForHumanity.Models
     [Table("Project")]
     public class Project
     {
-        
+
         public int Id { get; set; }
 
         [Key, Column(Order = 0)]
@@ -23,6 +23,7 @@ namespace HabitatForHumanity.Models
 
         public int status { get; set; } // 0 - inactive, 1 - active
 
+        #region Database Access
         public static List<Project> getAllProjects()
         {
             VolunteerDbContext db = new VolunteerDbContext();
@@ -59,5 +60,7 @@ namespace HabitatForHumanity.Models
             //find the record with PK_name+beginDate
             return db.projects.Find(name, beginDate);
         }
+        #endregion
     }
+
 }
