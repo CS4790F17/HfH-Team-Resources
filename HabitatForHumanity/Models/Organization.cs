@@ -86,7 +86,7 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
-        /// Deletes ad organization from the database.
+        /// Deletes an organization from the database by id.
         /// </summary>
         /// <param name="id">The id of the organization to delete.</param>
         public static void DeleteOrganizationById(int id)
