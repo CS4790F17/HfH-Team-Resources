@@ -18,7 +18,7 @@ namespace HabitatForHumanity.ViewModels
         public List<SelectListItem> Projects { get; set; }
 
         //extracts items out of 
-        public void getListItems(List<Project> items)
+        public void createDropDownList(List<Project> items)
         {
             var SelectList = new List<SelectListItem>();
             foreach (Project item in items)
@@ -32,5 +32,28 @@ namespace HabitatForHumanity.ViewModels
             Projects = SelectList;
         }
     }
+
+    public class OrganizationDropDownList
+    {
+        public int OrganizationId { get; set; }
+        public string OrganizationName { get; set; }
+        public List<SelectListItem> Organizations { get; set; }
+
+        public void createDropDownList(List<Organization> items)
+        {
+            var SelectList = new List<SelectListItem>();
+            foreach (Organization item in items)
+            {
+                SelectList.Add(new SelectListItem
+                {
+                    Value = item.Id.ToString(),
+                    Text = item.name
+                });
+            }
+            Organizations = SelectList;
+        }
+
+    }
+
 
 }
