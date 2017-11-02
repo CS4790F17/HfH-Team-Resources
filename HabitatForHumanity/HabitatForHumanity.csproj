@@ -146,10 +146,6 @@
     <Compile Include="ViewModels\SignWaiverVM.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\HabitatAllModels.mdf" />
-    <Content Include="App_Data\HabitatAllModels_log.ldf">
-      <DependentUpon>HabitatAllModels.mdf</DependentUpon>
-    </Content>
     <Content Include="App_Data\Volunteer.mdf" />
     <Content Include="App_Data\Volunteer_log.ldf">
       <DependentUpon>Volunteer.mdf</DependentUpon>
@@ -171,7 +167,10 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Images\Volunteer Waiver - adult.docx" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
+    <Content Include="Images\Habitat For Humanity logo.jpg" />
+    <Content Include="Images\hfhwd logo %281%29.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-3.2.1.js" />
