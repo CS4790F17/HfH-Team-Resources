@@ -22,12 +22,15 @@ namespace HabitatForHumanity.Models
         /// </summary>
         public int status { get; set; }
 
+
+
+
         #region Database Access Methods
         /// <summary>
         /// Get all projects in the database.
         /// </summary>
         /// <returns>A list of all projects.</returns>
-        public static List<Project> getAllProjects()
+        public static List<Project> GetAllProjects()
         {
             VolunteerDbContext db = new VolunteerDbContext();
             return db.projects.ToList();
@@ -38,7 +41,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A single project object with a matching id or null otherwise.</returns>
-        public static Project getProjectById(int id)
+        public static Project GetProjectById(int id)
         {
             VolunteerDbContext db = new VolunteerDbContext();
             return db.projects.Find(id);
@@ -48,7 +51,7 @@ namespace HabitatForHumanity.Models
         /// Gets all the currently active projects
         /// </summary>
         /// <returns>A list of all projects that are currently active.</returns>
-        public static List<Project> getActiveProjects()
+        public static List<Project> GetActiveProjects()
         {
             VolunteerDbContext db = new VolunteerDbContext();
             return db.projects.Where(x => x.status == 1).ToList();
@@ -61,7 +64,7 @@ namespace HabitatForHumanity.Models
         /// <param name="name">Name of the project</param>
         /// <param name="date">MM/DD/YYYY</param>
         /// <returns>Project object</returns>
-        public static Project getProjectByNameAndDate(string name, string date)
+        public static Project GetProjectByNameAndDate(string name, string date)
         {
             //parse date into datetime
             //probably not a good method of handling keys
