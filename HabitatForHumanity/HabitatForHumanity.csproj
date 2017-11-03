@@ -227,6 +227,7 @@
     <Content Include="Views\User\VolunteerPortal.cshtml" />
     <Content Include="Views\User\ForgotPassword.cshtml" />
     <Content Include="Views\TimeSheet\PunchIn.cshtml" />
+    <Content Include="Views\TimeSheet\PunchOut.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

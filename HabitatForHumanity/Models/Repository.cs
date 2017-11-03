@@ -63,18 +63,22 @@ namespace HabitatForHumanity.Models
 
         // time card stuff
 
-        public static PunchOutVM GetPunchClockVM(int userId)
+        public static TimeSheet GetClockedInUserTimeSheet(int userId)
         {
-            PunchOutVM punch = new PunchOutVM();
-
-            User user = GetUser(userId);
-            punch.userName = user.firstName + " " + user.lastName;
-            punch.projectList = GetProjectListVMs();      
-            punch.orgList = Organization.GetOrganizations();
-            TimeSheet ts = TimeSheet.GetOpenUserTimeSheet(userId);
-            punch.timeSheet = ts;
-            return punch;
+            return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
+        //public static PunchOutVM GetPunchClockVM(int userId)
+        //{
+        //    PunchOutVM punch = new PunchOutVM();
+
+        //    User user = GetUser(userId);
+        //    punch.userName = user.firstName + " " + user.lastName;
+        //    punch.projectList = GetProjectListVMs();      
+        //    punch.orgList = Organization.GetOrganizations();
+        //    TimeSheet ts = TimeSheet.GetClockedInUserTimeSheet(userId);
+        //    punch.timeSheet = ts;
+        //    return punch;
+        //}
 
         public static PunchInVM GetPunchInVM(int userId)
         {
@@ -87,15 +91,14 @@ namespace HabitatForHumanity.Models
             return punch;
         }
 
-        public static void PunchIn(PunchInVM punchInVM)
+        public static void UpdateTimeSheet(TimeSheet timeSheet)
         {
-            TimeSheet ts = new TimeSheet();
-            ts.user_Id = punchInVM.userId;
-            ts.project_Id = punchInVM.projectId;
-            ts.clockInTime = DateTime.Now;
-            ts.clockOutTime = DateTime.Today.AddDays(1);
-            TimeSheet.InsertTimeSheet(ts);
+            TimeSheet.UpdateTimeSheet(timeSheet);
+        }
 
+        public static void PunchIn(TimeSheet ts)
+        {
+            TimeSheet.InsertTimeSheet(ts);
         }
         public static List<ProjectListVM> GetProjectListVMs()
         {

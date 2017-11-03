@@ -56,28 +56,34 @@ namespace HabitatForHumanity.Controllers
             return View("PunchIn", punchIn);
 
         }
-        //public ActionResult PunchIn()
-        //{
-        //    PunchInVM punchIn = new PunchInVM();
-        //    punchIn = Repository.GetPunchInVM(3);
-        //    return View("PunchIn", punchIn);
 
-        //}
         // GET: TimeSheet/Create
         public ActionResult PunchOut(int userId)
         {
-            PunchOutVM punchOut = new PunchOutVM();
-            punchOut = Repository.GetPunchClockVM(userId);
-            if (punchOut.timeSheet == null)
+            TimeSheet t = new TimeSheet();
+            t = Repository.GetClockedInUserTimeSheet(userId);
+            if (t != null)
             {
-                PunchInVM punchIn = new PunchInVM();
-                punchIn.userId = userId;
-                punchIn.userName = punchOut.userName;
-                punchIn.orgList = punchOut.orgList;
-                punchIn.projectList = punchOut.projectList;
-                return View("PunchIn");
+                return View(t);
             }
-            return View("PunchOut", punchOut);
+            ViewBag.status = "No open timecards. See admin for assistance with timecard corrections.";
+            return RedirectToAction("VolunteerPortal", "User", new { userId = userId });
+        }
+        // POST: TimeSheet/PunchOut/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PunchOut([Bind(Include = "Id,user_Id,project_Id,clockInTime,clockOutTime")] TimeSheet timeSheet)
+        {
+            if (ModelState.IsValid)
+            {
+                timeSheet.clockOutTime = DateTime.Now;
+                Repository.UpdateTimeSheet(timeSheet);
+   
+                return RedirectToAction("VolunteerPortal","User", new { id = timeSheet.user_Id } );
+            }
+            return View(timeSheet);
         }
 
         // POST: TimeSheet/Create
@@ -89,7 +95,12 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                Repository.PunchIn(punchInVM);
+                TimeSheet sheet = new TimeSheet();
+                sheet.user_Id = punchInVM.userId;
+                sheet.project_Id = punchInVM.projectId;
+                sheet.clockInTime = DateTime.Now;
+                sheet.clockOutTime = DateTime.Today.AddDays(1);
+                Repository.PunchIn(sheet);
             
                 return RedirectToAction("Index");
             }
