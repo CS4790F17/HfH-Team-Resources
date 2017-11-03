@@ -27,6 +27,9 @@ namespace HabitatForHumanity.Controllers
             model.projectTest = Project.GetProjectByNameAndDate("test", "1/1/2081").name;
             model.projectTest2 = Project.GetProjectByNameAndDate("test2", "1/1/2081").name;
 
+            //Repository.GetUserByName("test1", "LASTname");
+            var temp = Repository.GetUsersByName("", "lastname");
+
 
 
             return View(model);

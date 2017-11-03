@@ -5,6 +5,7 @@ using System.Linq;
 using HabitatForHumanity.ViewModels;
 using System.Data.Entity;
 using System.Web.Helpers;
+using System.Collections.Generic;
 
 namespace HabitatForHumanity.Models
 {
@@ -57,6 +58,42 @@ namespace HabitatForHumanity.Models
                 exists = true;
             }
             return exists;
+        }
+
+        /// <summary>
+        /// Gets all the users with matching names. To be used when you know one name, but not the other. 
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <returns>List of users</returns>
+        public static List<User> GetUsersByName(string firstName, string lastName)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.users.Where(x => x.firstName.Equals(firstName) || x.lastName.Equals(lastName)).ToList();
+        }
+
+        /// <summary>
+        /// Get a single user out of the database with a matching first and last name.
+        /// Only to be used when you know the exact names
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <returns>Id of the returned user</returns>
+        public static int GetUserByName(string firstName, string lastName)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+
+            var userCount = db.users.Count(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName));
+
+            //if no users are found or if multiple users are found
+            if (userCount != 1)
+            {
+                return 0;
+            }
+
+            var user = db.users.Where(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName)).Single();
+
+            return user.Id;
         }
 
         /// <summary>
@@ -134,7 +171,7 @@ namespace HabitatForHumanity.Models
         {
             VolunteerDbContext db = new VolunteerDbContext();
             User user = db.users.Find(id);
-            if(user != null)
+            if (user != null)
             {
                 db.users.Remove(user);
                 db.SaveChanges();

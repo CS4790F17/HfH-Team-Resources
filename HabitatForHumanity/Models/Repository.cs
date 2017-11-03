@@ -61,6 +61,31 @@ namespace HabitatForHumanity.Models
             return User.GetUserByEmail(email);
         }
 
+        /// <summary>
+        /// Get a single user out of the database with a matching first and last name.
+        /// Only to be used when you know the exact names
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <returns>Id of the returned user</returns>
+        public static int GetUserByName(string firstName, string lastName)
+        {
+            //set both names to lowercase to avoid errors
+            return User.GetUserByName(firstName.ToLower(), lastName.ToLower());
+        }
+
+        /// <summary>
+        /// Gets all the users with matching names. To be used when you know one name, but not the other. 
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <returns>List of users</returns>
+        public static List<User> GetUsersByName(string firstName, string lastName)
+        {
+            //set both names to lowercase to avoid errors
+            return User.GetUsersByName(firstName.ToLower(), lastName.ToLower());
+        }
+
 
         /// <summary>
         /// Changes the user password and hashes it.
@@ -260,7 +285,7 @@ namespace HabitatForHumanity.Models
         #endregion
 
         #region TimeSheet functions
-        
+
 
         /// <summary>
         /// Gets the record in the timesheet table by it's natural key: user_id+project_id+clockInTime.
@@ -271,7 +296,7 @@ namespace HabitatForHumanity.Models
         /// <returns>Timesheet Object</returns>
         public static TimeSheet GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
         {
-           return TimeSheet.GetTimeSheetByNaturalKey(userId, projectId, clockInTime);
+            return TimeSheet.GetTimeSheetByNaturalKey(userId, projectId, clockInTime);
         }
 
         /// <summary>
@@ -323,7 +348,7 @@ namespace HabitatForHumanity.Models
         #endregion
 
         #region OrgUser functions
-        
+
 
         /// <summary>
         /// Gets all the OrgUsers in the database.
@@ -331,7 +356,7 @@ namespace HabitatForHumanity.Models
         /// <returns>A list of OrgUser</returns>
         public static List<OrgUser> GetAllOrgUsers()
         {
-           return OrgUser.GetAllOrgUsers();
+            return OrgUser.GetAllOrgUsers();
         }
 
         /// <summary>
@@ -392,7 +417,7 @@ namespace HabitatForHumanity.Models
             OrgUser.DeleteOrgUserByIds(orgId, userId);
         }
 
-        
+
         #endregion
     }
 }
