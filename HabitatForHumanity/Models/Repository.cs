@@ -374,8 +374,8 @@ namespace HabitatForHumanity.Models
             User user = GetUser(userId);
             punch.userId = userId;
             punch.userName = user.firstName + " " + user.lastName;
-            punch.projectList = GetProjectListVMs();
-            punch.orgList = Organization.GetAllOrganizations();
+           // punch.projectList = GetProjectListVMs();
+           // punch.orgList = Organization.GetAllOrganizations();
             return punch;
         }
 

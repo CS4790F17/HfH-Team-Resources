@@ -53,6 +53,20 @@ namespace HabitatForHumanity.Controllers
             }
             PunchInVM punchIn = new PunchInVM();
             punchIn = Repository.GetPunchInVM(id);
+            punchIn.projects.createDropDownList(Repository.GetAllProjects());
+            var userOrgs = Repository.GetOrgUserByUserId(id);
+
+            List<Organization> orgs = new List<Organization>();
+
+            foreach(OrgUser ou in userOrgs)
+            {
+                Organization org = Repository.GetOrganizationById(ou.org_Id);
+                orgs.Add(org);
+            }
+
+            punchIn.orgs.createDropDownList(orgs);
+
+
             return View("PunchIn", punchIn);
 
         }

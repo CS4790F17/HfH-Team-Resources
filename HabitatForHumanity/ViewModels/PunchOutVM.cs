@@ -12,8 +12,8 @@ namespace HabitatForHumanity.ViewModels
         public int orgId { get; set; }
         public string project { get; set; }
         public string userName { get; set; }
-     
-   
+
+
     }
     public class PunchInVM
     {
@@ -21,8 +21,10 @@ namespace HabitatForHumanity.ViewModels
         public int orgId { get; set; }
         public int projectId { get; set; }
         public string userName { get; set; }
-        public List<ProjectListVM> projectList { get; set; }
-        public List<Organization> orgList { get; set; }
+        // public List<ProjectListVM> projectList { get; set; }
+        // public List<Organization> orgList { get; set; }
+        public ProjectDropDownList projects = new ProjectDropDownList();
+        public OrganizationDropDownList orgs = new OrganizationDropDownList();
 
     }
     public class ProjectListVM
