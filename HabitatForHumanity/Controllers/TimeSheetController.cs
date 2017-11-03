@@ -76,7 +76,8 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PunchIn([Bind(Include = "userId,projectId")] PunchInVM punchInVM)
+       // public ActionResult PunchIn([Bind(Include = "userId,projectId")] PunchInVM punchInVM)
+        public ActionResult PunchIn([Bind(Include = "userId,projectId,orgId")] PunchInVM punchInVM)
         {
             if (ModelState.IsValid)
             {
