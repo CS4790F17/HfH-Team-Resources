@@ -57,6 +57,28 @@ namespace HabitatForHumanity.Controllers
 
         }
 
+        // POST: TimeSheet/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PunchIn([Bind(Include = "userId,projectId")] PunchInVM punchInVM)
+        {
+            if (ModelState.IsValid)
+            {
+                TimeSheet sheet = new TimeSheet();
+                sheet.user_Id = punchInVM.userId;
+                sheet.project_Id = punchInVM.projectId;
+                sheet.clockInTime = DateTime.Now;
+                sheet.clockOutTime = DateTime.Today.AddDays(1);
+                Repository.PunchIn(sheet);
+
+                return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
+            }
+
+            return View(punchInVM);
+        }
+
         // GET: TimeSheet/Create
         public ActionResult PunchOut(int userId)
         {
@@ -67,7 +89,7 @@ namespace HabitatForHumanity.Controllers
                 return View(t);
             }
             ViewBag.status = "No open timecards. See admin for assistance with timecard corrections.";
-            return RedirectToAction("VolunteerPortal", "User", new { userId = userId });
+            return RedirectToAction("VolunteerPortal", "User", new { id = userId });
         }
         // POST: TimeSheet/PunchOut/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -86,27 +108,7 @@ namespace HabitatForHumanity.Controllers
             return View(timeSheet);
         }
 
-        // POST: TimeSheet/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult PunchIn([Bind(Include = "userId,projectId")] PunchInVM punchInVM)
-        {
-            if (ModelState.IsValid)
-            {
-                TimeSheet sheet = new TimeSheet();
-                sheet.user_Id = punchInVM.userId;
-                sheet.project_Id = punchInVM.projectId;
-                sheet.clockInTime = DateTime.Now;
-                sheet.clockOutTime = DateTime.Today.AddDays(1);
-                Repository.PunchIn(sheet);
-            
-                return RedirectToAction("Index");
-            }
-
-            return View(punchInVM);
-        }
+        
 
 
         // POST: TimeSheet/Create
