@@ -58,6 +58,12 @@ namespace HabitatForHumanity.Models
             return users.FirstOrDefault();
         }
 
+        public static User GetUser(int id)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.users.Find(id);
+        }
+
         public static int CreateUser(User user)
         {
             int userId = 0;

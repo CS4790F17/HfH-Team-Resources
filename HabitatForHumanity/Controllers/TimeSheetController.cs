@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -40,6 +41,75 @@ namespace HabitatForHumanity.Controllers
         {
             return View();
         }
+
+        // GET: TimeSheet/Create
+
+        public ActionResult PunchIn(int? userId)
+        {
+            int id = 2;
+            if (userId != null)
+            {
+                id = (int)userId;
+            }
+            PunchInVM punchIn = new PunchInVM();
+            punchIn = Repository.GetPunchInVM(id);
+            return View("PunchIn", punchIn);
+
+        }
+
+        // POST: TimeSheet/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PunchIn([Bind(Include = "userId,projectId")] PunchInVM punchInVM)
+        {
+            if (ModelState.IsValid)
+            {
+                TimeSheet sheet = new TimeSheet();
+                sheet.user_Id = punchInVM.userId;
+                sheet.project_Id = punchInVM.projectId;
+                sheet.clockInTime = DateTime.Now;
+                sheet.clockOutTime = DateTime.Today.AddDays(1);
+                Repository.PunchIn(sheet);
+
+                return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
+            }
+
+            return View(punchInVM);
+        }
+
+        // GET: TimeSheet/Create
+        public ActionResult PunchOut(int userId)
+        {
+            TimeSheet t = new TimeSheet();
+            t = Repository.GetClockedInUserTimeSheet(userId);
+            if (t != null)
+            {
+                return View(t);
+            }
+            ViewBag.status = "No open timecards. See admin for assistance with timecard corrections.";
+            return RedirectToAction("VolunteerPortal", "User", new { id = userId });
+        }
+        // POST: TimeSheet/PunchOut/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PunchOut([Bind(Include = "Id,user_Id,project_Id,clockInTime,clockOutTime")] TimeSheet timeSheet)
+        {
+            if (ModelState.IsValid)
+            {
+                timeSheet.clockOutTime = DateTime.Now;
+                Repository.UpdateTimeSheet(timeSheet);
+   
+                return RedirectToAction("VolunteerPortal","User", new { id = timeSheet.user_Id } );
+            }
+            return View(timeSheet);
+        }
+
+        
+
 
         // POST: TimeSheet/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 

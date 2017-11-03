@@ -18,6 +18,11 @@ namespace HabitatForHumanity.Models
             return User.CreateUser(user);
         }
 
+        public static User GetUser(int id)
+        {
+            return User.GetUser(id);
+        }
+
         public static bool EmailExists(string email)
         {
             return User.EmailExists(email);
@@ -39,7 +44,6 @@ namespace HabitatForHumanity.Models
             return User.GetUserByEmail(email);
         }
 
-        // this not only changes the password, it also hashes it
         public static void ChangePassword(string email, string newPW)
         {
             User user = new User();
@@ -51,9 +55,65 @@ namespace HabitatForHumanity.Models
             }
         }
 
+
         public static void EditUser(User user)
         {
             User.EditUser(user);
         }
+
+        // time card stuff
+
+        public static TimeSheet GetClockedInUserTimeSheet(int userId)
+        {
+            return TimeSheet.GetClockedInUserTimeSheet(userId);
+        }
+        //public static PunchOutVM GetPunchClockVM(int userId)
+        //{
+        //    PunchOutVM punch = new PunchOutVM();
+
+        //    User user = GetUser(userId);
+        //    punch.userName = user.firstName + " " + user.lastName;
+        //    punch.projectList = GetProjectListVMs();      
+        //    punch.orgList = Organization.GetOrganizations();
+        //    TimeSheet ts = TimeSheet.GetClockedInUserTimeSheet(userId);
+        //    punch.timeSheet = ts;
+        //    return punch;
+        //}
+
+        public static PunchInVM GetPunchInVM(int userId)
+        {
+            PunchInVM punch = new PunchInVM();
+            User user = GetUser(userId);
+            punch.userId = userId;
+            punch.userName = user.firstName + " " + user.lastName;
+            punch.projectList = GetProjectListVMs();
+            punch.orgList = Organization.GetOrganizations();
+            return punch;
+        }
+
+        public static void UpdateTimeSheet(TimeSheet timeSheet)
+        {
+            TimeSheet.UpdateTimeSheet(timeSheet);
+        }
+
+        public static void PunchIn(TimeSheet ts)
+        {
+            TimeSheet.InsertTimeSheet(ts);
+        }
+        public static List<ProjectListVM> GetProjectListVMs()
+        {
+            List<Project> projects = new List<Project>();
+            List<ProjectListVM> p = new List<ProjectListVM>();
+            projects = Project.GetActiveProjects();
+            if (projects.Count() > 0)
+            {
+                foreach(Project proj in projects)
+                {
+                    p.Add(new ProjectListVM { Id = proj.Id, projectName = proj.name });
+                }
+            }
+            return p;
+        }
+
     }
 }
