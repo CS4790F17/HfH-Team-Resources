@@ -23,6 +23,8 @@ CREATE TABLE [dbo].[User] (
     [emergencyZip]           VARCHAR (50)  NULL
 );
 
+GO
+
 CREATE TABLE [dbo].[TimeSheet] (
     [Id]           INT      IDENTITY (1, 1) NOT NULL,
     [user_Id]      INT      NOT NULL,
@@ -31,6 +33,8 @@ CREATE TABLE [dbo].[TimeSheet] (
     [clockOutTime] DATETIME DEFAULT (CONVERT (DATETIME, CONVERT (DATE, getdate() + (1)))) NOT NULL,
     CONSTRAINT PK_TimeSheet PRIMARY KEY (user_Id, project_Id, clockInTime)
 );
+
+GO
 
 CREATE TABLE [dbo].[Project] (
     [Id]          INT           IDENTITY (1, 1) NOT NULL,
@@ -41,10 +45,14 @@ CREATE TABLE [dbo].[Project] (
     CONSTRAINT PK_Project PRIMARY KEY (name, beginDate)
 );
 
+GO
+
 CREATE TABLE [dbo].[Organization] (
     [Id]   INT           IDENTITY (1, 1) NOT NULL,
     [name] VARCHAR (100) NULL UNIQUE
 );
+
+GO
 
 CREATE TABLE [dbo].[Org_User] (
     [Id]      INT IDENTITY (1, 1) NOT NULL,
