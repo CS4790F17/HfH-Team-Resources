@@ -405,6 +405,7 @@ namespace HabitatForHumanity.Models
 
         #endregion
 
+        /*
         #region OrgUser functions
 
 
@@ -477,6 +478,7 @@ namespace HabitatForHumanity.Models
 
 
         #endregion
+    */
 
         
 

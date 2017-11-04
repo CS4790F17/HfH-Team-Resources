@@ -15,6 +15,7 @@ namespace HabitatForHumanity.Models
         public int Id { get; set; }
         public int user_Id { get; set; }
         public int project_Id { get; set; }
+        public int org_id { get; set; }
         public DateTime clockInTime { get; set; }
         public DateTime clockOutTime { get; set; }
 

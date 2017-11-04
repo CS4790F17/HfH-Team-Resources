@@ -54,15 +54,16 @@ namespace HabitatForHumanity.Controllers
             PunchInVM punchIn = new PunchInVM();
             punchIn = Repository.GetPunchInVM(id);
             punchIn.projects.createDropDownList(Repository.GetAllProjects());
-            var userOrgs = Repository.GetOrgUserByUserId(id);
+           // var userOrgs = Repository.GetOrgUserByUserId(id);
 
-            List<Organization> orgs = new List<Organization>();
+            List<Organization> orgs = Repository.GetAllOrganizations();
 
-            foreach(OrgUser ou in userOrgs)
-            {
-                Organization org = Repository.GetOrganizationById(ou.org_Id);
-                orgs.Add(org);
-            }
+
+            //foreach(OrgUser ou in userOrgs)
+            //{
+            //    Organization org = Repository.GetOrganizationById(ou.org_Id);
+            //    orgs.Add(org);
+            //}
 
             punchIn.orgs.createDropDownList(orgs);
 
@@ -86,6 +87,7 @@ namespace HabitatForHumanity.Controllers
                 sheet.project_Id = punchInVM.projectId;
                 sheet.clockInTime = DateTime.Now;
                 sheet.clockOutTime = DateTime.Today.AddDays(1);
+                sheet.org_id = punchInVM.orgId;
                 Repository.PunchIn(sheet);
 
                 return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
