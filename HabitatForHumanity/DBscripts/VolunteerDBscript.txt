@@ -23,33 +23,41 @@ CREATE TABLE [dbo].[User] (
     [emergencyZip]           VARCHAR (50)  NULL
 );
 
+GO
+
 CREATE TABLE [dbo].[TimeSheet] (
     [Id]           INT      IDENTITY (1, 1) NOT NULL,
-    [user_Id]      INT      NOT NULL FOREIGN KEY REFERENCES User(Id),
-    [project_Id]   INT      NOT NULL FOREIGN KEY REFERENCES Project(Id),
+    [user_Id]      INT      NOT NULL,
+    [project_Id]   INT      NOT NULL,
     [clockInTime]  DATETIME DEFAULT (getdate()) NOT NULL,
     [clockOutTime] DATETIME DEFAULT (CONVERT (DATETIME, CONVERT (DATE, getdate() + (1)))) NOT NULL,
     CONSTRAINT PK_TimeSheet PRIMARY KEY (user_Id, project_Id, clockInTime)
 );
 
+GO
+
 CREATE TABLE [dbo].[Project] (
     [Id]          INT           IDENTITY (1, 1) NOT NULL,
-    [name]        VARCHAR (50)  NULL,
+    [name]        VARCHAR (50) NOT NULL,
     [description] VARCHAR (MAX) NULL,
-    [beginDate]   DATETIME      NULL,
+    [beginDate]   DATETIME     NOT NULL,
     [status]      INT           DEFAULT ((1)) NOT NULL,
     CONSTRAINT PK_Project PRIMARY KEY (name, beginDate)
 );
+
+GO
 
 CREATE TABLE [dbo].[Organization] (
     [Id]   INT           IDENTITY (1, 1) NOT NULL,
     [name] VARCHAR (100) NULL UNIQUE
 );
 
+GO
+
 CREATE TABLE [dbo].[Org_User] (
     [Id]      INT IDENTITY (1, 1) NOT NULL,
-    [org_Id]  INT NULL FOREIGN KEY REFERENCES Organization(Id),
-    [user_Id] INT NULL FOREIGN KEY REFERENCES User(Id),
+    [org_Id]  INT NOT NULL,
+    [user_Id] INT NOT NULL,
     CONSTRAINT PK_Org_User PRIMARY KEY (org_Id, user_Id)
 );
 
