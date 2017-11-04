@@ -27,7 +27,7 @@ namespace HabitatForHumanity.ViewModels
             var SelectList = new List<SelectListItem>();
             SelectList.Add(new SelectListItem
             {
-                Value = "0",
+                Value = "-1",
                 Text = "Select a Project"
             });
             foreach (Project item in items)
@@ -58,7 +58,7 @@ namespace HabitatForHumanity.ViewModels
             var SelectList = new List<SelectListItem>();
             SelectList.Add(new SelectListItem
             {
-                Value = "0",
+                Value = "-1",
                 Text = "Select an Organization"
             });
 
