@@ -29,10 +29,12 @@ CREATE TABLE [dbo].[TimeSheet] (
     [Id]           INT      IDENTITY (1, 1) NOT NULL,
     [user_Id]      INT      NOT NULL,
     [project_Id]   INT      NOT NULL,
+	[org_Id]	   INT		NOT NULL,
     [clockInTime]  DATETIME DEFAULT (getdate()) NOT NULL,
     [clockOutTime] DATETIME DEFAULT (CONVERT (DATETIME, CONVERT (DATE, getdate() + (1)))) NOT NULL,
-    CONSTRAINT PK_TimeSheet PRIMARY KEY (user_Id, project_Id, clockInTime)
+    CONSTRAINT PK_TimeSheet PRIMARY KEY (user_Id, project_Id, org_Id, clockInTime)
 );
+
 
 GO
 
@@ -51,13 +53,5 @@ CREATE TABLE [dbo].[Organization] (
     [Id]   INT           IDENTITY (1, 1) NOT NULL,
     [name] VARCHAR (100) NULL UNIQUE
 );
-
-GO
-
-CREATE TABLE [dbo].[Org_User] (
-    [Id]      INT IDENTITY (1, 1) NOT NULL,
-    [org_Id]  INT NOT NULL,
-    [user_Id] INT NOT NULL,
-    CONSTRAINT PK_Org_User PRIMARY KEY (org_Id, user_Id)
-);
+ GO
 
