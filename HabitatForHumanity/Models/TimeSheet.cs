@@ -103,7 +103,31 @@ namespace HabitatForHumanity.Models
         public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
         {
             VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Where(x => x.project_Id == projectId).ToList();
+            return db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
+        }
+
+        /// <summary>
+        /// Gets all timesheets where the clock in and out dates are between beginDate and endDate parameters.
+        /// </summary>
+        /// <param name="beginDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.clockInTime >= beginDate && x.clockOutTime <= endDate).OrderBy(x => x.Id).ToList();
+        }
+
+
+        /// <summary>
+        /// Gets all timesheets with a specified organization id.
+        /// </summary>
+        /// <param name="organizationId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByOrganizationid(int organizationId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.org_id == organizationId).OrderBy(x => x.Id).ToList();
         }
 
         #endregion
@@ -150,5 +174,10 @@ namespace HabitatForHumanity.Models
             VolunteerDbContext db = new VolunteerDbContext();
             return db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
         }
+
+
+  
+
+
     }
 }

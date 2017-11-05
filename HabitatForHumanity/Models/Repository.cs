@@ -325,6 +325,29 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
+        /// Gets all the timesheets for an organization
+        /// </summary>
+        /// <param name="organizationId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByOrganizationId(int organizationId)
+        {
+            return TimeSheet.GetAllTimeSheetsByOrganizationid(organizationId);
+        }
+
+
+        /// <summary>
+        /// Gets all the timesheets within a specified date range.
+        /// </summary>
+        /// <param name="beginDate">Datetime represntation of the begin date</param>
+        /// <param name="endDate">Datetime represntation of the begin date</param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
+        {
+            return TimeSheet.GetAllTimeSheetsInDateRange(beginDate, endDate);
+        }
+
+
+        /// <summary>
         /// Get the TimeSheet with the matching id.
         /// </summary>
         /// <param name="id"></param>
