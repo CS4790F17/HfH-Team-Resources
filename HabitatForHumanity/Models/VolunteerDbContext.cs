@@ -12,6 +12,5 @@ namespace HabitatForHumanity.Models
         public DbSet<Project> projects { get; set; }
         public DbSet<TimeSheet> timeSheets { get; set; }
         public DbSet<User> users { get; set; }
-        public DbSet<OrgUser> orgUser { get; set; }
     }
 }
