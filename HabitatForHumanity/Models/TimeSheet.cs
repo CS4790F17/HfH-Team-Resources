@@ -144,7 +144,10 @@ namespace HabitatForHumanity.Models
             db.SaveChanges();
         }
 
-
-
+        public static List<TimeSheet> GetAllVolunteerTimeSheets(int volunteerId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
+        }
     }
 }

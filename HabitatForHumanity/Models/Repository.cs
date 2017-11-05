@@ -35,6 +35,7 @@ namespace HabitatForHumanity.Models
             return User.EmailExists(email);
         }
 
+
         /// <summary>
         /// Checks whether the user entered a bad password for that log in email.
         /// </summary>
@@ -304,10 +305,23 @@ namespace HabitatForHumanity.Models
             return TimeSheet.GetTimeSheetByNaturalKey(userId, projectId, clockInTime);
         }
 
-
+        /// <summary>
+        /// Gets all timesheets for a specific project
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
         public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
         {
             return TimeSheet.GetAllTimeSheetsByProjectId(projectId);
+        }
+
+        /// <summary>
+        /// Gets all the timesheets for a single volunteer
+        /// </summary>
+        /// <param name="volunteerId"></param>
+        public static List<TimeSheet> GetAllTimeSheetsByVolunteer(int volunteerId)
+        {
+            return TimeSheet.GetAllVolunteerTimeSheets(volunteerId);
         }
 
         /// <summary>
@@ -486,14 +500,6 @@ namespace HabitatForHumanity.Models
 
 
         #region Report functions
-
-        /// <summary>
-        /// Gets all timesheets related to a project
-        /// </summary>
-        public static void GetProjectHours(int projectId)
-        {
-            var projects = GetAllTimeSheetsByProjectId(projectId);
-        }
 
 
         /// <summary>
