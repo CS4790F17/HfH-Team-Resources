@@ -80,7 +80,7 @@ namespace HabitatForHumanity.Controllers
                 sheet.org_id = punchInVM.orgId;
                 Repository.PunchIn(sheet);
 
-                return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
+                return RedirectToAction("VolunteerPortalOut", "User", new { id = punchInVM.userId });
             }
             punchInVM.projects.createDropDownList(Repository.GetAllProjects());
             punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
