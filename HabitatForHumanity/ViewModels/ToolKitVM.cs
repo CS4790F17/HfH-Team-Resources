@@ -25,6 +25,11 @@ namespace HabitatForHumanity.ViewModels
         public void createDropDownList(List<Project> items)
         {
             var SelectList = new List<SelectListItem>();
+            SelectList.Add(new SelectListItem
+            {
+                Value = "-1",
+                Text = "Select a Project"
+            });
             foreach (Project item in items)
             {
                 SelectList.Add(new SelectListItem
@@ -51,6 +56,12 @@ namespace HabitatForHumanity.ViewModels
         public void createDropDownList(List<Organization> items)
         {
             var SelectList = new List<SelectListItem>();
+            SelectList.Add(new SelectListItem
+            {
+                Value = "-1",
+                Text = "Select an Organization"
+            });
+
             foreach (Organization item in items)
             {
                 SelectList.Add(new SelectListItem
