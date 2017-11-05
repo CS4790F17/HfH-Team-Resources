@@ -1,7 +1,8 @@
 ﻿
 @{
-    ViewBag.Title = "VolunteerPortal";
+    ViewBag.Title = "VolunteerPortalOut";
 }
+
 <!--  insert a partial view for user info-->
 <h2>Volunteer Portal</h2>
 <h3>Welcome ??? name</h3>
@@ -13,6 +14,7 @@
 
 <p> for now, some buttons to navigate</p>
 <div>
-    @Html.ActionLink("Punch in", "PunchIn","TimeSheet", new { userId = ViewBag.userId }, null)
-    @*@Html.ActionLink("Punch out", "PunchOut", "TimeSheet", new { userId = ViewBag.userId }, null)*@
+    @*@Html.ActionLink("Punch in", "PunchIn", "TimeSheet", new { userId = ViewBag.userId }, null)*@
+    @Html.ActionLink("Punch out", "PunchOut", "TimeSheet", new { userId = ViewBag.userId }, null)
 </div>
+

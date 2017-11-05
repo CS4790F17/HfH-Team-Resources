@@ -47,6 +47,16 @@ namespace HabitatForHumanity.Controllers
             return View();
         }
 
+        public ActionResult VolunteerPortalOut(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ViewBag.userId = id;
+
+            return View();
+        }
 
         // GET: User/Create
         public ActionResult Create()
@@ -113,8 +123,19 @@ namespace HabitatForHumanity.Controllers
                         User user = Repository.GetUserByEmail(loginVm.email);
                         Session["isAdmin"] = user.isAdmin;
                         Session["Username"] = user.emailAddress;
-                        //return RedirectToAction("VolunteerPortal");
-                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        TimeSheet currentTimeSheet = Repository.GetClockedInUserTimeSheet(user.Id);
+                        DateTime temp = DateTime.Today;
+                        if (currentTimeSheet == null)
+                        {
+                            return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        }
+                        else
+                        {
+                            if (currentTimeSheet.clockOutTime.TimeOfDay != temp.TimeOfDay)
+                                return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                            else
+                                return RedirectToAction("VolunteerPortalOut", new { id = user.Id });
+                        }
                     }
                     else
                     {

@@ -233,6 +233,7 @@
     <Content Include="Views\Home\Examples.cshtml" />
     <Content Include="Views\TimeSheet\PunchIn.cshtml" />
     <Content Include="Views\TimeSheet\PunchOut.cshtml" />
+    <Content Include="Views\User\VolunteerPortalOut.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
