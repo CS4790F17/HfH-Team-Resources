@@ -87,12 +87,24 @@ namespace HabitatForHumanity.Models
         {
             VolunteerDbContext db = new VolunteerDbContext();
             TimeSheet ts = db.timeSheets.Find(id);
-            if(ts != null)
+            if (ts != null)
             {
                 db.timeSheets.Remove(ts);
                 db.SaveChanges();
             }
         }
+
+        /// <summary>
+        /// Gets all the timesheets with the supplied project id.
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.project_Id == projectId).ToList();
+        }
+
         #endregion
 
         public static TimeSheet GetClockedInUserTimeSheet(int userId)
@@ -104,8 +116,8 @@ namespace HabitatForHumanity.Models
             //return ordered.FirstOrDefault();
             VolunteerDbContext db = new VolunteerDbContext();
             var sheets = from t in db.timeSheets
-                    group t by t.user_Id into g
-                    select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
+                         group t by t.user_Id into g
+                         select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
             int id = 0;
             if (sheets.Count() > 0)
             {
@@ -131,5 +143,8 @@ namespace HabitatForHumanity.Models
             db.Entry(timeSheet).State = EntityState.Modified;
             db.SaveChanges();
         }
+
+
+
     }
 }

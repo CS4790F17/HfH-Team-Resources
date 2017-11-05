@@ -304,6 +304,12 @@ namespace HabitatForHumanity.Models
             return TimeSheet.GetTimeSheetByNaturalKey(userId, projectId, clockInTime);
         }
 
+
+        public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
+        {
+            return TimeSheet.GetAllTimeSheetsByProjectId(projectId);
+        }
+
         /// <summary>
         /// Get the TimeSheet with the matching id.
         /// </summary>
@@ -478,7 +484,37 @@ namespace HabitatForHumanity.Models
 
         #endregion
 
-        
+
+        #region Report functions
+
+        /// <summary>
+        /// Gets all timesheets related to a project
+        /// </summary>
+        public static void GetProjectHours(int projectId)
+        {
+            var projects = GetAllTimeSheetsByProjectId(projectId);
+        }
+
+
+        /// <summary>
+        /// Takes a refence to a list and adds all the worked hours up into a total.
+        /// </summary>
+        /// <param name="ts">List of timesheets to calculate hours on.</param>
+        /// <returns>A timespan object with the total time worked.</returns>
+        public static TimeSpan AddTimeSheetHours(List<TimeSheet> ts)
+        {
+            TimeSpan hoursWorked = TimeSpan.Zero;
+            foreach (TimeSheet sheet in ts)
+            {
+                hoursWorked += sheet.clockOutTime - sheet.clockInTime;
+            }
+            return hoursWorked;
+        }
+
+
+        #endregion
+
+
 
 
     }
