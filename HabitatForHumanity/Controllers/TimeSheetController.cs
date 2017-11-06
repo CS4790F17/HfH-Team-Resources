@@ -53,6 +53,11 @@ namespace HabitatForHumanity.Controllers
             }
             PunchInVM punchIn = new PunchInVM();
             punchIn = Repository.GetPunchInVM(id);
+
+            punchIn.projects.createDropDownList(Repository.GetAllProjects());
+            punchIn.orgs.createDropDownList(Repository.GetAllOrganizations());
+
+
             return View("PunchIn", punchIn);
 
         }
@@ -62,7 +67,8 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PunchIn([Bind(Include = "userId,projectId")] PunchInVM punchInVM)
+       // public ActionResult PunchIn([Bind(Include = "userId,projectId")] PunchInVM punchInVM)
+        public ActionResult PunchIn([Bind(Include = "userId,projectId,orgId")] PunchInVM punchInVM)
         {
             if (ModelState.IsValid)
             {
@@ -71,10 +77,13 @@ namespace HabitatForHumanity.Controllers
                 sheet.project_Id = punchInVM.projectId;
                 sheet.clockInTime = DateTime.Now;
                 sheet.clockOutTime = DateTime.Today.AddDays(1);
+                sheet.org_id = punchInVM.orgId;
                 Repository.PunchIn(sheet);
 
                 return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
             }
+            punchInVM.projects.createDropDownList(Repository.GetAllProjects());
+            punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
 
             return View(punchInVM);
         }
