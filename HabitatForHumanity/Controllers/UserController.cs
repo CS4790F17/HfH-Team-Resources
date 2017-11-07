@@ -86,8 +86,8 @@ namespace HabitatForHumanity.Controllers
                     int userId = Repository.CreateUser(user);
                     if (userId > 0)
                     {
-                        Session["isAdmin"] = 0; // if you're admin, you have to have an admin change isAdmin to 1, then log in
-                        Session["Username"] = user.emailAddress;
+                        Session["isAdmin"] = null; // if you're admin, you have to have an admin change isAdmin to 1, then log in
+                        Session["UserName"] = user.emailAddress;
                         return RedirectToAction("VolunteerPortal", new { id = userId });
                     }
                     else
@@ -128,10 +128,16 @@ namespace HabitatForHumanity.Controllers
                     if (Repository.AuthenticateUser(loginVm))
                     {
                         User user = Repository.GetUserByEmail(loginVm.email);
-                        Session["isAdmin"] = user.isAdmin;
-                        Session["Username"] = user.emailAddress;
+                        if(user.isAdmin == 1)
+                        {
+                            Session["isAdmin"] = "isAdmin";
+                        }
+
+                        Session["UserName"] = user.emailAddress;
+                        //Session["UserName"] = "testing";
                         TimeSheet currentTimeSheet = Repository.GetClockedInUserTimeSheet(user.Id);
                         DateTime temp = DateTime.Today;
+
                         if (currentTimeSheet == null)
                         {
                             return RedirectToAction("VolunteerPortal", new { id = user.Id });

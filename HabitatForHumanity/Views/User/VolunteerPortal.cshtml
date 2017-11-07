@@ -3,6 +3,12 @@
     ViewBag.Title = "VolunteerPortal";
 }
 <!--  insert a partial view for user info-->
+@{ 
+    if(Session["Username"] != null)
+    {
+        <h1>@Session["Username"]</h1>
+    }
+}
 <h2>Volunteer Portal</h2>
 <h3>Welcome @Model.userName!</h3>
 <h3>You have logged ??? hours to date.</h3>
