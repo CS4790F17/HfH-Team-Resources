@@ -38,13 +38,20 @@ namespace HabitatForHumanity.Controllers
         }
         public ActionResult VolunteerPortal(int? id)
         {
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+    
             ViewBag.userId = id;
+            PunchInVM punchIn = new PunchInVM();
+            punchIn = Repository.GetPunchInVM((int)id);
 
-            return View();
+            punchIn.projects.createDropDownList(Repository.GetAllProjects());
+            punchIn.orgs.createDropDownList(Repository.GetAllOrganizations());
+    
+            return View(punchIn);
         }
 
         public ActionResult VolunteerPortalOut(int? id)
