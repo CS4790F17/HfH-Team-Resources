@@ -149,6 +149,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\VolunteerDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\BadPunchVM.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\PunchOutVM.cs" />
@@ -280,6 +281,7 @@
     <Content Include="Views\Admin\Reports.cshtml" />
     <Content Include="Views\Admin\_HoursMonthChart.cshtml" />
     <Content Include="Views\Admin\_HoursByDemog.cshtml" />
+    <Content Include="Views\Admin\_BadPunches.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

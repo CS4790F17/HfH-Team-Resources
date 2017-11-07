@@ -158,5 +158,11 @@ namespace HabitatForHumanity.Controllers
             #endregion
             return PartialView("_HoursByDemog", chart);
         }
+
+
+        public ActionResult GetBadPunches()
+        {
+            return PartialView("_BadPunches", BadPunchVM.GetDummyBadPunches());
+        }
     }
 }

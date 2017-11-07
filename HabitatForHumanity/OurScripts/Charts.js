@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     getHoursChart("Month");
     getDemographicsPie("All");
+    getBadPunches();
 });
 
 function getHoursChart(period) {
@@ -19,6 +20,15 @@ function getDemographicsPie(gender) {
         url: path,
         success: function (result) {
             $("#divHoursDemog").html(result);
+        }
+    });
+}
+
+function getBadPunches() {
+    $.ajax({
+        url: "/Admin/GetBadPunches",
+        success: function (result) {
+            $("#badPunches").html(result);
         }
     });
 }
