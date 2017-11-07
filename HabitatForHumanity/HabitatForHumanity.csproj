@@ -129,10 +129,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminFilter.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="AuthorizationFilter.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrganizationController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
@@ -282,6 +284,8 @@
     <Content Include="Views\Admin\_HoursMonthChart.cshtml" />
     <Content Include="Views\Admin\_HoursByDemog.cshtml" />
     <Content Include="Views\Admin\_BadPunches.cshtml" />
+    <Content Include="Views\User\VolunteerPortalOut.cshtml" />
+    <Content Include="Views\User\_PunchIn.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

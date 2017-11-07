@@ -1,18 +1,29 @@
-﻿
+﻿@model HabitatForHumanity.ViewModels.PunchInVM
 @{
     ViewBag.Title = "VolunteerPortal";
 }
 <!--  insert a partial view for user info-->
+@{ 
+    if(Session["Username"] != null)
+    {
+        <h1>@Session["Username"]</h1>
+    }
+}
 <h2>Volunteer Portal</h2>
-<h3>Welcome ??? name</h3>
+<h3>Welcome @Model.userName!</h3>
 <h3>You have logged ??? hours to date.</h3>
 
 <!--  insert a partial view for timeclock based on if punched in logic-->
-<div>if waiver, then load in timeclock partial here</div>
-<div> if no waiver, then sign waiver now button</div>
+<div>if waiver, then load in timeclock partial here </div >
+<div> if no waiver, then sign waiver now button </div >
 
-<p> for now, some buttons to navigate</p>
+
+
+  <p> for now, some buttons to navigate </p>
+
+<div>@Html.Partial("_PunchIn", Model)</div>
+<div></div>
 <div>
-    @Html.ActionLink("Punch in", "PunchIn","TimeSheet", new { userId = ViewBag.userId }, null)
-    @Html.ActionLink("Punch out", "PunchOut", "TimeSheet", new { userId = ViewBag.userId }, null)
+    @*@Html.ActionLink("Punch in", "PunchIn","TimeSheet", new { userId = ViewBag.userId }, null)*@
+    @*@Html.ActionLink("Punch out", "PunchOut", "TimeSheet", new { userId = ViewBag.userId }, null)*@
 </div>

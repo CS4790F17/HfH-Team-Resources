@@ -38,6 +38,24 @@ namespace HabitatForHumanity.Controllers
         }
         public ActionResult VolunteerPortal(int? id)
         {
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+    
+            ViewBag.userId = id;
+            PunchInVM punchIn = new PunchInVM();
+            punchIn = Repository.GetPunchInVM((int)id);
+
+            punchIn.projects.createDropDownList(Repository.GetAllProjects());
+            punchIn.orgs.createDropDownList(Repository.GetAllOrganizations());
+    
+            return View(punchIn);
+        }
+
+        public ActionResult VolunteerPortalOut(int? id)
+        {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -46,7 +64,6 @@ namespace HabitatForHumanity.Controllers
 
             return View();
         }
-
 
         // GET: User/Create
         public ActionResult Create()
@@ -69,8 +86,8 @@ namespace HabitatForHumanity.Controllers
                     int userId = Repository.CreateUser(user);
                     if (userId > 0)
                     {
-                        Session["isAdmin"] = 0; // if you're admin, you have to have an admin change isAdmin to 1, then log in
-                        Session["Username"] = user.emailAddress;
+                        Session["isAdmin"] = null; // if you're admin, you have to have an admin change isAdmin to 1, then log in
+                        Session["UserName"] = user.emailAddress;
                         return RedirectToAction("VolunteerPortal", new { id = userId });
                     }
                     else
@@ -111,10 +128,27 @@ namespace HabitatForHumanity.Controllers
                     if (Repository.AuthenticateUser(loginVm))
                     {
                         User user = Repository.GetUserByEmail(loginVm.email);
-                        Session["isAdmin"] = user.isAdmin;
-                        Session["Username"] = user.emailAddress;
-                        //return RedirectToAction("VolunteerPortal");
-                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        if(user.isAdmin == 1)
+                        {
+                            Session["isAdmin"] = "isAdmin";
+                        }
+
+                        Session["UserName"] = user.emailAddress;
+                        //Session["UserName"] = "testing";
+                        TimeSheet currentTimeSheet = Repository.GetClockedInUserTimeSheet(user.Id);
+                        DateTime temp = DateTime.Today;
+
+                        if (currentTimeSheet == null)
+                        {
+                            return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        }
+                        else
+                        {
+                            if (currentTimeSheet.clockOutTime.TimeOfDay != temp.TimeOfDay)
+                                return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                            else
+                                return RedirectToAction("VolunteerPortalOut", new { id = user.Id });
+                        }
                     }
                     else
                     {
