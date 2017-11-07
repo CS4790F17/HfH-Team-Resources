@@ -1,15 +1,18 @@
 ﻿$(document).ready(function () {
-    loadChart($("divHoursMonthChart"));
-
+    getHoursChart("Month");
 });
 
-function loadChart(target) {
+function getHoursChart(period) {
+    var path = "/Admin/GetHoursChartBy/?period=" + period
     $.ajax({
-        url: '/Admin/GetHoursMonthChart',
+        url: path,
         success: function (result) {
-            $("#divHoursMonthChart").html(result);
+            $("#divHoursChart").html(result);
         }
     });
 }
+
+
+
 
 

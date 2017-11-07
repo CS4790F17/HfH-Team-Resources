@@ -1,6 +1,13 @@
-﻿<h1>Hours by month</h1>
-<div id="divHoursMonthChart">
+﻿<div class="container">
+    <ul class="nav nav-tabs">
+        <li><a onclick="getHoursChart('Month')">Hours by Month</a></li>
+        <li><a onclick="getHoursChart('Week')">Hours by Week</a></li>
+        <li><a onclick="getHoursChart('Year')">Hours by Year</a></li>
+    </ul>
+    <div id="divHoursChart"></div>
+
 </div>
+
 
 @section Scripts {
     <script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
