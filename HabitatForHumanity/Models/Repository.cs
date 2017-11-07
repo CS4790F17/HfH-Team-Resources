@@ -35,6 +35,7 @@ namespace HabitatForHumanity.Models
             return User.EmailExists(email);
         }
 
+
         /// <summary>
         /// Checks whether the user entered a bad password for that log in email.
         /// </summary>
@@ -305,6 +306,48 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
+        /// Gets all timesheets for a specific project
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
+        {
+            return TimeSheet.GetAllTimeSheetsByProjectId(projectId);
+        }
+
+        /// <summary>
+        /// Gets all the timesheets for a single volunteer
+        /// </summary>
+        /// <param name="volunteerId"></param>
+        public static List<TimeSheet> GetAllTimeSheetsByVolunteer(int volunteerId)
+        {
+            return TimeSheet.GetAllVolunteerTimeSheets(volunteerId);
+        }
+
+        /// <summary>
+        /// Gets all the timesheets for an organization
+        /// </summary>
+        /// <param name="organizationId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByOrganizationId(int organizationId)
+        {
+            return TimeSheet.GetAllTimeSheetsByOrganizationid(organizationId);
+        }
+
+
+        /// <summary>
+        /// Gets all the timesheets within a specified date range.
+        /// </summary>
+        /// <param name="beginDate">Datetime represntation of the begin date</param>
+        /// <param name="endDate">Datetime represntation of the begin date</param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
+        {
+            return TimeSheet.GetAllTimeSheetsInDateRange(beginDate, endDate);
+        }
+
+
+        /// <summary>
         /// Get the TimeSheet with the matching id.
         /// </summary>
         /// <param name="id"></param>
@@ -480,7 +523,29 @@ namespace HabitatForHumanity.Models
         #endregion
     */
 
-        
+
+        #region Report functions
+
+
+        /// <summary>
+        /// Takes a refence to a list and adds all the worked hours up into a total.
+        /// </summary>
+        /// <param name="ts">List of timesheets to calculate hours on.</param>
+        /// <returns>A timespan object with the total time worked.</returns>
+        public static TimeSpan AddTimeSheetHours(List<TimeSheet> ts)
+        {
+            TimeSpan hoursWorked = TimeSpan.Zero;
+            foreach (TimeSheet sheet in ts)
+            {
+                hoursWorked += sheet.clockOutTime - sheet.clockInTime;
+            }
+            return hoursWorked;
+        }
+
+
+        #endregion
+
+
 
 
     }

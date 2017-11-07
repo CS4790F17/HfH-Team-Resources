@@ -88,12 +88,48 @@ namespace HabitatForHumanity.Models
         {
             VolunteerDbContext db = new VolunteerDbContext();
             TimeSheet ts = db.timeSheets.Find(id);
-            if(ts != null)
+            if (ts != null)
             {
                 db.timeSheets.Remove(ts);
                 db.SaveChanges();
             }
         }
+
+        /// <summary>
+        /// Gets all the timesheets with the supplied project id.
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
+        }
+
+        /// <summary>
+        /// Gets all timesheets where the clock in and out dates are between beginDate and endDate parameters.
+        /// </summary>
+        /// <param name="beginDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.clockInTime >= beginDate && x.clockOutTime <= endDate).OrderBy(x => x.Id).ToList();
+        }
+
+
+        /// <summary>
+        /// Gets all timesheets with a specified organization id.
+        /// </summary>
+        /// <param name="organizationId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByOrganizationid(int organizationId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.org_id == organizationId).OrderBy(x => x.Id).ToList();
+        }
+
         #endregion
 
         public static TimeSheet GetClockedInUserTimeSheet(int userId)
@@ -105,8 +141,8 @@ namespace HabitatForHumanity.Models
             //return ordered.FirstOrDefault();
             VolunteerDbContext db = new VolunteerDbContext();
             var sheets = from t in db.timeSheets
-                    group t by t.user_Id into g
-                    select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
+                         group t by t.user_Id into g
+                         select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
             int id = 0;
             if (sheets.Count() > 0)
             {
@@ -132,5 +168,16 @@ namespace HabitatForHumanity.Models
             db.Entry(timeSheet).State = EntityState.Modified;
             db.SaveChanges();
         }
+
+        public static List<TimeSheet> GetAllVolunteerTimeSheets(int volunteerId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
+        }
+
+
+  
+
+
     }
 }
