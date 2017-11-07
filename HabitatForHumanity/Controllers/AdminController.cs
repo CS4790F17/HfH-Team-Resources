@@ -108,5 +108,55 @@ namespace HabitatForHumanity.Controllers
             return PartialView("_HoursMonthChart", columnChart);
 
         }
+
+        public ActionResult GetHoursByDemogPieBy(string gender)
+        {
+            // go get data and filter on gender
+            #region Build Demographics Pie
+            Highcharts chart = new Highcharts("chart")
+                .InitChart(new Chart { PlotShadow = false })
+                .SetTitle(new Title { Text = "" })
+                .SetTooltip(new Tooltip { Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }" })
+                .SetPlotOptions(new PlotOptions
+                {
+                    Pie = new PlotOptionsPie
+                    {
+                        AllowPointSelect = true,
+                        Cursor = Cursors.Pointer,
+                        DataLabels = new PlotOptionsPieDataLabels
+                        {
+                            Color = ColorTranslator.FromHtml("#000000"),
+                            ConnectorColor = ColorTranslator.FromHtml("#000000"),
+                            Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }"
+                        }
+                    }
+                })
+                .SetSeries(
+                     new Series
+                     {
+                         Type = ChartTypes.Pie,
+                         Name = "Male",
+                         Data = new Data(new object[]
+                                               {
+                                                   new object[] { "Firefox", 5 },
+                                                   new object[] { "IE", 25 },
+                                                   new DotNet.Highcharts.Options.Point
+                                                   {
+                                                       Name = "Chrome",
+                                                       Y = 40,
+                                                       Sliced = true,
+                                                       Selected = true
+                                                   },
+                                                   new object[] { "Safari", 10},
+                                                   new object[] { "Opera", 12 },
+                                                   new object[] { "Others", 10 }
+                                               })
+
+                     }
+               );
+
+            #endregion
+            return PartialView("_HoursByDemog", chart);
+        }
     }
 }

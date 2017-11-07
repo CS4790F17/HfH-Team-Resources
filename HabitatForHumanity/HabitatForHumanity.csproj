@@ -279,6 +279,7 @@
     <Content Include="Views\Admin\Dashboard.cshtml" />
     <Content Include="Views\Admin\Reports.cshtml" />
     <Content Include="Views\Admin\_HoursMonthChart.cshtml" />
+    <Content Include="Views\Admin\_HoursByDemog.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
