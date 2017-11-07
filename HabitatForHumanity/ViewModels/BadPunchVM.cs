@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -7,7 +8,10 @@ namespace HabitatForHumanity.ViewModels
 {
     public class BadPunchVM
     {
+        [DisplayName("Volunteer")]
         public string name { get; set; }
+
+        [DisplayName("Date")]
         public string strPunchDate { get; set; }
 
         public static List<BadPunchVM> GetDummyBadPunches()

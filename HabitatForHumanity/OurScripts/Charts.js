@@ -15,7 +15,7 @@ function getHoursChart(period) {
 }
 
 function getDemographicsPie(gender) {
-    var path = "/Admin/GetHoursByDemogPieBy/?gender=" + gender
+    var path = "/Admin/GetHoursDemogPieBy/?gender=" + gender
     $.ajax({
         url: path,
         success: function (result) {

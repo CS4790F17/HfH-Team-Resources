@@ -82,7 +82,6 @@ namespace HabitatForHumanity.Controllers
             //columnChart.SetSeries(new Series[] = chartVM._series;
             {
 
-
                 new Series
                 {
 
@@ -92,16 +91,18 @@ namespace HabitatForHumanity.Controllers
                 new Series
                 {
 
-                    Name = "Re-Store",
-                    Data = new Data(new object[] { 312, 42, 928, 425, 660, 572, 604, 713, 115 })
+                   Name = chartVM._series[1]._name,
+                   Data = new Data(chartVM._series[1]._data)
                 },
                 new Series
                 {
-                    Name = "ABWK",
-                    Data = new Data(new object[] { 19, 895, 821, 1103, 1097, 1198, 600, 764, 524, })
+                   Name = chartVM._series[2]._name,
+                   Data = new Data(chartVM._series[2]._data)
                 }
             }
             );
+
+
             #endregion
 
 
@@ -109,7 +110,7 @@ namespace HabitatForHumanity.Controllers
 
         }
 
-        public ActionResult GetHoursByDemogPieBy(string gender)
+        public ActionResult GetHoursDemogPieBy(string gender)
         {
             // go get data and filter on gender
             #region Build Demographics Pie
