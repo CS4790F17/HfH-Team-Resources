@@ -154,6 +154,7 @@
     <Compile Include="ViewModels\BadPunchVM.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\PortalVM.cs" />
     <Compile Include="ViewModels\PunchOutVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
     <Compile Include="ViewModels\ToolKitExampleVM.cs" />
@@ -187,6 +188,7 @@
     <Content Include="Images\Habitat For Humanity logo.jpg" />
     <Content Include="Images\hfhwd logo %281%29.jpg" />
     <Content Include="OurScripts\Charts.js" />
+    <Content Include="OurScripts\timePunch.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\Highcharts-4.0.1\js\adapters\standalone-framework.js" />
@@ -277,8 +279,8 @@
     <Content Include="Views\User\VolunteerPortal.cshtml" />
     <Content Include="Views\User\ForgotPassword.cshtml" />
     <Content Include="Views\Home\Examples.cshtml" />
-    <Content Include="Views\TimeSheet\PunchIn.cshtml" />
-    <Content Include="Views\TimeSheet\PunchOut.cshtml" />
+    <Content Include="Views\User\PunchIn.cshtml" />
+    <Content Include="Views\User\PunchOut.cshtml" />
     <Content Include="Views\Admin\Dashboard.cshtml" />
     <Content Include="Views\Admin\Reports.cshtml" />
     <Content Include="Views\Admin\_HoursMonthChart.cshtml" />
@@ -286,6 +288,8 @@
     <Content Include="Views\Admin\_BadPunches.cshtml" />
     <Content Include="Views\User\VolunteerPortalOut.cshtml" />
     <Content Include="Views\User\_PunchIn.cshtml" />
+    <Content Include="Views\TimeSheet\_PunchIn.cshtml" />
+    <Content Include="Views\User\_PunchOut.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -398,18 +398,6 @@ namespace HabitatForHumanity.Models
         {
             return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
-        //public static PunchOutVM GetPunchClockVM(int userId)
-        //{
-        //    PunchOutVM punch = new PunchOutVM();
-
-        //    User user = GetUser(userId);
-        //    punch.userName = user.firstName + " " + user.lastName;
-        //    punch.projectList = GetProjectListVMs();      
-        //    punch.orgList = Organization.GetOrganizations();
-        //    TimeSheet ts = TimeSheet.GetClockedInUserTimeSheet(userId);
-        //    punch.timeSheet = ts;
-        //    return punch;
-        //}
 
         public static PunchInVM GetPunchInVM(int userId)
         {
@@ -417,8 +405,6 @@ namespace HabitatForHumanity.Models
             User user = GetUser(userId);
             punch.userId = userId;
             punch.userName = user.firstName + " " + user.lastName;
-           // punch.projectList = GetProjectListVMs();
-           // punch.orgList = Organization.GetAllOrganizations();
             return punch;
         }
 
@@ -431,25 +417,12 @@ namespace HabitatForHumanity.Models
         {
             TimeSheet.InsertTimeSheet(ts);
         }
-        public static List<ProjectListVM> GetProjectListVMs()
-        {
-            List<Project> projects = new List<Project>();
-            List<ProjectListVM> p = new List<ProjectListVM>();
-            projects = Project.GetActiveProjects();
-            if (projects.Count() > 0)
-            {
-                foreach (Project proj in projects)
-                {
-                    p.Add(new ProjectListVM { Id = proj.Id, projectName = proj.name });
-                }
-            }
-            return p;
-        }
 
         #endregion
 
-        /*
         #region OrgUser functions
+        /*
+        
 
 
         /// <summary>
@@ -520,9 +493,9 @@ namespace HabitatForHumanity.Models
         }
 
 
-        #endregion
+   
     */
-
+        #endregion
 
         #region Report functions
 
@@ -544,9 +517,6 @@ namespace HabitatForHumanity.Models
 
 
         #endregion
-
-
-
 
     }
 }

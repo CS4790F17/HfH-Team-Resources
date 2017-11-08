@@ -15,7 +15,7 @@ namespace HabitatForHumanity.Models
         public int Id { get; set; }
         public int user_Id { get; set; }
         public int project_Id { get; set; }
-        public int org_id { get; set; }
+        public int org_Id { get; set; }
         public DateTime clockInTime { get; set; }
         public DateTime clockOutTime { get; set; }
 
@@ -127,30 +127,28 @@ namespace HabitatForHumanity.Models
         public static List<TimeSheet> GetAllTimeSheetsByOrganizationid(int organizationId)
         {
             VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Where(x => x.org_id == organizationId).OrderBy(x => x.Id).ToList();
+            return db.timeSheets.Where(x => x.org_Id == organizationId).OrderBy(x => x.Id).ToList();
         }
 
         #endregion
 
         public static TimeSheet GetClockedInUserTimeSheet(int userId)
         {
-            //VolunteerDbContext db = new VolunteerDbContext();
-            //var punches = db.timeSheets.Where(t => t.user_Id == userId && t.clockInTime.Date == DateTime.Today
-            //    && t.clockOutTime.Date > DateTime.Today).ToList();
-            //var ordered = punches.OrderByDescending(t => t.clockInTime);
-            //return ordered.FirstOrDefault();
+            TimeSheet temp = new TimeSheet();
             VolunteerDbContext db = new VolunteerDbContext();
             var sheets = from t in db.timeSheets
                          group t by t.user_Id into g
                          select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
-            int id = 0;
             if (sheets.Count() > 0)
             {
-                id = sheets.First().Id;
-                return db.timeSheets.Find(id);
+                temp = sheets.First();
+                // only if the clockout is midnight today(tomorrow really)
+                if(temp.clockOutTime == DateTime.Today.AddDays(1))
+                {
+                    return temp;
+                }
             }
-            return null;
-
+            return new TimeSheet();
         }
 
         public static void InsertTimeSheet(TimeSheet ts)

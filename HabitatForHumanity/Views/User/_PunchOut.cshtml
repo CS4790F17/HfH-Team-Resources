@@ -1,0 +1,28 @@
+﻿@model HabitatForHumanity.ViewModels.PunchOutVM
+
+@using (Html.BeginForm("PunchOut","TimeSheet"))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.timeSheetNumber)
+        @Html.HiddenFor(model => model.userNumber)
+        @Html.HiddenFor(model => model.projectNumber)
+        @Html.HiddenFor(model => model.orgNumber)
+        @Html.HiddenFor(model => model.inTime)
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Clock Out" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+@{ 
+    string time = Model.inTime.ToString("t");
+}
+<div>@time</div>
+
+
+

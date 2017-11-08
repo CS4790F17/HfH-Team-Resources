@@ -36,38 +36,10 @@ namespace HabitatForHumanity.Controllers
             return View(timeSheet);
         }
 
-        // GET: TimeSheet/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
 
-        // GET: TimeSheet/Create
-
-        public ActionResult PunchIn(int? userId)
-        {
-            int id = 2;
-            if (userId != null)
-            {
-                id = (int)userId;
-            }
-            PunchInVM punchIn = new PunchInVM();
-            punchIn = Repository.GetPunchInVM(id);
-
-            punchIn.projects.createDropDownList(Repository.GetAllProjects());
-            punchIn.orgs.createDropDownList(Repository.GetAllOrganizations());
-
-
-            return View("PunchIn", punchIn);
-
-        }
-
-        // POST: TimeSheet/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        #region PunchIn
         [HttpPost]
         [ValidateAntiForgeryToken]
-       // public ActionResult PunchIn([Bind(Include = "userId,projectId")] PunchInVM punchInVM)
         public ActionResult PunchIn([Bind(Include = "userId,projectId,orgId")] PunchInVM punchInVM)
         {
             if (ModelState.IsValid)
@@ -77,47 +49,47 @@ namespace HabitatForHumanity.Controllers
                 sheet.project_Id = punchInVM.projectId;
                 sheet.clockInTime = DateTime.Now;
                 sheet.clockOutTime = DateTime.Today.AddDays(1);
-                sheet.org_id = punchInVM.orgId;
+                sheet.org_Id = punchInVM.orgId;
                 Repository.PunchIn(sheet);
 
-                return RedirectToAction("VolunteerPortalOut", "User", new { id = punchInVM.userId });
+                return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
             }
             punchInVM.projects.createDropDownList(Repository.GetAllProjects());
             punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
 
             return View(punchInVM);
         }
+        #endregion
 
-        // GET: TimeSheet/Create
-        public ActionResult PunchOut(int userId)
-        {
-            TimeSheet t = new TimeSheet();
-            t = Repository.GetClockedInUserTimeSheet(userId);
-            if (t != null)
-            {
-                return View(t);
-            }
-            ViewBag.status = "No open timecards. See admin for assistance with timecard corrections.";
-            return RedirectToAction("VolunteerPortal", "User", new { id = userId });
-        }
-        // POST: TimeSheet/PunchOut/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        #region PunchOut
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PunchOut([Bind(Include = "Id,user_Id,project_Id,clockInTime,clockOutTime")] TimeSheet timeSheet)
+        //public ActionResult PunchOut([Bind(Include = "Id,user_Id,project_Id,org_id,clockInTime,clockOutTime")] TimeSheet timeSheet)
+        public ActionResult PunchOut(PunchOutVM punchOutVM)
         {
             if (ModelState.IsValid)
             {
+                TimeSheet timeSheet = new TimeSheet();
+                timeSheet.Id = punchOutVM.timeSheetNumber;
+                timeSheet.user_Id = punchOutVM.userNumber;
+                timeSheet.project_Id = punchOutVM.projectNumber;
+                timeSheet.org_Id = punchOutVM.orgNumber;
+                timeSheet.clockInTime = punchOutVM.inTime;
                 timeSheet.clockOutTime = DateTime.Now;
                 Repository.UpdateTimeSheet(timeSheet);
    
                 return RedirectToAction("VolunteerPortal","User", new { id = timeSheet.user_Id } );
             }
-            return View(timeSheet);
+            return View(punchOutVM);
         }
+        #endregion
 
-        
+        #region Create
+        // GET: TimeSheet/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
 
 
         // POST: TimeSheet/Create
@@ -136,7 +108,9 @@ namespace HabitatForHumanity.Controllers
 
             return View(timeSheet);
         }
+        #endregion
 
+        #region Edit
         // GET: TimeSheet/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -152,9 +126,6 @@ namespace HabitatForHumanity.Controllers
             return View(timeSheet);
         }
 
-        // POST: TimeSheet/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,user_Id,project_Id,clockInTime,clockOutTime")] TimeSheet timeSheet)
@@ -167,7 +138,9 @@ namespace HabitatForHumanity.Controllers
             }
             return View(timeSheet);
         }
+        #endregion
 
+        #region Delete
         // GET: TimeSheet/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -193,7 +166,7 @@ namespace HabitatForHumanity.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
+        #endregion
         protected override void Dispose(bool disposing)
         {
             if (disposing)

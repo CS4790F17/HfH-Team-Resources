@@ -16,13 +16,14 @@ namespace HabitatForHumanity.Controllers
     {
         private VolunteerDbContext db = new VolunteerDbContext();
 
-        // GET: User
+        #region Index
         public ActionResult Index()
         {
             return View(db.users.ToList());
         }
+        #endregion
 
-        // GET: User/Details/5
+        #region Details
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -36,6 +37,9 @@ namespace HabitatForHumanity.Controllers
             }
             return View(user);
         }
+        #endregion
+
+        #region VolunteerPortal
         public ActionResult VolunteerPortal(int? id)
         {
 
@@ -43,37 +47,60 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-    
-            ViewBag.userId = id;
-            PunchInVM punchIn = new PunchInVM();
-            punchIn = Repository.GetPunchInVM((int)id);
-
-            punchIn.projects.createDropDownList(Repository.GetAllProjects());
-            punchIn.orgs.createDropDownList(Repository.GetAllOrganizations());
-    
-            return View(punchIn);
-        }
-
-        public ActionResult VolunteerPortalOut(int? id)
-        {
-            if (id == null)
+            User user = Repository.GetUser((int)id);
+            if(user != null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                PortalVM portalVM = new PortalVM();
+                portalVM.punchInVM = new PunchInVM();
+                portalVM.punchOutVM = new PunchOutVM();
+                portalVM.fullName = "";
+                portalVM.cumulativeHours = 99.9;
+                portalVM.isPunchedIn = true;
+
+                TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
+ 
+                if (temp == null || temp.Id < 1)
+                {
+                    portalVM.isPunchedIn = false;
+                    portalVM.punchInVM = Repository.GetPunchInVM((int)id);
+                    portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
+                    portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
+                }
+                else
+                {
+                    portalVM.punchOutVM.timeSheetNumber = temp.Id;
+                    portalVM.punchOutVM.userNumber = temp.user_Id;
+                    portalVM.punchOutVM.projectNumber = temp.project_Id;
+                    portalVM.punchOutVM.orgNumber = temp.org_Id;
+                    portalVM.punchOutVM.inTime = temp.clockInTime;
+                }
+
+               
+                if (user.firstName != null)
+                {
+                    portalVM.fullName += user.firstName + " ";
+                }
+                if (user.lastName != null)
+                {
+                    portalVM.fullName += user.lastName;
+                }
+
+              
+
+                return View(portalVM);
             }
-            ViewBag.userId = id;
-
-            return View();
+  
+    
+            return RedirectToAction("Login", "User");
         }
+        #endregion
 
-        // GET: User/Create
+        #region Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: User/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(
@@ -106,17 +133,15 @@ namespace HabitatForHumanity.Controllers
 
             return View(user);
         }
+        #endregion
 
-        // GET: Users/Login/5
+        #region Login get
         public ActionResult Login()
         {
             LoginVM loginVm = new LoginVM();
             return View(loginVm);
         }
 
-        // POST: Users/Login/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Login([Bind(Include = "email,password")] LoginVM loginVm)
@@ -134,21 +159,7 @@ namespace HabitatForHumanity.Controllers
                         }
 
                         Session["UserName"] = user.emailAddress;
-                        //Session["UserName"] = "testing";
-                        TimeSheet currentTimeSheet = Repository.GetClockedInUserTimeSheet(user.Id);
-                        DateTime temp = DateTime.Today;
-
-                        if (currentTimeSheet == null)
-                        {
-                            return RedirectToAction("VolunteerPortal", new { id = user.Id });
-                        }
-                        else
-                        {
-                            if (currentTimeSheet.clockOutTime.TimeOfDay != temp.TimeOfDay)
-                                return RedirectToAction("VolunteerPortal", new { id = user.Id });
-                            else
-                                return RedirectToAction("VolunteerPortalOut", new { id = user.Id });
-                        }
+                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
                     }
                     else
                     {
@@ -166,7 +177,9 @@ namespace HabitatForHumanity.Controllers
             return RedirectToAction("Login", "Volunteer");
         }
 
-        // 
+        #endregion
+
+        #region ForgotPassword
         public ActionResult ForgotPassword()
         {
             LoginVM loginVm = new LoginVM();
@@ -174,10 +187,7 @@ namespace HabitatForHumanity.Controllers
         }
 
 
-
-        // POST: Users/forgotPassword/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ForgotPassword([Bind(Include = "email")] LoginVM forgot)
@@ -226,8 +236,9 @@ namespace HabitatForHumanity.Controllers
             ViewBag.status = "Please provide a valid email address.";
             return RedirectToAction("Login", "Volunteer");
         }
+        #endregion
 
-        // GET: User/Edit/5
+        #region Edit
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -242,9 +253,6 @@ namespace HabitatForHumanity.Controllers
             return View(user);
         }
 
-        // POST: User/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,firstName,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate,emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
@@ -257,8 +265,9 @@ namespace HabitatForHumanity.Controllers
             }
             return View(user);
         }
+        #endregion
 
-        // GET: User/Delete/5
+        #region Delete
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -283,7 +292,7 @@ namespace HabitatForHumanity.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
+        #endregion
         protected override void Dispose(bool disposing)
         {
             if (disposing)
