@@ -101,6 +101,73 @@ namespace HabitatForHumanity.Controllers
             return View();
         }
 
+<<<<<<< Updated upstream
+=======
+        // GET: User/VolunteerSignup
+        public ActionResult VolunteerSignup()
+        {
+            return View();
+        }
+
+        // GET: User/SignWaiver
+        public ActionResult SignWaiver()
+        {
+            SignWaiverVM signWaiver = new SignWaiverVM();
+            signWaiver.signature = "";
+            signWaiver.user = Repository.GetUserByEmail(Session["Username"].ToString());
+            return View();
+        }
+
+        // POST: User/SignWaiver
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignWaiver([Bind(
+            Include = "Id,firstName,gender, isAdmin,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate, emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
+        {
+            if (Repository.EmailExists(user.emailAddress) == false)
+            {
+            }
+            else
+            {
+                // this needs some kind of notification
+                ViewBag.status = "That email already exists in out system. Click the link below.";
+                return RedirectToAction("Login", "User");
+            }
+
+            return View(user);
+        }
+
+        // POST: User/VolunteerSignup
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult VolunteerSignup([Bind(
+            Include = "Id,firstName,gender, isAdmin,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate, emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
+        {
+            if (Repository.EmailExists(user.emailAddress) == false)
+            {
+                user.isAdmin = 0;
+                user.waiverSignDate = DateTime.Now.AddYears(-2);
+                Repository.CreateVolunteer(user);
+                Session["isAdmin"] = user.isAdmin;
+                Session["Username"] = user.emailAddress;
+                return RedirectToAction("SignWaiver", "User");
+            }
+            else
+            {
+                // this needs some kind of notification
+                ViewBag.status = "That email already exists in out system. Click the link below.";
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+        // POST: User/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+>>>>>>> Stashed changes
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(
