@@ -25,7 +25,10 @@ namespace HabitatForHumanity.Models
         public string password { get; set; }
         public DateTime birthDate { get; set; }
         public string gender { get; set; }
-        public int isAdmin { get; set; }    // 0 - volunteer, 1 - admin
+        /// <summary>
+        /// 0 - volunteer, 1 - admin
+        /// </summary>
+        public int isAdmin { get; set; }
         public DateTime waiverSignDate { get; set; }
         public string emergencyFirstName { get; set; }
         public string emergencyLastName { get; set; }
@@ -115,11 +118,32 @@ namespace HabitatForHumanity.Models
             return users.FirstOrDefault();
         }
 
-        public static User GetUser(int id)
+        public static ReturnStatus GetUser(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.users.Find(id);
+            ReturnStatus st = new ReturnStatus();
+            st.errorCode = 0;
+
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.users.Find(id);
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = -1;
+                st.data = e.ToString();
+                return st;
+            }
         }
+
+
+        //
+        //public static User GetUser(int id)
+        //{
+        //    VolunteerDbContext db = new VolunteerDbContext();
+        //    return db.users.Find(id);
+        //}
 
         /// <summary>
         /// Adds a user to the database.
