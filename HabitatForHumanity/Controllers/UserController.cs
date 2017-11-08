@@ -47,50 +47,77 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            User user = Repository.GetUser((int)id);
-            if(user != null)
+
+            //User user = Repository.GetUser((int)id);
+            try
             {
-                PortalVM portalVM = new PortalVM();
-                portalVM.punchInVM = new PunchInVM();
-                portalVM.punchOutVM = new PunchOutVM();
-                portalVM.fullName = "";
-                portalVM.cumulativeHours = 99.9;
-                portalVM.isPunchedIn = true;
-
-                TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
- 
-                if (temp == null || temp.Id < 1)
+                ReturnStatus st = Repository.GetUser((int)id);
+                if (st.errorCode == 0 && st.data != null)
                 {
-                    portalVM.isPunchedIn = false;
-                    portalVM.punchInVM = Repository.GetPunchInVM((int)id);
-                    portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
-                    portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
-                }
-                else
-                {
-                    portalVM.punchOutVM.timeSheetNumber = temp.Id;
-                    portalVM.punchOutVM.userNumber = temp.user_Id;
-                    portalVM.punchOutVM.projectNumber = temp.project_Id;
-                    portalVM.punchOutVM.orgNumber = temp.org_Id;
-                    portalVM.punchOutVM.inTime = temp.clockInTime;
-                }
+                    User user = (User)st.data;
 
-               
-                if (user.firstName != null)
-                {
-                    portalVM.fullName += user.firstName + " ";
-                }
-                if (user.lastName != null)
-                {
-                    portalVM.fullName += user.lastName;
-                }
+                    if (user != null)
+                    {
+                        PortalVM portalVM = new PortalVM();
+                        portalVM.punchInVM = new PunchInVM();
+                        portalVM.punchOutVM = new PunchOutVM();
+                        portalVM.fullName = "";
+                        portalVM.cumulativeHours = 99.9;
+                        portalVM.isPunchedIn = true;
 
-              
+                        TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
 
-                return View(portalVM);
+                        if (temp == null || temp.Id < 1)
+                        {
+                            portalVM.isPunchedIn = false;
+
+
+
+                            ReturnStatus st2 = Repository.GetPunchInVM((int)id);
+
+                            if (st2.errorCode == 0 && st2.data != null)
+                            {
+                                //cast st2.data into a punchInVM
+                                portalVM.punchInVM = (PunchInVM)st2.data;
+                            }
+
+
+
+                            portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
+                            portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
+                        }
+                        else
+                        {
+                            portalVM.punchOutVM.timeSheetNumber = temp.Id;
+                            portalVM.punchOutVM.userNumber = temp.user_Id;
+                            portalVM.punchOutVM.projectNumber = temp.project_Id;
+                            portalVM.punchOutVM.orgNumber = temp.org_Id;
+                            portalVM.punchOutVM.inTime = temp.clockInTime;
+                        }
+
+
+                        if (user.firstName != null)
+                        {
+                            portalVM.fullName += user.firstName + " ";
+                        }
+                        if (user.lastName != null)
+                        {
+                            portalVM.fullName += user.lastName;
+                        }
+
+
+
+                        return View(portalVM);
+                    }
+                }
             }
-  
-    
+            catch (Exception e)
+            {
+                //TODO: redirect/display error message/log
+                return RedirectToAction("Login", "User");
+            }
+
+
             return RedirectToAction("Login", "User");
         }
         #endregion
@@ -108,7 +135,7 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(Repository.EmailExists(user.emailAddress) == false)
+                if (Repository.EmailExists(user.emailAddress) == false)
                 {
                     int userId = Repository.CreateUser(user);
                     if (userId > 0)
@@ -121,7 +148,7 @@ namespace HabitatForHumanity.Controllers
                     {
                         ViewBag.status = "An error occurred during account creation please try again.";
                         return View(user);
-                    }        
+                    }
                 }
                 else
                 {
@@ -153,7 +180,7 @@ namespace HabitatForHumanity.Controllers
                     if (Repository.AuthenticateUser(loginVm))
                     {
                         User user = Repository.GetUserByEmail(loginVm.email);
-                        if(user.isAdmin == 1)
+                        if (user.isAdmin == 1)
                         {
                             Session["isAdmin"] = "isAdmin";
                         }
@@ -187,7 +214,7 @@ namespace HabitatForHumanity.Controllers
         }
 
 
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ForgotPassword([Bind(Include = "email")] LoginVM forgot)

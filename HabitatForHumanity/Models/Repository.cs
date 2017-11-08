@@ -52,10 +52,35 @@ namespace HabitatForHumanity.Models
             return exists;
         }
 
-        public static User GetUser(int id)
+
+        public static ReturnStatus GetUser(int id)
         {
-            return User.GetUser(id);
+            ReturnStatus st = new ReturnStatus();
+
+            try
+            {
+                st = User.GetUser(id);
+
+                if (st.errorCode == 0 && st.data == null)
+                {
+                    st.errorCode = -1;
+                    st.data = "Nothing in db";
+                }
+
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = -2;
+                st.data = e.ToString();
+                return st;
+            }
         }
+
+        //public static User GetUser(int id)
+        //{
+        //    return User.GetUser(id);
+        //}
 
         /// <summary>
         /// Gets the user in the database with the matching email.
@@ -399,13 +424,43 @@ namespace HabitatForHumanity.Models
             return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
 
-        public static PunchInVM GetPunchInVM(int userId)
+        public static ReturnStatus GetPunchInVM(int userId)
         {
             PunchInVM punch = new PunchInVM();
-            User user = GetUser(userId);
-            punch.userId = userId;
-            punch.userName = user.firstName + " " + user.lastName;
-            return punch;
+            ReturnStatus st = new ReturnStatus();
+
+
+            // User user = GetUser(userId); 
+
+            try
+            {
+                st = User.GetUser(userId);
+
+                if (st.errorCode == 0 && st.data != null)
+                {
+                    User user = (User)st.data;
+                    punch.userId = userId;
+                    punch.userName = user.firstName + " " + user.lastName;
+
+                    //reset values in st to all good
+                    st.errorCode = 0;
+                    st.data = punch;
+
+                    return st;
+                }
+                else
+                {
+                    //if st was null or had bad error code
+                    return st;
+                }
+            }
+            catch (Exception e)
+            {
+                //TODO: improve error handling
+                st.errorCode = -1;
+                st.data = e.ToString();
+                return st;
+            }
         }
 
         public static void UpdateTimeSheet(TimeSheet timeSheet)
