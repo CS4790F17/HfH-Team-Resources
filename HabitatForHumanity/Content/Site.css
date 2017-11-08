@@ -22,3 +22,25 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.navbar {
+    background-color: #005596;
+}
+
+.BannerLogo{
+    display: block;
+    margin : auto;
+    padding-bottom: 30px;
+    width: 40%;
+}
+
+.HFHFooter{
+    text-align: center;
+    color: #54B948;
+    font-family: FontAwesome;
+
+}
+
+.dropdown{
+        color: #005596;
+}

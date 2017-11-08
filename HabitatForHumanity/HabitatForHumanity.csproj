@@ -172,6 +172,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Images\HFHLogo.jpg" />
     <Content Include="Images\Volunteer Waiver - adult.docx" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Images\Habitat For Humanity logo.jpg" />
@@ -234,7 +235,7 @@
     <Content Include="Views\TimeSheet\PunchIn.cshtml" />
     <Content Include="Views\TimeSheet\PunchOut.cshtml" />
     <Content Include="Views\User\VolunteerPortalOut.cshtml" />
-    <Content Include="Views\Shared\_SharedLayout.cshtml" />
+    <Content Include="Views\Shared\_SharedLayoutUser.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
