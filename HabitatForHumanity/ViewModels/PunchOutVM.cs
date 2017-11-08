@@ -9,23 +9,22 @@ namespace HabitatForHumanity.ViewModels
 {
     public class PunchOutVM
     {
-        public TimeSheet timeSheet { get; set; }
-        public int orgId { get; set; }
-        public string project { get; set; }
-        public string userName { get; set; }
-
+        public int timeSheetNumber { get; set; }
+        public int userNumber { get; set; }
+        public int projectNumber { get; set; }
+        public int orgNumber { get; set; }
+        public DateTime inTime { get; set; }
 
     }
     public class PunchInVM
     {
         public int userId { get; set; }
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Please Select an Organization")]
         public int orgId { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Please Select a Project")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Please Select a Project")]
         public int projectId { get; set; }
         public string userName { get; set; }
-        // public List<ProjectListVM> projectList { get; set; }
-        // public List<Organization> orgList { get; set; }
         public ProjectDropDownList projects = new ProjectDropDownList();
         public OrganizationDropDownList orgs = new OrganizationDropDownList();
 

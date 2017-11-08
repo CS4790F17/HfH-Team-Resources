@@ -43,15 +43,74 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-    
-            ViewBag.userId = id;
-            PunchInVM punchIn = new PunchInVM();
-            punchIn = Repository.GetPunchInVM((int)id);
+            User user = Repository.GetUser((int)id);
+            if(user != null)
+            {
+                PortalVM portalVM = new PortalVM();
+                portalVM.punchInVM = new PunchInVM();
+                portalVM.punchOutVM = new PunchOutVM();
+                portalVM.fullName = "";
+                portalVM.cumulativeHours = 99.9;
+                portalVM.isPunchedIn = true;
 
-            punchIn.projects.createDropDownList(Repository.GetAllProjects());
-            punchIn.orgs.createDropDownList(Repository.GetAllOrganizations());
+                TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
+ 
+                if (temp == null || temp.Id < 1)
+                {
+                    portalVM.isPunchedIn = false;
+                    portalVM.punchInVM = Repository.GetPunchInVM((int)id);
+                    portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
+                    portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
+                }
+                else
+                {
+                    portalVM.punchOutVM.timeSheetNumber = temp.Id;
+                    portalVM.punchOutVM.userNumber = temp.user_Id;
+                    portalVM.punchOutVM.projectNumber = temp.project_Id;
+                    portalVM.punchOutVM.orgNumber = temp.org_Id;
+                    portalVM.punchOutVM.inTime = temp.clockInTime;
+                }
+
+               
+                if (user.firstName != null)
+                {
+                    portalVM.fullName += user.firstName + " ";
+                }
+                if (user.lastName != null)
+                {
+                    portalVM.fullName += user.lastName;
+                }
+
+              
+
+                return View(portalVM);
+            }
+  
     
-            return View(punchIn);
+            return RedirectToAction("Login", "User");
+        }
+
+        public ActionResult GetPunchInOrOut(int id)
+        {
+            TimeSheet timeSheet = Repository.GetClockedInUserTimeSheet(id);
+            if(timeSheet == null)
+            {
+                PunchInVM punchIn = new PunchInVM();
+                punchIn = Repository.GetPunchInVM((int)id);
+
+                punchIn.projects.createDropDownList(Repository.GetAllProjects());
+                punchIn.orgs.createDropDownList(Repository.GetAllOrganizations());
+                return PartialView("_PunchIn", punchIn);
+            }
+            else if (timeSheet.Id > 0)
+            {
+                return PartialView("_PunchOut", timeSheet);
+
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public ActionResult VolunteerPortalOut(int? id)
@@ -134,21 +193,23 @@ namespace HabitatForHumanity.Controllers
                         }
 
                         Session["UserName"] = user.emailAddress;
-                        //Session["UserName"] = "testing";
-                        TimeSheet currentTimeSheet = Repository.GetClockedInUserTimeSheet(user.Id);
-                        DateTime temp = DateTime.Today;
+                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        ////Session["UserName"] = "testing";
+                        //TimeSheet currentTimeSheet = Repository.GetClockedInUserTimeSheet(user.Id);
+                        //DateTime temp = DateTime.Today;
 
-                        if (currentTimeSheet == null)
-                        {
-                            return RedirectToAction("VolunteerPortal", new { id = user.Id });
-                        }
-                        else
-                        {
-                            if (currentTimeSheet.clockOutTime.TimeOfDay != temp.TimeOfDay)
-                                return RedirectToAction("VolunteerPortal", new { id = user.Id });
-                            else
-                                return RedirectToAction("VolunteerPortalOut", new { id = user.Id });
-                        }
+                        //if (currentTimeSheet == null)
+                        //{
+                        //    return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        //}
+                        //else
+                        //{
+                        //    return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        //    //if (currentTimeSheet.clockOutTime.TimeOfDay != temp.TimeOfDay)
+                        //    //    return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        //    //else
+                        //    //    return RedirectToAction("VolunteerPortalOut", new { id = user.Id });
+                        //}
                     }
                     else
                     {

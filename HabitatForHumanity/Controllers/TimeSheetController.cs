@@ -77,10 +77,10 @@ namespace HabitatForHumanity.Controllers
                 sheet.project_Id = punchInVM.projectId;
                 sheet.clockInTime = DateTime.Now;
                 sheet.clockOutTime = DateTime.Today.AddDays(1);
-                sheet.org_id = punchInVM.orgId;
+                sheet.org_Id = punchInVM.orgId;
                 Repository.PunchIn(sheet);
 
-                return RedirectToAction("VolunteerPortalOut", "User", new { id = punchInVM.userId });
+                return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
             }
             punchInVM.projects.createDropDownList(Repository.GetAllProjects());
             punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
@@ -105,16 +105,23 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PunchOut([Bind(Include = "Id,user_Id,project_Id,clockInTime,clockOutTime")] TimeSheet timeSheet)
+        //public ActionResult PunchOut([Bind(Include = "Id,user_Id,project_Id,org_id,clockInTime,clockOutTime")] TimeSheet timeSheet)
+        public ActionResult PunchOut(PunchOutVM punchOutVM)
         {
             if (ModelState.IsValid)
             {
+                TimeSheet timeSheet = new TimeSheet();
+                timeSheet.Id = punchOutVM.timeSheetNumber;
+                timeSheet.user_Id = punchOutVM.userNumber;
+                timeSheet.project_Id = punchOutVM.projectNumber;
+                timeSheet.org_Id = punchOutVM.orgNumber;
+                timeSheet.clockInTime = punchOutVM.inTime;
                 timeSheet.clockOutTime = DateTime.Now;
                 Repository.UpdateTimeSheet(timeSheet);
    
                 return RedirectToAction("VolunteerPortal","User", new { id = timeSheet.user_Id } );
             }
-            return View(timeSheet);
+            return View(punchOutVM);
         }
 
         
