@@ -5,19 +5,16 @@
 @{
     if (Session["Username"] != null)
     {
-        <h1>@Session["Username"]</h1>
+        @*<h1>@Session["Username"]</h1>*@
     }
 }
 <h2>Volunteer Portal</h2>
 <h3>Welcome @Model.fullName!</h3>
-<h3>You have logged ??? hours to date.</h3>
+<h3>You have logged @Model.cumulativeHours hours to date.</h3>
 
-<!--  insert a partial view for timeclock based on if punched in logic-->
-@*<div id="timeDiv">@{Html.RenderAction("GetPunchInOrOut", new { id = Model.userId }); }</div >*@
 @{
     if (Model.isPunchedIn == false)
     {
-        <p> user is not punched in</p>
         <div>@{Html.RenderPartial("_PunchIn", Model.punchInVM);}</div>
     }
     else

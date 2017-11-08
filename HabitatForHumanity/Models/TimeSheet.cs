@@ -142,6 +142,7 @@ namespace HabitatForHumanity.Models
             if (sheets.Count() > 0)
             {
                 temp = sheets.First();
+                // only if the clockout is midnight today(tomorrow really)
                 if(temp.clockOutTime == DateTime.Today.AddDays(1))
                 {
                     return temp;

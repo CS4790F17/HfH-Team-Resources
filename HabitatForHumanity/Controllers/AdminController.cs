@@ -105,7 +105,6 @@ namespace HabitatForHumanity.Controllers
 
             #endregion
 
-
             return PartialView("_HoursMonthChart", columnChart);
 
         }
