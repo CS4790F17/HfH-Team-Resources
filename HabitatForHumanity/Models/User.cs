@@ -116,12 +116,13 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetUserByEmail(string email)
         {
             ReturnStatus st = new ReturnStatus();
-            st.errorCode = 0;
 
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 var users = db.users.Where(u => u.emailAddress.Equals(email));
+
+                st.errorCode = 0;
                 st.data = users.FirstOrDefault();
 
                 return st;
@@ -129,8 +130,9 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
-                st.errorCode = -1;
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.data = "Could not access database.";
+                st.errorMessage = e.ToString();
                 return st;
             }
         }
@@ -144,24 +146,23 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetUser(int id)
         {
             ReturnStatus st = new ReturnStatus();
-            st.errorCode = 0;
-
+            
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 //VolunteerDbContext db = null;
+                
                 st.data = db.users.Find(id);
+                st.errorCode = 0;
+
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = e.ToString();
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
                 return st;
-            }
-            finally
-            {
-
             }
         }
 
@@ -209,7 +210,8 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = e.ToString();
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
                 return st;
             }
         }

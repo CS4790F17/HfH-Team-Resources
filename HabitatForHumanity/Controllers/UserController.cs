@@ -213,7 +213,7 @@ namespace HabitatForHumanity.Controllers
                 }
             }catch(Exception e)
             {
-
+                //TODO: add error logging/handling
             }
             // model was bad
             return RedirectToAction("Login", "Volunteer");

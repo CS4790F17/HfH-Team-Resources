@@ -66,6 +66,9 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_AUTHENTICATE_USER;
+                st.data = "Failed to authenticate user.";
+                st.errorMessage = e.ToString();
                 return st;
             }
         }
@@ -73,8 +76,7 @@ namespace HabitatForHumanity.Models
 
         public static ReturnStatus GetUser(int id)
         {
-            ReturnStatus st = new ReturnStatus();
-            st = User.GetUser(id);
+            ReturnStatus st = User.GetUser(id);
             return st;
         }
 
