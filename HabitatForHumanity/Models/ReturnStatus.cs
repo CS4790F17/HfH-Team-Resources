@@ -9,6 +9,7 @@ namespace HabitatForHumanity.Models
     {
         public int errorCode { get; set; }
         public object data { get; set; }
+        public string errorMessage { get; set; }
 
 
         public enum ErrorCodes
