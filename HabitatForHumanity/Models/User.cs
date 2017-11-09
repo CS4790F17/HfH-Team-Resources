@@ -179,6 +179,78 @@ namespace HabitatForHumanity.Models
                 db.SaveChanges();
             }
         }
+
+        public class Demog
+        {
+            public string ageBracket { get; set; }
+            public int numPeople { get; set; }
+        }
+        public static List<Demog> GetDemographicsForPie(string gender)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            List<Demog> demogs = new List<Demog>();
+            List<User> users = new List<User>();
+            if (gender.Equals("All"))
+            {
+                users = db.users.Where(u => u.birthDate != null).ToList();
+            }
+            else
+            {
+                users = db.users.Where(u => u.birthDate != null && u.gender.Equals(gender)).ToList();
+            }
+            Demog dunder18 = new Demog() { ageBracket = "Under 18", numPeople = 0 };
+            Demog d18to27 = new Demog() { ageBracket = "18 to 27", numPeople = 0 };
+            Demog d27to40 = new Demog() { ageBracket = "27 to 40", numPeople = 0 };
+            Demog d40to55 = new Demog() { ageBracket = "40 to 55", numPeople = 0 };
+            Demog dover55 = new Demog() { ageBracket = "Over 55", numPeople = 0 };
+            foreach(User u in users)
+            {
+                DateTime present = DateTime.Now;
+                if(present.AddYears(-18) < u.birthDate)
+                {
+                    dunder18.numPeople++;
+                }
+                else if (present.AddYears(-18) <= u.birthDate && present.AddYears(-27) > u.birthDate)
+                {
+                    d18to27.numPeople++;
+                }
+                else if (present.AddYears(-27) <= u.birthDate && present.AddYears(-40) > u.birthDate)
+                {
+                    d27to40.numPeople++;
+                }
+                else if (present.AddYears(-40) <= u.birthDate && present.AddYears(-55) > u.birthDate)
+                {
+                    d40to55.numPeople++;
+                }         
+                else
+                {
+                    dover55.numPeople++;
+                }
+            }
+
+            demogs.Add(dunder18);
+            demogs.Add(d18to27);
+            demogs.Add(d27to40);
+            demogs.Add(d40to55);
+            demogs.Add(dover55);
+            return demogs;
+
+        }
+        /*TimeSheet temp = new TimeSheet();
+            VolunteerDbContext db = new VolunteerDbContext();
+            var sheets = from t in db.timeSheets
+                         group t by t.user_Id into g
+                         select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
+            if (sheets.Count() > 0)
+            {
+                temp = sheets.First();
+                // only if the clockout is midnight today(tomorrow really)
+                if(temp.clockOutTime == DateTime.Today.AddDays(1))
+                {
+                    return temp;
+                }
+            }
+            return new TimeSheet();*/
         #endregion
     }
 }
