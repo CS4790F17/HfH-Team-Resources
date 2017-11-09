@@ -22,7 +22,6 @@ namespace HabitatForHumanity.Controllers
             return View();
         }
 
-        //GetHoursMonthChart
         public ActionResult GetHoursChartBy(string period)
         {
             #region Build Month Chart
@@ -113,20 +112,18 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult GetHoursDemogPieBy(string gender)
         {
+            #region Build Demographics Pie
             /* gender options from javascript radios       
-            All          
-            Male                                
-            Female
-            Other             
-             */
-            Demog[] demogs = Models.User.GetDemographicsForPie().ToArray();
+            All, M, F, O */
+
+            Demog[] demogs = Repository.GetDemographicsForPie(gender).ToArray();
             object[] outer = new object[demogs.Length];
-            for(int i=0;i<demogs.Length;i++)
+            for (int i = 0; i < demogs.Length; i++)
             {
                 outer[i] = new object[] { demogs[i].ageBracket, demogs[i].numPeople };
             }
 
-            #region Build Demographics Pie
+           
             Highcharts chart = new Highcharts("chart")
                 .InitChart(new Chart { PlotShadow = false })
                 .SetTitle(new Title { Text = "" })
@@ -151,36 +148,12 @@ namespace HabitatForHumanity.Controllers
                          Type = ChartTypes.Pie,
                          Name = "Male",
                          Data = new Data(outer)
-                         //Data = new Data(new object[]
-                         //                      {
-                         //                          inner1,
-                         //                          new object[] { "IE", 25 },
-                         //                          new DotNet.Highcharts.Options.Point
-                         //                          {
-                         //                              Name = "Chrome",
-                         //                              Y = 40,
-                         //                              Sliced = true,
-                         //                              Selected = true
-                         //                          },
-                         //                          new object[] { "Safari", 10},
-                         //                          new object[] { "Opera", 12 },
-                         //                          new object[] { "Others", 10 }
-                         //                      })
-
                      }
                );
 
             #endregion
-            return PartialView("_HoursByDemog", chart);
+            return PartialView("_DemographicsPie", chart);
         }
-
-        // public static List<User> GetDemographicsForPie()
-        public ActionResult GetDemographicsForPie()
-        {
-            List<Demog> users = Models.User.GetDemographicsForPie();
-            return View(users);
-        }
-
 
         public ActionResult GetBadPunches()
         {

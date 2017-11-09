@@ -185,11 +185,19 @@ namespace HabitatForHumanity.Models
             public string ageBracket { get; set; }
             public int numPeople { get; set; }
         }
-        public static List<Demog> GetDemographicsForPie()
+        public static List<Demog> GetDemographicsForPie(string gender)
         {
             VolunteerDbContext db = new VolunteerDbContext();
             List<Demog> demogs = new List<Demog>();
-            var users = db.users.Where(u => u.birthDate != null).ToList();
+            List<User> users = new List<User>();
+            if (gender.Equals("All"))
+            {
+                users = db.users.Where(u => u.birthDate != null).ToList();
+            }
+            else
+            {
+                users = db.users.Where(u => u.birthDate != null && u.gender.Equals(gender)).ToList();
+            }
             Demog dunder18 = new Demog() { ageBracket = "Under 18", numPeople = 0 };
             Demog d18to27 = new Demog() { ageBracket = "18 to 27", numPeople = 0 };
             Demog d27to40 = new Demog() { ageBracket = "27 to 40", numPeople = 0 };

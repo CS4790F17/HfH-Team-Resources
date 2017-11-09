@@ -515,7 +515,10 @@ namespace HabitatForHumanity.Models
             return hoursWorked;
         }
 
-
+        public static List<User.Demog> GetDemographicsForPie(string gender)
+        {
+            return User.GetDemographicsForPie(gender);
+        }
         #endregion
 
     }
