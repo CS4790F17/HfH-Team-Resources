@@ -126,7 +126,8 @@ namespace HabitatForHumanity.Models
 
                 return st;
 
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 st.errorCode = -1;
                 st.data = "Could not access database.";
@@ -148,6 +149,7 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
+                //VolunteerDbContext db = null;
                 st.data = db.users.Find(id);
                 return st;
             }
@@ -156,6 +158,10 @@ namespace HabitatForHumanity.Models
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.data = e.ToString();
                 return st;
+            }
+            finally
+            {
+
             }
         }
 
@@ -181,16 +187,33 @@ namespace HabitatForHumanity.Models
             return userId;
         }
 
+
         /// <summary>
         /// Updates the users information based on a new model.
         /// </summary>
         /// <param name="user">User object with new information.</param>
-        public static void EditUser(User user)
+        public static ReturnStatus EditUser(User user)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.Entry(user).State = EntityState.Modified;
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+
+            try
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = e.ToString();
+                return st;
+            }
         }
+
 
         /// <summary>
         /// Deletes the user from the database.

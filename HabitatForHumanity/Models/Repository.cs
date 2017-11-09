@@ -128,16 +128,14 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus ChangePassword(string email, string newPW)
         {
             ReturnStatus st = new ReturnStatus();
-            User user = new User();
+            // User user = new User();
 
             try
             {
                 st = User.GetUserByEmail(email);
 
-                if (st.errorCode == 0 && st.data != null)
+                if (ReturnStatus.tryParseUser(st, out User user))
                 {
-                    user = (User)st.data;
-
                     if (user != null && !String.IsNullOrEmpty(newPW) && !String.IsNullOrWhiteSpace(newPW))
                     {
                         user.password = Crypto.HashPassword(newPW);
@@ -151,7 +149,8 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 st.errorCode = -1;
-                st.data = "Could not change password.";
+                st.data = "Failed to change password.";
+                st.errorMessage = e.ToString();
                 return st;
             }
         }
@@ -160,9 +159,9 @@ namespace HabitatForHumanity.Models
         /// Updates the users information based on a new model.
         /// </summary>
         /// <param name="user">User object with new information.</param>
-        public static void EditUser(User user)
+        public static ReturnStatus EditUser(User user)
         {
-            User.EditUser(user);
+            return User.EditUser(user);
         }
 
 
