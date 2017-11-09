@@ -113,7 +113,19 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult GetHoursDemogPieBy(string gender)
         {
-            // go get data and filter on gender
+            /* gender options from javascript radios       
+            All          
+            Male                                
+            Female
+            Other             
+             */
+            Demog[] demogs = Models.User.GetDemographicsForPie().ToArray();
+            object[] outer = new object[demogs.Length];
+            for(int i=0;i<demogs.Length;i++)
+            {
+                outer[i] = new object[] { demogs[i].ageBracket, demogs[i].numPeople };
+            }
+
             #region Build Demographics Pie
             Highcharts chart = new Highcharts("chart")
                 .InitChart(new Chart { PlotShadow = false })
@@ -138,21 +150,22 @@ namespace HabitatForHumanity.Controllers
                      {
                          Type = ChartTypes.Pie,
                          Name = "Male",
-                         Data = new Data(new object[]
-                                               {
-                                                   new object[] { "Firefox", 5 },
-                                                   new object[] { "IE", 25 },
-                                                   new DotNet.Highcharts.Options.Point
-                                                   {
-                                                       Name = "Chrome",
-                                                       Y = 40,
-                                                       Sliced = true,
-                                                       Selected = true
-                                                   },
-                                                   new object[] { "Safari", 10},
-                                                   new object[] { "Opera", 12 },
-                                                   new object[] { "Others", 10 }
-                                               })
+                         Data = new Data(outer)
+                         //Data = new Data(new object[]
+                         //                      {
+                         //                          inner1,
+                         //                          new object[] { "IE", 25 },
+                         //                          new DotNet.Highcharts.Options.Point
+                         //                          {
+                         //                              Name = "Chrome",
+                         //                              Y = 40,
+                         //                              Sliced = true,
+                         //                              Selected = true
+                         //                          },
+                         //                          new object[] { "Safari", 10},
+                         //                          new object[] { "Opera", 12 },
+                         //                          new object[] { "Others", 10 }
+                         //                      })
 
                      }
                );

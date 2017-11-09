@@ -190,11 +190,11 @@ namespace HabitatForHumanity.Models
             VolunteerDbContext db = new VolunteerDbContext();
             List<Demog> demogs = new List<Demog>();
             var users = db.users.Where(u => u.birthDate != null).ToList();
-            Demog dunder18 = new Demog() { ageBracket = "< 18", numPeople = 0 };
-            Demog d18to27 = new Demog() { ageBracket = "18-27", numPeople = 0 };
-            Demog d27to40 = new Demog() { ageBracket = "27-40", numPeople = 0 };
-            Demog d40to55 = new Demog() { ageBracket = "40-55", numPeople = 0 };
-            Demog dover55 = new Demog() { ageBracket = "55+", numPeople = 0 };
+            Demog dunder18 = new Demog() { ageBracket = "Under 18", numPeople = 0 };
+            Demog d18to27 = new Demog() { ageBracket = "18 to 27", numPeople = 0 };
+            Demog d27to40 = new Demog() { ageBracket = "27 to 40", numPeople = 0 };
+            Demog d40to55 = new Demog() { ageBracket = "40 to 55", numPeople = 0 };
+            Demog dover55 = new Demog() { ageBracket = "Over 55", numPeople = 0 };
             foreach(User u in users)
             {
                 DateTime present = DateTime.Now;
@@ -219,6 +219,7 @@ namespace HabitatForHumanity.Models
                     dover55.numPeople++;
                 }
             }
+
             demogs.Add(dunder18);
             demogs.Add(d18to27);
             demogs.Add(d27to40);
