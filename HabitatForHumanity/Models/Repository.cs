@@ -40,41 +40,42 @@ namespace HabitatForHumanity.Models
         /// Checks whether the user entered a bad password for that log in email.
         /// </summary>
         /// <param name="loginVm">The viewmodel containing the users email and password.</param>
-        /// <returns>True if user entered a correct password.</returns>
-        public static bool AuthenticateUser(LoginVM loginVm)
+        /// <returns>ReturnStatus object that contains true if user entered a correct password.</returns>
+        public static ReturnStatus AuthenticateUser(LoginVM loginVm)
         {
-            bool exists = false;
-            User user = User.GetUserByEmail(loginVm.email);
-            if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+            ReturnStatus st = new ReturnStatus();
+
+            try
             {
-                exists = true;
+                bool exists = false;
+
+                st = User.GetUserByEmail(loginVm.email);
+
+                //check status to make sure error code and data are correct
+                if (ReturnStatus.tryParseUser(st, out User user))
+                {
+                    if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+                    {
+                        exists = true;
+                    }
+                }
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = exists;
+                return st;
             }
-            return exists;
+            catch (Exception e)
+            {
+                return st;
+            }
         }
 
 
         public static ReturnStatus GetUser(int id)
         {
             ReturnStatus st = new ReturnStatus();
-
-            try
-            {
-                st = User.GetUser(id);
-
-                if (st.errorCode == 0 && st.data == null)
-                {
-                    st.errorCode = -1;
-                    st.data = "Nothing in db";
-                }
-
-                return st;
-            }
-            catch (Exception e)
-            {
-                st.errorCode = -2;
-                st.data = e.ToString();
-                return st;
-            }
+            st = User.GetUser(id);
+            return st;
         }
 
         //public static User GetUser(int id)
@@ -87,7 +88,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="email"></param>
         /// <returns>User with matching email address.</returns>
-        public static User GetUserByEmail(string email)
+        public static ReturnStatus GetUserByEmail(string email)
         {
             return User.GetUserByEmail(email);
         }
@@ -123,14 +124,35 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="email">Email of current user.</param>
         /// <param name="newPW">New password.</param>
-        public static void ChangePassword(string email, string newPW)
+        /// <returns>ReturnStatus object with error code and data</returns>
+        public static ReturnStatus ChangePassword(string email, string newPW)
         {
+            ReturnStatus st = new ReturnStatus();
             User user = new User();
-            user = User.GetUserByEmail(email);
-            if (user != null && !String.IsNullOrEmpty(newPW) && !String.IsNullOrWhiteSpace(newPW))
+
+            try
             {
-                user.password = Crypto.HashPassword(newPW);
-                EditUser(user);
+                st = User.GetUserByEmail(email);
+
+                if (st.errorCode == 0 && st.data != null)
+                {
+                    user = (User)st.data;
+
+                    if (user != null && !String.IsNullOrEmpty(newPW) && !String.IsNullOrWhiteSpace(newPW))
+                    {
+                        user.password = Crypto.HashPassword(newPW);
+                        EditUser(user);
+                    }
+                }
+
+                st.data = null; //to avoid sending user data up the pipeline
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = -1;
+                st.data = "Could not change password.";
+                return st;
             }
         }
 

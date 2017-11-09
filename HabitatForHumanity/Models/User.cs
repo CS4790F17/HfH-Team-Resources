@@ -51,7 +51,9 @@ namespace HabitatForHumanity.Models
         public static bool AuthenticateUser(LoginVM loginVm)
         {
             bool exists = false;
-            User user = User.GetUserByEmail(loginVm.email);
+            //User user = User.GetUserByEmail(loginVm.email);
+            User user = (User)User.GetUserByEmail(loginVm.email).data; //temp while fixing others
+
             if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
             {
                 exists = true;
@@ -111,13 +113,33 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="email"></param>
         /// <returns>User with matching email address.</returns>
-        public static User GetUserByEmail(string email)
+        public static ReturnStatus GetUserByEmail(string email)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            var users = db.users.Where(u => u.emailAddress.Equals(email));
-            return users.FirstOrDefault();
+            ReturnStatus st = new ReturnStatus();
+            st.errorCode = 0;
+
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var users = db.users.Where(u => u.emailAddress.Equals(email));
+                st.data = users.FirstOrDefault();
+
+                return st;
+
+            }catch(Exception e)
+            {
+                st.errorCode = -1;
+                st.data = "Could not access database.";
+                return st;
+            }
         }
 
+
+        /// <summary>
+        /// Gets the user by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static ReturnStatus GetUser(int id)
         {
             ReturnStatus st = new ReturnStatus();
@@ -131,19 +153,12 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
-                st.errorCode = -1;
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.data = e.ToString();
                 return st;
             }
         }
 
-
-        //
-        //public static User GetUser(int id)
-        //{
-        //    VolunteerDbContext db = new VolunteerDbContext();
-        //    return db.users.Find(id);
-        //}
 
         /// <summary>
         /// Adds a user to the database.

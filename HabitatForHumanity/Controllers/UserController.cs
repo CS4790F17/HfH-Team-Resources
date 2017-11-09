@@ -52,9 +52,9 @@ namespace HabitatForHumanity.Controllers
             try
             {
                 ReturnStatus st = Repository.GetUser((int)id);
-                if (st.errorCode == 0 && st.data != null)
+                if (ReturnStatus.tryParseUser(st, out User user))
                 {
-                    User user = (User)st.data;
+                   // User user = (User)st.data;
 
                     if (user != null)
                     {
@@ -173,32 +173,47 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login([Bind(Include = "email,password")] LoginVM loginVm)
         {
-            if (ModelState.IsValid)
-            {
-                if (Repository.EmailExists(loginVm.email))
-                {
-                    if (Repository.AuthenticateUser(loginVm))
-                    {
-                        User user = Repository.GetUserByEmail(loginVm.email);
-                        if (user.isAdmin == 1)
-                        {
-                            Session["isAdmin"] = "isAdmin";
-                        }
 
-                        Session["UserName"] = user.emailAddress;
-                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
+            ReturnStatus st = new ReturnStatus();
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (Repository.EmailExists(loginVm.email))
+                    {
+
+                        st = Repository.AuthenticateUser(loginVm);
+
+
+                        if ((bool)Repository.AuthenticateUser(loginVm).data)
+                        {
+                            // User user = (User)Repository.GetUserByEmail(loginVm.email).data;
+                            ReturnStatus.tryParseUser(Repository.GetUserByEmail(loginVm.email), out User user);
+
+                            if (user.isAdmin == 1)
+                            {
+                                Session["isAdmin"] = "isAdmin";
+                            }
+
+                            Session["UserName"] = user.emailAddress;
+                            return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        }
+                        else
+                        {
+                            ViewBag.status = "The password provided is not valid.";
+                            return View(loginVm);
+                        }
                     }
                     else
                     {
-                        ViewBag.status = "The password provided is not valid.";
+                        ViewBag.status = "The email address provided is not in our system.";
                         return View(loginVm);
                     }
                 }
-                else
-                {
-                    ViewBag.status = "The email address provided is not in our system.";
-                    return View(loginVm);
-                }
+            }catch(Exception e)
+            {
+
             }
             // model was bad
             return RedirectToAction("Login", "Volunteer");
