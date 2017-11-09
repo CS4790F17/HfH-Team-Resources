@@ -9,6 +9,8 @@ using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using System.Drawing;
 using HabitatForHumanity.ViewModels;
+using HabitatForHumanity.Models;
+using static HabitatForHumanity.Models.User;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -157,6 +159,13 @@ namespace HabitatForHumanity.Controllers
 
             #endregion
             return PartialView("_HoursByDemog", chart);
+        }
+
+        // public static List<User> GetDemographicsForPie()
+        public ActionResult GetDemographicsForPie()
+        {
+            List<Demog> users = Models.User.GetDemographicsForPie();
+            return View(users);
         }
 
 
