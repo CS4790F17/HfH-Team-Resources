@@ -157,7 +157,37 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult GetBadPunches()
         {
-            return PartialView("_BadPunches", BadPunchVM.GetDummyBadPunches());
+
+            List<TimeSheet> ts = Repository.GetBadTimeSheets();
+            List<BadPunchVM> bp = new List<BadPunchVM>();
+            foreach(TimeSheet t in ts)
+            {
+                User user = Repository.GetUser(t.user_Id);
+                string volName = "";
+                if(user != null)
+                {
+                    if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
+                    {
+                        volName = user.emailAddress;
+                    }
+                    else if (string.IsNullOrEmpty(user.firstName))
+                    {
+                        volName += user.emailAddress + " ";
+                    }
+                    else if(string.IsNullOrEmpty(user.lastName))
+                    {
+                        volName += user.emailAddress;
+                    }
+                    else
+                    {
+                        volName += user.firstName + " " + user.lastName;
+                    }
+                }
+                bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
+            }
+            //return PartialView("_BadPunches", BadPunchVM.GetDummyBadPunches());
+            return PartialView("_BadPunches", bp);
         }
+        
     }
 }
