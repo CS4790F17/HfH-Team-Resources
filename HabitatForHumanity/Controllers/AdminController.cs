@@ -162,9 +162,12 @@ namespace HabitatForHumanity.Controllers
             List<BadPunchVM> bp = new List<BadPunchVM>();
             foreach(TimeSheet t in ts)
             {
-                User user = Repository.GetUser(t.user_Id);
+                ReturnStatus st = Repository.GetUser(t.user_Id);
+                //User user = Repository.GetUser(t.user_Id);
                 string volName = "";
-                if(user != null)
+
+                //if st returned with all clear and user exists
+                if(ReturnStatus.tryParseUser(st, out User user))
                 {
                     if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
                     {
