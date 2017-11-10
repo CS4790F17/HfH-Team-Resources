@@ -61,17 +61,46 @@ namespace HabitatForHumanity.Models
             return exists;
         }
 
+
+
         /// <summary>
         /// Gets all the users with matching names. To be used when you know one name, but not the other. 
         /// </summary>
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
-        /// <returns>List of users</returns>
-        public static List<User> GetUsersByName(string firstName, string lastName)
+        /// <returns>ReturnStatus object containing a list of users</returns>
+        public static ReturnStatus GetUsersByName(string firstName, string lastName)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.users.Where(x => x.firstName.Equals(firstName) || x.lastName.Equals(lastName)).ToList();
+            ReturnStatus st = new ReturnStatus();
+
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.users.Where(x => x.firstName.Equals(firstName) || x.lastName.Equals(lastName)).ToList();
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database.";
+                return st;
+            }
+
         }
+
+        ///// <summary>
+        ///// Gets all the users with matching names. To be used when you know one name, but not the other. 
+        ///// </summary>
+        ///// <param name="firstName"></param>
+        ///// <param name="lastName"></param>
+        ///// <returns>List of users</returns>
+        //public static List<User> GetUsersByName(string firstName, string lastName)
+        //{
+        //    VolunteerDbContext db = new VolunteerDbContext();
+        //    return db.users.Where(x => x.firstName.Equals(firstName) || x.lastName.Equals(lastName)).ToList();
+        //}
 
         /// <summary>
         /// Get a single user out of the database with a matching first and last name.
@@ -131,7 +160,7 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not access database.";
+                st.data = "Could not connect to database.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -146,12 +175,12 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetUser(int id)
         {
             ReturnStatus st = new ReturnStatus();
-            
+
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 //VolunteerDbContext db = null;
-                
+
                 st.data = db.users.Find(id);
                 st.errorCode = 0;
 
@@ -267,10 +296,10 @@ namespace HabitatForHumanity.Models
             Demog d27to40 = new Demog() { ageBracket = "27 to 40", numPeople = 0 };
             Demog d40to55 = new Demog() { ageBracket = "40 to 55", numPeople = 0 };
             Demog dover55 = new Demog() { ageBracket = "Over 55", numPeople = 0 };
-            foreach(User u in users)
+            foreach (User u in users)
             {
                 DateTime present = DateTime.Now;
-                if(present.AddYears(-18) < u.birthDate)
+                if (present.AddYears(-18) < u.birthDate)
                 {
                     dunder18.numPeople++;
                 }
@@ -285,7 +314,7 @@ namespace HabitatForHumanity.Models
                 else if (present.AddYears(-40) <= u.birthDate && present.AddYears(-55) > u.birthDate)
                 {
                     d40to55.numPeople++;
-                }         
+                }
                 else
                 {
                     dover55.numPeople++;

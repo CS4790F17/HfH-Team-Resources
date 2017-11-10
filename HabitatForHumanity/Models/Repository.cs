@@ -114,7 +114,7 @@ namespace HabitatForHumanity.Models
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns>List of users</returns>
-        public static List<User> GetUsersByName(string firstName, string lastName)
+        public static ReturnStatus GetUsersByName(string firstName, string lastName)
         {
             //set both names to lowercase to avoid errors
             return User.GetUsersByName(firstName.ToLower(), lastName.ToLower());
