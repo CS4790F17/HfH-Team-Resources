@@ -170,6 +170,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="DBscripts\ageBracketsByGender.txt" />
     <Content Include="DBscripts\VolunteerDBscript.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -285,7 +286,7 @@
     <Content Include="Views\Admin\Dashboard.cshtml" />
     <Content Include="Views\Admin\Reports.cshtml" />
     <Content Include="Views\Admin\_HoursMonthChart.cshtml" />
-    <Content Include="Views\Admin\_HoursByDemog.cshtml" />
+    <Content Include="Views\Admin\_DemographicsPie.cshtml" />
     <Content Include="Views\Admin\_BadPunches.cshtml" />
     <Content Include="Views\User\VolunteerPortalOut.cshtml" />
     <Content Include="Views\User\_PunchIn.cshtml" />
