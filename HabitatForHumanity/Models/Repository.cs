@@ -43,34 +43,7 @@ namespace HabitatForHumanity.Models
         /// <returns>ReturnStatus object that contains true if user entered a correct password.</returns>
         public static ReturnStatus AuthenticateUser(LoginVM loginVm)
         {
-            ReturnStatus st = new ReturnStatus();
-
-            try
-            {
-                bool exists = false;
-
-                st = User.GetUserByEmail(loginVm.email);
-
-                //check status to make sure error code and data are correct
-                if (ReturnStatus.tryParseUser(st, out User user))
-                {
-                    if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
-                    {
-                        exists = true;
-                    }
-                }
-
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.data = exists;
-                return st;
-            }
-            catch (Exception e)
-            {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_AUTHENTICATE_USER;
-                st.data = "Failed to authenticate user.";
-                st.errorMessage = e.ToString();
-                return st;
-            }
+            return User.AuthenticateUser(loginVm);
         }
 
 

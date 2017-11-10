@@ -43,24 +43,46 @@ namespace HabitatForHumanity.Models
 
         #region Database Access Methods
 
+
+       
+
+
         /// <summary>
         /// Checks whether the user entered a bad password for that log in email.
         /// </summary>
         /// <param name="loginVm">The viewmodel containing the users email and password.</param>
-        /// <returns>True if user entered a correct password.</returns>
-        public static bool AuthenticateUser(LoginVM loginVm)
+        /// <returns>ReturnStatus object that contains true if user entered a correct password.</returns>
+        public static ReturnStatus AuthenticateUser(LoginVM loginVm)
         {
-            bool exists = false;
-            //User user = User.GetUserByEmail(loginVm.email);
-            User user = (User)User.GetUserByEmail(loginVm.email).data; //temp while fixing others
+            ReturnStatus st = new ReturnStatus();
 
-            if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+            try
             {
-                exists = true;
-            }
-            return exists;
-        }
+                bool exists = false;
 
+                st = User.GetUserByEmail(loginVm.email);
+
+                //check status to make sure error code and data are correct
+                if (ReturnStatus.tryParseUser(st, out User user))
+                {
+                    if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+                    {
+                        exists = true;
+                    }
+                }
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = exists;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_AUTHENTICATE_USER;
+                st.data = "Failed to authenticate user.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        }
 
 
         /// <summary>
@@ -89,18 +111,6 @@ namespace HabitatForHumanity.Models
             }
 
         }
-
-        ///// <summary>
-        ///// Gets all the users with matching names. To be used when you know one name, but not the other. 
-        ///// </summary>
-        ///// <param name="firstName"></param>
-        ///// <param name="lastName"></param>
-        ///// <returns>List of users</returns>
-        //public static List<User> GetUsersByName(string firstName, string lastName)
-        //{
-        //    VolunteerDbContext db = new VolunteerDbContext();
-        //    return db.users.Where(x => x.firstName.Equals(firstName) || x.lastName.Equals(lastName)).ToList();
-        //}
 
         /// <summary>
         /// Get a single user out of the database with a matching first and last name.
