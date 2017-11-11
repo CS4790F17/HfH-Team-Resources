@@ -17,11 +17,9 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="user">User to add.</param>
         /// <returns>The id of the user or 0 if no user could be added.</returns>
-        public static int CreateUser(User user)
+        public static ReturnStatus CreateUser(User user)
         {
-            user.password = Crypto.HashPassword(user.password);
-            user.isAdmin = 0;
-            user.waiverSignDate = DateTime.Today;
+            //user.isAdmin = 0;
             return User.CreateUser(user);
         }
 

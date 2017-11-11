@@ -44,7 +44,7 @@ namespace HabitatForHumanity.Models
         #region Database Access Methods
 
 
-       
+
 
 
         /// <summary>
@@ -141,7 +141,8 @@ namespace HabitatForHumanity.Models
                 st.data = db.users.Where(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName)).Single();
 
                 return st;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_SINGLE_USER;
                 st.data = "";
@@ -167,7 +168,8 @@ namespace HabitatForHumanity.Models
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
                 st.data = db.users.Any(u => u.emailAddress.Equals(email));
                 return st;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_EMAIL;
                 st.data = "Could not find user with that email address";
@@ -247,26 +249,79 @@ namespace HabitatForHumanity.Models
         }
 
 
+
         /// <summary>
         /// Adds a user to the database.
         /// </summary>
         /// <param name="user">User to add.</param>
         /// <returns>The id of the user or 0 if no user could be added.</returns>
-        public static int CreateUser(User user)
+        public static ReturnStatus CreateUser(User user)
         {
-            int userId = 0;
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.users.Add(user);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
 
-            var users = db.users.Where(u => u.emailAddress.Equals(user.emailAddress));
-            User newUser = users.FirstOrDefault();
-            if (newUser != null)
+            try
             {
-                userId = newUser.Id;
+                user.password = Crypto.HashPassword(user.password);
+                user.waiverSignDate = DateTime.Today;
+
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.users.Add(user);
+                db.SaveChanges();
+
+                //entity framework automagically populates a model with all database generated ids
+                //so the passed in user object will have an id
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = user.Id;
+
+
+
+                //var users = db.users.Where(u => u.emailAddress.Equals(user.emailAddress));
+                //User newUser = users.FirstOrDefault();
+                //if (newUser != null)
+                //{
+                //    userId = newUser.Id;
+                //}
+                //return userId;
+
+                return st;
+
             }
-            return userId;
+            catch (ArgumentNullException e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.USER_PASSWORD_CANNOT_BE_NULL;
+                st.errorMessage = e.ToString();
+                st.data = "Password is a required field.";
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database.";
+                return st;
+            }
         }
+
+        ///// <summary>
+        ///// Adds a user to the database.
+        ///// </summary>
+        ///// <param name="user">User to add.</param>
+        ///// <returns>The id of the user or 0 if no user could be added.</returns>
+        //public static int CreateUser(User user)
+        //{
+        //    int userId = 0;
+        //    VolunteerDbContext db = new VolunteerDbContext();
+        //    db.users.Add(user);
+        //    db.SaveChanges();
+
+        //    var users = db.users.Where(u => u.emailAddress.Equals(user.emailAddress));
+        //    User newUser = users.FirstOrDefault();
+        //    if (newUser != null)
+        //    {
+        //        userId = newUser.Id;
+        //    }
+        //    return userId;
+        //}
 
 
         /// <summary>

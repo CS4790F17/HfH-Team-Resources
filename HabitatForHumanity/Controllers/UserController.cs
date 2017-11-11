@@ -54,7 +54,7 @@ namespace HabitatForHumanity.Controllers
                 ReturnStatus st = Repository.GetUser((int)id);
                 if (ReturnStatus.tryParseUser(st, out User user))
                 {
-                   // User user = (User)st.data;
+                    // User user = (User)st.data;
 
                     if (user != null)
                     {
@@ -135,19 +135,23 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
+                //TODO: potentially rework with a bool.TryParse to ensure no type mismatches
                 if ((bool)Repository.EmailExists(user.emailAddress).data == false)
                 {
-                    int userId = Repository.CreateUser(user);
-                    if (userId > 0)
+                    // int userId = (int)Repository.CreateUser(user).data;
+                    if (int.TryParse(Repository.CreateUser(user).data.ToString(), out int userId))
                     {
-                        Session["isAdmin"] = null; // if you're admin, you have to have an admin change isAdmin to 1, then log in
-                        Session["UserName"] = user.emailAddress;
-                        return RedirectToAction("VolunteerPortal", new { id = userId });
-                    }
-                    else
-                    {
-                        ViewBag.status = "An error occurred during account creation please try again.";
-                        return View(user);
+                        if (userId > 0)
+                        {
+                            Session["isAdmin"] = null; // if you're admin, you have to have an admin change isAdmin to 1, then log in
+                            Session["UserName"] = user.emailAddress;
+                            return RedirectToAction("VolunteerPortal", new { id = userId });
+                        }
+                        else
+                        {
+                            ViewBag.status = "An error occurred during account creation please try again.";
+                            return View(user);
+                        }
                     }
                 }
                 else
@@ -211,7 +215,8 @@ namespace HabitatForHumanity.Controllers
                         return View(loginVm);
                     }
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 //TODO: add error logging/handling
             }
