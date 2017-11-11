@@ -112,6 +112,7 @@ namespace HabitatForHumanity.Models
 
         }
 
+
         /// <summary>
         /// Get a single user out of the database with a matching first and last name.
         /// Only to be used when you know the exact names
@@ -119,23 +120,37 @@ namespace HabitatForHumanity.Models
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns>Id of the returned user</returns>
-        public static int GetUserByName(string firstName, string lastName)
+        public static ReturnStatus GetUserByName(string firstName, string lastName)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-
-            var userCount = db.users.Count(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName));
-
-            //if no users are found or if multiple users are found
-            if (userCount != 1)
+            ReturnStatus st = new ReturnStatus();
+            try
             {
-                return 0;
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                var userCount = db.users.Count(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName));
+
+                //if no users are found or if multiple users are found
+                if (userCount != 1)
+                {
+                    st.errorCode = -1;
+                    st.data = "More than one user found.";
+                    return st;
+                }
+
+                st.errorCode = 0;
+                st.data = db.users.Where(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName)).Single();
+
+                return st;
+            }catch(Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_SINGLE_USER;
+                st.data = "";
+                st.errorMessage = e.ToString();
+                return st;
             }
-
-            var user = db.users.Where(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName)).Single();
-
-            return user.Id;
         }
 
+  
         /// <summary>
         /// Finds email if it exists in the database.
         /// </summary>

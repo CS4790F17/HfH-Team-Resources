@@ -17,6 +17,7 @@ namespace HabitatForHumanity.Models
             All_CLEAR,
             COULD_NOT_CONNECT_TO_DATABASE,
             COULD_NOT_AUTHENTICATE_USER,
+            COULD_NOT_FIND_SINGLE_USER,
         };
 
 
