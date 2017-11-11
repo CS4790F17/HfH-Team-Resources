@@ -137,7 +137,7 @@ namespace HabitatForHumanity.Models
                     return st;
                 }
 
-                st.errorCode = 0;
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
                 st.data = db.users.Where(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName)).Single();
 
                 return st;
@@ -150,17 +150,43 @@ namespace HabitatForHumanity.Models
             }
         }
 
-  
+
+
         /// <summary>
         /// Finds email if it exists in the database.
         /// </summary>
         /// <param name="email">Email to search for.</param>
         /// <returns>True if email exists</returns>
-        public static bool EmailExists(string email)
+        public static ReturnStatus EmailExists(string email)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.users.Any(u => u.emailAddress.Equals(email));
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = db.users.Any(u => u.emailAddress.Equals(email));
+                return st;
+            }catch(Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_EMAIL;
+                st.data = "Could not find user with that email address";
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
+
+
+        ///// <summary>
+        ///// Finds email if it exists in the database.
+        ///// </summary>
+        ///// <param name="email">Email to search for.</param>
+        ///// <returns>True if email exists</returns>
+        //public static bool EmailExists(string email)
+        //{
+        //    VolunteerDbContext db = new VolunteerDbContext();
+        //   return db.users.Any(u => u.emailAddress.Equals(email));
+        //}
 
         /// <summary>
         /// Gets the user in the database with the matching email.

@@ -30,7 +30,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <returns>True if email exists</returns>
         /// <param name="email">Email to search for.</param>
-        public static bool EmailExists(string email)
+        public static ReturnStatus EmailExists(string email)
         {
             return User.EmailExists(email);
         }

@@ -135,7 +135,7 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (Repository.EmailExists(user.emailAddress) == false)
+                if ((bool)Repository.EmailExists(user.emailAddress).data == false)
                 {
                     int userId = Repository.CreateUser(user);
                     if (userId > 0)
@@ -180,7 +180,7 @@ namespace HabitatForHumanity.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (Repository.EmailExists(loginVm.email))
+                    if ((bool)Repository.EmailExists(loginVm.email).data)
                     {
 
                         st = Repository.AuthenticateUser(loginVm);
@@ -236,7 +236,7 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (Repository.EmailExists(forgot.email))
+                if ((bool)Repository.EmailExists(forgot.email).data)
                 {
                     try
                     {
