@@ -12,5 +12,6 @@ namespace HabitatForHumanity.ViewModels
         public double cumulativeHours { get; set; }
         public string fullName { get; set; }
         public bool isPunchedIn { get; set; }
+        public bool isReStore { get; set; }
     }
 }
