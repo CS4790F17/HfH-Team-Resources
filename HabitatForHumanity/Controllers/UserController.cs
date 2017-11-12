@@ -54,55 +54,48 @@ namespace HabitatForHumanity.Controllers
                 ReturnStatus st = Repository.GetUser((int)id);
                 if (ReturnStatus.tryParseUser(st, out User user))
                 {
-                    // User user = (User)st.data;
 
-                    if (user != null)
+                    PortalVM portalVM = new PortalVM();
+                    portalVM.punchInVM = new PunchInVM();
+                    portalVM.punchOutVM = new PunchOutVM();
+                    portalVM.fullName = "";
+                    portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
+                    portalVM.isPunchedIn = true;
+
+                    TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
+
+                    if (temp == null || temp.Id < 1)
                     {
-                        PortalVM portalVM = new PortalVM();
-                        portalVM.punchInVM = new PunchInVM();
-                        portalVM.punchOutVM = new PunchOutVM();
-                        portalVM.fullName = "";
-                        portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
-                        portalVM.isPunchedIn = true;
+                        portalVM.isPunchedIn = false;
+                        ReturnStatus st2 = Repository.GetPunchInVM((int)id);
 
-                        TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
-
-                        if (temp == null || temp.Id < 1)
+                        if (ReturnStatus.tryParsePunchInVM(st2, out PunchInVM punchIn))
                         {
-                            portalVM.isPunchedIn = false;
-                            ReturnStatus st2 = Repository.GetPunchInVM((int)id);
-
-                            if (ReturnStatus.tryParsePunchInVM(st2, out PunchInVM punchIn))
-                            {
-                                portalVM.punchInVM = punchIn;
-                            }
-
-                            portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
-                            portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
-                        }
-                        else
-                        {
-                            portalVM.punchOutVM.timeSheetNumber = temp.Id;
-                            portalVM.punchOutVM.userNumber = temp.user_Id;
-                            portalVM.punchOutVM.projectNumber = temp.project_Id;
-                            portalVM.punchOutVM.orgNumber = temp.org_Id;
-                            portalVM.punchOutVM.inTime = temp.clockInTime;
+                            portalVM.punchInVM = punchIn;
                         }
 
-
-                        if (user.firstName != null)
-                        {
-                            portalVM.fullName += user.firstName + " ";
-                        }
-                        if (user.lastName != null)
-                        {
-                            portalVM.fullName += user.lastName;
-                        }
-
-
-
-                        return View(portalVM);
+                        portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
+                        portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
                     }
+                    else
+                    {
+                        portalVM.punchOutVM.timeSheetNumber = temp.Id;
+                        portalVM.punchOutVM.userNumber = temp.user_Id;
+                        portalVM.punchOutVM.projectNumber = temp.project_Id;
+                        portalVM.punchOutVM.orgNumber = temp.org_Id;
+                        portalVM.punchOutVM.inTime = temp.clockInTime;
+                    }
+
+
+                    if (user.firstName != null)
+                    {
+                        portalVM.fullName += user.firstName + " ";
+                    }
+                    if (user.lastName != null)
+                    {
+                        portalVM.fullName += user.lastName;
+                    }
+                    return View(portalVM);
                 }
             }
             catch (Exception e)
@@ -110,8 +103,6 @@ namespace HabitatForHumanity.Controllers
                 //TODO: redirect/display error message/log
                 return RedirectToAction("Login", "User");
             }
-
-
             return RedirectToAction("Login", "User");
         }
         #endregion
