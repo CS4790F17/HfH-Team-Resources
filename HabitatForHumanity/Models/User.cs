@@ -356,26 +356,62 @@ namespace HabitatForHumanity.Models
         /// Deletes the user from the database.
         /// </summary>
         /// <param name="user">The user object to be deleted.</param>
-        public static void DeleteUser(User user)
+        public static ReturnStatus DeleteUser(User user)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.users.Attach(user);
-            db.users.Remove(user);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.users.Attach(user);
+                db.users.Remove(user);
+                db.SaveChanges();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = "Successfully deleted user.";
+                return st;
+
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Deletes the user in the database with matching id.
         /// </summary>
         /// <param name="id"></param>
-        public static void DeleteUserById(int id)
+        public static ReturnStatus DeleteUserById(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            User user = db.users.Find(id);
-            if (user != null)
+            ReturnStatus st = new ReturnStatus();
+
+            try
             {
-                db.users.Remove(user);
-                db.SaveChanges();
+                VolunteerDbContext db = new VolunteerDbContext();
+                User user = db.users.Find(id);
+                if (user != null)
+                {
+                    db.users.Remove(user);
+                    db.SaveChanges();
+
+                    st.data = "Successfully deleted user.";
+                }
+                else
+                {
+                    st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_DELETE;
+                    st.data = "Could not delete user.";
+                }
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
             }
         }
 

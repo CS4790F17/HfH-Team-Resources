@@ -22,6 +22,7 @@ namespace HabitatForHumanity.Models
             COULD_NOT_FIND_SINGLE_USER,
             COULD_NOT_FIND_EMAIL,
             USER_PASSWORD_CANNOT_BE_NULL,
+            COULD_NOT_DELETE,
         };
 
 

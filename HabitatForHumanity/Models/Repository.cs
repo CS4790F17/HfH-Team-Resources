@@ -142,18 +142,18 @@ namespace HabitatForHumanity.Models
         /// Deletes the user from the database.
         /// </summary>
         /// <param name="user">The user object to be deleted.</param>
-        public static void DeleteUser(User user)
+        public static ReturnStatus DeleteUser(User user)
         {
-            User.DeleteUser(user);
+            return User.DeleteUser(user);
         }
 
         /// <summary>
         /// Deletes the user in the database with matching id.
         /// </summary>
         /// <param name="id"></param>
-        public static void DeleteUserById(int id)
+        public static ReturnStatus DeleteUserById(int id)
         {
-            User.DeleteUserById(id);
+            return User.DeleteUserById(id);
         }
 
 
@@ -554,14 +554,14 @@ namespace HabitatForHumanity.Models
             List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId);
             List<TimeSheet> volunteerTimes = new List<TimeSheet>();
             foreach (TimeSheet ts in temp)
-            {              
-                if (ts.clockOutTime != userClockedIn )
+            {
+                if (ts.clockOutTime != userClockedIn)
                     volunteerTimes.Add(ts);
             }
             TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
             return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
-         //   return 0;
-      
+            //   return 0;
+
         }
 
         /// <summary>
