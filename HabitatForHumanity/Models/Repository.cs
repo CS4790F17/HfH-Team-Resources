@@ -371,7 +371,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A TimeSheet object with matching id otherwise null.</returns>
-        public static TimeSheet GetTimeSheetById(int id)
+        public static ReturnStatus GetTimeSheetById(int id)
         {
             return TimeSheet.GetTimeSheetById(id);
         }

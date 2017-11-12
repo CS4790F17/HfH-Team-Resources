@@ -40,7 +40,7 @@ namespace HabitatForHumanity.Models
                 st.data = db.timeSheets.Where(x => x.user_Id == userId && x.project_Id == projectId && x.clockInTime.Equals(cit)).Single();
                 return st;
             }
-            catch(InvalidOperationException e)
+            catch (InvalidOperationException e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_SINGLE_TIMESHEET;
                 st.errorMessage = e.ToString();
@@ -61,10 +61,24 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A TimeSheet object with matching id otherwise null.</returns>
-        public static TimeSheet GetTimeSheetById(int id)
+        public static ReturnStatus GetTimeSheetById(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Find(id);
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = db.timeSheets.Find(id);
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
