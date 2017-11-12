@@ -28,11 +28,32 @@ namespace HabitatForHumanity.Models
         /// <param name="projectId">Id of the project</param>
         /// <param name="clockInTime">MM/DD/YYYY</param>
         /// <returns>Timesheet Object</returns>
-        public static TimeSheet GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
+        public static ReturnStatus GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            DateTime cit = DateTime.Parse(clockInTime);
-            return db.timeSheets.Where(x => x.user_Id == userId && x.project_Id == projectId && x.clockInTime.Equals(cit)).Single();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                DateTime cit = DateTime.Parse(clockInTime);
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = db.timeSheets.Where(x => x.user_Id == userId && x.project_Id == projectId && x.clockInTime.Equals(cit)).Single();
+                return st;
+            }
+            catch(InvalidOperationException e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_SINGLE_TIMESHEET;
+                st.errorMessage = e.ToString();
+                st.data = "More than one timesheet found for unique natural key.";
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>

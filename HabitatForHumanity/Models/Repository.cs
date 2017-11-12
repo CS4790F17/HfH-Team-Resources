@@ -319,7 +319,7 @@ namespace HabitatForHumanity.Models
         /// <param name="projectId">Id of the project</param>
         /// <param name="clockInTime">MM/DD/YYYY</param>
         /// <returns>Timesheet Object</returns>
-        public static TimeSheet GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
+        public static ReturnStatus GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
         {
             return TimeSheet.GetTimeSheetByNaturalKey(userId, projectId, clockInTime);
         }
