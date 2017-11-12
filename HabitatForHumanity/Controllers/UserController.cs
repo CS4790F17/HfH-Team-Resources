@@ -70,18 +70,12 @@ namespace HabitatForHumanity.Controllers
                         if (temp == null || temp.Id < 1)
                         {
                             portalVM.isPunchedIn = false;
-
-
-
                             ReturnStatus st2 = Repository.GetPunchInVM((int)id);
 
-                            if (st2.errorCode == 0 && st2.data != null)
+                            if (ReturnStatus.tryParsePunchInVM(st2, out PunchInVM punchIn))
                             {
-                                //cast st2.data into a punchInVM
-                                portalVM.punchInVM = (PunchInVM)st2.data;
+                                portalVM.punchInVM = punchIn;
                             }
-
-
 
                             portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
                             portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
@@ -241,6 +235,7 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
+                //TODO: replace with bool.Tryparse to ensure no type mismatch
                 if ((bool)Repository.EmailExists(forgot.email).data)
                 {
                     try

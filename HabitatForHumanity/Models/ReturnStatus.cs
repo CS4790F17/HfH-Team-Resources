@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using HabitatForHumanity.Models;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Models
 {
@@ -60,6 +62,33 @@ namespace HabitatForHumanity.Models
                 if (st.errorCode == 0 && st.data != null)
                 {
                     result = (List<User>)st.data;
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                //TODO: log e
+                //could not parse user
+                return false;
+
+            }
+        }
+
+        /// <summary>
+        /// Tries to safely parse a PunchInVM out of a ReturnStatus object
+        /// </summary>
+        /// <param name="st">ReturnStatus object </param>
+        /// <param name="punchIn">Uninitialized PunchInVM object</param>
+        /// <returns></returns>
+        public static bool tryParsePunchInVM(ReturnStatus st, out PunchInVM punchIn)
+        {
+            punchIn = new PunchInVM();
+            try
+            {
+                if (st.errorCode == 0 && st.data != null)
+                {
+                    punchIn = (PunchInVM)st.data;
                     return true;
                 }
                 return false;
