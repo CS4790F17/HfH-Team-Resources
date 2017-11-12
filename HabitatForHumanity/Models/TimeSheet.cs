@@ -50,7 +50,7 @@ namespace HabitatForHumanity.Models
         /// Adds the TimeSheet to the database.
         /// </summary>
         /// <param name="ts">TimeSheet object to add.</param>
-        public static void AddTimeSheet(TimeSheet ts)
+        public static void InsertTimeSheet(TimeSheet ts)
         {
             VolunteerDbContext db = new VolunteerDbContext();
             db.timeSheets.Add(ts);
@@ -143,7 +143,7 @@ namespace HabitatForHumanity.Models
             {
                 temp = sheets.First();
                 // only if the clockout is midnight today(tomorrow really)
-                if(temp.clockOutTime == DateTime.Today.AddDays(1))
+                if (temp.clockOutTime == DateTime.Today.AddDays(1))
                 {
                     return temp;
                 }
@@ -151,12 +151,6 @@ namespace HabitatForHumanity.Models
             return new TimeSheet();
         }
 
-        public static void InsertTimeSheet(TimeSheet ts)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.timeSheets.Add(ts);
-            db.SaveChanges();
-        }
 
         public static void UpdateTimeSheet(TimeSheet timeSheet)
         {
@@ -179,7 +173,7 @@ namespace HabitatForHumanity.Models
             var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
                 .OrderByDescending(c => c.clockInTime).
                 ToList();
-                
+
             if (sheets.Count() > 0)
             {
             }

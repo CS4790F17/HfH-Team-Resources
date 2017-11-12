@@ -380,9 +380,9 @@ namespace HabitatForHumanity.Models
         /// Adds the TimeSheet to the database.
         /// </summary>
         /// <param name="ts">TimeSheet object to add.</param>
-        public static void AddTimeSheet(TimeSheet ts)
+        public static void InsertTimeSheet(TimeSheet ts)
         {
-            TimeSheet.AddTimeSheet(ts);
+            TimeSheet.InsertTimeSheet(ts);
         }
 
         /// <summary>
