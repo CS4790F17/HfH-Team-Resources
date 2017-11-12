@@ -53,16 +53,6 @@ namespace HabitatForHumanity.Controllers
             {
                 ReturnStatus st = Repository.GetUser((int)id);
                 if (ReturnStatus.tryParseUser(st, out User user))
-                PortalVM portalVM = new PortalVM();
-                portalVM.punchInVM = new PunchInVM();
-                portalVM.punchOutVM = new PunchOutVM();
-                portalVM.fullName = "";
-                portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
-                portalVM.isPunchedIn = true;
-
-                TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
- 
-                if (temp == null || temp.Id < 1)
                 {
                     // User user = (User)st.data;
 
@@ -72,7 +62,7 @@ namespace HabitatForHumanity.Controllers
                         portalVM.punchInVM = new PunchInVM();
                         portalVM.punchOutVM = new PunchOutVM();
                         portalVM.fullName = "";
-                        portalVM.cumulativeHours = 99.9;
+                        portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
                         portalVM.isPunchedIn = true;
 
                         TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
