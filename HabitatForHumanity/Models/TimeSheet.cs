@@ -85,11 +85,26 @@ namespace HabitatForHumanity.Models
         /// Adds the TimeSheet to the database.
         /// </summary>
         /// <param name="ts">TimeSheet object to add.</param>
-        public static void InsertTimeSheet(TimeSheet ts)
+        public static ReturnStatus InsertTimeSheet(TimeSheet ts)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.timeSheets.Add(ts);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.timeSheets.Add(ts);
+                db.SaveChanges();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = "Successfully added TimeSheet.";
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database.";
+                return st;
+            }
         }
 
         /// <summary>

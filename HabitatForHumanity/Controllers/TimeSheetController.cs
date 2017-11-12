@@ -50,6 +50,8 @@ namespace HabitatForHumanity.Controllers
                 sheet.clockInTime = DateTime.Now;
                 sheet.clockOutTime = DateTime.Today.AddDays(1);
                 sheet.org_Id = punchInVM.orgId;
+
+                //TODO: check error code?
                 Repository.PunchIn(sheet);
 
                 return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
