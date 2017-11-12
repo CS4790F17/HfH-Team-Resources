@@ -18,7 +18,10 @@ namespace HabitatForHumanity.Models
         /// <param name="user"></param>
         public static void CreateVolunteer(User user)
         {
-            user.password = Crypto.HashPassword(user.password);
+            if (user.password != null)
+            {
+                user.password = Crypto.HashPassword(user.password);
+            }
             User.CreateVolunteer(user);
         }
 
