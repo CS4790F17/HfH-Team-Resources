@@ -110,10 +110,17 @@ namespace HabitatForHumanity.Controllers
         // GET: User/SignWaiver
         public ActionResult SignWaiver()
         {
-            SignWaiverVM signWaiver = new SignWaiverVM();
-            signWaiver.signature = "";
-            signWaiver.user = Repository.GetUserByEmail(Session["Username"].ToString());
-            return View();
+            if (Session["UserName"] != null)
+            {
+                SignWaiverVM signWaiver = new SignWaiverVM();
+                signWaiver.signature = "";
+                signWaiver.userEmail = Session["UserName"].ToString();
+                return View(signWaiver);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
         }
 
         // POST: User/SignWaiver
@@ -122,19 +129,27 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SignWaiver([Bind(
-            Include = "user, signature")] SignWaiverVM signWaiverVM)
+            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature")] SignWaiverVM signWaiverVM)
         {
             if (ModelState.IsValid)
             {
-                if (Repository.EmailExists(signWaiverVM.user.emailAddress) == false)
+                if (signWaiverVM.signature == null)
                 {
+                    return View(signWaiverVM);
                 }
-                else
-                {
-                    // this needs some kind of notification
-                    ViewBag.status = "That email already exists in out system. Click the link below.";
-                    return RedirectToAction("Login", "User");
-                }
+                User user = Repository.GetUserByEmail(signWaiverVM.userEmail);
+                user.emergencyCity = signWaiverVM.emergencyCity;
+                user.emergencyFirstName = signWaiverVM.emergencyFirstName;
+                user.emergencyHomePhone = signWaiverVM.emergencyHomePhone;
+                user.emergencyLastName = signWaiverVM.emergencyLastName;
+                user.emergencyStreetAddress = signWaiverVM.emergencyStreetAddress;
+                user.emergencyWorkPhone = signWaiverVM.emergencyWorkPhone;
+                user.emergencyZip = signWaiverVM.emergencyZip;
+                user.relation = signWaiverVM.relation;
+                user.waiverSignDate = DateTime.Now;
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("VolunteerPortal", new { id = user.Id });
             }
 
             return View(signWaiverVM);
@@ -146,7 +161,7 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult VolunteerSignup([Bind(
-            Include = "Id,firstName,gender, isAdmin,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate, emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
+            Include = "Id,firstName,gender, isAdmin,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -156,7 +171,7 @@ namespace HabitatForHumanity.Controllers
                     user.waiverSignDate = DateTime.Now.AddYears(-2);
                     Repository.CreateVolunteer(user);
                     Session["isAdmin"] = user.isAdmin;
-                    Session["Username"] = user.emailAddress;
+                    Session["UserName"] = user.emailAddress;
                     return RedirectToAction("SignWaiver", "User");
                 }
                 else
