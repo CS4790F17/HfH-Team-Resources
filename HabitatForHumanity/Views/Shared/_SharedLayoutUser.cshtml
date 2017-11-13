@@ -11,6 +11,7 @@
     <header>
         <img src="~/Images/HFHLogo.jpg" class="BannerLogo"/>
     </header>
+ 
     <div class="navbar navbar-inverse navbar-fixed">
         <div class="container">
             <div class="navbar-header">
@@ -22,41 +23,49 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Time Sheet<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">@Html.ActionLink("Add Time Sheet", "Create", "TimeSheet")</a></li>
-                            <li><a href="#">@Html.ActionLink("Edit Time Sheet", "Edit", "TimeSheet")</a></li>
-                            <li><a href="#">@Html.ActionLink("Delete Time Sheet", "Delete", "TimeSheet")</a></li>
-                        </ul>
-                    </li>
 
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Projects<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">@Html.ActionLink("Add Project", "Create", "Project")</a></li>
-                            <li><a href="#">@Html.ActionLink("Edit Project", "Edit", "Project")</a></li>
-                            <li><a href="#">@Html.ActionLink("Delete Project", "Delete", "Project")</a></li>
-                        </ul>
-                    </li>
+                    @{  
+                        if (Session["isAdmin"] != null && Session["isAdmin"].Equals(1))
+                        {
 
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Organization<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">@Html.ActionLink("Add Organization", "Create", "Organization")</a></li>
-                            <li><a href="#">@Html.ActionLink("Edit Organization", "Edit", "Organization")</a></li>
-                            <li><a href="#">@Html.ActionLink("Delete Organization", "Delete", "Organization")</a></li>
-                        </ul>
-                    </li>
-                 </ul>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Time Sheet<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">@Html.ActionLink("Add Time Sheet", "Create", "TimeSheet")</a></li>
+                                    <li><a href="#">@Html.ActionLink("Edit Time Sheet", "Edit", "TimeSheet")</a></li>
+                                    <li><a href="#">@Html.ActionLink("Delete Time Sheet", "Delete", "TimeSheet")</a></li>
+                                </ul>
+                            </li>
 
-                <ul class="nav navbar-nav navbar-right">
-                    <li><span class="glyphicon glyphicon-user" style="color: #54B948; padding-left:7px">@Html.ActionLink("Edit Profile", "Edit", "User")</span></li>
-                    <li><span class="glyphicon glyphicon-log-in" style="color: #54B948; padding-left:3px">@Html.ActionLink("Sign Out", "PunchOut", "TimeSheet")</span></li>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Projects<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">@Html.ActionLink("Add Project", "Create", "Project")</a></li>
+                                    <li><a href="#">@Html.ActionLink("Edit Project", "Edit", "Project")</a></li>
+                                    <li><a href="#">@Html.ActionLink("Delete Project", "Delete", "Project")</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Organization<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">@Html.ActionLink("Add Organization", "Create", "Organization")</a></li>
+                                    <li><a href="#">@Html.ActionLink("Edit Organization", "Edit", "Organization")</a></li>
+                                    <li><a href="#">@Html.ActionLink("Delete Organization", "Delete", "Organization")</a></li>
+                                </ul>
+                            </li>
+
+                        }
+                    }
                 </ul>
 
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><span class="glyphicon glyphicon-user" style="color: #54B948; padding-left:7px">@Html.ActionLink("Edit Profile", "Edit", "User")</span></li>
+                        <li><span class="glyphicon glyphicon-log-in" style="color: #54B948; padding-left:3px">@Html.ActionLink("Sign Out", "PunchOut", "TimeSheet")</span></li>
+                    </ul>
+
+                </div>
             </div>
-        </div>
     </div>
     <div class="container body-content">
         @RenderBody()
