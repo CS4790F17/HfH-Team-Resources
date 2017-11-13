@@ -40,6 +40,7 @@ namespace HabitatForHumanity.Models
         public string city { get; set; }
         [Required(ErrorMessage = "Enter Zipcode")]
         [Display(Name = "Zipcode*")]
+        [RegularExpression(@"^(^\d{5}$)|(^\d{5}-\d{4}$)$", ErrorMessage = "Please Enter a Valid Zip")]
         public string zip { get; set; }
         [Required(ErrorMessage = "Enter Password")]
         [Display(Name = "Password*")]
