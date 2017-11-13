@@ -13,6 +13,19 @@ namespace HabitatForHumanity.Models
         #region User functions
 
         /// <summary>
+        /// Creates a volunteer user
+        /// </summary>
+        /// <param name="user"></param>
+        public static void CreateVolunteer(User user)
+        {
+            if (user.password != null)
+            {
+                user.password = Crypto.HashPassword(user.password);
+            }
+            User.CreateVolunteer(user);
+        }
+
+        /// <summary>
         /// Adds a user to the database.
         /// </summary>
         /// <param name="user">User to add.</param>
@@ -34,6 +47,7 @@ namespace HabitatForHumanity.Models
         {
             return User.EmailExists(email);
         }
+
 
         /// <summary>
         /// Checks whether the user entered a bad password for that log in email.
@@ -269,6 +283,48 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
+        /// Gets all timesheets for a specific project
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
+        {
+            return TimeSheet.GetAllTimeSheetsByProjectId(projectId);
+        }
+
+        /// <summary>
+        /// Gets all the timesheets for a single volunteer
+        /// </summary>
+        /// <param name="volunteerId"></param>
+        public static List<TimeSheet> GetAllTimeSheetsByVolunteer(int volunteerId)
+        {
+            return TimeSheet.GetAllVolunteerTimeSheets(volunteerId);
+        }
+
+        /// <summary>
+        /// Gets all the timesheets for an organization
+        /// </summary>
+        /// <param name="organizationId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByOrganizationId(int organizationId)
+        {
+            return TimeSheet.GetAllTimeSheetsByOrganizationid(organizationId);
+        }
+
+
+        /// <summary>
+        /// Gets all the timesheets within a specified date range.
+        /// </summary>
+        /// <param name="beginDate">Datetime represntation of the begin date</param>
+        /// <param name="endDate">Datetime represntation of the begin date</param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
+        {
+            return TimeSheet.GetAllTimeSheetsInDateRange(beginDate, endDate);
+        }
+
+
+        /// <summary>
         /// Get the TimeSheet with the matching id.
         /// </summary>
         /// <param name="id"></param>
@@ -319,18 +375,6 @@ namespace HabitatForHumanity.Models
         {
             return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
-        //public static PunchOutVM GetPunchClockVM(int userId)
-        //{
-        //    PunchOutVM punch = new PunchOutVM();
-
-        //    User user = GetUser(userId);
-        //    punch.userName = user.firstName + " " + user.lastName;
-        //    punch.projectList = GetProjectListVMs();      
-        //    punch.orgList = Organization.GetOrganizations();
-        //    TimeSheet ts = TimeSheet.GetClockedInUserTimeSheet(userId);
-        //    punch.timeSheet = ts;
-        //    return punch;
-        //}
 
         public static PunchInVM GetPunchInVM(int userId)
         {
@@ -338,8 +382,6 @@ namespace HabitatForHumanity.Models
             User user = GetUser(userId);
             punch.userId = userId;
             punch.userName = user.firstName + " " + user.lastName;
-           // punch.projectList = GetProjectListVMs();
-           // punch.orgList = Organization.GetAllOrganizations();
             return punch;
         }
 
@@ -352,25 +394,12 @@ namespace HabitatForHumanity.Models
         {
             TimeSheet.InsertTimeSheet(ts);
         }
-        public static List<ProjectListVM> GetProjectListVMs()
-        {
-            List<Project> projects = new List<Project>();
-            List<ProjectListVM> p = new List<ProjectListVM>();
-            projects = Project.GetActiveProjects();
-            if (projects.Count() > 0)
-            {
-                foreach (Project proj in projects)
-                {
-                    p.Add(new ProjectListVM { Id = proj.Id, projectName = proj.name });
-                }
-            }
-            return p;
-        }
 
         #endregion
 
-        /*
         #region OrgUser functions
+        /*
+        
 
 
         /// <summary>
@@ -441,11 +470,52 @@ namespace HabitatForHumanity.Models
         }
 
 
-        #endregion
+   
     */
+        #endregion
 
-        
+        #region Report functions
 
+        public static double getTotalHoursWorkedByVolunteer(int volunteerId)
+        {
+            DateTime userClockedIn = DateTime.Today.AddDays(1);
+            List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId);
+            List<TimeSheet> volunteerTimes = new List<TimeSheet>();
+            foreach (TimeSheet ts in temp)
+            {              
+                if (ts.clockOutTime != userClockedIn )
+                    volunteerTimes.Add(ts);
+            }
+            TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
+            return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+         //   return 0;
+      
+        }
 
+        /// <summary>
+        /// Takes a refence to a list and adds all the worked hours up into a total.
+        /// </summary>
+        /// <param name="ts">List of timesheets to calculate hours on.</param>
+        /// <returns>A timespan object with the total time worked.</returns>
+        public static TimeSpan AddTimeSheetHours(List<TimeSheet> ts)
+        {
+            TimeSpan hoursWorked = TimeSpan.Zero;
+            foreach (TimeSheet sheet in ts)
+            {
+                hoursWorked += sheet.clockOutTime - sheet.clockInTime;
+            }
+            return hoursWorked;
+        }
+
+        public static List<User.Demog> GetDemographicsForPie(string gender)
+        {
+            return User.GetDemographicsForPie(gender);
+        }
+
+        public static List<TimeSheet> GetBadTimeSheets()
+        {
+            return TimeSheet.GetBadTimeSheets();
+        }
+        #endregion
     }
 }

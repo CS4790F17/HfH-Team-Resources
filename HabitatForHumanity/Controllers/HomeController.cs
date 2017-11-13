@@ -30,7 +30,16 @@ namespace HabitatForHumanity.Controllers
             //Repository.GetUserByName("test1", "LASTname");
             var temp = Repository.GetUsersByName("", "lastname");
 
+            var test = Repository.GetAllTimeSheetsByProjectId(1);
+            Repository.GetAllTimeSheetsByVolunteer(1);
+            var timetest = Repository.AddTimeSheetHours(test);
+            var volunteerTest = Repository.GetAllTimeSheetsByVolunteer(6);
+            var orgtest = Repository.GetAllTimeSheetsByOrganizationId(1);
 
+            DateTime beginDate = DateTime.Parse("11/1/2017");
+            DateTime endDate = DateTime.Parse("11/3/2017");
+
+            var dateTest = Repository.GetAllTimeSheetsInDateRange(beginDate, endDate);
 
             return View(model);
         }

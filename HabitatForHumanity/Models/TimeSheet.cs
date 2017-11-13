@@ -15,7 +15,7 @@ namespace HabitatForHumanity.Models
         public int Id { get; set; }
         public int user_Id { get; set; }
         public int project_Id { get; set; }
-        public int org_id { get; set; }
+        public int org_Id { get; set; }
         public DateTime clockInTime { get; set; }
         public DateTime clockOutTime { get; set; }
 
@@ -88,33 +88,77 @@ namespace HabitatForHumanity.Models
         {
             VolunteerDbContext db = new VolunteerDbContext();
             TimeSheet ts = db.timeSheets.Find(id);
-            if(ts != null)
+            if (ts != null)
             {
                 db.timeSheets.Remove(ts);
                 db.SaveChanges();
             }
         }
+
+        /// <summary>
+        /// Gets all the timesheets with the supplied project id.
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
+        }
+
+        /// <summary>
+        /// Gets all timesheets where the clock in and out dates are between beginDate and endDate parameters.
+        /// </summary>
+        /// <param name="beginDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.clockInTime >= beginDate && x.clockOutTime <= endDate).OrderBy(x => x.Id).ToList();
+        }
+
+
+        /// <summary>
+        /// Gets all timesheets with a specified organization id.
+        /// </summary>
+        /// <param name="organizationId"></param>
+        /// <returns></returns>
+        public static List<TimeSheet> GetAllTimeSheetsByOrganizationid(int organizationId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.org_Id == organizationId).OrderBy(x => x.Id).ToList();
+        }
+
         #endregion
 
         public static TimeSheet GetClockedInUserTimeSheet(int userId)
         {
-            //VolunteerDbContext db = new VolunteerDbContext();
-            //var punches = db.timeSheets.Where(t => t.user_Id == userId && t.clockInTime.Date == DateTime.Today
-            //    && t.clockOutTime.Date > DateTime.Today).ToList();
-            //var ordered = punches.OrderByDescending(t => t.clockInTime);
-            //return ordered.FirstOrDefault();
+            TimeSheet temp = new TimeSheet();
             VolunteerDbContext db = new VolunteerDbContext();
-            var sheets = from t in db.timeSheets
-                    group t by t.user_Id into g
-                    select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
-            int id = 0;
-            if (sheets.Count() > 0)
-            {
-                id = sheets.First().Id;
-                return db.timeSheets.Find(id);
-            }
-            return null;
 
+            //var sheets = from t in db.timeSheets
+            //             group t by t.user_Id into g
+            //             select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
+
+
+            var sheet = db.timeSheets.Where(x => x.user_Id == userId).ToList().OrderBy(y => y.clockInTime);
+            if (sheet.Count() > 0)
+            {
+                if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
+                    return sheet.Last();
+            }
+
+            //if (sheets.Count() > 0)
+            //{
+            //    temp = sheets.First();
+            //    // only if the clockout is midnight today(tomorrow really)
+            //    if (temp.clockOutTime == DateTime.Today.AddDays(1))
+            //    {
+            //        return temp;
+            //    }
+            //}
+            return new TimeSheet();
         }
 
         public static void InsertTimeSheet(TimeSheet ts)
@@ -132,5 +176,27 @@ namespace HabitatForHumanity.Models
             db.Entry(timeSheet).State = EntityState.Modified;
             db.SaveChanges();
         }
+
+        public static List<TimeSheet> GetAllVolunteerTimeSheets(int volunteerId)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
+        }
+
+        public static List<TimeSheet> GetBadTimeSheets()
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
+                .OrderByDescending(c => c.clockInTime).
+                ToList();
+
+            if (sheets.Count() > 0)
+            {
+            }
+            return sheets;
+        }
+
+
+
     }
 }

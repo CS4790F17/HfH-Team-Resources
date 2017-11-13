@@ -16,13 +16,14 @@ namespace HabitatForHumanity.Controllers
     {
         private VolunteerDbContext db = new VolunteerDbContext();
 
-        // GET: User
+        #region Index
         public ActionResult Index()
         {
             return View(db.users.ToList());
         }
+        #endregion
 
-        // GET: User/Details/5
+        #region Details
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -36,37 +37,158 @@ namespace HabitatForHumanity.Controllers
             }
             return View(user);
         }
+        #endregion
+
+        #region VolunteerPortal
         public ActionResult VolunteerPortal(int? id)
         {
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ViewBag.userId = id;
-
-            return View();
-        }
-
-        public ActionResult VolunteerPortalOut(int? id)
-        {
-            if (id == null)
+            User user = Repository.GetUser((int)id);
+            if(user != null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                PortalVM portalVM = new PortalVM();
+                portalVM.punchInVM = new PunchInVM();
+                portalVM.punchOutVM = new PunchOutVM();
+                portalVM.fullName = "";
+                portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
+                portalVM.isPunchedIn = true;
+
+                TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
+ 
+                if (temp == null || temp.Id < 1)
+                {
+                    portalVM.isPunchedIn = false;
+                    portalVM.punchInVM = Repository.GetPunchInVM((int)id);
+                    portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
+                    portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
+                }
+                else
+                {
+                    portalVM.punchOutVM.timeSheetNumber = temp.Id;
+                    portalVM.punchOutVM.userNumber = temp.user_Id;
+                    portalVM.punchOutVM.projectNumber = temp.project_Id;
+                    portalVM.punchOutVM.orgNumber = temp.org_Id;
+                    portalVM.punchOutVM.inTime = temp.clockInTime;
+                }
+
+               
+                if (user.firstName != null)
+                {
+                    portalVM.fullName += user.firstName + " ";
+                }
+                if (user.lastName != null)
+                {
+                    portalVM.fullName += user.lastName;
+                }
+
+              
+
+                return View(portalVM);
             }
-            ViewBag.userId = id;
-
-            return View();
+  
+    
+            return RedirectToAction("Login", "User");
         }
+        #endregion
 
-        // GET: User/Create
+        #region Create
         public ActionResult Create()
         {
             return View();
+        }
+        
+        // GET: User/VolunteerSignup
+        public ActionResult VolunteerSignup()
+        {
+            return View();
+        }
+
+        // GET: User/SignWaiver
+        public ActionResult SignWaiver()
+        {
+            if (Session["UserName"] != null)
+            {
+                SignWaiverVM signWaiver = new SignWaiverVM();
+                signWaiver.signature = "";
+                signWaiver.userEmail = Session["UserName"].ToString();
+                return View(signWaiver);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+        // POST: User/SignWaiver
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignWaiver([Bind(
+            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature")] SignWaiverVM signWaiverVM)
+        {
+            if (ModelState.IsValid)
+            {
+                if (signWaiverVM.signature == null)
+                {
+                    return View(signWaiverVM);
+                }
+                User user = Repository.GetUserByEmail(signWaiverVM.userEmail);
+                user.emergencyCity = signWaiverVM.emergencyCity;
+                user.emergencyFirstName = signWaiverVM.emergencyFirstName;
+                user.emergencyHomePhone = signWaiverVM.emergencyHomePhone;
+                user.emergencyLastName = signWaiverVM.emergencyLastName;
+                user.emergencyStreetAddress = signWaiverVM.emergencyStreetAddress;
+                user.emergencyWorkPhone = signWaiverVM.emergencyWorkPhone;
+                user.emergencyZip = signWaiverVM.emergencyZip;
+                user.relation = signWaiverVM.relation;
+                user.waiverSignDate = DateTime.Now;
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("VolunteerPortal", new { id = user.Id });
+            }
+
+            return View(signWaiverVM);
+        }
+
+        // POST: User/VolunteerSignup
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult VolunteerSignup([Bind(
+            Include = "Id,firstName,gender, isAdmin,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate")] User user)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Repository.EmailExists(user.emailAddress) == false)
+                {
+                    user.isAdmin = 0;
+                    user.waiverSignDate = DateTime.Now.AddYears(-2);
+                    Repository.CreateVolunteer(user);
+                    Session["isAdmin"] = user.isAdmin;
+                    Session["UserName"] = user.emailAddress;
+                    return RedirectToAction("SignWaiver", "User");
+                }
+                else
+                {
+                    // this needs some kind of notification
+                    ViewBag.status = "That email already exists in out system. Click the link below.";
+                    return RedirectToAction("Login", "User");
+                }
+            }
+
+            return View(user);
         }
 
         // POST: User/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(
@@ -79,8 +201,8 @@ namespace HabitatForHumanity.Controllers
                     int userId = Repository.CreateUser(user);
                     if (userId > 0)
                     {
-                        Session["isAdmin"] = 0; // if you're admin, you have to have an admin change isAdmin to 1, then log in
-                        Session["Username"] = user.emailAddress;
+                        Session["isAdmin"] = null; // if you're admin, you have to have an admin change isAdmin to 1, then log in
+                        Session["UserName"] = user.emailAddress;
                         return RedirectToAction("VolunteerPortal", new { id = userId });
                     }
                     else
@@ -99,17 +221,15 @@ namespace HabitatForHumanity.Controllers
 
             return View(user);
         }
+        #endregion
 
-        // GET: Users/Login/5
+        #region Login get
         public ActionResult Login()
         {
             LoginVM loginVm = new LoginVM();
             return View(loginVm);
         }
 
-        // POST: Users/Login/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Login([Bind(Include = "email,password")] LoginVM loginVm)
@@ -121,21 +241,13 @@ namespace HabitatForHumanity.Controllers
                     if (Repository.AuthenticateUser(loginVm))
                     {
                         User user = Repository.GetUserByEmail(loginVm.email);
-                        Session["isAdmin"] = user.isAdmin;
-                        Session["Username"] = user.emailAddress;
-                        TimeSheet currentTimeSheet = Repository.GetClockedInUserTimeSheet(user.Id);
-                        DateTime temp = DateTime.Today;
-                        if (currentTimeSheet == null)
+                        if(user.isAdmin == 1)
                         {
-                            return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                            Session["isAdmin"] = "isAdmin";
                         }
-                        else
-                        {
-                            if (currentTimeSheet.clockOutTime.TimeOfDay != temp.TimeOfDay)
-                                return RedirectToAction("VolunteerPortal", new { id = user.Id });
-                            else
-                                return RedirectToAction("VolunteerPortalOut", new { id = user.Id });
-                        }
+
+                        Session["UserName"] = user.emailAddress;
+                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
                     }
                     else
                     {
@@ -153,7 +265,9 @@ namespace HabitatForHumanity.Controllers
             return RedirectToAction("Login", "Volunteer");
         }
 
-        // 
+        #endregion
+
+        #region ForgotPassword
         public ActionResult ForgotPassword()
         {
             LoginVM loginVm = new LoginVM();
@@ -161,10 +275,7 @@ namespace HabitatForHumanity.Controllers
         }
 
 
-
-        // POST: Users/forgotPassword/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ForgotPassword([Bind(Include = "email")] LoginVM forgot)
@@ -213,8 +324,9 @@ namespace HabitatForHumanity.Controllers
             ViewBag.status = "Please provide a valid email address.";
             return RedirectToAction("Login", "Volunteer");
         }
+        #endregion
 
-        // GET: User/Edit/5
+        #region Edit
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -229,9 +341,6 @@ namespace HabitatForHumanity.Controllers
             return View(user);
         }
 
-        // POST: User/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,firstName,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate,emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
@@ -244,8 +353,9 @@ namespace HabitatForHumanity.Controllers
             }
             return View(user);
         }
+        #endregion
 
-        // GET: User/Delete/5
+        #region Delete
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -270,6 +380,47 @@ namespace HabitatForHumanity.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+        #endregion
+
+        #region Search
+        public ActionResult VolunteerSearch()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult VolunteerSearch([Bind(Include = "firstName,lastName")] User user)
+        {
+            return View("VolunteerSearchResults", Repository.GetUsersByName(user.firstName, user.lastName));
+        }
+
+        /// <summary>
+        /// This gives all time sheet details for selected user in VolunteerSearchResukts
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult UserTimeDetails(int id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            SearchTimeDetailVM userTimeDetails = new SearchTimeDetailVM();
+            User user = Repository.GetUser(id);
+            userTimeDetails.userId = user.Id;
+            userTimeDetails.firstName = user.firstName;
+            userTimeDetails.lastName = user.lastName;
+            userTimeDetails.emailAddress = user.emailAddress;
+            userTimeDetails.timeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
+            if (userTimeDetails == null)
+            {
+                return HttpNotFound();
+            }
+            return View(userTimeDetails);
+        }
+        #endregion 
+
 
         protected override void Dispose(bool disposing)
         {

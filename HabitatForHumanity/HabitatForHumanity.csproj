@@ -49,6 +49,10 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DotNet.Highcharts, Version=4.0.0.0, Culture=neutral, PublicKeyToken=88854f873df851bf, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNet.Highcharts.4.0\lib\DotNet.Highcharts.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -125,9 +129,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminFilter.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="AuthorizationFilter.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrganizationController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
@@ -144,10 +151,14 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\VolunteerDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\BadPunchVM.cs" />
+    <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\OrganizationVM.cs" />
     <Compile Include="ViewModels\ProjectVM.cs" />
+    <Compile Include="ViewModels\PortalVM.cs" />
     <Compile Include="ViewModels\PunchOutVM.cs" />
+    <Compile Include="ViewModels\SearchTimeDetailVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
     <Compile Include="ViewModels\ToolKitExampleVM.cs" />
     <Compile Include="ViewModels\ToolKitVM.cs" />
@@ -162,6 +173,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
+    <Content Include="DBscripts\ageBracketsByGender.txt" />
     <Content Include="DBscripts\VolunteerDBscript.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -176,16 +188,54 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Images\Volunteer Waiver - adult.docx" />
+    <Content Include="CustomScripts" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Images\Habitat For Humanity logo.jpg" />
     <Content Include="Images\hfhwd logo %281%29.jpg" />
+    <Content Include="OurScripts\Charts.js" />
+    <Content Include="OurScripts\timePunch.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\adapters\standalone-framework.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\adapters\standalone-framework.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\highcharts-3d.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\highcharts-3d.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\highcharts-all.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\highcharts-more.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\highcharts-more.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\highcharts.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\highcharts.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\canvas-tools.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\canvas-tools.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\data.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\data.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\drilldown.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\drilldown.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\exporting.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\exporting.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\funnel.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\funnel.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\heatmap.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\heatmap.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\no-data-to-display.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\no-data-to-display.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\solid-gauge.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\modules\solid-gauge.src.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\themes\dark-blue.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\themes\dark-green.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\themes\dark-unica.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\themes\gray.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\themes\grid-light.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\themes\grid.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\themes\sand-signika.js" />
+    <Content Include="Scripts\Highcharts-4.0.1\js\themes\skies.js" />
     <Content Include="Scripts\jquery-3.2.1.js" />
     <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -196,7 +246,9 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -232,9 +284,22 @@
     <Content Include="Views\User\VolunteerPortal.cshtml" />
     <Content Include="Views\User\ForgotPassword.cshtml" />
     <Content Include="Views\Home\Examples.cshtml" />
-    <Content Include="Views\TimeSheet\PunchIn.cshtml" />
-    <Content Include="Views\TimeSheet\PunchOut.cshtml" />
+    <Content Include="Views\User\PunchIn.cshtml" />
+    <Content Include="Views\User\PunchOut.cshtml" />
+    <Content Include="Views\Admin\Dashboard.cshtml" />
+    <Content Include="Views\Admin\Reports.cshtml" />
+    <Content Include="Views\Admin\_HoursMonthChart.cshtml" />
+    <Content Include="Views\Admin\_DemographicsPie.cshtml" />
+    <Content Include="Views\Admin\_BadPunches.cshtml" />
     <Content Include="Views\User\VolunteerPortalOut.cshtml" />
+    <Content Include="Views\User\_PunchIn.cshtml" />
+    <Content Include="Views\TimeSheet\_PunchIn.cshtml" />
+    <Content Include="Views\User\_PunchOut.cshtml" />
+    <Content Include="Views\User\VolunteerSearch.cshtml" />
+    <Content Include="Views\User\VolunteerSearchResults.cshtml" />
+    <Content Include="Views\User\UserTimeDetails.cshtml" />
+    <Content Include="Views\User\VolunteerSignup.cshtml" />
+    <Content Include="Views\User\SignWaiver.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
