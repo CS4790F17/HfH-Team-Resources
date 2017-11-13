@@ -6776,5 +6776,9 @@ button.close {
 }
 
 .dropdown{
-        color: #005596;
+    color: #005596;
+}
+
+dropdown-menu{
+    color: #005596;
 }
