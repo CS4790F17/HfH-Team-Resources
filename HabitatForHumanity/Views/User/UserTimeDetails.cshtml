@@ -1,0 +1,63 @@
+﻿@model HabitatForHumanity.ViewModels.SearchTimeDetailVM
+
+@{
+    ViewBag.Title = "User Time Details";
+}
+
+<h2>User Time Details</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayFor(model => model.firstName)
+        </th>
+        <th>
+            @Html.DisplayFor(model => model.lastName)
+        </th>
+        <th>
+            @Html.DisplayFor(model => model.emailAddress)
+        </th>
+        <th></th>
+    </tr>
+</table>
+<hr>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.timeSheets[0].user_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.timeSheets[0].project_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.timeSheets[0].clockInTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.timeSheets[0].clockOutTime)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model.timeSheets) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.user_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.project_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.clockInTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.clockOutTime)
+        </td>
+        <td>
+            @Html.ActionLink("Edit","Edit","TimeSheet", new { id=item.Id }, null)
+            @*@Html.ActionLink("Details", "Details", new { id=item.Id }) |
+        @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+    </td>*@
+    </tr>
+}
+
+</table>

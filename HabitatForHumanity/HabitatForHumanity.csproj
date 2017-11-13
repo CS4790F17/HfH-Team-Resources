@@ -156,6 +156,7 @@
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\PortalVM.cs" />
     <Compile Include="ViewModels\PunchOutVM.cs" />
+    <Compile Include="ViewModels\SearchTimeDetailVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
     <Compile Include="ViewModels\ToolKitExampleVM.cs" />
     <Compile Include="ViewModels\ToolKitVM.cs" />
@@ -242,7 +243,9 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -291,6 +294,9 @@
     <Content Include="Views\User\_PunchIn.cshtml" />
     <Content Include="Views\TimeSheet\_PunchIn.cshtml" />
     <Content Include="Views\User\_PunchOut.cshtml" />
+    <Content Include="Views\User\VolunteerSearch.cshtml" />
+    <Content Include="Views\User\VolunteerSearchResults.cshtml" />
+    <Content Include="Views\User\UserTimeDetails.cshtml" />
     <Content Include="Views\User\VolunteerSignup.cshtml" />
     <Content Include="Views\User\SignWaiver.cshtml" />
   </ItemGroup>

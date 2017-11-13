@@ -553,6 +553,5 @@ namespace HabitatForHumanity.Models
             return TimeSheet.GetBadTimeSheets();
         }
         #endregion
-
     }
 }
