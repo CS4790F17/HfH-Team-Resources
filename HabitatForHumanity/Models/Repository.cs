@@ -199,24 +199,6 @@ namespace HabitatForHumanity.Models
             Project.EditProject(project);
         }
 
-        /// <summary>
-        /// Deletes a project from the database.
-        /// </summary>
-        /// <param name="project">The project object to delete.</param>
-        public static void DeleteProject(Project project)
-        {
-            Project.DeleteProject(project);
-        }
-
-        /// <summary>
-        /// Deletes a project from the database by id.
-        /// </summary>
-        /// <param name="id">The id of the project to delete</param>
-        public static void DeleteProjectById(int id)
-        {
-            Project.DeleteProjectById(id);
-        }
-
         #endregion
 
         #region Organization functions
@@ -267,24 +249,6 @@ namespace HabitatForHumanity.Models
         public static void EditOrganization(Organization org)
         {
             Organization.EditOrganization(org);
-        }
-
-        /// <summary>
-        /// Deletes an organization from the database.
-        /// </summary>
-        /// <param name="org">The organization object to delete</param>
-        public static void DeleteOrganization(Organization org)
-        {
-            Organization.DeleteOrganization(org);
-        }
-
-        /// <summary>
-        /// Deletes an organization from the database by id.
-        /// </summary>
-        /// <param name="id">The id of the organization to delete.</param>
-        public static void DeleteOrganizationById(int id)
-        {
-            Organization.DeleteOrganizationById(id);
         }
 
         #endregion

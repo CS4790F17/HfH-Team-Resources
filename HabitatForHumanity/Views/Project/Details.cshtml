@@ -1,4 +1,4 @@
-﻿@model HabitatForHumanity.Models.Project
+﻿@model HabitatForHumanity.ViewModels.ProjectVM
 
 @{
     ViewBag.Title = "Details";
@@ -11,32 +11,40 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.name)
+            @Html.DisplayNameFor(model => model.project.name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.name)
+            @Html.DisplayFor(model => model.project.name)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.description)
+            @Html.DisplayNameFor(model => model.project.description)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.description)
+            @Html.DisplayFor(model => model.project.description)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.beginDate)
+            @Html.DisplayNameFor(model => model.project.beginDate)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.beginDate)
+            @Html.DisplayFor(model => model.project.beginDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model._status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model._status)
         </dd>
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.project.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

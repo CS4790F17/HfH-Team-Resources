@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -23,16 +24,30 @@ namespace HabitatForHumanity.Controllers
         // GET: Organization/Details/5
         public ActionResult Details(int? id)
         {
+            int orgId = 0;
+            orgId = (int)id;
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Organization organization = db.organizations.Find(id);
-            if (organization == null)
+            
+            OrganizationVM organizationVM = new OrganizationVM();
+            organizationVM.organization = Repository.GetOrganizationById(orgId);
+            if (organizationVM.organization.status == 1)
+            {
+                organizationVM._status = true;
+            }
+            else
+            {
+                organizationVM._status = false;
+            }
+
+            if (organizationVM == null)
             {
                 return HttpNotFound();
             }
-            return View(organization);
+            return View(organizationVM);
         }
 
         // GET: Organization/Create
@@ -61,16 +76,30 @@ namespace HabitatForHumanity.Controllers
         // GET: Organization/Edit/5
         public ActionResult Edit(int? id)
         {
+            int orgId = 0;
+            orgId = (int)id;
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Organization organization = db.organizations.Find(id);
-            if (organization == null)
+            
+            OrganizationVM organizationVM = new OrganizationVM();
+            organizationVM.organization = Repository.GetOrganizationById(orgId);
+            if (organizationVM.organization.status == 1)
+            {
+                organizationVM._status = true;
+            }
+            else
+            {
+                organizationVM._status = false;
+            }
+
+            if (organizationVM == null)
             {
                 return HttpNotFound();
             }
-            return View(organization);
+            return View(organizationVM);
         }
 
         // POST: Organization/Edit/5
@@ -78,41 +107,23 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,name")] Organization organization)
+        public ActionResult Edit([Bind(Include = "Id,name,status")] OrganizationVM organizationVM)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(organization).State = EntityState.Modified;
+                if (organizationVM._status == true)
+                {
+                    organizationVM.organization.status = 1;
+                }
+                else
+                {
+                    organizationVM.organization.status = 0;
+                }
+                db.Entry(organizationVM.organization).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(organization);
-        }
-
-        // GET: Organization/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Organization organization = db.organizations.Find(id);
-            if (organization == null)
-            {
-                return HttpNotFound();
-            }
-            return View(organization);
-        }
-
-        // POST: Organization/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Organization organization = db.organizations.Find(id);
-            db.organizations.Remove(organization);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return View(organizationVM.organization);
         }
 
         protected override void Dispose(bool disposing)

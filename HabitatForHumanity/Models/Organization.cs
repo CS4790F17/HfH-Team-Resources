@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Models
 {
@@ -13,7 +14,11 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Enter organization name")]
+        [Display(Name = "Organization Name*")]
         public string name { get; set; }
+        [Display(Name = "Active")]
+        public int status { get; set; }
 
 
         #region Database Access Methods
@@ -52,6 +57,16 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
+        /// Gets all the currently active organizations
+        /// </summary>
+        /// <returns>A list of all organizatinos that are currently active.</returns>
+        public static List<Organization> GetActiveOrganizations()
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.organizations.Where(x => x.status == 1).ToList();
+        }
+
+        /// <summary>
         /// Adds an organization to the database.
         /// </summary>
         /// <param name="org">The organization to be added</param>
@@ -72,33 +87,7 @@ namespace HabitatForHumanity.Models
             db.Entry(org).State = EntityState.Modified;
             db.SaveChanges();
         }
-
-        /// <summary>
-        /// Deletes an organization from the database.
-        /// </summary>
-        /// <param name="org">The organization object to delete</param>
-        public static void DeleteOrganization(Organization org)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.organizations.Attach(org);
-            db.organizations.Remove(org);
-            db.SaveChanges();
-        }
-
-        /// <summary>
-        /// Deletes an organization from the database by id.
-        /// </summary>
-        /// <param name="id">The id of the organization to delete.</param>
-        public static void DeleteOrganizationById(int id)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            Organization org = db.organizations.Find(id);
-            if(org != null)
-            {
-                db.organizations.Remove(org);
-                db.SaveChanges();
-            }
-        }
+        
         #endregion
     }
 }

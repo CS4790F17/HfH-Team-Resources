@@ -14,8 +14,14 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Enter project name")]
+        [Display(Name = "Project Name*")]
         public string name { get; set; }
+        [Display(Name = "Description")]
         public string description { get; set; }
+        [Required(ErrorMessage = "Enter begin date")]
+        [Display(Name = "Begin Date*")]
+        [DataType(DataType.Date)]
         public DateTime beginDate { get; set; }
 
         /// <summary>
@@ -104,32 +110,6 @@ namespace HabitatForHumanity.Models
             db.SaveChanges();
         }
 
-        /// <summary>
-        /// Deletes a project from the database.
-        /// </summary>
-        /// <param name="project">The project object to delete.</param>
-        public static void DeleteProject(Project project)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.projects.Attach(project);
-            db.projects.Remove(project);
-            db.SaveChanges();
-        }
-
-        /// <summary>
-        /// Deletes a project from the database by id.
-        /// </summary>
-        /// <param name="id">The id of the project to delete</param>
-        public static void DeleteProjectById(int id)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            Project proj = db.projects.Find(id);
-            if(proj != null)
-            {
-                db.projects.Remove(proj);
-                db.SaveChanges();
-            }
-        }
         #endregion
     }
 
