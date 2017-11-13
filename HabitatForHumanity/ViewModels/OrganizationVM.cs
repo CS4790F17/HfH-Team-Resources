@@ -10,7 +10,10 @@ namespace HabitatForHumanity.ViewModels
 {
     public class OrganizationVM
     {
-        public Organization organization { get; set; }
+        public int _Id { get; set; }
+        [Required(ErrorMessage = "Enter organization name")]
+        [Display(Name = "Organization Name*")]
+        public string _name { get; set; }
         [Display(Name = "Active")]
         public bool _status { get; set; }
     }

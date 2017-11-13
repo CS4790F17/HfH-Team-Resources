@@ -31,10 +31,14 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            
+
+            Organization organization = new Organization();
             OrganizationVM organizationVM = new OrganizationVM();
-            organizationVM.organization = Repository.GetOrganizationById(orgId);
-            if (organizationVM.organization.status == 1)
+            organization = Repository.GetOrganizationById(orgId);
+
+            organizationVM._Id = organization.Id;
+            organizationVM._name = organization.name;
+            if (organization.status == 1)
             {
                 organizationVM._status = true;
             }
@@ -83,10 +87,14 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            
+
+            Organization organization = new Organization();
             OrganizationVM organizationVM = new OrganizationVM();
-            organizationVM.organization = Repository.GetOrganizationById(orgId);
-            if (organizationVM.organization.status == 1)
+            organization = Repository.GetOrganizationById(orgId);
+
+            organizationVM._Id = organization.Id;
+            organizationVM._name = organization.name;
+            if (organization.status == 1)
             {
                 organizationVM._status = true;
             }
@@ -107,23 +115,31 @@ namespace HabitatForHumanity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,name,status")] OrganizationVM organizationVM)
+        public ActionResult Edit(OrganizationVM organizationVM)
         {
             if (ModelState.IsValid)
             {
+                Organization organization = new Organization();
+
+                organization.Id = organizationVM._Id;
+                if (organizationVM._name != null)
+                {
+                    organization.name = organizationVM._name;
+                }
+
                 if (organizationVM._status == true)
                 {
-                    organizationVM.organization.status = 1;
+                    organization.status = 1;
                 }
                 else
                 {
-                    organizationVM.organization.status = 0;
+                    organization.status = 0;
                 }
-                db.Entry(organizationVM.organization).State = EntityState.Modified;
+                db.Entry(organization).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(organizationVM.organization);
+            return View(organizationVM);
         }
 
         protected override void Dispose(bool disposing)

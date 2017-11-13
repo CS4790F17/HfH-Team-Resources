@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
 using HabitatForHumanity.ViewModels;
+using System.Text.RegularExpressions;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -31,10 +32,16 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProjectVM projectVM = new ProjectVM();
-            projectVM.project = Repository.GetProjectById(projectId);
 
-            if (projectVM.project.status == 1)
+            Project project = new Project();
+            ProjectVM projectVM = new ProjectVM();
+            project = Repository.GetProjectById(projectId);
+
+            projectVM._Id = project.Id;
+            projectVM._name = project.name;
+            projectVM._beginDate = project.beginDate;
+            projectVM._description = project.description;
+            if (project.status == 1)
             {
                 projectVM._status = true;
             }
@@ -84,9 +91,16 @@ namespace HabitatForHumanity.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            Project project = new Project();
             ProjectVM projectVM = new ProjectVM();
-            projectVM.project = Repository.GetProjectById(projectId);
-            if (projectVM.project.status == 1)
+            project = Repository.GetProjectById(projectId);
+
+            projectVM._Id = project.Id;
+            projectVM._name = project.name;
+            projectVM._beginDate = project.beginDate;
+            projectVM._description = project.description;
+
+            if (project.status == 1)
             {
                 projectVM._status = true;
             }
@@ -111,19 +125,45 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (projectVM._status == true)
+                Project project = new Project();
+
+                project.Id = projectVM._Id;
+                //Checking for name
+                if (projectVM._name != null) 
                 {
-                    projectVM.project.status = 1;
+                    project.name = projectVM._name;
+                }
+
+                //Checking for beginDate
+                if (projectVM._beginDate != null)
+                {
+                    project.beginDate = projectVM._beginDate;
+                }
+
+                //Checking for description
+                if (projectVM._description != null)
+                {
+                    project.description = projectVM._description;
                 }
                 else
                 {
-                    projectVM.project.status = 0;
+                    project.description = "";
                 }
-                db.Entry(projectVM.project).State = EntityState.Modified;
+                
+                //Checking for status
+                if (projectVM._status == true)
+                {
+                    project.status = 1;
+                }
+                else
+                {
+                    project.status = 0;
+                }
+                db.Entry(project).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(projectVM.project);
+            return View(projectVM);
         }
 
         protected override void Dispose(bool disposing)

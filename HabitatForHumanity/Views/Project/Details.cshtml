@@ -11,27 +11,27 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.project.name)
+            @Html.DisplayNameFor(model => model._name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.project.name)
+            @Html.DisplayFor(model => model._name)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.project.description)
+            @Html.DisplayNameFor(model => model._description)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.project.description)
+            @Html.DisplayFor(model => model._description)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.project.beginDate)
+            @Html.DisplayNameFor(model => model._beginDate)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.project.beginDate)
+            @Html.DisplayFor(model => model._beginDate)
         </dd>
 
         <dt>
@@ -45,6 +45,6 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.project.Id }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model._Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

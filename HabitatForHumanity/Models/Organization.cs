@@ -14,10 +14,7 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required(ErrorMessage = "Enter organization name")]
-        [Display(Name = "Organization Name*")]
         public string name { get; set; }
-        [Display(Name = "Active")]
         public int status { get; set; }
 
 
