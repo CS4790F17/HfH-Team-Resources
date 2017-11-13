@@ -14,26 +14,73 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Enter First Name")]
+        [Display(Name = "First Name*")]
         public string firstName { get; set; }
+        [Required(ErrorMessage = "Enter Last Name")]
+        [Display(Name = "Last Name*")]
         public string lastName { get; set; }
+        [Required(ErrorMessage = "Enter Home Phone")]
+        [Display(Name = "Home Phone*")]
+        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string homePhoneNumber { get; set; }
+        [Required(ErrorMessage = "Enter Work Phone")]
+        [Display(Name = "Work Phone*")]
+        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string workPhoneNumber { get; set; }
+        [Required(ErrorMessage = "Enter Email")]
+        [Display(Name = "Email*")]
+        [RegularExpression(@"^(([^<>()\[\]\\.,;:\s@']+(\.[^<>()\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Please Enter a Valid Email Address")]
         public string emailAddress { get; set; }
+        [Required(ErrorMessage = "Enter Address")]
+        [Display(Name = "Address*")]
         public string streetAddress { get; set; }
+        [Required(ErrorMessage = "Enter City")]
+        [Display(Name = "City*")]
         public string city { get; set; }
+        [Required(ErrorMessage = "Enter Zipcode")]
+        [Display(Name = "Zipcode*")]
         public string zip { get; set; }
+        [Required(ErrorMessage = "Enter Password")]
+        [Display(Name = "Password*")]
         public string password { get; set; }
+        [Required(ErrorMessage = "Enter Birthdate")]
+        [Display(Name = "Birthdate*")]
+        [DataType(DataType.Date)]
         public DateTime birthDate { get; set; }
+        [Display(Name = "Gender")]
         public string gender { get; set; }
+        [Required(ErrorMessage = "Is Admin (0 - Volunteer, 1 - Admin)")]
+        [Display(Name = "Admin*")]
         public int isAdmin { get; set; }    // 0 - volunteer, 1 - admin
+        [Required(ErrorMessage = "Enter Waiver Sign Date")]
+        [Display(Name = "Waiver Sign Date*")]
         public DateTime waiverSignDate { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency First Name")]
+        [Display(Name = "Emergency First Name*")]
         public string emergencyFirstName { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Last Name")]
+        [Display(Name = "Emergency Last Name*")]
         public string emergencyLastName { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Relation")]
+        [Display(Name = "Relation*")]
         public string relation { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Home Phone")]
+        [Display(Name = "Emergency Home Phone*")]
+        //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Work Phone")]
+        [Display(Name = "Emergency Work Phone*")]
+        //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Address")]
+        [Display(Name = "Emergency Address*")]
         public string emergencyStreetAddress { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency City")]
+        [Display(Name = "Emergency City*")]
         public string emergencyCity { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Zipcode")]
+        [Display(Name = "Emergency Zipcode*")]
         public string emergencyZip { get; set; }
 
 
@@ -119,6 +166,17 @@ namespace HabitatForHumanity.Models
         {
             VolunteerDbContext db = new VolunteerDbContext();
             return db.users.Find(id);
+        }
+
+        /// <summary>
+        /// Creates a volunteer user
+        /// </summary>
+        /// <param name="user"></param>
+        public static void CreateVolunteer(User user)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            db.users.Add(user);
+            db.SaveChanges();
         }
 
         /// <summary>

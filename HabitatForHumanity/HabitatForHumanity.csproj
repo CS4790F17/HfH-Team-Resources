@@ -291,6 +291,8 @@
     <Content Include="Views\User\_PunchIn.cshtml" />
     <Content Include="Views\TimeSheet\_PunchIn.cshtml" />
     <Content Include="Views\User\_PunchOut.cshtml" />
+    <Content Include="Views\User\VolunteerSignup.cshtml" />
+    <Content Include="Views\User\SignWaiver.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
