@@ -54,7 +54,7 @@ namespace HabitatForHumanity.Controllers
                 portalVM.punchInVM = new PunchInVM();
                 portalVM.punchOutVM = new PunchOutVM();
                 portalVM.fullName = "";
-                portalVM.cumulativeHours = 99.9;
+                portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
                 portalVM.isPunchedIn = true;
 
                 TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
@@ -100,6 +100,94 @@ namespace HabitatForHumanity.Controllers
         {
             return View();
         }
+        
+        // GET: User/VolunteerSignup
+        public ActionResult VolunteerSignup()
+        {
+            return View();
+        }
+
+        // GET: User/SignWaiver
+        public ActionResult SignWaiver()
+        {
+            if (Session["UserName"] != null)
+            {
+                SignWaiverVM signWaiver = new SignWaiverVM();
+                signWaiver.signature = "";
+                signWaiver.userEmail = Session["UserName"].ToString();
+                return View(signWaiver);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+        // POST: User/SignWaiver
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignWaiver([Bind(
+            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature")] SignWaiverVM signWaiverVM)
+        {
+            if (ModelState.IsValid)
+            {
+                if (signWaiverVM.signature == null)
+                {
+                    return View(signWaiverVM);
+                }
+                User user = Repository.GetUserByEmail(signWaiverVM.userEmail);
+                user.emergencyCity = signWaiverVM.emergencyCity;
+                user.emergencyFirstName = signWaiverVM.emergencyFirstName;
+                user.emergencyHomePhone = signWaiverVM.emergencyHomePhone;
+                user.emergencyLastName = signWaiverVM.emergencyLastName;
+                user.emergencyStreetAddress = signWaiverVM.emergencyStreetAddress;
+                user.emergencyWorkPhone = signWaiverVM.emergencyWorkPhone;
+                user.emergencyZip = signWaiverVM.emergencyZip;
+                user.relation = signWaiverVM.relation;
+                user.waiverSignDate = DateTime.Now;
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("VolunteerPortal", new { id = user.Id });
+            }
+
+            return View(signWaiverVM);
+        }
+
+        // POST: User/VolunteerSignup
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult VolunteerSignup([Bind(
+            Include = "Id,firstName,gender, isAdmin,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate")] User user)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Repository.EmailExists(user.emailAddress) == false)
+                {
+                    user.isAdmin = 0;
+                    user.waiverSignDate = DateTime.Now.AddYears(-2);
+                    Repository.CreateVolunteer(user);
+                    Session["isAdmin"] = user.isAdmin;
+                    Session["UserName"] = user.emailAddress;
+                    return RedirectToAction("SignWaiver", "User");
+                }
+                else
+                {
+                    // this needs some kind of notification
+                    ViewBag.status = "That email already exists in out system. Click the link below.";
+                    return RedirectToAction("Login", "User");
+                }
+            }
+
+            return View(user);
+        }
+
+        // POST: User/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 
         [HttpPost]
         [ValidateAntiForgeryToken]

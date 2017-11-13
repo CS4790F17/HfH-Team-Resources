@@ -14,26 +14,74 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Enter First Name")]
+        [Display(Name = "First Name*")]
         public string firstName { get; set; }
+        [Required(ErrorMessage = "Enter Last Name")]
+        [Display(Name = "Last Name*")]
         public string lastName { get; set; }
+        [Required(ErrorMessage = "Enter Home Phone")]
+        [Display(Name = "Home Phone*")]
+        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string homePhoneNumber { get; set; }
+        [Required(ErrorMessage = "Enter Work Phone")]
+        [Display(Name = "Work Phone*")]
+        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string workPhoneNumber { get; set; }
+        [Required(ErrorMessage = "Enter Email")]
+        [Display(Name = "Email*")]
+        [RegularExpression(@"^(([^<>()\[\]\\.,;:\s@']+(\.[^<>()\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Please Enter a Valid Email Address")]
         public string emailAddress { get; set; }
+        [Required(ErrorMessage = "Enter Address")]
+        [Display(Name = "Address*")]
         public string streetAddress { get; set; }
+        [Required(ErrorMessage = "Enter City")]
+        [Display(Name = "City*")]
         public string city { get; set; }
+        [Required(ErrorMessage = "Enter Zipcode")]
+        [Display(Name = "Zipcode*")]
+        [RegularExpression(@"^(^\d{5}$)|(^\d{5}-\d{4}$)$", ErrorMessage = "Please Enter a Valid Zip")]
         public string zip { get; set; }
+        [Required(ErrorMessage = "Enter Password")]
+        [Display(Name = "Password*")]
         public string password { get; set; }
+        [Required(ErrorMessage = "Enter Birthdate")]
+        [Display(Name = "Birthdate*")]
+        [DataType(DataType.Date)]
         public DateTime birthDate { get; set; }
+        [Display(Name = "Gender")]
         public string gender { get; set; }
+        [Required(ErrorMessage = "Is Admin (0 - Volunteer, 1 - Admin)")]
+        [Display(Name = "Admin*")]
         public int isAdmin { get; set; }    // 0 - volunteer, 1 - admin
+        [Required(ErrorMessage = "Enter Waiver Sign Date")]
+        [Display(Name = "Waiver Sign Date*")]
         public DateTime waiverSignDate { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency First Name")]
+        [Display(Name = "Emergency First Name*")]
         public string emergencyFirstName { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Last Name")]
+        [Display(Name = "Emergency Last Name*")]
         public string emergencyLastName { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Relation")]
+        [Display(Name = "Relation*")]
         public string relation { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Home Phone")]
+        [Display(Name = "Emergency Home Phone*")]
+        //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Work Phone")]
+        [Display(Name = "Emergency Work Phone*")]
+        //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Address")]
+        [Display(Name = "Emergency Address*")]
         public string emergencyStreetAddress { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency City")]
+        [Display(Name = "Emergency City*")]
         public string emergencyCity { get; set; }
+        //[Required(ErrorMessage = "Enter Emergency Zipcode")]
+        [Display(Name = "Emergency Zipcode*")]
         public string emergencyZip { get; set; }
 
 
@@ -122,6 +170,17 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
+        /// Creates a volunteer user
+        /// </summary>
+        /// <param name="user"></param>
+        public static void CreateVolunteer(User user)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            db.users.Add(user);
+            db.SaveChanges();
+        }
+
+        /// <summary>
         /// Adds a user to the database.
         /// </summary>
         /// <param name="user">User to add.</param>
@@ -179,6 +238,78 @@ namespace HabitatForHumanity.Models
                 db.SaveChanges();
             }
         }
+
+        public class Demog
+        {
+            public string ageBracket { get; set; }
+            public int numPeople { get; set; }
+        }
+        public static List<Demog> GetDemographicsForPie(string gender)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            List<Demog> demogs = new List<Demog>();
+            List<User> users = new List<User>();
+            if (gender.Equals("All"))
+            {
+                users = db.users.Where(u => u.birthDate != null).ToList();
+            }
+            else
+            {
+                users = db.users.Where(u => u.birthDate != null && u.gender.Equals(gender)).ToList();
+            }
+            Demog dunder18 = new Demog() { ageBracket = "Under 18", numPeople = 0 };
+            Demog d18to27 = new Demog() { ageBracket = "18 to 27", numPeople = 0 };
+            Demog d27to40 = new Demog() { ageBracket = "27 to 40", numPeople = 0 };
+            Demog d40to55 = new Demog() { ageBracket = "40 to 55", numPeople = 0 };
+            Demog dover55 = new Demog() { ageBracket = "Over 55", numPeople = 0 };
+            foreach(User u in users)
+            {
+                DateTime present = DateTime.Now;
+                if(present.AddYears(-18) < u.birthDate)
+                {
+                    dunder18.numPeople++;
+                }
+                else if (present.AddYears(-18) <= u.birthDate && present.AddYears(-27) > u.birthDate)
+                {
+                    d18to27.numPeople++;
+                }
+                else if (present.AddYears(-27) <= u.birthDate && present.AddYears(-40) > u.birthDate)
+                {
+                    d27to40.numPeople++;
+                }
+                else if (present.AddYears(-40) <= u.birthDate && present.AddYears(-55) > u.birthDate)
+                {
+                    d40to55.numPeople++;
+                }         
+                else
+                {
+                    dover55.numPeople++;
+                }
+            }
+
+            demogs.Add(dunder18);
+            demogs.Add(d18to27);
+            demogs.Add(d27to40);
+            demogs.Add(d40to55);
+            demogs.Add(dover55);
+            return demogs;
+
+        }
+        /*TimeSheet temp = new TimeSheet();
+            VolunteerDbContext db = new VolunteerDbContext();
+            var sheets = from t in db.timeSheets
+                         group t by t.user_Id into g
+                         select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
+            if (sheets.Count() > 0)
+            {
+                temp = sheets.First();
+                // only if the clockout is midnight today(tomorrow really)
+                if(temp.clockOutTime == DateTime.Today.AddDays(1))
+                {
+                    return temp;
+                }
+            }
+            return new TimeSheet();*/
         #endregion
     }
 }

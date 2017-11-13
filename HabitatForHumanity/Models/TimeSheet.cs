@@ -136,18 +136,28 @@ namespace HabitatForHumanity.Models
         {
             TimeSheet temp = new TimeSheet();
             VolunteerDbContext db = new VolunteerDbContext();
-            var sheets = from t in db.timeSheets
-                         group t by t.user_Id into g
-                         select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
-            if (sheets.Count() > 0)
+
+            //var sheets = from t in db.timeSheets
+            //             group t by t.user_Id into g
+            //             select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
+
+
+            var sheet = db.timeSheets.Where(x => x.user_Id == userId).ToList().OrderBy(y => y.clockInTime);
+            if (sheet.Count() > 0)
             {
-                temp = sheets.First();
-                // only if the clockout is midnight today(tomorrow really)
-                if(temp.clockOutTime == DateTime.Today.AddDays(1))
-                {
-                    return temp;
-                }
+                if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
+                    return sheet.Last();
             }
+
+            //if (sheets.Count() > 0)
+            //{
+            //    temp = sheets.First();
+            //    // only if the clockout is midnight today(tomorrow really)
+            //    if (temp.clockOutTime == DateTime.Today.AddDays(1))
+            //    {
+            //        return temp;
+            //    }
+            //}
             return new TimeSheet();
         }
 
@@ -173,8 +183,19 @@ namespace HabitatForHumanity.Models
             return db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
         }
 
+        public static List<TimeSheet> GetBadTimeSheets()
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
+                .OrderByDescending(c => c.clockInTime).
+                ToList();
 
-  
+            if (sheets.Count() > 0)
+            {
+            }
+            return sheets;
+        }
+
 
 
     }

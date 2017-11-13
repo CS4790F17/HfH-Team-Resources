@@ -2,33 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using HabitatForHumanity.Models;
+using System.Data.Entity;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using HabitatForHumanity.ViewModels;
+using System.Web.Helpers;
 
 namespace HabitatForHumanity.ViewModels
 {
     public class SignWaiverVM
     {
-        // join stuff
-        public int waiverId { get; set; }
-        public int userId { get; set; }
-
-        //user stuff
-        public string email { get; set; }
-        public string firstName { get; set; }
-        public string lastName { get; set; }
-        public string streetAddress { get; set; }
-        public string city { get; set; }
-        public string zip { get; set; }
-        public string phone { get; set; }
-
-        // waiver stuff
-        public DateTime signDate { get; set; }
-        public string emContFirstName { get; set; }
-        public string emContLastName { get; set; }
+        public string userEmail { get; set; }
+        [Required(ErrorMessage = "Enter your signature")]
+        [Display(Name = "Signature*")]
+        public string signature { get; set; }
+        [Required(ErrorMessage = "Enter Emergency First Name")]
+        [Display(Name = "Emergency First Name*")]
+        public string emergencyFirstName { get; set; }
+        [Required(ErrorMessage = "Enter Emergency Last Name")]
+        [Display(Name = "Emergency Last Name*")]
+        public string emergencyLastName { get; set; }
+        [Required(ErrorMessage = "Enter Emergency Relation")]
+        [Display(Name = "Emergency Relation*")]
         public string relation { get; set; }
-        public string emContHomePhone { get; set; }
-        public string emContWorkPhone { get; set; }
-        public string signature { get; set; } // change me later to an image
-        public bool consent { get; set; }
-
+        [Required(ErrorMessage = "Enter Emergency Home Phone")]
+        [Display(Name = "Emergency Home Phone*")]
+        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
+        public string emergencyHomePhone { get; set; }
+        [Required(ErrorMessage = "Enter Emergency Work Phone")]
+        [Display(Name = "Emergency Work Phone*")]
+        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
+        public string emergencyWorkPhone { get; set; }
+        [Required(ErrorMessage = "Enter Emergency Street Address")]
+        [Display(Name = "Emergency Street Address*")]
+        public string emergencyStreetAddress { get; set; }
+        [Required(ErrorMessage = "Enter Emergency City")]
+        [Display(Name = "Emergency City*")]
+        public string emergencyCity { get; set; }
+        [Required(ErrorMessage = "Enter Emergency Zipcode")]
+        [Display(Name = "Emergency Zipcode*")]
+        [RegularExpression(@"^(^\d{5}$)|(^\d{5}-\d{4}$)$", ErrorMessage = "Please Enter a Valid Zip")]
+        public string emergencyZip { get; set; }
     }
 }

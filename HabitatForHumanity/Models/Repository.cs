@@ -13,6 +13,19 @@ namespace HabitatForHumanity.Models
         #region User functions
 
         /// <summary>
+        /// Creates a volunteer user
+        /// </summary>
+        /// <param name="user"></param>
+        public static void CreateVolunteer(User user)
+        {
+            if (user.password != null)
+            {
+                user.password = Crypto.HashPassword(user.password);
+            }
+            User.CreateVolunteer(user);
+        }
+
+        /// <summary>
         /// Adds a user to the database.
         /// </summary>
         /// <param name="user">User to add.</param>
@@ -499,6 +512,21 @@ namespace HabitatForHumanity.Models
 
         #region Report functions
 
+        public static double getTotalHoursWorkedByVolunteer(int volunteerId)
+        {
+            DateTime userClockedIn = DateTime.Today.AddDays(1);
+            List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId);
+            List<TimeSheet> volunteerTimes = new List<TimeSheet>();
+            foreach (TimeSheet ts in temp)
+            {              
+                if (ts.clockOutTime != userClockedIn )
+                    volunteerTimes.Add(ts);
+            }
+            TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
+            return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+         //   return 0;
+      
+        }
 
         /// <summary>
         /// Takes a refence to a list and adds all the worked hours up into a total.
@@ -515,7 +543,15 @@ namespace HabitatForHumanity.Models
             return hoursWorked;
         }
 
+        public static List<User.Demog> GetDemographicsForPie(string gender)
+        {
+            return User.GetDemographicsForPie(gender);
+        }
 
+        public static List<TimeSheet> GetBadTimeSheets()
+        {
+            return TimeSheet.GetBadTimeSheets();
+        }
         #endregion
     }
 }

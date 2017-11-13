@@ -9,6 +9,8 @@ using DotNet.Highcharts.Helpers;
 using DotNet.Highcharts.Options;
 using System.Drawing;
 using HabitatForHumanity.ViewModels;
+using HabitatForHumanity.Models;
+using static HabitatForHumanity.Models.User;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -20,7 +22,6 @@ namespace HabitatForHumanity.Controllers
             return View();
         }
 
-        //GetHoursMonthChart
         public ActionResult GetHoursChartBy(string period)
         {
             #region Build Month Chart
@@ -111,8 +112,18 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult GetHoursDemogPieBy(string gender)
         {
-            // go get data and filter on gender
             #region Build Demographics Pie
+            /* gender options from javascript radios       
+            All, M, F, O */
+
+            Demog[] demogs = Repository.GetDemographicsForPie(gender).ToArray();
+            object[] outer = new object[demogs.Length];
+            for (int i = 0; i < demogs.Length; i++)
+            {
+                outer[i] = new object[] { demogs[i].ageBracket, demogs[i].numPeople };
+            }
+
+           
             Highcharts chart = new Highcharts("chart")
                 .InitChart(new Chart { PlotShadow = false })
                 .SetTitle(new Title { Text = "" })
@@ -136,33 +147,47 @@ namespace HabitatForHumanity.Controllers
                      {
                          Type = ChartTypes.Pie,
                          Name = "Male",
-                         Data = new Data(new object[]
-                                               {
-                                                   new object[] { "Firefox", 5 },
-                                                   new object[] { "IE", 25 },
-                                                   new DotNet.Highcharts.Options.Point
-                                                   {
-                                                       Name = "Chrome",
-                                                       Y = 40,
-                                                       Sliced = true,
-                                                       Selected = true
-                                                   },
-                                                   new object[] { "Safari", 10},
-                                                   new object[] { "Opera", 12 },
-                                                   new object[] { "Others", 10 }
-                                               })
-
+                         Data = new Data(outer)
                      }
                );
 
             #endregion
-            return PartialView("_HoursByDemog", chart);
+            return PartialView("_DemographicsPie", chart);
         }
-
 
         public ActionResult GetBadPunches()
         {
-            return PartialView("_BadPunches", BadPunchVM.GetDummyBadPunches());
+
+            List<TimeSheet> ts = Repository.GetBadTimeSheets();
+            List<BadPunchVM> bp = new List<BadPunchVM>();
+            foreach(TimeSheet t in ts)
+            {
+                User user = Repository.GetUser(t.user_Id);
+                string volName = "";
+                if(user != null)
+                {
+                    if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
+                    {
+                        volName = user.emailAddress;
+                    }
+                    else if (string.IsNullOrEmpty(user.firstName))
+                    {
+                        volName += user.emailAddress + " ";
+                    }
+                    else if(string.IsNullOrEmpty(user.lastName))
+                    {
+                        volName += user.emailAddress;
+                    }
+                    else
+                    {
+                        volName += user.firstName + " " + user.lastName;
+                    }
+                }
+                bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
+            }
+            //return PartialView("_BadPunches", BadPunchVM.GetDummyBadPunches());
+            return PartialView("_BadPunches", bp);
         }
+        
     }
 }
