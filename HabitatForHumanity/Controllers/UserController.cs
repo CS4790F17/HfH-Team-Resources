@@ -110,6 +110,11 @@ namespace HabitatForHumanity.Controllers
         #region Create
         public ActionResult Create()
         {
+            ReturnStatus st = Repository.GetUser(1);
+            if(ReturnStatus.tryParseUser(st, out User user))
+            {
+                user.birthDate
+            }
             return View();
         }
         
@@ -135,6 +140,8 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
+
+        //TODO: test 
         // POST: User/SignWaiver
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -149,19 +156,24 @@ namespace HabitatForHumanity.Controllers
                 {
                     return View(signWaiverVM);
                 }
-                User user = Repository.GetUserByEmail(signWaiverVM.userEmail);
-                user.emergencyCity = signWaiverVM.emergencyCity;
-                user.emergencyFirstName = signWaiverVM.emergencyFirstName;
-                user.emergencyHomePhone = signWaiverVM.emergencyHomePhone;
-                user.emergencyLastName = signWaiverVM.emergencyLastName;
-                user.emergencyStreetAddress = signWaiverVM.emergencyStreetAddress;
-                user.emergencyWorkPhone = signWaiverVM.emergencyWorkPhone;
-                user.emergencyZip = signWaiverVM.emergencyZip;
-                user.relation = signWaiverVM.relation;
-                user.waiverSignDate = DateTime.Now;
-                db.Entry(user).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("VolunteerPortal", new { id = user.Id });
+
+                ReturnStatus st = Repository.GetUserByEmail(signWaiverVM.userEmail);
+                //User user = Repository.GetUserByEmail(signWaiverVM.userEmail);
+                if (ReturnStatus.tryParseUser(st, out User user))
+                {
+                    user.emergencyCity = signWaiverVM.emergencyCity;
+                    user.emergencyFirstName = signWaiverVM.emergencyFirstName;
+                    user.emergencyHomePhone = signWaiverVM.emergencyHomePhone;
+                    user.emergencyLastName = signWaiverVM.emergencyLastName;
+                    user.emergencyStreetAddress = signWaiverVM.emergencyStreetAddress;
+                    user.emergencyWorkPhone = signWaiverVM.emergencyWorkPhone;
+                    user.emergencyZip = signWaiverVM.emergencyZip;
+                    user.relation = signWaiverVM.relation;
+                    user.waiverSignDate = DateTime.Now;
+                    db.Entry(user).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                }
             }
 
             return View(signWaiverVM);
@@ -177,7 +189,10 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (Repository.EmailExists(user.emailAddress) == false)
+
+                ReturnStatus st = Repository.EmailExists(user.emailAddress);
+
+                if ((bool)Repository.EmailExists(user.emailAddress).data == false)
                 {
                     user.isAdmin = 0;
                     user.waiverSignDate = DateTime.Now.AddYears(-2);

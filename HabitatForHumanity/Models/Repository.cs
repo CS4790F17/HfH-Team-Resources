@@ -16,13 +16,14 @@ namespace HabitatForHumanity.Models
         /// Creates a volunteer user
         /// </summary>
         /// <param name="user"></param>
-        public static void CreateVolunteer(User user)
+        public static ReturnStatus CreateVolunteer(User user)
         {
-            if (user.password != null)
-            {
-                user.password = Crypto.HashPassword(user.password);
-            }
-            User.CreateVolunteer(user);
+            //if (user.password != null)
+            //{
+            //    user.password = Crypto.HashPassword(user.password);
+            //}
+            //User.CreateVolunteer(user);
+            return User.CreateUser(user);
         }
 
         /// <summary>
@@ -402,18 +403,18 @@ namespace HabitatForHumanity.Models
         /// Updates the timesheet with new information.
         /// </summary>
         /// <param name="ts">TimeSheet object with new values.</param>
-        public static void EditTimeSheet(TimeSheet ts)
+        public static ReturnStatus EditTimeSheet(TimeSheet ts)
         {
-            TimeSheet.EditTimeSheet(ts);
+            return TimeSheet.EditTimeSheet(ts);
         }
 
         /// <summary>
         /// Deletes the TimeSheet from the database.
         /// </summary>
         /// <param name="ts">TimeSheet object to be deleted.</param>
-        public static void DeleteTimeSheet(TimeSheet ts)
+        public static ReturnStatus DeleteTimeSheet(TimeSheet ts)
         {
-            TimeSheet.DeleteTimeSheet(ts);
+            return TimeSheet.DeleteTimeSheet(ts);
         }
 
         /// <summary>

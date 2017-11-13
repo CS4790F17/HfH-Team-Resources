@@ -24,6 +24,7 @@ namespace HabitatForHumanity.Models
             USER_PASSWORD_CANNOT_BE_NULL,
             COULD_NOT_DELETE,
             COULD_NOT_FIND_SINGLE_TIMESHEET,
+            ID_CANNOT_BE_NULL,
         };
 
 

@@ -111,37 +111,86 @@ namespace HabitatForHumanity.Models
         /// Updates the timesheet with new information.
         /// </summary>
         /// <param name="ts">TimeSheet object with new values.</param>
-        public static void EditTimeSheet(TimeSheet ts)
+        public static ReturnStatus EditTimeSheet(TimeSheet ts)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.Entry(ts).State = EntityState.Modified;
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.Entry(ts).State = EntityState.Modified;
+                db.SaveChanges();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = "Successfully updated TimeSheet";
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database.";
+                return st;
+            }
         }
 
         /// <summary>
         /// Deletes the TimeSheet from the database.
         /// </summary>
         /// <param name="ts">TimeSheet object to be deleted.</param>
-        public static void DeleteTimeSheet(TimeSheet ts)
+        public static ReturnStatus DeleteTimeSheet(TimeSheet ts)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.timeSheets.Attach(ts);
-            db.timeSheets.Remove(ts);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.timeSheets.Attach(ts);
+                db.timeSheets.Remove(ts);
+                db.SaveChanges();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = "Successfully deleted TimeSheet.";
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Deletes the TimeSheet from the database with the matching id.
         /// </summary>
         /// <param name="id"></param>
-        public static void DeleteTimeSheetById(int id)
+        public static ReturnStatus DeleteTimeSheetById(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            TimeSheet ts = db.timeSheets.Find(id);
-            if (ts != null)
+            ReturnStatus st = new ReturnStatus();
+            try
             {
-                db.timeSheets.Remove(ts);
-                db.SaveChanges();
+                VolunteerDbContext db = new VolunteerDbContext();
+                TimeSheet ts = db.timeSheets.Find(id);
+                if (ts != null)
+                {
+                    db.timeSheets.Remove(ts);
+                    db.SaveChanges();
+
+                    st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                    st.data = "Successfully deleted TimeSheet.";
+                    return st;
+                }
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.ID_CANNOT_BE_NULL;
+                st.data = "Id cannot be null.";
+                return st;
+
+            }catch(Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
             }
         }
 

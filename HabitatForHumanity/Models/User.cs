@@ -318,7 +318,7 @@ namespace HabitatForHumanity.Models
             try
             {
                 user.password = Crypto.HashPassword(user.password);
-                user.waiverSignDate = DateTime.Today;
+                //user.waiverSignDate = DateTime.Today;
 
                 VolunteerDbContext db = new VolunteerDbContext();
                 db.users.Add(user);
