@@ -28,9 +28,11 @@ namespace HabitatForHumanity.ViewModels
         public string relation { get; set; }
         [Required(ErrorMessage = "Enter Emergency Home Phone")]
         [Display(Name = "Emergency Home Phone*")]
+        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
         [Required(ErrorMessage = "Enter Emergency Work Phone")]
         [Display(Name = "Emergency Work Phone*")]
+        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
         [Required(ErrorMessage = "Enter Emergency Street Address")]
         [Display(Name = "Emergency Street Address*")]
@@ -40,6 +42,7 @@ namespace HabitatForHumanity.ViewModels
         public string emergencyCity { get; set; }
         [Required(ErrorMessage = "Enter Emergency Zipcode")]
         [Display(Name = "Emergency Zipcode*")]
+        [RegularExpression(@"^(^\d{5}$)|(^\d{5}-\d{4}$)$", ErrorMessage = "Please Enter a Valid Zip")]
         public string emergencyZip { get; set; }
     }
 }
