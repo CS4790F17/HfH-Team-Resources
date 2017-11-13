@@ -173,8 +173,19 @@ namespace HabitatForHumanity.Models
             return db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
         }
 
+        public static List<TimeSheet> GetBadTimeSheets()
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
+                .OrderByDescending(c => c.clockInTime).
+                ToList();
+                
+            if (sheets.Count() > 0)
+            {
+            }
+            return sheets;
+        }
 
-  
 
 
     }

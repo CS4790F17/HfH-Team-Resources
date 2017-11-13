@@ -54,7 +54,7 @@ namespace HabitatForHumanity.Controllers
                 portalVM.punchInVM = new PunchInVM();
                 portalVM.punchOutVM = new PunchOutVM();
                 portalVM.fullName = "";
-                portalVM.cumulativeHours = 99.9;
+                portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
                 portalVM.isPunchedIn = true;
 
                 TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
