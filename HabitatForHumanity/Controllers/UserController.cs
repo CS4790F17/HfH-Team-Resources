@@ -293,6 +293,47 @@ namespace HabitatForHumanity.Controllers
             return RedirectToAction("Index");
         }
         #endregion
+
+        #region Search
+        public ActionResult VolunteerSearch()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult VolunteerSearch([Bind(Include = "firstName,lastName")] User user)
+        {
+            return View("VolunteerSearchResults", Repository.GetUsersByName(user.firstName, user.lastName));
+        }
+
+        /// <summary>
+        /// This gives all time sheet details for selected user in VolunteerSearchResukts
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult UserTimeDetails(int id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            SearchTimeDetailVM userTimeDetails = new SearchTimeDetailVM();
+            User user = Repository.GetUser(id);
+            userTimeDetails.userId = user.Id;
+            userTimeDetails.firstName = user.firstName;
+            userTimeDetails.lastName = user.lastName;
+            userTimeDetails.emailAddress = user.emailAddress;
+            userTimeDetails.timeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
+            if (userTimeDetails == null)
+            {
+                return HttpNotFound();
+            }
+            return View(userTimeDetails);
+        }
+        #endregion 
+
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

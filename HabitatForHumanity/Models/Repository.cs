@@ -517,6 +517,5 @@ namespace HabitatForHumanity.Models
 
 
         #endregion
-
     }
 }

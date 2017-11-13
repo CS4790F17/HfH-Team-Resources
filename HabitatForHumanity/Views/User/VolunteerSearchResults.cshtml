@@ -1,0 +1,47 @@
+﻿@model IEnumerable<HabitatForHumanity.Models.User>
+
+@{
+    ViewBag.Title = "VolunteerSearchResults";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("New Search", "VolunteerSearch")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.firstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.lastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.emailAddress)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.firstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.lastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.emailAddress)
+            </td>
+            <td>
+                @*@Html.ActionLink("Edit Volunteer", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Edit Time Sheet", "Edit", new { id = item.Id })*@
+                @Html.ActionLink("Details", "UserTimeDetails", new { id = item.Id })
+                @*@Html.ActionLink("Delete", "Delete", new { id = item.Id })*@
+            </td>
+        </tr>
+    }
+
+</table>
