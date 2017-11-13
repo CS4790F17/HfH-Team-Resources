@@ -59,10 +59,20 @@
                     }
                 </ul>
 
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><span class="glyphicon glyphicon-user" style="color: #54B948; padding-left:7px">@Html.ActionLink("Edit Profile", "Edit", "User")</span></li>
-                        <li><span class="glyphicon glyphicon-log-in" style="color: #54B948; padding-left:3px">@Html.ActionLink("Sign Out", "PunchOut", "TimeSheet")</span></li>
-                    </ul>
+                @{ if (Session["Username"] != null)
+                    {
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><span class="glyphicon glyphicon-user" style="color: #54B948; padding-left:7px">@Html.ActionLink("Edit Profile", "Edit", "User")</span></li>
+                            <li><span class="glyphicon glyphicon-log-out" style="color: #54B948; padding-left:3px">@Html.ActionLink("Sign Out", "PunchOut", "TimeSheet")</span></li>
+                        </ul>
+                    }
+                    else if (Session["Username"] == null)
+                    {
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><span class="glyphicon glyphicon-log-in" style="color: #54B948; padding-left:3px">@Html.ActionLink("Sign In", "Login", "User")</span></li>
+                        </ul>
+                    }
+                }
 
                 </div>
             </div>
