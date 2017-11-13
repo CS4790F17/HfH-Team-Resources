@@ -15,12 +15,9 @@ namespace HabitatForHumanity.Models
         [Key]
         public int Id { get; set; }
         public string name { get; set; }
+        [Display(Name = "Description")]
         public string description { get; set; }
         public DateTime beginDate { get; set; }
-
-        /// <summary>
-        /// Current open status of the project. 0 - inactive, 1 - active
-        /// </summary>
         public int status { get; set; }
 
 
@@ -104,32 +101,6 @@ namespace HabitatForHumanity.Models
             db.SaveChanges();
         }
 
-        /// <summary>
-        /// Deletes a project from the database.
-        /// </summary>
-        /// <param name="project">The project object to delete.</param>
-        public static void DeleteProject(Project project)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.projects.Attach(project);
-            db.projects.Remove(project);
-            db.SaveChanges();
-        }
-
-        /// <summary>
-        /// Deletes a project from the database by id.
-        /// </summary>
-        /// <param name="id">The id of the project to delete</param>
-        public static void DeleteProjectById(int id)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            Project proj = db.projects.Find(id);
-            if(proj != null)
-            {
-                db.projects.Remove(proj);
-                db.SaveChanges();
-            }
-        }
         #endregion
     }
 
