@@ -13,6 +13,19 @@ namespace HabitatForHumanity.Models
         #region User functions
 
         /// <summary>
+        /// Creates a volunteer user
+        /// </summary>
+        /// <param name="user"></param>
+        public static void CreateVolunteer(User user)
+        {
+            if (user.password != null)
+            {
+                user.password = Crypto.HashPassword(user.password);
+            }
+            User.CreateVolunteer(user);
+        }
+
+        /// <summary>
         /// Adds a user to the database.
         /// </summary>
         /// <param name="user">User to add.</param>
