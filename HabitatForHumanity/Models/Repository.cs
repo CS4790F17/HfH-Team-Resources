@@ -471,9 +471,10 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static void UpdateTimeSheet(TimeSheet timeSheet)
+        public static ReturnStatus UpdateTimeSheet(TimeSheet timeSheet)
         {
-            TimeSheet.UpdateTimeSheet(timeSheet);
+            //TimeSheet.UpdateTimeSheet(timeSheet);
+            return TimeSheet.EditTimeSheet(timeSheet);
         }
 
         public static ReturnStatus PunchIn(TimeSheet ts)

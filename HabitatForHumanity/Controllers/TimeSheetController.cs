@@ -78,6 +78,8 @@ namespace HabitatForHumanity.Controllers
                 timeSheet.org_Id = punchOutVM.orgNumber;
                 timeSheet.clockInTime = punchOutVM.inTime;
                 timeSheet.clockOutTime = DateTime.Now;
+
+                //TODO: add handling to ensure timesheet was properly updated
                 Repository.UpdateTimeSheet(timeSheet);
    
                 return RedirectToAction("VolunteerPortal","User", new { id = timeSheet.user_Id } );

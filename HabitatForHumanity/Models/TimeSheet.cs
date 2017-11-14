@@ -334,14 +334,14 @@ namespace HabitatForHumanity.Models
 
 
 
-        public static void UpdateTimeSheet(TimeSheet timeSheet)
-        {
-            //timeSheet.clockInTime = (DateTime)timeSheet.clockInTime;
+        //public static void UpdateTimeSheet(TimeSheet timeSheet)
+        //{
+        //    //timeSheet.clockInTime = (DateTime)timeSheet.clockInTime;
 
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.Entry(timeSheet).State = EntityState.Modified;
-            db.SaveChanges();
-        }
+        //    VolunteerDbContext db = new VolunteerDbContext();
+        //    db.Entry(timeSheet).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //}
 
         public static List<TimeSheet> GetAllVolunteerTimeSheets(int volunteerId)
         {
