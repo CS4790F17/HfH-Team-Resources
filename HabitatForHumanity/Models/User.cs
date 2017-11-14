@@ -84,7 +84,30 @@ namespace HabitatForHumanity.Models
         [Display(Name = "Emergency Zipcode*")]
         public string emergencyZip { get; set; }
 
-
+        public User()
+        {
+            firstName = "";
+            lastName = "";
+            homePhoneNumber = "";
+            workPhoneNumber = "";
+            emailAddress = "";
+            streetAddress = "";
+            city = "";
+            zip = "";
+            password = "";
+            birthDate = DateTime.Now; //the year 0001 is out of range for a datetime object which is the defaul null value
+            gender = "";
+            isAdmin = 0;
+            waiverSignDate = DateTime.Now.AddYears(-2);
+            emergencyFirstName = "";
+            emergencyLastName = "";
+            emergencyStreetAddress = "";
+            emergencyWorkPhone = "";
+            relation = "";
+            emergencyZip = "";
+            emergencyCity = "";
+            emergencyHomePhone = "";
+        }
 
         #region Database Access Methods
 
