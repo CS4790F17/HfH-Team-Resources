@@ -157,7 +157,6 @@
     <Compile Include="ViewModels\PortalVM.cs" />
     <Compile Include="ViewModels\PunchOutVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
-    <Compile Include="ViewModels\ToolKitExampleVM.cs" />
     <Compile Include="ViewModels\ToolKitVM.cs" />
   </ItemGroup>
   <ItemGroup>
