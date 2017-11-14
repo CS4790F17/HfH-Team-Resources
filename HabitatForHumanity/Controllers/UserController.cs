@@ -153,6 +153,14 @@ namespace HabitatForHumanity.Controllers
             return RedirectToAction("Login", "Volunteer");
         }
 
+        public ActionResult Logout(string excMsg)
+        {
+            Session["UserName"] = null;
+            Session["isAdmin"] = null;
+            ViewBag.status = excMsg;
+            return View("Login");
+        }
+
         // 
         public ActionResult ForgotPassword()
         {
