@@ -362,7 +362,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="organizationId"></param>
         /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsByOrganizationId(int organizationId)
+        public static ReturnStatus GetAllTimeSheetsByOrganizationId(int organizationId)
         {
             return TimeSheet.GetAllTimeSheetsByOrganizationid(organizationId);
         }

@@ -252,14 +252,31 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="organizationId"></param>
         /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsByOrganizationid(int organizationId)
+        public static ReturnStatus GetAllTimeSheetsByOrganizationid(int organizationId)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Where(x => x.org_Id == organizationId).OrderBy(x => x.Id).ToList();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = db.timeSheets.Where(x => x.org_Id == organizationId).OrderBy(x => x.Id).ToList();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database.";
+                return st;
+            }
         }
 
-        #endregion
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public static TimeSheet GetClockedInUserTimeSheet(int userId)
         {
             TimeSheet temp = new TimeSheet();
@@ -288,6 +305,12 @@ namespace HabitatForHumanity.Models
             //}
             return new TimeSheet();
         }
+
+
+
+        #endregion
+
+
 
 
         public static void UpdateTimeSheet(TimeSheet timeSheet)
