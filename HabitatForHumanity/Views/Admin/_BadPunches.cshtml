@@ -1,0 +1,29 @@
+﻿@model IEnumerable<HabitatForHumanity.ViewModels.BadPunchVM>
+
+<div class="well">
+    <input type="button" onclick="@("location.href='"+ Url.Action("Index","TimeSheet")+ "'")" value="Edit Bad Punches" class="btn btn-warning" />
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.strPunchDate)
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.strPunchDate)
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+

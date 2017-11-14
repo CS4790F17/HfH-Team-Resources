@@ -1,0 +1,50 @@
+﻿<div class="container">
+    <ul class="nav nav-tabs">
+        <li><a onclick="getHoursChart('Month')">Hours by Month</a></li>
+        <li><a onclick="getHoursChart('Week')">Hours by Week</a></li>
+        <li><a onclick="getHoursChart('Year')">Hours by Year</a></li>
+    </ul>
+    <div id="divHoursChart"></div>
+
+    <div><h2>Demographics</h2></div>
+    <div class="row">
+        <div id="divHoursDemog" class="col-md-4"></div>
+        <div class="col-md-2">
+            <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                    <input class="form-check-input" checked="" type="radio" name="optionsRadios" id="optionsRadios1" onclick="getDemographicsPie('All')"> All
+                </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios2" onclick="getDemographicsPie('M')"> Male
+                </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios3" onclick="getDemographicsPie('F')"> Female
+                </label>
+            </div>
+            <div class="form-check form-check-inline disabled">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios4" onclick="getDemographicsPie('O')"> Other
+                </label>
+            </div>
+        </div>
+        @* maybe run this off a model with a list of bad punches and only load this partial if badPunchList.length > 0,
+            then pass that list to partial??
+            list of all the bad punches ??? pagination ??*@
+
+        <div id="badPunches" class="col-md-3"></div>
+
+
+    </div>
+
+
+</div>
+
+
+@section Scripts {
+    <script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/OurScripts/Charts.js"></script>
+}
