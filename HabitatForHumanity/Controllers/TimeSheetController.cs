@@ -56,7 +56,13 @@ namespace HabitatForHumanity.Controllers
 
                 return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
             }
-            punchInVM.projects.createDropDownList(Repository.GetAllProjects());
+            ReturnStatus stp = Repository.GetAllProjects();
+            if (stp.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            {
+                return RedirectToAction("HandleErrors", "User", new { excMsg = (string)stp.userErrorMsg });
+            }
+
+            punchInVM.projects.createDropDownList((List<Project>)stp.data);
             punchInVM.orgs.createDownListFromAll();
 
             return View(punchInVM);
@@ -179,5 +185,6 @@ namespace HabitatForHumanity.Controllers
             }
             base.Dispose(disposing);
         }
+
     }
 }

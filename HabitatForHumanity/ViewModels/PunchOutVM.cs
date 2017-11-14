@@ -25,8 +25,12 @@ namespace HabitatForHumanity.ViewModels
         [Required, Range(1, int.MaxValue, ErrorMessage = "Please Select a Project")]
         public int projectId { get; set; }
         public string userName { get; set; }
-        public ProjectDropDownList projects = new ProjectDropDownList();
+        public ProjectDropDownList projects;
         public OrganizationDropDownList orgs = new OrganizationDropDownList();
+        public PunchInVM(List<Project> ps)
+        {
+            projects = new ProjectDropDownList(ps);
+        }
 
     }
     public class ProjectListVM

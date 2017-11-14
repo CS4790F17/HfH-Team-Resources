@@ -54,9 +54,13 @@ namespace HabitatForHumanity.Controllers
                 ReturnStatus st = Repository.GetUser((int)id);
                 if (ReturnStatus.tryParseUser(st, out User user))
                 {
-
+                    ReturnStatus projList = Repository.GetAllProjects();
+                    if(projList.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                    {
+                        return RedirectToAction("HandleErrors", "User", new { excMsg = (string)projList.userErrorMsg });
+                    }
                     PortalVM portalVM = new PortalVM();
-                    portalVM.punchInVM = new PunchInVM();
+                    portalVM.punchInVM = new PunchInVM((List<Project>)projList.data);
                     portalVM.punchOutVM = new PunchOutVM();
                     portalVM.fullName = "";
                     portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
@@ -71,12 +75,23 @@ namespace HabitatForHumanity.Controllers
                             portalVM.isPunchedIn = false;
                             ReturnStatus st2 = Repository.GetPunchInVM((int)id);
 
-                            if (ReturnStatus.tryParsePunchInVM(st2, out PunchInVM punchIn))
+                            if (st2.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                             {
-                                portalVM.punchInVM = punchIn;
+                                return RedirectToAction("HandleErrors", "User", new { excMsg = (string)st2.userErrorMsg });
                             }
+                            //if (ReturnStatus.tryParsePunchInVM(st2, out PunchInVM punchIn))
+                            //{
+                            //    portalVM.punchInVM = punchIn;
+                            //}
 
-                            portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
+                            //ReturnStatus stp = Repository.GetAllProjects();
+                            //if (stp.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                            //{
+                            //    return RedirectToAction("HandleErrors", "User", new { excMsg = (string)stp.userErrorMsg });
+                            //}
+
+                            portalVM.punchInVM.projects.createDropDownList((List<Project>)stp.data);
+                            //portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
                             portalVM.punchInVM.orgs.createDownListFromAll();
                         }
                         else
@@ -251,10 +266,16 @@ namespace HabitatForHumanity.Controllers
         }
         #endregion
 
-        #region Login get
-        public ActionResult Login()
+        #region Login
+        //public ActionResult Login()
+        //{
+        //    LoginVM loginVm = new LoginVM();
+        //    return View(loginVm);
+        //}
+        public ActionResult Login(string excMsg)
         {
             LoginVM loginVm = new LoginVM();
+            ViewBag.status = excMsg;
             return View(loginVm);
         }
 
@@ -310,6 +331,15 @@ namespace HabitatForHumanity.Controllers
             return RedirectToAction("Login", "Volunteer");
         }
 
+        #endregion
+
+        #region Logout
+        public ActionResult Logout(string excMsg)
+        {
+            Session["UserName"] = null;
+            Session["isAdmin"] = null;
+            return RedirectToAction("Login", new { excMsg = excMsg });
+        }
         #endregion
 
         #region ForgotPassword

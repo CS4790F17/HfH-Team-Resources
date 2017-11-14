@@ -39,6 +39,7 @@ namespace HabitatForHumanity.Models
             COULD_NOT_DELETE,
             COULD_NOT_FIND_SINGLE_TIMESHEET,
             ID_CANNOT_BE_NULL,
+            FAIL_ON_INSERT
         };
 
 
@@ -114,26 +115,26 @@ namespace HabitatForHumanity.Models
         /// <param name="st">ReturnStatus object </param>
         /// <param name="punchIn">Uninitialized PunchInVM object</param>
         /// <returns>true if it was capable of parsing a User, false otherwise</returns>
-        public static bool tryParsePunchInVM(ReturnStatus st, out PunchInVM punchIn)
-        {
-            punchIn = new PunchInVM();
-            try
-            {
-                if (st.errorCode == 0 && st.data != null)
-                {
-                    punchIn = (PunchInVM)st.data;
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception e)
-            {
-                //TODO: log e
-                //could not parse user
-                return false;
+        //public static bool tryParsePunchInVM(ReturnStatus st, out PunchInVM punchIn)
+        //{
+        //    punchIn = new PunchInVM();
+        //    try
+        //    {
+        //        if (st.errorCode == 0 && st.data != null)
+        //        {
+        //            punchIn = (PunchInVM)st.data;
+        //            return true;
+        //        }
+        //        return false;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        //TODO: log e
+        //        //could not parse user
+        //        return false;
 
-            }
-        }
+        //    }
+        //}
 
         /// <summary>
         /// Tries to safely parse a timesheet out of a ReturnStatus object

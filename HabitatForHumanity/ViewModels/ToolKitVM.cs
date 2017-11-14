@@ -17,6 +17,10 @@ namespace HabitatForHumanity.ViewModels
         public string ProjectName { get; set; }
         public List<SelectListItem> Projects { get; set; }
 
+        public ProjectDropDownList(List<Project> projects)
+        {
+            createDropDownList(projects);
+        }
         /// <summary>
         /// Takes a list of Projects and separates them into select list items. To be used in conjunction
         /// with @Html.DropDownListFor(x => x.pdd.ProjectId, Model.pdd.Projects)

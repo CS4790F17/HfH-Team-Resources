@@ -206,7 +206,11 @@ namespace HabitatForHumanity.Models
         /// Get all projects in the database.
         /// </summary>
         /// <returns>A list of all projects.</returns>
-        public static List<Project> GetAllProjects()
+        //public static List<Project> GetAllProjects()
+        //{
+        //    return Project.GetAllProjects();
+        //}
+        public static ReturnStatus GetAllProjects()
         {
             return Project.GetAllProjects();
         }
@@ -216,7 +220,11 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A single project object with a matching id or null otherwise.</returns>
-        public static Project GetProjectById(int id)
+        //public static Project GetProjectById(int id)
+        //{
+        //    return Project.GetProjectById(id);
+        //}
+        public static ReturnStatus GetProjectById(int id)
         {
             return Project.GetProjectById(id);
         }
@@ -225,7 +233,11 @@ namespace HabitatForHumanity.Models
         /// Gets all the currently active projects
         /// </summary>
         /// <returns>A list of all projects that are currently active.</returns>
-        public static List<Project> GetActiveProjects()
+        //public static List<Project> GetActiveProjects()
+        //{
+        //    return Project.GetActiveProjects();
+        //}
+        public static ReturnStatus GetActiveProjects()
         {
             return Project.GetActiveProjects();
         }
@@ -236,7 +248,11 @@ namespace HabitatForHumanity.Models
         /// <param name="name">Name of the project</param>
         /// <param name="date">MM/DD/YYYY</param>
         /// <returns></returns>
-        public static Project GetProjectByNameAndDate(string name, string date)
+        //public static Project GetProjectByNameAndDate(string name, string date)
+        //{
+        //    return Project.GetProjectByNameAndDate(name, date);
+        //}
+        public static ReturnStatus GetProjectByNameAndDate(string name, string date)
         {
             return Project.GetProjectByNameAndDate(name, date);
         }
@@ -245,37 +261,45 @@ namespace HabitatForHumanity.Models
         /// Inserts a project into the database.
         /// </summary>
         /// <param name="project">The new project to be inserted.</param>
-        public static void AddProject(Project project)
+        //public static void AddProject(Project project)
+        //{
+        //    Project.AddProject(project);
+        //}
+        public static ReturnStatus AddProject(Project project)
         {
-            Project.AddProject(project);
+            return Project.AddProject(project);
         }
 
         /// <summary>
         /// Edit the project with new values.
         /// </summary>
         /// <param name="project">Project object where new values are stored.</param>
-        public static void EditProject(Project project)
+        //public static void EditProject(Project project)
+        //{
+        //    Project.EditProject(project);
+        //}
+        public static ReturnStatus EditProject(Project project)
         {
-            Project.EditProject(project);
+            return Project.EditProject(project);
         }
 
         /// <summary>
         /// Deletes a project from the database.
         /// </summary>
         /// <param name="project">The project object to delete.</param>
-        public static void DeleteProject(Project project)
-        {
-            Project.DeleteProject(project);
-        }
+        //public static void DeleteProject(Project project)
+        //{
+        //    Project.DeleteProject(project);
+        //}
 
-        /// <summary>
-        /// Deletes a project from the database by id.
-        /// </summary>
-        /// <param name="id">The id of the project to delete</param>
-        public static void DeleteProjectById(int id)
-        {
-            Project.DeleteProjectById(id);
-        }
+        ///// <summary>
+        ///// Deletes a project from the database by id.
+        ///// </summary>
+        ///// <param name="id">The id of the project to delete</param>
+        //public static void DeleteProjectById(int id)
+        //{
+        //    Project.DeleteProjectById(id);
+        //}
 
         #endregion
 
@@ -460,7 +484,12 @@ namespace HabitatForHumanity.Models
 
         public static ReturnStatus GetPunchInVM(int userId)
         {
-            PunchInVM punch = new PunchInVM();
+            ReturnStatus projList = GetAllProjects();
+            if(projList.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            {
+                return projList;
+            }
+            PunchInVM punch = new PunchInVM((List<Project>)projList.data);
             ReturnStatus st = new ReturnStatus();
 
 
