@@ -227,7 +227,10 @@ namespace HabitatForHumanity.Controllers
         public ActionResult Login(string excMsg)
         {
             LoginVM loginVm = new LoginVM();
-            ViewBag.status = excMsg;
+            if (excMsg != null)
+            {
+                ViewBag.status = excMsg;
+            }
             return View(loginVm);
         }
 
