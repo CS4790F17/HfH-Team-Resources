@@ -223,10 +223,11 @@ namespace HabitatForHumanity.Controllers
         }
         #endregion
 
-        #region Login get
-        public ActionResult Login()
+        #region Login
+        public ActionResult Login(string excMsg)
         {
             LoginVM loginVm = new LoginVM();
+            ViewBag.status = excMsg;
             return View(loginVm);
         }
 
@@ -266,6 +267,14 @@ namespace HabitatForHumanity.Controllers
         }
 
         #endregion
+
+        public ActionResult Logout(string excMsg)
+        {
+            Session["UserName"] = null;
+            Session["isAdmin"] = null;
+            ViewBag.status = excMsg;
+            return View("Login");
+        }
 
         #region ForgotPassword
         public ActionResult ForgotPassword()
