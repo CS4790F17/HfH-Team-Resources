@@ -24,6 +24,15 @@ namespace HabitatForHumanity.Models
         public int status { get; set; }
 
 
+        public Project()
+        {
+            Id = -1;
+            name = "";
+            description = "";
+            beginDate = DateTime.Today;
+        }
+
+
 
 
         #region Database Access Methods

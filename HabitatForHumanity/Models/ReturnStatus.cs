@@ -16,8 +16,14 @@ namespace HabitatForHumanity.Models
     {
         public int errorCode { get; set; }
         public object data { get; set; }
+        /// <summary>
+        /// String to be logged
+        /// </summary>
         public string errorMessage { get; set; }
-
+        /// <summary>
+        /// String to show the user
+        /// </summary>
+        public string userErrorMsg { get; set; }
 
         /// <summary>
         /// An enumerator of error codes used by the ReturnStatus class object.

@@ -15,6 +15,12 @@ namespace HabitatForHumanity.Models
         public int Id { get; set; }
         public string name { get; set; }
 
+        public Organization()
+        {
+            Id = -1;
+            name = "";
+        }
+
 
         #region Database Access Methods
 

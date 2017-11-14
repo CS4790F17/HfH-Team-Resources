@@ -86,6 +86,7 @@ namespace HabitatForHumanity.Models
 
         public User()
         {
+            Id = -1;
             firstName = "";
             lastName = "";
             homePhoneNumber = "";

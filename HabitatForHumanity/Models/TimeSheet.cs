@@ -19,6 +19,17 @@ namespace HabitatForHumanity.Models
         public DateTime clockInTime { get; set; }
         public DateTime clockOutTime { get; set; }
 
+        public TimeSheet()
+        {
+            Id = -1;
+            user_Id = -1;
+            project_Id = -1;
+            org_Id = -1;
+            clockInTime = DateTime.Today;
+            clockOutTime = DateTime.Today.AddDays(1);
+        }
+
+
         #region Database Access Methods
 
         /// <summary>
