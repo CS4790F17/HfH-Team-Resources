@@ -104,5 +104,33 @@ namespace HabitatForHumanity.Models
 
             }
         }
+
+        /// <summary>
+        /// Tries to safely parse a timesheet out of a ReturnStatus object
+        /// </summary>
+        /// <param name="st">ReturnStatus object that potentially contains a timesheet in it's data property.</param>
+        /// <param name="result">The object reference in which to store the parsed timesheet.</param>
+        /// <returns>True if it was capable of parsing a TimeSheet, false otherwise</returns>
+        public static bool tryParseTimeSheet(ReturnStatus st, out TimeSheet result)
+        {
+
+            result = new TimeSheet();
+            try
+            {
+                if (st.errorCode == 0 && st.data != null)
+                {
+                    result = (TimeSheet)st.data;
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                //TODO: log e
+                //could not parse user
+                return false;
+
+            }
+        }
     }
 }

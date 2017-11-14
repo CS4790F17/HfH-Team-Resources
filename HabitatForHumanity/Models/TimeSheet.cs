@@ -273,37 +273,58 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
-        /// 
+        /// Attempts to determine if a user is logged in by fetching all the timesheets by user id and 
+        /// selecting the most recent one. If the most recent timesheet has a clock out time of midnight
+        /// then the user is still clocked in, otherwise they're clocked out.
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public static TimeSheet GetClockedInUserTimeSheet(int userId)
+        public static ReturnStatus GetClockedInUserTimeSheet(int userId)
         {
-            TimeSheet temp = new TimeSheet();
-            VolunteerDbContext db = new VolunteerDbContext();
-
-            //var sheets = from t in db.timeSheets
-            //             group t by t.user_Id into g
-            //             select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
-
-
-            var sheet = db.timeSheets.Where(x => x.user_Id == userId).ToList().OrderBy(y => y.clockInTime);
-            if (sheet.Count() > 0)
+            ReturnStatus st = new ReturnStatus();
+            try
             {
-                if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
-                    return sheet.Last();
-            }
+                // TimeSheet temp = new TimeSheet();
+                VolunteerDbContext db = new VolunteerDbContext();
 
-            //if (sheets.Count() > 0)
-            //{
-            //    temp = sheets.First();
-            //    // only if the clockout is midnight today(tomorrow really)
-            //    if (temp.clockOutTime == DateTime.Today.AddDays(1))
-            //    {
-            //        return temp;
-            //    }
-            //}
-            return new TimeSheet();
+                //var sheets = from t in db.timeSheets
+                //             group t by t.user_Id into g
+                //             select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
+
+
+                var sheet = db.timeSheets.Where(x => x.user_Id == userId).ToList().OrderBy(y => y.clockInTime);
+                if (sheet.Count() > 0)
+                {
+                    if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
+                    {
+                        st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                        st.data = sheet.Last();
+                        return st;
+                    }
+
+                }
+
+                //if (sheets.Count() > 0)
+                //{
+                //    temp = sheets.First();
+                //    // only if the clockout is midnight today(tomorrow really)
+                //    if (temp.clockOutTime == DateTime.Today.AddDays(1))
+                //    {
+                //        return temp;
+                //    }
+                //}
+                //return new TimeSheet();
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = new TimeSheet();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database.";
+                return st;
+            }
         }
 
 
@@ -315,7 +336,7 @@ namespace HabitatForHumanity.Models
 
         public static void UpdateTimeSheet(TimeSheet timeSheet)
         {
-            timeSheet.clockInTime = (DateTime)timeSheet.clockInTime;
+            //timeSheet.clockInTime = (DateTime)timeSheet.clockInTime;
 
             VolunteerDbContext db = new VolunteerDbContext();
             db.Entry(timeSheet).State = EntityState.Modified;

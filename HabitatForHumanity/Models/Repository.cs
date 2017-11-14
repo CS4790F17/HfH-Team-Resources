@@ -427,7 +427,7 @@ namespace HabitatForHumanity.Models
         }
 
 
-        public static TimeSheet GetClockedInUserTimeSheet(int userId)
+        public static ReturnStatus GetClockedInUserTimeSheet(int userId)
         {
             return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
