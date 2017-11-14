@@ -1,9 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using HabitatForHumanity.Models
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - HFH</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -29,29 +31,35 @@
                         {
 
                             <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Time Sheet<span class="caret"></span></a>
+                                <a class="dropdown-toggle" data-toggle="dropdown">Time Sheet<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">@Html.ActionLink("Add Time Sheet", "Create", "TimeSheet")</a></li>
-                                    <li><a href="#">@Html.ActionLink("Edit Time Sheet", "Edit", "TimeSheet")</a></li>
-                                    <li><a href="#">@Html.ActionLink("Delete Time Sheet", "Delete", "TimeSheet")</a></li>
+                                    <li>@Html.ActionLink("Add Time Sheet", "Create", "TimeSheet")</li>
+                                    <li>@Html.ActionLink("Edit Time Sheet", "Index", "TimeSheet")</li>
                                 </ul>
                             </li>
 
                             <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Projects<span class="caret"></span></a>
+                                <a class="dropdown-toggle" data-toggle="dropdown">Projects<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">@Html.ActionLink("Add Project", "Create", "Project")</a></li>
-                                    <li><a href="#">@Html.ActionLink("Edit Project", "Edit", "Project")</a></li>
-                                    <li><a href="#">@Html.ActionLink("Delete Project", "Delete", "Project")</a></li>
+                                    <li>@Html.ActionLink("Add Project", "Create", "Project")</li>
+                                    <li>@Html.ActionLink("Edit Project", "Index", "Project")</li>
                                 </ul>
                             </li>
 
                             <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Organization<span class="caret"></span></a>
+                                <a class="dropdown-toggle" data-toggle="dropdown">Organization<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">@Html.ActionLink("Add Organization", "Create", "Organization")</a></li>
-                                    <li><a href="#">@Html.ActionLink("Edit Organization", "Edit", "Organization")</a></li>
-                                    <li><a href="#">@Html.ActionLink("Delete Organization", "Delete", "Organization")</a></li>
+                                    <li>@Html.ActionLink("Add Organization", "Create", "Organization")</li>
+                                    <li>@Html.ActionLink("Edit Organization", "Index", "Organization")</li>
+                                </ul>
+                            </li>
+
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown">Reports<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Placeholder", "Index", "Home")</li>
+                                    <li>@Html.ActionLink("Placeholder", "Index", "Home")</li>
+                                    <li>@Html.ActionLink("Placeholder", "Index", "Home")</li>
                                 </ul>
                             </li>
 
@@ -62,8 +70,8 @@
                 @{ if (Session["Username"] != null)
                     {
                         <ul class="nav navbar-nav navbar-right">
-                            <li><span class="glyphicon glyphicon-user" style="color: #54B948; padding-left:7px">@Html.ActionLink("Edit Profile", "Edit", "User")</span></li>
-                            <li><span class="glyphicon glyphicon-log-out" style="color: #54B948; padding-left:3px">@Html.ActionLink("Sign Out", "PunchOut", "TimeSheet")</span></li>
+                            <li><span class="glyphicon glyphicon-user" style="color: #54B948; padding-left:7px">@Html.ActionLink("Edit Profile", "Edit", "User", new { id = Repository.GetUserByEmail((string)Session["Username"]).Id } , null)</span></li>
+                            <li><span class="glyphicon glyphicon-log-out" style="color: #54B948; padding-left:3px">@Html.ActionLink("Sign Out", "PunchOut", "TimeSheet", new { id = Repository.GetUserByEmail((string)Session["Username"]).Id }, null)</span></li>
                         </ul>
                     }
                     else if (Session["Username"] == null)
