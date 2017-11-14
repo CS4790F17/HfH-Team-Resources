@@ -604,7 +604,7 @@ namespace HabitatForHumanity.Models
             return User.GetDemographicsForPie(gender);
         }
 
-        public static List<TimeSheet> GetBadTimeSheets()
+        public static ReturnStatus GetBadTimeSheets()
         {
             return TimeSheet.GetBadTimeSheets();
         }

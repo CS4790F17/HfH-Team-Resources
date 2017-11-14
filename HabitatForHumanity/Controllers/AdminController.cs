@@ -157,36 +157,41 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult GetBadPunches()
         {
-
-            List<TimeSheet> ts = Repository.GetBadTimeSheets();
+            ReturnStatus badTimeSheets = Repository.GetBadTimeSheets();
+           // List<TimeSheet> ts = Repository.GetBadTimeSheets();
             List<BadPunchVM> bp = new List<BadPunchVM>();
-            foreach(TimeSheet t in ts)
-            {
-                ReturnStatus st = Repository.GetUser(t.user_Id);
-                //User user = Repository.GetUser(t.user_Id);
-                string volName = "";
 
-                //if st returned with all clear and user exists
-                if(ReturnStatus.tryParseUser(st, out User user))
+
+            if (ReturnStatus.tryParseTimeSheetList(badTimeSheets, out List<TimeSheet> ts))
+            {
+                foreach (TimeSheet t in ts)
                 {
-                    if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
+                    ReturnStatus st = Repository.GetUser(t.user_Id);
+                    //User user = Repository.GetUser(t.user_Id);
+                    string volName = "";
+
+                    //if st returned with all clear and user exists
+                    if (ReturnStatus.tryParseUser(st, out User user))
                     {
-                        volName = user.emailAddress;
+                        if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
+                        {
+                            volName = user.emailAddress;
+                        }
+                        else if (string.IsNullOrEmpty(user.firstName))
+                        {
+                            volName += user.emailAddress + " ";
+                        }
+                        else if (string.IsNullOrEmpty(user.lastName))
+                        {
+                            volName += user.emailAddress;
+                        }
+                        else
+                        {
+                            volName += user.firstName + " " + user.lastName;
+                        }
                     }
-                    else if (string.IsNullOrEmpty(user.firstName))
-                    {
-                        volName += user.emailAddress + " ";
-                    }
-                    else if(string.IsNullOrEmpty(user.lastName))
-                    {
-                        volName += user.emailAddress;
-                    }
-                    else
-                    {
-                        volName += user.firstName + " " + user.lastName;
-                    }
+                    bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
                 }
-                bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
             }
             //return PartialView("_BadPunches", BadPunchVM.GetDummyBadPunches());
             return PartialView("_BadPunches", bp);

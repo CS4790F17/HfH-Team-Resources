@@ -368,17 +368,32 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static List<TimeSheet> GetBadTimeSheets()
+        public static ReturnStatus GetBadTimeSheets()
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
-                .OrderByDescending(c => c.clockInTime).
-                ToList();
-
-            if (sheets.Count() > 0)
+            ReturnStatus st = new ReturnStatus();
+            try
             {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
+                    .OrderByDescending(c => c.clockInTime).
+                    ToList();
+
+                if (sheets.Count() > 0)
+                {
+                }
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = sheets;
+                return st;
+               // return sheets;
             }
-            return sheets;
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database.";
+                return st;
+            }
         }
 
 
