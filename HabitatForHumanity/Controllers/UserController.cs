@@ -109,12 +109,7 @@ namespace HabitatForHumanity.Controllers
 
         #region Create
         public ActionResult Create()
-        {
-            ReturnStatus st = Repository.GetUser(1);
-            if(ReturnStatus.tryParseUser(st, out User user))
-            {
-                user.birthDate
-            }
+        {  
             return View();
         }
         
