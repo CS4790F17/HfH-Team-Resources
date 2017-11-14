@@ -77,7 +77,7 @@ namespace HabitatForHumanity.Controllers
                             }
 
                             portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
-                            portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
+                            portalVM.punchInVM.orgs.createDownListFromAll();
                         }
                         else
                         {
@@ -278,6 +278,7 @@ namespace HabitatForHumanity.Controllers
                         if ((bool)Repository.AuthenticateUser(loginVm).data)
                         {
                             // User user = (User)Repository.GetUserByEmail(loginVm.email).data;
+                            //TODO: add to if
                             ReturnStatus.tryParseUser(Repository.GetUserByEmail(loginVm.email), out User user);
 
                             if (user.isAdmin == 1)

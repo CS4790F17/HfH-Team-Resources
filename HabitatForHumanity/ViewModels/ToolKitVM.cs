@@ -18,7 +18,7 @@ namespace HabitatForHumanity.ViewModels
         public List<SelectListItem> Projects { get; set; }
 
         /// <summary>
-        /// Takes a list of Organizations and separates them into select list items. To be used in conjunction
+        /// Takes a list of Projects and separates them into select list items. To be used in conjunction
         /// with @Html.DropDownListFor(x => x.pdd.ProjectId, Model.pdd.Projects)
         /// </summary>
         /// <param name="items">List of Projects</param>
@@ -40,6 +40,20 @@ namespace HabitatForHumanity.ViewModels
             }
             Projects = SelectList;
         }
+
+        //TODO: Uncomment when Project model has been refactored
+        ///// <summary>
+        ///// Creates a drop down list for all Projects in the database.
+        ///// </summary>
+        //public void createDownListFromAll()
+        //{
+        //    ReturnStatus st = Repository.GetAllProjects();
+        //    if(ReturnStatus.tryParseOrganizationList(st, out List<Projects> result))
+        //    {
+        //        createDropDownList(result);
+        //    }
+
+        //}
     }
 
     public class OrganizationDropDownList
@@ -71,6 +85,19 @@ namespace HabitatForHumanity.ViewModels
                 });
             }
             Organizations = SelectList;
+        }
+
+
+        /// <summary>
+        /// Creates a drop down list for all Organizations in the database.
+        /// </summary>
+        public void createDownListFromAll()
+        {
+            ReturnStatus st = Repository.GetAllOrganizations();
+            if (ReturnStatus.tryParseOrganizationList(st, out List<Organization> result))
+            {
+                createDropDownList(result);
+            }
         }
 
     }

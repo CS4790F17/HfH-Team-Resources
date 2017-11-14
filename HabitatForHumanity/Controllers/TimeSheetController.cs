@@ -57,7 +57,7 @@ namespace HabitatForHumanity.Controllers
                 return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
             }
             punchInVM.projects.createDropDownList(Repository.GetAllProjects());
-            punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
+            punchInVM.orgs.createDownListFromAll();
 
             return View(punchInVM);
         }
