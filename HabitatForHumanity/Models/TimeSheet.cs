@@ -199,10 +199,23 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
+        public static ReturnStatus GetAllTimeSheetsByProjectId(int projectId)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
+                return st;
+            }catch(Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
