@@ -13,6 +13,43 @@ namespace HabitatForHumanity.Models
         #region User functions
 
         /// <summary>
+        /// Checks whether the user entered a bad password for that log in email.
+        /// </summary>
+        /// <param name="loginVm">The viewmodel containing the users email and password.</param>
+        /// <returns>ReturnStatus object that contains true if user entered a correct password.</returns>
+        public static ReturnStatus AuthenticateUser(LoginVM loginVm)
+        {
+            ReturnStatus st = new ReturnStatus();
+
+            try
+            {
+                bool exists = false;
+
+                st = User.GetUserByEmail(loginVm.email);
+
+                //check status to make sure error code and data are correct
+                if (ReturnStatus.tryParseUser(st, out User user))
+                {
+                    if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+                    {
+                        exists = true;
+                    }
+                }
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = exists;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_AUTHENTICATE_USER;
+                st.data = "Failed to authenticate user.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        }
+
+        /// <summary>
         /// Creates a volunteer user
         /// </summary>
         /// <param name="user"></param>
@@ -45,17 +82,6 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus EmailExists(string email)
         {
             return User.EmailExists(email);
-        }
-
-
-        /// <summary>
-        /// Checks whether the user entered a bad password for that log in email.
-        /// </summary>
-        /// <param name="loginVm">The viewmodel containing the users email and password.</param>
-        /// <returns>ReturnStatus object that contains true if user entered a correct password.</returns>
-        public static ReturnStatus AuthenticateUser(LoginVM loginVm)
-        {
-            return User.AuthenticateUser(loginVm);
         }
 
 
