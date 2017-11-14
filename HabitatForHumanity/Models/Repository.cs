@@ -352,7 +352,7 @@ namespace HabitatForHumanity.Models
         /// Gets all the timesheets for a single volunteer
         /// </summary>
         /// <param name="volunteerId"></param>
-        public static List<TimeSheet> GetAllTimeSheetsByVolunteer(int volunteerId)
+        public static ReturnStatus GetAllTimeSheetsByVolunteer(int volunteerId)
         {
             return TimeSheet.GetAllVolunteerTimeSheets(volunteerId);
         }
@@ -396,7 +396,7 @@ namespace HabitatForHumanity.Models
         /// <param name="ts">TimeSheet object to add.</param>
         public static ReturnStatus InsertTimeSheet(TimeSheet ts)
         {
-           return TimeSheet.InsertTimeSheet(ts);
+            return TimeSheet.InsertTimeSheet(ts);
         }
 
         /// <summary>
@@ -566,17 +566,22 @@ namespace HabitatForHumanity.Models
         public static double getTotalHoursWorkedByVolunteer(int volunteerId)
         {
             DateTime userClockedIn = DateTime.Today.AddDays(1);
-            List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId);
+            //List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId)
             List<TimeSheet> volunteerTimes = new List<TimeSheet>();
-            foreach (TimeSheet ts in temp)
-            {
-                if (ts.clockOutTime != userClockedIn)
-                    volunteerTimes.Add(ts);
-            }
-            TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
-            return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
-            //   return 0;
+            ReturnStatus st = GetAllTimeSheetsByVolunteer(volunteerId);
 
+            if (ReturnStatus.tryParseTimeSheetList(st, out List<TimeSheet> temp))
+            {
+                foreach (TimeSheet ts in temp)
+                {
+                    if (ts.clockOutTime != userClockedIn)
+                        volunteerTimes.Add(ts);
+                }
+                TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
+                return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+                //   return 0;
+            }
+            return 0; //no timesheets were found
         }
 
         /// <summary>

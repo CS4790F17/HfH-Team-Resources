@@ -132,5 +132,27 @@ namespace HabitatForHumanity.Models
 
             }
         }
+
+        public static bool tryParseTimeSheetList(ReturnStatus st, out List<TimeSheet> result)
+        {
+
+            result = new List<TimeSheet>();
+            try
+            {
+                if (st.errorCode == 0 && st.data != null)
+                {
+                    result = (List<TimeSheet>)st.data;
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                //TODO: log e
+                //could not parse user
+                return false;
+
+            }
+        }
     }
 }

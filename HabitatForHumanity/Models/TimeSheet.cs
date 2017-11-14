@@ -343,10 +343,29 @@ namespace HabitatForHumanity.Models
         //    db.SaveChanges();
         //}
 
-        public static List<TimeSheet> GetAllVolunteerTimeSheets(int volunteerId)
+
+        /// <summary>
+        /// Gets all the supplied volunteers timesheets
+        /// </summary>
+        /// <param name="volunteerId"></param>
+        /// <returns></returns>
+        public static ReturnStatus GetAllVolunteerTimeSheets(int volunteerId)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to the database.";
+                return st;
+            }
         }
 
         public static List<TimeSheet> GetBadTimeSheets()
