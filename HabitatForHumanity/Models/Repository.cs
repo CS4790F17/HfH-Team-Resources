@@ -373,8 +373,8 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="beginDate">Datetime represntation of the begin date</param>
         /// <param name="endDate">Datetime represntation of the begin date</param>
-        /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
+        /// <returns>ReturnStatus object with errorCode and data</returns>
+        public static ReturnStatus GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
         {
             return TimeSheet.GetAllTimeSheetsInDateRange(beginDate, endDate);
         }
