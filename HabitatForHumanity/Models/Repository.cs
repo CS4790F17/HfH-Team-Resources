@@ -259,7 +259,7 @@ namespace HabitatForHumanity.Models
         /// Get all organizations in the database.
         /// </summary>
         /// <returns>A list of all organizations.</returns>
-        public static List<Organization> GetAllOrganizations()
+        public static ReturnStatus GetAllOrganizations()
         {
             return Organization.GetAllOrganizations();
         }
@@ -269,7 +269,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A single organization object with a matching id otherwise null.</returns>
-        public static Organization GetOrganizationById(int id)
+        public static ReturnStatus GetOrganizationById(int id)
         {
             return Organization.GetOrganizationById(id);
         }
@@ -279,7 +279,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="name"></param>
         /// <returns>A single organization object with a matching name otherwise null.</returns>
-        public static Organization GetOrganizationByName(string name)
+        public static ReturnStatus GetOrganizationByName(string name)
         {
             return Organization.GetOrganizationByName(name);
         }
@@ -289,36 +289,36 @@ namespace HabitatForHumanity.Models
         /// Adds an organization to the database.
         /// </summary>
         /// <param name="org">The organization to be added</param>
-        public static void AddOrganization(Organization org)
+        public static ReturnStatus AddOrganization(Organization org)
         {
-            Organization.AddOrganization(org);
+            return Organization.AddOrganization(org);
         }
 
         /// <summary>
         /// Edits the organization with new values.
         /// </summary>
         /// <param name="org">The organization object with new values.</param>
-        public static void EditOrganization(Organization org)
+        public static ReturnStatus EditOrganization(Organization org)
         {
-            Organization.EditOrganization(org);
+            return Organization.EditOrganization(org);
         }
 
         /// <summary>
         /// Deletes an organization from the database.
         /// </summary>
         /// <param name="org">The organization object to delete</param>
-        public static void DeleteOrganization(Organization org)
+        public static ReturnStatus DeleteOrganization(Organization org)
         {
-            Organization.DeleteOrganization(org);
+            return Organization.DeleteOrganization(org);
         }
 
         /// <summary>
         /// Deletes an organization from the database by id.
         /// </summary>
         /// <param name="id">The id of the organization to delete.</param>
-        public static void DeleteOrganizationById(int id)
+        public static ReturnStatus DeleteOrganizationById(int id)
         {
-            Organization.DeleteOrganizationById(id);
+            return Organization.DeleteOrganizationById(id);
         }
 
         #endregion

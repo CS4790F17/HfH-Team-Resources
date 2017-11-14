@@ -22,10 +22,23 @@ namespace HabitatForHumanity.Models
         /// Get all organizations in the database.
         /// </summary>
         /// <returns>A list of all organizations.</returns>
-        public static List<Organization> GetAllOrganizations()
+        public static ReturnStatus GetAllOrganizations()
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.organizations.ToList();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = db.organizations.ToList();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database.";
+                return st;
+            }
         }
 
 
@@ -34,10 +47,23 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A single organization object with a matching id otherwise null.</returns>
-        public static Organization GetOrganizationById(int id)
+        public static ReturnStatus GetOrganizationById(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.organizations.Find(id);
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = db.organizations.Find(id);
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
@@ -45,58 +71,134 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="name"></param>
         /// <returns>A single organization object with a matching name otherwise null.</returns>
-        public static Organization GetOrganizationByName(string name)
+        public static ReturnStatus GetOrganizationByName(string name)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.organizations.Where(x => x.name.Equals(name)).Single();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = db.organizations.Where(x => x.name.Equals(name)).Single();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Adds an organization to the database.
         /// </summary>
         /// <param name="org">The organization to be added</param>
-        public static void AddOrganization(Organization org)
+        public static ReturnStatus AddOrganization(Organization org)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.organizations.Add(org);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.organizations.Add(org);
+                db.SaveChanges();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = "Successfully added organization.";
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Edits the organization with new values.
         /// </summary>
         /// <param name="org">The organization object with new values.</param>
-        public static void EditOrganization(Organization org)
+        public static ReturnStatus EditOrganization(Organization org)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.Entry(org).State = EntityState.Modified;
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.Entry(org).State = EntityState.Modified;
+                db.SaveChanges();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = "Successfully edited organization.";
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Deletes an organization from the database.
         /// </summary>
         /// <param name="org">The organization object to delete</param>
-        public static void DeleteOrganization(Organization org)
+        public static ReturnStatus DeleteOrganization(Organization org)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.organizations.Attach(org);
-            db.organizations.Remove(org);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.organizations.Attach(org);
+                db.organizations.Remove(org);
+                db.SaveChanges();
+
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.data = "Successfully deleted the organization.";
+                return st;
+
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database.";
+                return st;
+            }
         }
 
         /// <summary>
         /// Deletes an organization from the database by id.
         /// </summary>
         /// <param name="id">The id of the organization to delete.</param>
-        public static void DeleteOrganizationById(int id)
+        public static ReturnStatus DeleteOrganizationById(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            Organization org = db.organizations.Find(id);
-            if(org != null)
+            ReturnStatus st = new ReturnStatus();
+            try
             {
-                db.organizations.Remove(org);
-                db.SaveChanges();
+                VolunteerDbContext db = new VolunteerDbContext();
+                Organization org = db.organizations.Find(id);
+                if (org != null)
+                {
+                    db.organizations.Remove(org);
+                    db.SaveChanges();
+
+                    st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                    st.data = "Successfully deleted the organization.";
+                    return st;
+                }
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_DELETE;
+                st.data = "Could not delete the organization with the supplied id.";
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = "Could not connect to database.";
+                st.errorMessage = e.ToString();
+                return st;
             }
         }
         #endregion
