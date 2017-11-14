@@ -42,6 +42,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = new TimeSheet();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -49,19 +50,20 @@ namespace HabitatForHumanity.Models
 
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
                 st.data = db.timeSheets.Where(x => x.user_Id == userId && x.project_Id == projectId && x.clockInTime.Equals(cit)).Single();
+                st.userErrorMsg = "";
                 return st;
             }
             catch (InvalidOperationException e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_SINGLE_TIMESHEET;
                 st.errorMessage = e.ToString();
-                st.data = "More than one timesheet found for unique natural key.";
+                st.userErrorMsg = "Time sheet not found, please try again.";
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -75,10 +77,11 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetTimeSheetById(int id)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = new TimeSheet();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-
+                st.userErrorMsg = "";
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
                 st.data = db.timeSheets.Find(id);
                 return st;
@@ -86,8 +89,8 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
                 st.errorMessage = e.ToString();
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -99,6 +102,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus InsertTimeSheet(TimeSheet ts)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = null;
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -106,14 +110,14 @@ namespace HabitatForHumanity.Models
                 db.SaveChanges();
 
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.data = "Successfully added TimeSheet.";
+                st.userErrorMsg = "Successfully added TimeSheet.";
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -125,6 +129,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus EditTimeSheet(TimeSheet ts)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = null;
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -132,14 +137,14 @@ namespace HabitatForHumanity.Models
                 db.SaveChanges();
 
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.data = "Successfully updated TimeSheet";
+                st.userErrorMsg = "Successfully updated TimeSheet";
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -151,6 +156,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus DeleteTimeSheet(TimeSheet ts)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = null;
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -159,13 +165,13 @@ namespace HabitatForHumanity.Models
                 db.SaveChanges();
 
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.data = "Successfully deleted TimeSheet.";
+                st.userErrorMsg = "Successfully deleted TimeSheet.";
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -178,6 +184,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus DeleteTimeSheetById(int id)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = null;
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -188,19 +195,19 @@ namespace HabitatForHumanity.Models
                     db.SaveChanges();
 
                     st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                    st.data = "Successfully deleted TimeSheet.";
+                    st.userErrorMsg = "Successfully deleted TimeSheet.";
                     return st;
                 }
 
                 st.errorCode = (int)ReturnStatus.ErrorCodes.ID_CANNOT_BE_NULL;
-                st.data = "Id cannot be null.";
+                st.userErrorMsg = "System was unable to process your request.";
                 return st;
 
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -214,6 +221,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetAllTimeSheetsByProjectId(int projectId)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -225,7 +233,7 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -240,6 +248,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -252,7 +261,7 @@ namespace HabitatForHumanity.Models
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -266,6 +275,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetAllTimeSheetsByOrganizationid(int organizationId)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -278,7 +288,7 @@ namespace HabitatForHumanity.Models
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -293,15 +303,10 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetClockedInUserTimeSheet(int userId)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = new TimeSheet();
             try
             {
-                // TimeSheet temp = new TimeSheet();
                 VolunteerDbContext db = new VolunteerDbContext();
-
-                //var sheets = from t in db.timeSheets
-                //             group t by t.user_Id into g
-                //             select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
-
 
                 var sheet = db.timeSheets.Where(x => x.user_Id == userId).ToList().OrderBy(y => y.clockInTime);
                 if (sheet.Count() > 0)
@@ -314,26 +319,14 @@ namespace HabitatForHumanity.Models
                     }
 
                 }
-
-                //if (sheets.Count() > 0)
-                //{
-                //    temp = sheets.First();
-                //    // only if the clockout is midnight today(tomorrow really)
-                //    if (temp.clockOutTime == DateTime.Today.AddDays(1))
-                //    {
-                //        return temp;
-                //    }
-                //}
-                //return new TimeSheet();
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.data = new TimeSheet();
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -341,19 +334,6 @@ namespace HabitatForHumanity.Models
 
 
         #endregion
-
-
-
-
-        //public static void UpdateTimeSheet(TimeSheet timeSheet)
-        //{
-        //    //timeSheet.clockInTime = (DateTime)timeSheet.clockInTime;
-
-        //    VolunteerDbContext db = new VolunteerDbContext();
-        //    db.Entry(timeSheet).State = EntityState.Modified;
-        //    db.SaveChanges();
-        //}
-
 
         /// <summary>
         /// Gets all the supplied volunteers timesheets
@@ -363,6 +343,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetAllVolunteerTimeSheets(int volunteerId)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -374,7 +355,7 @@ namespace HabitatForHumanity.Models
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.data = "Could not connect to the database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -382,6 +363,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetBadTimeSheets()
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -389,20 +371,15 @@ namespace HabitatForHumanity.Models
                     .OrderByDescending(c => c.clockInTime).
                     ToList();
 
-                if (sheets.Count() > 0)
-                {
-                }
-
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
                 st.data = sheets;
                 return st;
-               // return sheets;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }

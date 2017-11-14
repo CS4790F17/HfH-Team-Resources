@@ -485,13 +485,18 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetPunchInVM(int userId)
         {
             ReturnStatus projList = GetAllProjects();
-            if(projList.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            if (projList == null
+                || projList.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR
+                    || ((List<Project>)projList.data).Count() < 1)
             {
-                return projList;
+                return new ReturnStatus()
+                {
+                    errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE,
+                    userErrorMsg = "Testing, get punchinvm in repo broke"
+                };
             }
             PunchInVM punch = new PunchInVM((List<Project>)projList.data);
             ReturnStatus st = new ReturnStatus();
-
 
             // User user = GetUser(userId); 
 
@@ -618,25 +623,64 @@ namespace HabitatForHumanity.Models
 
         #region Report functions
 
-        public static double getTotalHoursWorkedByVolunteer(int volunteerId)
-        {
-            DateTime userClockedIn = DateTime.Today.AddDays(1);
-            //List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId)
-            List<TimeSheet> volunteerTimes = new List<TimeSheet>();
-            ReturnStatus st = GetAllTimeSheetsByVolunteer(volunteerId);
+        //public static double getTotalHoursWorkedByVolunteer(int volunteerId)
+        //{
+        //    DateTime userClockedIn = DateTime.Today.AddDays(1);
+        //    //List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId)
+        //    List<TimeSheet> volunteerTimes = new List<TimeSheet>();
+        //    ReturnStatus st = GetAllTimeSheetsByVolunteer(volunteerId);
 
-            if (ReturnStatus.tryParseTimeSheetList(st, out List<TimeSheet> temp))
+        //    if (ReturnStatus.tryParseTimeSheetList(st, out List < TimeSheet > temp))
+        //    {
+        //        foreach (TimeSheet ts in temp)
+        //        {
+        //            if (ts.clockOutTime != userClockedIn)
+        //                volunteerTimes.Add(ts);
+        //        }
+        //        TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
+        //        return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+        //        //   return 0;
+        //    }
+        //    return 0; //no timesheets were found
+        //}
+        public static ReturnStatus getTotalHoursWorkedByVolunteer(int volunteerId)
+        {
+            ReturnStatus ret = new ReturnStatus();
+
+            DateTime userClockedIn = DateTime.Today.AddDays(1);
+            List<TimeSheet> temp = new List<TimeSheet>();
+            List<TimeSheet> volunteerTimes = new List<TimeSheet>();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+            try
             {
-                foreach (TimeSheet ts in temp)
+                st = GetAllTimeSheetsByVolunteer(volunteerId);
+                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
-                    if (ts.clockOutTime != userClockedIn)
-                        volunteerTimes.Add(ts);
+                    ret.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                    ret.userErrorMsg = "Your request cannot be processed at this time."; ;
+                    return ret;
                 }
-                TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
-                return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
-                //   return 0;
+                temp = (List<TimeSheet>)st.data;
+                if(temp!= null && temp.Count() > 0)
+                {
+                    foreach (TimeSheet ts in temp)
+                    {
+                        if (ts.clockOutTime != userClockedIn)
+                            volunteerTimes.Add(ts);
+                    }
+                    TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
+                    ret.data =  Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);  
+                }     
             }
-            return 0; //no timesheets were found
+            catch(Exception e)
+            {
+                ret.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                ret.data = 0.0;
+                ret.userErrorMsg = "No timecards found for that volunteer.";
+                ret.errorMessage = e.Message;
+            }
+            return ret;
         }
 
         /// <summary>
@@ -654,8 +698,28 @@ namespace HabitatForHumanity.Models
             return hoursWorked;
         }
 
-        public static List<User.Demog> GetDemographicsForPie(string gender)
+        //public static List<User.Demog> GetDemographicsForPie(string gender)
+        //{
+        //    return User.GetDemographicsForPie(gender);
+        //}
+        public static ReturnStatus GetDemographicsForPie(string gender)
         {
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<User.Demog>();
+            try
+            {
+                st = User.GetDemographicsForPie(gender);
+                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                {
+                    st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                    st.userErrorMsg = "Problem loading demographics data, try again later.";
+                    return st;
+                }
+            }
+            catch
+            {
+                //log something
+            }
             return User.GetDemographicsForPie(gender);
         }
 
