@@ -62,30 +62,32 @@ namespace HabitatForHumanity.Controllers
                     portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
                     portalVM.isPunchedIn = true;
 
-                    TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
-
-                    if (temp == null || temp.Id < 1)
+                    //TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
+                    ReturnStatus timeSheetResult = Repository.GetClockedInUserTimeSheet((int)id);
+                    if (ReturnStatus.tryParseTimeSheet(timeSheetResult, out TimeSheet temp))
                     {
-                        portalVM.isPunchedIn = false;
-                        ReturnStatus st2 = Repository.GetPunchInVM((int)id);
-
-                        if (ReturnStatus.tryParsePunchInVM(st2, out PunchInVM punchIn))
+                        if (temp == null || temp.Id < 1)
                         {
-                            portalVM.punchInVM = punchIn;
+                            portalVM.isPunchedIn = false;
+                            ReturnStatus st2 = Repository.GetPunchInVM((int)id);
+
+                            if (ReturnStatus.tryParsePunchInVM(st2, out PunchInVM punchIn))
+                            {
+                                portalVM.punchInVM = punchIn;
+                            }
+
+                            portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
+                            portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
                         }
-
-                        portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
-                        portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
+                        else
+                        {
+                            portalVM.punchOutVM.timeSheetNumber = temp.Id;
+                            portalVM.punchOutVM.userNumber = temp.user_Id;
+                            portalVM.punchOutVM.projectNumber = temp.project_Id;
+                            portalVM.punchOutVM.orgNumber = temp.org_Id;
+                            portalVM.punchOutVM.inTime = temp.clockInTime;
+                        }
                     }
-                    else
-                    {
-                        portalVM.punchOutVM.timeSheetNumber = temp.Id;
-                        portalVM.punchOutVM.userNumber = temp.user_Id;
-                        portalVM.punchOutVM.projectNumber = temp.project_Id;
-                        portalVM.punchOutVM.orgNumber = temp.org_Id;
-                        portalVM.punchOutVM.inTime = temp.clockInTime;
-                    }
-
 
                     if (user.firstName != null)
                     {
@@ -109,10 +111,10 @@ namespace HabitatForHumanity.Controllers
 
         #region Create
         public ActionResult Create()
-        {  
+        {
             return View();
         }
-        
+
         // GET: User/VolunteerSignup
         public ActionResult VolunteerSignup()
         {
