@@ -78,7 +78,8 @@ namespace HabitatForHumanity.Controllers
                 PunchInVM punchInVM = (PunchInVM)pivm.data;
                 portalVM.punchInVM = punchInVM;
                 // punch out stuff
-                PunchOutVM punchOutVM = new PunchOutVM();
+               // PunchOutVM punchOutVM = new PunchOutVM();
+                portalVM.punchOutVM = new PunchOutVM();
 
                 ReturnStatus timeSheetResult = new ReturnStatus();
                 timeSheetResult.data = new TimeSheet();
@@ -94,12 +95,16 @@ namespace HabitatForHumanity.Controllers
                 }
                 else
                 {
+                    portalVM.isPunchedIn = true;
                     portalVM.punchOutVM.timeSheetNumber = temp.Id;
                     portalVM.punchOutVM.userNumber = temp.user_Id;
                     portalVM.punchOutVM.projectNumber = temp.project_Id;
                     portalVM.punchOutVM.orgNumber = temp.org_Id;
                     portalVM.punchOutVM.inTime = temp.clockInTime;
+                    
                 }
+
+                portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
 
                 return View(portalVM);
                 
