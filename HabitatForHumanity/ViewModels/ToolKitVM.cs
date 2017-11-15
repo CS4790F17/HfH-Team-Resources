@@ -17,7 +17,7 @@ namespace HabitatForHumanity.ViewModels
         public string ProjectName { get; set; }
         public List<SelectListItem> Projects { get; set; }
 
-        public ProjectDropDownList(List<Project> projects)
+        public ProjectDropDownList()
         {
             ReturnStatus st = Repository.GetAllProjects();
             createDropDownList((List<Project>)st.data);
@@ -54,7 +54,7 @@ namespace HabitatForHumanity.ViewModels
         public string OrganizationName { get; set; }
         public List<SelectListItem> Organizations { get; set; }
 
-        public OrganizationDropDownList(List<Organization> orgs)
+        public OrganizationDropDownList()
         {
             ReturnStatus st = Repository.GetAllOrganizations();
             createDropDownList((List<Organization>)st.data);

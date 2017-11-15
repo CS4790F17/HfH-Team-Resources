@@ -512,7 +512,7 @@ namespace HabitatForHumanity.Models
                     userErrorMsg = "Testing, get punchinvm in repo broke on orgs"
                 };
             }
-            PunchInVM punch = new PunchInVM((List<Project>)projList.data,(List<Organization>)orgResult.data);
+            PunchInVM punch = new PunchInVM();
             ReturnStatus st = new ReturnStatus();
 
             // User user = GetUser(userId); 
