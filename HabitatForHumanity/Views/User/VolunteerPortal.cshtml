@@ -20,6 +20,7 @@
         }
     else
     {
-        <div>@{Html.RenderPartial("_PunchOut", Model.punchOutVM);}</div>
+        @*<div>@{Html.RenderPartial("_PunchOut", Model.punchOutVM);}</div>*@
+        <div>@Html.Action("_PunchOut", new { id = Model.userId })</div>
     }
 }

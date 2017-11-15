@@ -58,51 +58,20 @@ namespace HabitatForHumanity.Controllers
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = (string)st.userErrorMsg });
                 }
+
                 User user = (User)st.data;
-                if (user.firstName != null)
-                {
-                    portalVM.fullName += user.firstName + " ";
-                }
-                if (user.lastName != null)
-                {
-                    portalVM.fullName += user.lastName;
-                }
+                //if (user.firstName != null)
+                //{
+                //    portalVM.fullName += user.firstName + " ";
+                //}
+                //if (user.lastName != null)
+                //{
+                //    portalVM.fullName += user.lastName;
+                //}
 
-
-
+                portalVM.fullName = user.firstName + " " + user.lastName;
                 portalVM.userId = user.Id;
-                // punch in vm
-                // ReturnStatus pivm = Repository.GetPunchInVM((int)id);
-
-
-                // PunchInVM punchInVM = (PunchInVM)pivm.data;
-                // portalVM.punchInVM = punchInVM;
-
-                portalVM.punchOutVM = new PunchOutVM();
-
-                ReturnStatus timeSheetResult = new ReturnStatus();
-                timeSheetResult.data = new TimeSheet();
-                timeSheetResult = Repository.GetClockedInUserTimeSheet((int)id);
-                if (timeSheetResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
-                {
-                    return RedirectToAction("HandleErrors", "User", new { excMsg = (string)timeSheetResult.userErrorMsg });
-                }
-                TimeSheet temp = (TimeSheet)timeSheetResult.data;
-                if (temp.Id < 1)
-                {
-                    portalVM.isPunchedIn = false;
-                }
-                else
-                {
-                    portalVM.isPunchedIn = true;
-                    portalVM.punchOutVM.timeSheetNumber = temp.Id;
-                    portalVM.punchOutVM.userNumber = temp.user_Id;
-                    portalVM.punchOutVM.projectNumber = temp.project_Id;
-                    portalVM.punchOutVM.orgNumber = temp.org_Id;
-                    portalVM.punchOutVM.inTime = temp.clockInTime;
-
-                }
-
+                portalVM.isPunchedIn = Repository.IsUserClockedIn(user.Id);
                 portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
 
                 return View(portalVM);
@@ -116,7 +85,25 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
+        [ChildActionOnly]
+        public ActionResult _PunchOut(int id)
+        {
+            ReturnStatus rsTimeSheet = Repository.GetClockedInUserTimeSheet((int)id);
 
+
+            if (rsTimeSheet.errorCode == (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            {
+                PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rsTimeSheet.data);
+                return PartialView("_PunchOut", punchOutVM);
+            }
+            else
+            {
+                return RedirectToAction("HandleErrors", "User", new { excMsg = (string)rsTimeSheet.userErrorMsg });
+            }
+        }
+
+
+        [ChildActionOnly]
         public ActionResult _PunchIn(int id)
         {
             ReturnStatus rsPunch = Repository.GetPunchInVM(id);
@@ -130,9 +117,7 @@ namespace HabitatForHumanity.Controllers
             }
             else
             {
-                //return RedirectToAction("HandleErrors", "User", new { excMsg = (string)rsPunch.userErrorMsg });
-                PunchInVM punch = new PunchInVM();
-                return PartialView(punch);
+                return RedirectToAction("HandleErrors", "User", new { excMsg = (string)rsPunch.userErrorMsg });
             }
         }
 

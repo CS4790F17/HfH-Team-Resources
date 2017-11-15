@@ -7,6 +7,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HabitatForHumanity.ViewModels
 {
+    public class PunchVM
+    {
+    }
+
     public class PunchOutVM
     {
         public int timeSheetNumber { get; set; }
@@ -15,7 +19,21 @@ namespace HabitatForHumanity.ViewModels
         public int orgNumber { get; set; }
         public DateTime inTime { get; set; }
 
+        public PunchOutVM()
+        {
+
+        }
+
+        public PunchOutVM(TimeSheet ts)
+        {
+            timeSheetNumber = ts.Id;
+            userNumber = ts.user_Id;
+            projectNumber = ts.project_Id;
+            orgNumber = ts.org_Id;
+            inTime = ts.clockInTime;
+        }
     }
+
     public class PunchInVM
     {
         public int userId { get; set; }

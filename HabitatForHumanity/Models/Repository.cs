@@ -26,8 +26,8 @@ namespace HabitatForHumanity.Models
             try
             {
                 userReturn = User.GetUserByEmail(loginVm.email);
-               
-                if(userReturn.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+
+                if (userReturn.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
                     retValue.errorCode = -1;
                     retValue.userErrorMsg = "User not found";
@@ -35,10 +35,10 @@ namespace HabitatForHumanity.Models
                     return retValue;
                 }
                 User user = (User)userReturn.data;
-                if ( user != null && user.Id > 0 && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+                if (user != null && user.Id > 0 && Crypto.VerifyHashedPassword(user.password, loginVm.password))
                 {
                     retValue.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                    retValue.data = true;                
+                    retValue.data = true;
                 }
                 return retValue;
             }
@@ -144,14 +144,14 @@ namespace HabitatForHumanity.Models
         {
             ReturnStatus ret = new ReturnStatus();
             ret.data = null;
-           
+
             ReturnStatus st = new ReturnStatus();
             st.data = new User();
 
             try
             {
                 st = User.GetUserByEmail(email);
-                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if (st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
                     ret.errorCode = -1;
                     return ret;
@@ -159,7 +159,7 @@ namespace HabitatForHumanity.Models
                 User user = (User)st.data;
                 if (user != null && !string.IsNullOrEmpty(newPW) && !string.IsNullOrWhiteSpace(newPW))
                 {
-                    
+
                     user.password = Crypto.HashPassword(newPW);
                     ret = EditUser(user);
                 }
@@ -483,6 +483,21 @@ namespace HabitatForHumanity.Models
             TimeSheet.DeleteTimeSheetById(id);
         }
 
+        public static bool IsUserClockedIn(int userId)
+        {
+            ReturnStatus rs = TimeSheet.GetClockedInUserTimeSheet(userId);
+            TimeSheet userTimeSheet = (TimeSheet)rs.data;
+
+            //if only a default timesheet was found then the user isn't "clocked in"
+            if (userTimeSheet.Id < 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         public static ReturnStatus GetClockedInUserTimeSheet(int userId)
         {
@@ -504,7 +519,7 @@ namespace HabitatForHumanity.Models
             }
 
             ReturnStatus orgResult = GetAllOrganizations();
-            if(orgResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            if (orgResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
             {
                 return new ReturnStatus()
                 {
@@ -672,14 +687,15 @@ namespace HabitatForHumanity.Models
             try
             {
                 st = GetAllTimeSheetsByVolunteer(volunteerId);
-                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if (st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
                     ret.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                    ret.userErrorMsg = "Your request cannot be processed at this time."; ;
+                    ret.userErrorMsg = "Your request cannot be processed at this time.";
+                    ;
                     return ret;
                 }
                 temp = (List<TimeSheet>)st.data;
-                if(temp!= null && temp.Count() > 0)
+                if (temp != null && temp.Count() > 0)
                 {
                     foreach (TimeSheet ts in temp)
                     {
@@ -687,10 +703,10 @@ namespace HabitatForHumanity.Models
                             volunteerTimes.Add(ts);
                     }
                     TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
-                    ret.data =  Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);  
-                }     
+                    ret.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+                }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 ret.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 ret.data = 0.0;
@@ -726,7 +742,7 @@ namespace HabitatForHumanity.Models
             try
             {
                 st = User.GetDemographicsForPie(gender);
-                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if (st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
                     st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                     st.userErrorMsg = "Problem loading demographics data, try again later.";
