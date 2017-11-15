@@ -35,15 +35,14 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 st.data = db.organizations.ToList();
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -61,14 +60,13 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 st.data = db.organizations.Find(id);
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -86,15 +84,14 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 st.data = db.organizations.Where(x => x.name.Equals(name)).Single();
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -113,14 +110,13 @@ namespace HabitatForHumanity.Models
                 db.organizations.Add(org);
                 db.SaveChanges();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
                 st.data = "Successfully added organization.";
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -140,14 +136,12 @@ namespace HabitatForHumanity.Models
                 db.Entry(org).State = EntityState.Modified;
                 db.SaveChanges();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.userErrorMsg = "Successfully edited organization.";
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -168,16 +162,14 @@ namespace HabitatForHumanity.Models
                 db.organizations.Remove(org);
                 db.SaveChanges();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.userErrorMsg = "Successfully deleted the organization.";
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
                 return st;
 
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -199,18 +191,15 @@ namespace HabitatForHumanity.Models
                     db.organizations.Remove(org);
                     db.SaveChanges();
 
-                    st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                    st.userErrorMsg = "Successfully deleted the organization.";
+                    st.errorCode = ReturnStatus.ALL_CLEAR;
                     return st;
                 }
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_DELETE;
-                st.userErrorMsg = "Could not delete the organization with the supplied id.";
+                st.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }
