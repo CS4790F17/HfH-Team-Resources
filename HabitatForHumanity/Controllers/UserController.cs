@@ -104,7 +104,7 @@ namespace HabitatForHumanity.Controllers
                 return View(portalVM);
                 
             }
-            catch (Exception e)
+            catch
             {
                 //TODO: redirect/display error message/log
                 //return RedirectToAction("Login", "User");

@@ -52,24 +52,27 @@ namespace HabitatForHumanity.Controllers
                 sheet.org_Id = punchInVM.orgId;
 
                 //TODO: check error code?
-                Repository.PunchIn(sheet);
-
+                ReturnStatus st = Repository.PunchIn(sheet);
+                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                {
+                    return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
+                }
                 return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
             }
-            ReturnStatus stp = Repository.GetAllProjects();
-            if (stp.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
-            {
-                return RedirectToAction("HandleErrors", "User", new { excMsg = stp.userErrorMsg });
-            }
+            //ReturnStatus stp = Repository.GetAllProjects();
+            //if (stp.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            //{
+            //    return RedirectToAction("HandleErrors", "User", new { excMsg = stp.userErrorMsg });
+            //}
 
-            ReturnStatus orgsResult = Repository.GetAllOrganizations();
-            if (orgsResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
-            {
-                return RedirectToAction("HandleErrors", "User", new { excMsg = orgsResult.userErrorMsg });
-            }
+            //ReturnStatus orgsResult = Repository.GetAllOrganizations();
+            //if (orgsResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            //{
+            //    return RedirectToAction("HandleErrors", "User", new { excMsg = orgsResult.userErrorMsg });
+            //}
 
-            punchInVM.projects.createDropDownList((List<Project>)stp.data);
-            punchInVM.orgs.createDropDownList((List<Organization>)orgsResult.data);
+            //punchInVM.projects.createDropDownList((List<Project>)stp.data);
+            //punchInVM.orgs.createDropDownList((List<Organization>)orgsResult.data);
 
             return View(punchInVM);
         }

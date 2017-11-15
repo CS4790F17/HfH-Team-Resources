@@ -32,6 +32,10 @@ namespace HabitatForHumanity.ViewModels
             projects = new ProjectDropDownList(ps);
             orgs = new OrganizationDropDownList(os);
         }
+        public PunchInVM()
+        {
+
+        }
 
     }
     public class ProjectListVM
