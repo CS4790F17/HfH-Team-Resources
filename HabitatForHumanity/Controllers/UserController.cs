@@ -54,7 +54,7 @@ namespace HabitatForHumanity.Controllers
             {
                 // user part
                 ReturnStatus st = Repository.GetUser((int)id);
-                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if (st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = (string)st.userErrorMsg });
                 }
@@ -68,17 +68,16 @@ namespace HabitatForHumanity.Controllers
                     portalVM.fullName += user.lastName;
                 }
 
-                // punch in vm
-                ReturnStatus pivm = Repository.GetPunchInVM((int)id);
-                if (pivm.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
-                {
-                    return RedirectToAction("HandleErrors", "User", new { excMsg = (string)pivm.userErrorMsg });
-                }
 
-                PunchInVM punchInVM = (PunchInVM)pivm.data;
-                portalVM.punchInVM = punchInVM;
-                // punch out stuff
-               // PunchOutVM punchOutVM = new PunchOutVM();
+
+                portalVM.userId = user.Id;
+                // punch in vm
+                // ReturnStatus pivm = Repository.GetPunchInVM((int)id);
+
+
+                // PunchInVM punchInVM = (PunchInVM)pivm.data;
+                // portalVM.punchInVM = punchInVM;
+
                 portalVM.punchOutVM = new PunchOutVM();
 
                 ReturnStatus timeSheetResult = new ReturnStatus();
@@ -101,13 +100,13 @@ namespace HabitatForHumanity.Controllers
                     portalVM.punchOutVM.projectNumber = temp.project_Id;
                     portalVM.punchOutVM.orgNumber = temp.org_Id;
                     portalVM.punchOutVM.inTime = temp.clockInTime;
-                    
+
                 }
 
                 portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
 
                 return View(portalVM);
-                
+
             }
             catch
             {
@@ -116,6 +115,29 @@ namespace HabitatForHumanity.Controllers
                 return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
             }
         }
+
+
+        public ActionResult _PunchIn(int id)
+        {
+            ReturnStatus rsPunch = Repository.GetPunchInVM(id);
+
+            //portalVM.punchInVM = punchInVM;
+
+            if (rsPunch.errorCode == (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            {
+                PunchInVM punchInVM = (PunchInVM)rsPunch.data;
+                return PartialView("_PunchIn", punchInVM);
+            }
+            else
+            {
+                //return RedirectToAction("HandleErrors", "User", new { excMsg = (string)rsPunch.userErrorMsg });
+                PunchInVM punch = new PunchInVM();
+                return PartialView(punch);
+            }
+        }
+
+
+
         #endregion
 
         #region Create
@@ -164,7 +186,7 @@ namespace HabitatForHumanity.Controllers
                 }
 
                 ReturnStatus st = Repository.GetUserByEmail(signWaiverVM.userEmail);
-                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if (st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = st.userErrorMsg });
                 }
@@ -296,14 +318,14 @@ namespace HabitatForHumanity.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                   
+
                     emailExistsResult = Repository.EmailExists(loginVm.email);
                     if (emailExistsResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                     {
-                       
+
                         return RedirectToAction("HandleErrors", "User", new { excMsg = (string)emailExistsResult.userErrorMsg });
                     }
-                    
+
                     if ((bool)emailExistsResult.data)
                     {
                         testo = "email exists bool true";
@@ -346,7 +368,7 @@ namespace HabitatForHumanity.Controllers
                 //TODO: add error logging/handling
             }
             // model was bad
-       
+
             return RedirectToAction("Login", "User", new { excMsg = testo });
         }
 
@@ -376,10 +398,10 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-              try
+                try
                 {
 
-         
+
                     ReturnStatus existsResult = new ReturnStatus();
                     existsResult = Repository.EmailExists(forgot.email);
                     if (existsResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)

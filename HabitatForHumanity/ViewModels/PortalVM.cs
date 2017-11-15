@@ -13,5 +13,6 @@ namespace HabitatForHumanity.ViewModels
         public string fullName { get; set; }
         public bool isPunchedIn { get; set; }
         public bool isReStore { get; set; }
+        public int userId { get; set; }
     }
 }
