@@ -269,8 +269,6 @@ namespace HabitatForHumanity.Controllers
             return RedirectToAction("Login", "Volunteer");
         }
 
-        #endregion
-
         public ActionResult Logout(string excMsg)
         {
             Session["UserName"] = null;
@@ -279,7 +277,6 @@ namespace HabitatForHumanity.Controllers
             return View("Login");
         }
 
-        #region ForgotPassword
         public ActionResult ForgotPassword()
         {
             LoginVM loginVm = new LoginVM();
