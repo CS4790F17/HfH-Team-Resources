@@ -66,6 +66,11 @@ namespace HabitatForHumanity.ViewModels
         public string OrganizationName { get; set; }
         public List<SelectListItem> Organizations { get; set; }
 
+        public OrganizationDropDownList(List<Organization> orgs)
+        {
+            createDropDownList(orgs);
+        }
+
         /// <summary>
         /// Takes a list of Organizations and separates them into select list items. To be used in conjunction
         /// with @Html.DropDownListFor(x => x.odd.OrganizationId, Model.odd.Organizations)
@@ -95,14 +100,14 @@ namespace HabitatForHumanity.ViewModels
         /// <summary>
         /// Creates a drop down list for all Organizations in the database.
         /// </summary>
-        public void createDownListFromAll()
-        {
-            ReturnStatus st = Repository.GetAllOrganizations();
-            if (ReturnStatus.tryParseOrganizationList(st, out List<Organization> result))
-            {
-                createDropDownList(result);
-            }
-        }
+        //public void createDownListFromAll()
+        //{
+        //    ReturnStatus st = Repository.GetAllOrganizations();
+        //    if (ReturnStatus.tryParseOrganizationList(st, out List<Organization> result))
+        //    {
+        //        createDropDownList(result);
+        //    }
+        //}
 
     }
 

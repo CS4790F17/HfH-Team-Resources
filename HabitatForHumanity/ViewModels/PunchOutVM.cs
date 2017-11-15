@@ -26,10 +26,11 @@ namespace HabitatForHumanity.ViewModels
         public int projectId { get; set; }
         public string userName { get; set; }
         public ProjectDropDownList projects;
-        public OrganizationDropDownList orgs = new OrganizationDropDownList();
-        public PunchInVM(List<Project> ps)
+        public OrganizationDropDownList orgs;// = new OrganizationDropDownList();
+        public PunchInVM(List<Project> ps, List<Organization> os)
         {
             projects = new ProjectDropDownList(ps);
+            orgs = new OrganizationDropDownList(os);
         }
 
     }

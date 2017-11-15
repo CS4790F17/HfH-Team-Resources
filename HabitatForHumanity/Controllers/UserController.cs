@@ -76,13 +76,13 @@ namespace HabitatForHumanity.Controllers
                 }
 
                 PunchInVM punchInVM = (PunchInVM)pivm.data;
-
+                portalVM.punchInVM = punchInVM;
                 // punch out stuff
                 PunchOutVM punchOutVM = new PunchOutVM();
 
                 ReturnStatus timeSheetResult = new ReturnStatus();
                 timeSheetResult.data = new TimeSheet();
-                timeSheetResult.data = Repository.GetClockedInUserTimeSheet((int)id);
+                timeSheetResult = Repository.GetClockedInUserTimeSheet((int)id);
                 if (timeSheetResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = (string)timeSheetResult.userErrorMsg });
@@ -284,29 +284,33 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login([Bind(Include = "email,password")] LoginVM loginVm)
         {
-
+            string testo = "287";
             ReturnStatus emailExistsResult = new ReturnStatus();
             ReturnStatus authResult = new ReturnStatus();
             try
             {
                 if (ModelState.IsValid)
                 {
+                   
                     emailExistsResult = Repository.EmailExists(loginVm.email);
                     if (emailExistsResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                     {
+                       
                         return RedirectToAction("HandleErrors", "User", new { excMsg = (string)emailExistsResult.userErrorMsg });
                     }
                     
                     if ((bool)emailExistsResult.data)
                     {
+                        testo = "email exists bool true";
                         authResult = Repository.AuthenticateUser(loginVm);
                         if (authResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                         {
                             return RedirectToAction("HandleErrors", "User", new { excMsg = (string)authResult.userErrorMsg });
                         }
-
+                        testo = "310";
                         if ((bool)authResult.data)
                         {
+                            testo = "311";
                             User user = (User)Repository.GetUserByEmail(loginVm.email).data;
                             ////TODO: add to if
                             //ReturnStatus.tryParseUser(Repository.GetUserByEmail(loginVm.email), out User user);
@@ -325,6 +329,7 @@ namespace HabitatForHumanity.Controllers
                     }
                     else
                     {
+                        testo = "not exists";
                         ViewBag.status = "The email address provided is not in our system.";
                         return View(loginVm);
                     }
@@ -332,10 +337,12 @@ namespace HabitatForHumanity.Controllers
             }
             catch (Exception e)
             {
+                ViewBag.status = "caught exception";
                 //TODO: add error logging/handling
             }
             // model was bad
-            return RedirectToAction("Login", "Volunteer");
+       
+            return RedirectToAction("Login", "User", new { excMsg = testo });
         }
 
         #endregion
@@ -425,6 +432,11 @@ namespace HabitatForHumanity.Controllers
             return RedirectToAction("Login", "Volunteer");
         }
         #endregion
+
+        public ActionResult HandleErrors(string excMsg)
+        {
+            return RedirectToAction("Login", "User", new { excMsg = excMsg });
+        }
 
         #region Edit
         public ActionResult Edit(int? id)

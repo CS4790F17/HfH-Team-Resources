@@ -19,36 +19,35 @@ namespace HabitatForHumanity.Models
         /// <returns>ReturnStatus object that contains true if user entered a correct password.</returns>
         public static ReturnStatus AuthenticateUser(LoginVM loginVm)
         {
-            ReturnStatus st = new ReturnStatus();
-            ReturnStatus ret = new ReturnStatus();
-            ret.data = false;
-            st.data = new User();
+            ReturnStatus userReturn = new ReturnStatus();
+            userReturn.data = new User();
+            ReturnStatus retValue = new ReturnStatus();
+
             try
             {
-                bool exists = false;
-
-                st = User.GetUserByEmail(loginVm.email);
+                userReturn = User.GetUserByEmail(loginVm.email);
                
-                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if(userReturn.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
-                    return st;
+                    retValue.errorCode = -1;
+                    retValue.userErrorMsg = "User not found";
+                    retValue.data = false;
+                    return retValue;
                 }
-                User user = (User)st.data;
+                User user = (User)userReturn.data;
                 if ( user != null && user.Id > 0 && Crypto.VerifyHashedPassword(user.password, loginVm.password))
                 {
-                    exists = true;
+                    retValue.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                    retValue.data = true;                
                 }
-
-                ret.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                ret.data = exists;
-                return st;
+                return retValue;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_AUTHENTICATE_USER;
-                st.userErrorMsg = "Failed to authenticate user.";
-                st.errorMessage = e.ToString();
-                return st;
+                retValue.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_AUTHENTICATE_USER;
+                retValue.userErrorMsg = "Failed to authenticate user.";
+                retValue.errorMessage = e.ToString();
+                return retValue;
             }
         }
 
@@ -500,10 +499,20 @@ namespace HabitatForHumanity.Models
                 return new ReturnStatus()
                 {
                     errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE,
-                    userErrorMsg = "Testing, get punchinvm in repo broke"
+                    userErrorMsg = "Testing, get punchinvm in repo broke on projects"
                 };
             }
-            PunchInVM punch = new PunchInVM((List<Project>)projList.data);
+
+            ReturnStatus orgResult = GetAllOrganizations();
+            if(orgResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            {
+                return new ReturnStatus()
+                {
+                    errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE,
+                    userErrorMsg = "Testing, get punchinvm in repo broke on orgs"
+                };
+            }
+            PunchInVM punch = new PunchInVM((List<Project>)projList.data,(List<Organization>)orgResult.data);
             ReturnStatus st = new ReturnStatus();
 
             // User user = GetUser(userId); 

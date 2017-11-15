@@ -190,13 +190,12 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus EmailExists(string email)
         {
             ReturnStatus st = new ReturnStatus();
-            st.data = false;
+          
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
                 st.data = db.users.Any(u => u.emailAddress.Equals(email));
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
                 return st;
             }
             catch (Exception e)

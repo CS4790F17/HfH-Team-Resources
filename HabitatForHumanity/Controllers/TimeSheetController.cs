@@ -59,11 +59,17 @@ namespace HabitatForHumanity.Controllers
             ReturnStatus stp = Repository.GetAllProjects();
             if (stp.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
             {
-                return RedirectToAction("HandleErrors", "User", new { excMsg = (string)stp.userErrorMsg });
+                return RedirectToAction("HandleErrors", "User", new { excMsg = stp.userErrorMsg });
+            }
+
+            ReturnStatus orgsResult = Repository.GetAllOrganizations();
+            if (orgsResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            {
+                return RedirectToAction("HandleErrors", "User", new { excMsg = orgsResult.userErrorMsg });
             }
 
             punchInVM.projects.createDropDownList((List<Project>)stp.data);
-            punchInVM.orgs.createDownListFromAll();
+            punchInVM.orgs.createDropDownList((List<Organization>)orgsResult.data);
 
             return View(punchInVM);
         }
