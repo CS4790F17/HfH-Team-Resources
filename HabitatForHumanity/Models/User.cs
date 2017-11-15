@@ -122,7 +122,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetUsersByName(string firstName, string lastName)
         {
             ReturnStatus st = new ReturnStatus();
-
+            st.data = new List<User>();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -134,7 +134,7 @@ namespace HabitatForHumanity.Models
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
 
@@ -151,6 +151,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetUserByName(string firstName, string lastName)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = new User();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -173,7 +174,7 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_SINGLE_USER;
-                st.data = "";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -189,6 +190,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus EmailExists(string email)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = false;
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -200,7 +202,7 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_EMAIL;
-                st.data = "Could not find user with that email address";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -226,7 +228,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetUserByEmail(string email)
         {
             ReturnStatus st = new ReturnStatus();
-
+            st.data = new User();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -241,7 +243,7 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -256,21 +258,19 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetUser(int id)
         {
             ReturnStatus st = new ReturnStatus();
-
+            st.data = new User();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                //VolunteerDbContext db = null;
-
                 st.data = db.users.Find(id);
-                st.errorCode = 0;
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
 
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -282,11 +282,32 @@ namespace HabitatForHumanity.Models
         /// Creates a volunteer user
         /// </summary>
         /// <param name="user"></param>
-        public static void CreateVolunteer(User user)
+        //public static void CreateVolunteer(User user)
+        //{
+        //    VolunteerDbContext db = new VolunteerDbContext();
+        //    db.users.Add(user);
+        //    db.SaveChanges();
+        //}
+        public static ReturnStatus CreateVolunteer(User user)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.users.Add(user);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.users.Add(user);
+                db.SaveChanges();
+                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.userErrorMsg = "Record added to system";
+                return st;
+            }
+            catch
+            {
+                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
+                return st;
+            }
+ 
         }
 
         /// <summary>
@@ -297,7 +318,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus CreateUser(User user)
         {
             ReturnStatus st = new ReturnStatus();
-
+            st.data = null;
             try
             {
                 user.password = Crypto.HashPassword(user.password);
@@ -329,39 +350,17 @@ namespace HabitatForHumanity.Models
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.USER_PASSWORD_CANNOT_BE_NULL;
                 st.errorMessage = e.ToString();
-                st.data = "Password is a required field.";
+                st.userErrorMsg = "Password is a required field.";
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
-
-        ///// <summary>
-        ///// Adds a user to the database.
-        ///// </summary>
-        ///// <param name="user">User to add.</param>
-        ///// <returns>The id of the user or 0 if no user could be added.</returns>
-        //public static int CreateUser(User user)
-        //{
-        //    int userId = 0;
-        //    VolunteerDbContext db = new VolunteerDbContext();
-        //    db.users.Add(user);
-        //    db.SaveChanges();
-
-        //    var users = db.users.Where(u => u.emailAddress.Equals(user.emailAddress));
-        //    User newUser = users.FirstOrDefault();
-        //    if (newUser != null)
-        //    {
-        //        userId = newUser.Id;
-        //    }
-        //    return userId;
-        //}
-
 
         /// <summary>
         /// Updates the users information based on a new model.
@@ -370,7 +369,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus EditUser(User user)
         {
             ReturnStatus st = new ReturnStatus();
-
+            st.data = null;
             try
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
@@ -384,7 +383,7 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -398,6 +397,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus DeleteUser(User user)
         {
             ReturnStatus st = new ReturnStatus();
+            st.data = null;
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -406,14 +406,14 @@ namespace HabitatForHumanity.Models
                 db.SaveChanges();
 
                 st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.data = "Successfully deleted user.";
+                st.userErrorMsg = "Successfully deleted user.";
                 return st;
 
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -426,7 +426,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus DeleteUserById(int id)
         {
             ReturnStatus st = new ReturnStatus();
-
+            st.data = null;
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -436,19 +436,19 @@ namespace HabitatForHumanity.Models
                     db.users.Remove(user);
                     db.SaveChanges();
 
-                    st.data = "Successfully deleted user.";
+                    st.userErrorMsg = "Successfully deleted user.";
                 }
                 else
                 {
                     st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_DELETE;
-                    st.data = "Could not delete user.";
+                    st.userErrorMsg = "Could not delete user.";
                 }
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = "Could not connect to database.";
+                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 st.errorMessage = e.ToString();
                 return st;
             }

@@ -20,30 +20,33 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus AuthenticateUser(LoginVM loginVm)
         {
             ReturnStatus st = new ReturnStatus();
-
+            ReturnStatus ret = new ReturnStatus();
+            ret.data = false;
+            st.data = new User();
             try
             {
                 bool exists = false;
 
                 st = User.GetUserByEmail(loginVm.email);
-
-                //check status to make sure error code and data are correct
-                if (ReturnStatus.tryParseUser(st, out User user))
+               
+                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
-                    if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
-                    {
-                        exists = true;
-                    }
+                    return st;
+                }
+                User user = (User)st.data;
+                if ( user != null && user.Id > 0 && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+                {
+                    exists = true;
                 }
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.data = exists;
+                ret.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                ret.data = exists;
                 return st;
             }
             catch (Exception e)
             {
                 st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_AUTHENTICATE_USER;
-                st.data = "Failed to authenticate user.";
+                st.userErrorMsg = "Failed to authenticate user.";
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -140,30 +143,35 @@ namespace HabitatForHumanity.Models
         /// <returns>ReturnStatus object with error code and data</returns>
         public static ReturnStatus ChangePassword(string email, string newPW)
         {
+            ReturnStatus ret = new ReturnStatus();
+            ret.data = null;
+           
             ReturnStatus st = new ReturnStatus();
-            // User user = new User();
+            st.data = new User();
 
             try
             {
                 st = User.GetUserByEmail(email);
-
-                if (ReturnStatus.tryParseUser(st, out User user))
+                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
                 {
-                    if (user != null && !String.IsNullOrEmpty(newPW) && !String.IsNullOrWhiteSpace(newPW))
-                    {
-                        user.password = Crypto.HashPassword(newPW);
-                        EditUser(user);
-                    }
+                    ret.errorCode = -1;
+                    return ret;
+                }
+                User user = (User)st.data;
+                if (user != null && !string.IsNullOrEmpty(newPW) && !string.IsNullOrWhiteSpace(newPW))
+                {
+                    
+                    user.password = Crypto.HashPassword(newPW);
+                    ret = EditUser(user);
                 }
 
-                st.data = null; //to avoid sending user data up the pipeline
-                return st;
+                return ret;
             }
             catch (Exception e)
             {
-                st.errorCode = -1;
-                st.data = "Failed to change password.";
-                st.errorMessage = e.ToString();
+                ret.errorCode = -1;
+                ret.userErrorMsg = "Failed to change password.";
+                ret.errorMessage = e.ToString();
                 return st;
             }
         }
