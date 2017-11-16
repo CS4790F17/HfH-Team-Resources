@@ -213,12 +213,7 @@ namespace HabitatForHumanity.Controllers
         }
         #endregion
 
-        #region Login
-
-
-            return View(user);
-        }
-        #endregion
+       
 
         #region Login
         public ActionResult Login(string excMsg)
@@ -448,19 +443,21 @@ namespace HabitatForHumanity.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult UserTimeDetails(int id)
+        public ActionResult UserTimeDetails(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             SearchTimeDetailVM userTimeDetails = new SearchTimeDetailVM();
-            User user = Repository.GetUser(id);
+            //TODO: add error checking
+            User user = (User)Repository.GetUser(id.Value).data;
             userTimeDetails.userId = user.Id;
             userTimeDetails.firstName = user.firstName;
             userTimeDetails.lastName = user.lastName;
             userTimeDetails.emailAddress = user.emailAddress;
-            userTimeDetails.timeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
+            //TODO: add error checking
+            userTimeDetails.timeSheets = (List<TimeSheet>)Repository.GetAllTimeSheetsByVolunteer(id.Value).data;
             if (userTimeDetails == null)
             {
                 return HttpNotFound();

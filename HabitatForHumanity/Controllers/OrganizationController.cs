@@ -34,7 +34,8 @@ namespace HabitatForHumanity.Controllers
 
             Organization organization = new Organization();
             OrganizationVM organizationVM = new OrganizationVM();
-            organization = Repository.GetOrganizationById(orgId);
+            //TODO: add error checking
+            organization = (Organization)Repository.GetOrganizationById(orgId).data;
 
             organizationVM._Id = organization.Id;
             organizationVM._name = organization.name;
@@ -90,7 +91,9 @@ namespace HabitatForHumanity.Controllers
 
             Organization organization = new Organization();
             OrganizationVM organizationVM = new OrganizationVM();
-            organization = Repository.GetOrganizationById(orgId);
+
+            //TODO: add error checking
+            organization = (Organization)Repository.GetOrganizationById(orgId).data;
 
             organizationVM._Id = organization.Id;
             organizationVM._name = organization.name;

@@ -35,7 +35,8 @@ namespace HabitatForHumanity.Controllers
 
             Project project = new Project();
             ProjectVM projectVM = new ProjectVM();
-            project = Repository.GetProjectById(projectId);
+            //TODO: add error checking
+            project = (Project)Repository.GetProjectById(projectId).data;
 
             projectVM._Id = project.Id;
             projectVM._name = project.name;
@@ -93,7 +94,9 @@ namespace HabitatForHumanity.Controllers
 
             Project project = new Project();
             ProjectVM projectVM = new ProjectVM();
-            project = Repository.GetProjectById(projectId);
+
+            //TODO: add error checking
+            project = (Project)Repository.GetProjectById(projectId).data;
 
             projectVM._Id = project.Id;
             projectVM._name = project.name;
