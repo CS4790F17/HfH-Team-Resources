@@ -110,6 +110,19 @@ namespace HabitatForHumanity.Models
             emergencyHomePhone = "";
         }
 
+        public void AddWaiverToUser(SignWaiverVM waiver)
+        {
+            emergencyCity = waiver.emergencyCity;
+            emergencyFirstName = waiver.emergencyFirstName;
+            emergencyHomePhone = waiver.emergencyHomePhone;
+            emergencyLastName = waiver.emergencyLastName;
+            emergencyStreetAddress = waiver.emergencyStreetAddress;
+            emergencyWorkPhone = waiver.emergencyWorkPhone;
+            emergencyZip = waiver.emergencyZip;
+            relation = waiver.relation;
+            waiverSignDate = DateTime.Now;
+        }
+
         #region Database Access Methods
 
 
@@ -188,7 +201,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus EmailExists(string email)
         {
             ReturnStatus st = new ReturnStatus();
-          
+
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -278,7 +291,7 @@ namespace HabitatForHumanity.Models
                 st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 return st;
             }
- 
+
         }
 
         /// <summary>
