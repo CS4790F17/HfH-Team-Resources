@@ -62,8 +62,7 @@ namespace HabitatForHumanity.Controllers
                 return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
             }
 
-            // return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
-            return RedirectToAction("VolunteerPortalWithValidation", "User", punchInVM);
+            return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
 
         }
         #endregion

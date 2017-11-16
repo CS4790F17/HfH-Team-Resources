@@ -62,13 +62,6 @@ namespace HabitatForHumanity.Controllers
 
         }
 
-        //This keeps the user from just clicking through on the clock in
-        //They're supposed to select atleast a project before they can clock in
-        public ActionResult VolunteerPortalWithValidation(PunchInVM badpunchIn)
-        {
-            return View("VolunteerPortal", Repository.GetPortalVMWithBadPunchIn(badpunchIn.userId, badpunchIn));
-        }
-
         
         public ActionResult _PunchOut(int id)
         {

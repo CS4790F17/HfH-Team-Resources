@@ -500,34 +500,20 @@ namespace HabitatForHumanity.Models
         public static PortalVM GetPortalVM(int id)
         {
             ReturnStatus st = Repository.GetUser(id);
-            User user = (User)st.data;
 
             PortalVM portalVM = new PortalVM();
-
-            portalVM.fullName = user.firstName + " " + user.lastName;
-            portalVM.userId = user.Id;
-            portalVM.isPunchedIn = Repository.IsUserClockedIn(user.Id);
-            portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
-            return portalVM;
-        }
-
-        public static PortalVM GetPortalVMWithBadPunchIn(int id, PunchInVM badpunch)
-        {
-            ReturnStatus st = Repository.GetUser(id);
-            PortalVM portalVM = new PortalVM();
-
-
             if (st.errorCode == ReturnStatus.ALL_CLEAR)
             {
                 User user = (User)st.data;
+
                 portalVM.fullName = user.firstName + " " + user.lastName;
                 portalVM.userId = user.Id;
                 portalVM.isPunchedIn = Repository.IsUserClockedIn(user.Id);
                 portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
-                portalVM.punchIn = badpunch;
             }
             return portalVM;
         }
+
 
         public static ReturnStatus GetPunchInVM(int userId)
         {
@@ -560,7 +546,7 @@ namespace HabitatForHumanity.Models
             {
                 User user = (User)st.data;
                 punch.userId = userId;
-               // punch.userName = user.firstName + " " + user.lastName;
+                // punch.userName = user.firstName + " " + user.lastName;
 
                 //reset values in st to all good
                 st.errorCode = 0;

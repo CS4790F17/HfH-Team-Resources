@@ -12,6 +12,5 @@ namespace HabitatForHumanity.ViewModels
         public bool isPunchedIn { get; set; }
         public bool isReStore { get; set; }
         public int userId { get; set; }
-        public PunchInVM punchIn { get; set; }
     }
 }
