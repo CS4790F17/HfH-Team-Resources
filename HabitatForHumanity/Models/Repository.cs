@@ -497,6 +497,38 @@ namespace HabitatForHumanity.Models
             return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
 
+        public static PortalVM GetPortalVM(int id)
+        {
+            ReturnStatus st = Repository.GetUser(id);
+            User user = (User)st.data;
+
+            PortalVM portalVM = new PortalVM();
+
+            portalVM.fullName = user.firstName + " " + user.lastName;
+            portalVM.userId = user.Id;
+            portalVM.isPunchedIn = Repository.IsUserClockedIn(user.Id);
+            portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+            return portalVM;
+        }
+
+        public static PortalVM GetPortalVMWithBadPunchIn(int id, PunchInVM badpunch)
+        {
+            ReturnStatus st = Repository.GetUser(id);
+            PortalVM portalVM = new PortalVM();
+
+
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                User user = (User)st.data;
+                portalVM.fullName = user.firstName + " " + user.lastName;
+                portalVM.userId = user.Id;
+                portalVM.isPunchedIn = Repository.IsUserClockedIn(user.Id);
+                portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+                portalVM.punchIn = badpunch;
+            }
+            return portalVM;
+        }
+
         public static ReturnStatus GetPunchInVM(int userId)
         {
             //ReturnStatus projList = GetAllProjects();

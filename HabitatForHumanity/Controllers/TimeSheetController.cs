@@ -40,7 +40,9 @@ namespace HabitatForHumanity.Controllers
         #region PunchIn
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PunchIn([Bind(Include = "userId,projectId,orgId")] PunchInVM punchInVM)
+        // public ActionResult PunchIn([Bind(Include = "userId,projectId,orgId")] PunchInVM punchInVM)
+        public ActionResult PunchIn(PunchInVM punchInVM)
+
         {
             if (ModelState.IsValid)
             {
@@ -53,28 +55,16 @@ namespace HabitatForHumanity.Controllers
 
                 //TODO: check error code?
                 ReturnStatus st = Repository.PunchIn(sheet);
-                if(st.errorCode != ReturnStatus.ALL_CLEAR)
+                if (st.errorCode != ReturnStatus.ALL_CLEAR)
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
                 }
                 return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
             }
-            //ReturnStatus stp = Repository.GetAllProjects();
-            //if (stp.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
-            //{
-            //    return RedirectToAction("HandleErrors", "User", new { excMsg = stp.userErrorMsg });
-            //}
 
-            //ReturnStatus orgsResult = Repository.GetAllOrganizations();
-            //if (orgsResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
-            //{
-            //    return RedirectToAction("HandleErrors", "User", new { excMsg = orgsResult.userErrorMsg });
-            //}
+            // return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
+            return RedirectToAction("VolunteerPortalWithValidation", "User", punchInVM);
 
-            //punchInVM.projects.createDropDownList((List<Project>)stp.data);
-            //punchInVM.orgs.createDropDownList((List<Organization>)orgsResult.data);
-
-            return View(punchInVM);
         }
         #endregion
 
@@ -96,8 +86,8 @@ namespace HabitatForHumanity.Controllers
 
                 //TODO: add handling to ensure timesheet was properly updated
                 Repository.UpdateTimeSheet(timeSheet);
-   
-                return RedirectToAction("VolunteerPortal","User", new { id = timeSheet.user_Id } );
+
+                return RedirectToAction("VolunteerPortal", "User", new { id = timeSheet.user_Id });
             }
             return View(punchOutVM);
         }

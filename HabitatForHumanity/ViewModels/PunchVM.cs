@@ -51,10 +51,5 @@ namespace HabitatForHumanity.ViewModels
 
         }
     }
-    public class ProjectListVM
-    {
-        public int Id { get; set; }
-        public string projectName { get; set; }
-    }
 
 }
