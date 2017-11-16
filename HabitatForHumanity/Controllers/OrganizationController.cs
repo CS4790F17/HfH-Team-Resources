@@ -15,6 +15,16 @@ namespace HabitatForHumanity.Controllers
     {
         private VolunteerDbContext db = new VolunteerDbContext();
 
+
+
+        public ActionResult GetOrganizations()
+        {
+            return View();
+        }
+
+
+
+
         // GET: Organization
         public ActionResult Index()
         {

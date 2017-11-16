@@ -221,6 +221,15 @@ namespace HabitatForHumanity.Controllers
           
             return PartialView("_BadPunches", bp);
         }
-        
+
+
+        public ActionResult GetOrganizations(string queryFilter = "1=1")
+        {
+            Repository.GetOrganizationSQL(queryFilter);
+            return View();
+        }
+
+
+
     }
 }

@@ -229,6 +229,11 @@ namespace HabitatForHumanity.Models
             return Project.GetProjectById(id);
         }
 
+        public static ReturnStatus GetOrganizationSQL(string queryFilter)
+        {
+            return Organization.GetOrganizationSQL(queryFilter);
+        }
+
         /// <summary>
         /// Gets all the currently active projects
         /// </summary>

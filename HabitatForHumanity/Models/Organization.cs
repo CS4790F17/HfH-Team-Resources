@@ -216,6 +216,14 @@ namespace HabitatForHumanity.Models
                 return st;
             }
         }
+
+        public static ReturnStatus GetOrganizationSQL(string queryFilter)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            ReturnStatus st = new ReturnStatus();
+            return st;
+           // ReturnStatus st = db.organizations.Where()
+        }
         #endregion
     }
 }
