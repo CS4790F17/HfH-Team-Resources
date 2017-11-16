@@ -48,22 +48,19 @@ namespace HabitatForHumanity.Models
                 VolunteerDbContext db = new VolunteerDbContext();
                 DateTime cit = DateTime.Parse(clockInTime);
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 st.data = db.timeSheets.Where(x => x.user_Id == userId && x.project_Id == projectId && x.clockInTime.Equals(cit)).Single();
-                st.userErrorMsg = "";
                 return st;
             }
             catch (InvalidOperationException e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_FIND_SINGLE_TIMESHEET;
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "Time sheet not found, please try again.";
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -81,16 +78,14 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                st.userErrorMsg = "";
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 st.data = db.timeSheets.Find(id);
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -109,15 +104,13 @@ namespace HabitatForHumanity.Models
                 db.timeSheets.Add(ts);
                 db.SaveChanges();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.userErrorMsg = "Successfully added TimeSheet.";
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -136,15 +129,13 @@ namespace HabitatForHumanity.Models
                 db.Entry(ts).State = EntityState.Modified;
                 db.SaveChanges();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.userErrorMsg = "Successfully updated TimeSheet";
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -164,14 +155,12 @@ namespace HabitatForHumanity.Models
                 db.timeSheets.Remove(ts);
                 db.SaveChanges();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                st.userErrorMsg = "Successfully deleted TimeSheet.";
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
+                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -194,20 +183,17 @@ namespace HabitatForHumanity.Models
                     db.timeSheets.Remove(ts);
                     db.SaveChanges();
 
-                    st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
-                    st.userErrorMsg = "Successfully deleted TimeSheet.";
+                    st.errorCode = (int)ReturnStatus.ALL_CLEAR;
                     return st;
                 }
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.ID_CANNOT_BE_NULL;
-                st.userErrorMsg = "System was unable to process your request.";
+                st.errorCode = ReturnStatus.NULL_ARGUMENT;
                 return st;
 
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -226,14 +212,13 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 st.data = db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -253,15 +238,14 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 st.data = db.timeSheets.Where(x => x.clockInTime >= beginDate && x.clockOutTime <= endDate).OrderBy(x => x.Id).ToList();
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -280,15 +264,14 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
                 st.data = db.timeSheets.Where(x => x.org_Id == organizationId).OrderBy(x => x.Id).ToList();
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -313,20 +296,19 @@ namespace HabitatForHumanity.Models
                 {
                     if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
                     {
-                        st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                        st.errorCode = ReturnStatus.ALL_CLEAR;
                         st.data = sheet.Last();
                         return st;
                     }
 
                 }
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -347,15 +329,14 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 st.data = db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
@@ -371,15 +352,14 @@ namespace HabitatForHumanity.Models
                     .OrderByDescending(c => c.clockInTime).
                     ToList();
 
-                st.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
                 st.data = sheets;
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
-                st.userErrorMsg = "System is unable to process your request right now, please try again later.";
                 return st;
             }
         }
