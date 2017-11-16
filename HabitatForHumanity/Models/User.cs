@@ -105,7 +105,7 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
-        /// Gets all the users with matching names. To be used when you know one name, but not the other. 
+        /// Gets all the users that contain any characters in firstName or lastName.
         /// </summary>
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
@@ -113,32 +113,11 @@ namespace HabitatForHumanity.Models
         public static List<User> GetUsersByName(string firstName, string lastName)
         {
             VolunteerDbContext db = new VolunteerDbContext();
-            return db.users.Where(x => x.firstName.Equals(firstName) || x.lastName.Equals(lastName)).ToList();
+
+            return db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
         }
 
-        /// <summary>
-        /// Get a single user out of the database with a matching first and last name.
-        /// Only to be used when you know the exact names
-        /// </summary>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <returns>Id of the returned user</returns>
-        public static int GetUserByName(string firstName, string lastName)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-
-            var userCount = db.users.Count(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName));
-
-            //if no users are found or if multiple users are found
-            if (userCount != 1)
-            {
-                return 0;
-            }
-
-            var user = db.users.Where(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName)).Single();
-
-            return user.Id;
-        }
+     
 
         /// <summary>
         /// Finds email if it exists in the database.
