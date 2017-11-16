@@ -24,8 +24,6 @@ namespace HabitatForHumanity.Models
         public static int FAIL_ON_INSERT = 3;
         public static int ERROR_WHILE_ACCESSING_DATA = 4;
         public static int NULL_ARGUMENT = 5;
- 
-
 
    }
 }

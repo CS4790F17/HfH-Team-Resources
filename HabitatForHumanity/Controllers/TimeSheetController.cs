@@ -53,7 +53,7 @@ namespace HabitatForHumanity.Controllers
 
                 //TODO: check error code?
                 ReturnStatus st = Repository.PunchIn(sheet);
-                if(st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if(st.errorCode != ReturnStatus.ALL_CLEAR)
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
                 }

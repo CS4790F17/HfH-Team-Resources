@@ -173,13 +173,13 @@ namespace HabitatForHumanity.Controllers
            // List<TimeSheet> ts = Repository.GetBadTimeSheets();
             List<BadPunchVM> bp = new List<BadPunchVM>();
 
-            if(badTimeSheets.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            if(badTimeSheets.errorCode != (int)ReturnStatus.ALL_CLEAR)
             {
                 return null;
             }
             ReturnStatus timesheetReturn = new ReturnStatus();
             timesheetReturn.data = new List<TimeSheet>();
-            if (timesheetReturn.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            if (timesheetReturn.errorCode != (int)ReturnStatus.ALL_CLEAR)
             {
                 return null;
             }
