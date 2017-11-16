@@ -439,7 +439,8 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult VolunteerSearch([Bind(Include = "firstName,lastName")] User user)
         {
-            return View("VolunteerSearchResults", Repository.GetUsersByName(user.firstName, user.lastName));
+            //TODO: add error checking
+            return View("VolunteerSearchResults", (List<User>)Repository.GetUsersByName(user.firstName, user.lastName).data);
         }
 
         /// <summary>

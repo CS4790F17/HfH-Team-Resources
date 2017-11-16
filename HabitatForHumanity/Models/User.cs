@@ -134,12 +134,24 @@ namespace HabitatForHumanity.Models
         /// <returns>ReturnStatus object containing a list of users</returns>
         public static ReturnStatus GetUsersByName(string firstName, string lastName)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-
-            return db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.data = new List<User>();
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
-     
+
 
         /// <summary>
         /// Finds email if it exists in the database.
