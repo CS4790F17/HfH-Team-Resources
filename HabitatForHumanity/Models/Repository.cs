@@ -27,25 +27,24 @@ namespace HabitatForHumanity.Models
             {
                 userReturn = User.GetUserByEmail(loginVm.email);
 
-                if (userReturn.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if (userReturn.errorCode != ReturnStatus.ALL_CLEAR)
                 {
                     retValue.errorCode = -1;
-                    retValue.userErrorMsg = "User not found";
+                    //retValue.userErrorMsg = "User not found";
                     retValue.data = false;
                     return retValue;
                 }
                 User user = (User)userReturn.data;
                 if (user != null && user.Id > 0 && Crypto.VerifyHashedPassword(user.password, loginVm.password))
                 {
-                    retValue.errorCode = (int)ReturnStatus.ErrorCodes.All_CLEAR;
+                    retValue.errorCode = ReturnStatus.ALL_CLEAR;
                     retValue.data = true;
                 }
                 return retValue;
             }
             catch (Exception e)
             {
-                retValue.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_AUTHENTICATE_USER;
-                retValue.userErrorMsg = "Failed to authenticate user.";
+                retValue.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 retValue.errorMessage = e.ToString();
                 return retValue;
             }
@@ -151,7 +150,7 @@ namespace HabitatForHumanity.Models
             try
             {
                 st = User.GetUserByEmail(email);
-                if (st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if (st.errorCode != ReturnStatus.ALL_CLEAR)
                 {
                     ret.errorCode = -1;
                     return ret;
@@ -169,7 +168,6 @@ namespace HabitatForHumanity.Models
             catch (Exception e)
             {
                 ret.errorCode = -1;
-                ret.userErrorMsg = "Failed to change password.";
                 ret.errorMessage = e.ToString();
                 return st;
             }
@@ -508,23 +506,21 @@ namespace HabitatForHumanity.Models
         {
             ReturnStatus projList = GetAllProjects();
             if (projList == null
-                || projList.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR
+                || projList.errorCode != ReturnStatus.ALL_CLEAR
                     || ((List<Project>)projList.data).Count() < 1)
             {
                 return new ReturnStatus()
                 {
-                    errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE,
-                    userErrorMsg = "Testing, get punchinvm in repo broke on projects"
+                    errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
                 };
             }
 
             ReturnStatus orgResult = GetAllOrganizations();
-            if (orgResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            if (orgResult.errorCode != ReturnStatus.ALL_CLEAR)
             {
                 return new ReturnStatus()
                 {
-                    errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE,
-                    userErrorMsg = "Testing, get punchinvm in repo broke on orgs"
+                    errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
                 };
             }
             PunchInVM punch = new PunchInVM();
@@ -576,83 +572,7 @@ namespace HabitatForHumanity.Models
 
         #endregion
 
-        #region OrgUser functions
-        /*
-        
-
-
-        /// <summary>
-        /// Gets all the OrgUsers in the database.
-        /// </summary>
-        /// <returns>A list of OrgUser</returns>
-        public static List<OrgUser> GetAllOrgUsers()
-        {
-            return OrgUser.GetAllOrgUsers();
-        }
-
-        /// <summary>
-        /// Gets all the organization ids for a particular user.
-        /// </summary>
-        /// <param name="userId">The id of the user.</param>
-        /// <returns></returns>
-        public static List<OrgUser> GetOrgUserByUserId(int userId)
-        {
-            return OrgUser.GetOrgUserByUserId(userId);
-        }
-
-        /// <summary>
-        /// Gets all the users that belong to a particular organization
-        /// </summary>
-        /// <param name="orgId">The id of the organization.</param>
-        /// <returns></returns>
-        public static List<OrgUser> GetOrgUserByOrgId(int orgId)
-        {
-            return OrgUser.GetOrgUserByOrgId(orgId);
-        }
-
-        /// <summary>
-        /// Adds an OrgUser object to the database.
-        /// </summary>
-        /// <param name="orgUser">Object with user_Id and org_Id</param>
-        public static void AddOrgUser(OrgUser orgUser)
-        {
-            OrgUser.AddOrgUser(orgUser);
-        }
-
-        /// <summary>
-        /// Adds an OrgUser to the database by ids.
-        /// </summary>
-        /// <param name="orgId">Id of the organization</param>
-        /// <param name="userId">Id of the user.</param>
-        public static void AddOrgUserByIds(int orgId, int userId)
-        {
-            OrgUser.AddOrgUserByIds(orgId, userId);
-        }
-
-        /// <summary>
-        /// Deletes the OrgUser from the database by object.
-        /// </summary>
-        /// <param name="ou"></param>
-        public static void DeleteOrgUser(OrgUser ou)
-        {
-            OrgUser.DeleteOrgUser(ou);
-        }
-
-        /// <summary>
-        /// Deletes an OrgUser with the given orgId and userId.
-        /// </summary>
-        /// <param name="orgId">Id of the organization.</param>
-        /// <param name="userId">Id of the user.</param>
-        public static void DeleteOrgUserByIds(int orgId, int userId)
-        {
-            OrgUser.DeleteOrgUserByIds(orgId, userId);
-        }
-
-
    
-    */
-        #endregion
-
         #region Report functions
 
         //public static double getTotalHoursWorkedByVolunteer(int volunteerId)
@@ -687,11 +607,9 @@ namespace HabitatForHumanity.Models
             try
             {
                 st = GetAllTimeSheetsByVolunteer(volunteerId);
-                if (st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if (st.errorCode != ReturnStatus.ALL_CLEAR)
                 {
-                    ret.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                    ret.userErrorMsg = "Your request cannot be processed at this time.";
-                    ;
+                    ret.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                     return ret;
                 }
                 temp = (List<TimeSheet>)st.data;
@@ -708,9 +626,8 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
-                ret.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
+                ret.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 ret.data = 0.0;
-                ret.userErrorMsg = "No timecards found for that volunteer.";
                 ret.errorMessage = e.Message;
             }
             return ret;
@@ -742,10 +659,9 @@ namespace HabitatForHumanity.Models
             try
             {
                 st = User.GetDemographicsForPie(gender);
-                if (st.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+                if (st.errorCode != (int)ReturnStatus.ALL_CLEAR)
                 {
-                    st.errorCode = (int)ReturnStatus.ErrorCodes.COULD_NOT_CONNECT_TO_DATABASE;
-                    st.userErrorMsg = "Problem loading demographics data, try again later.";
+                    st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                     return st;
                 }
             }
