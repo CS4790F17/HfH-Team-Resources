@@ -21,6 +21,7 @@ namespace HabitatForHumanity.Models
         public static int ALL_CLEAR { get; } = 0;
         public static int COULD_NOT_CONNECT_TO_DATABASE = 1;
         public static int COULD_NOT_UPDATE_DATABASE = 2;
+        public static int FAIL_ON_INSERT = 3;
  
 
 
