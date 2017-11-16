@@ -107,18 +107,7 @@ namespace HabitatForHumanity.Models
             return User.GetUserByEmail(email);
         }
 
-        /// <summary>
-        /// Get a single user out of the database with a matching first and last name.
-        /// Only to be used when you know the exact names
-        /// </summary>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <returns>Id of the returned user</returns>
-        public static ReturnStatus GetUserByName(string firstName, string lastName)
-        {
-            //set both names to lowercase to avoid errors
-            return User.GetUserByName(firstName.ToLower(), lastName.ToLower());
-        }
+
 
         /// <summary>
         /// Gets all the users with matching names. To be used when you know one name, but not the other. 
@@ -128,8 +117,14 @@ namespace HabitatForHumanity.Models
         /// <returns>List of users</returns>
         public static ReturnStatus GetUsersByName(string firstName, string lastName)
         {
+            if (firstName != null)
+                firstName = firstName.ToLower();
+            if (lastName != null)
+                lastName = lastName.ToLower();
+
+
             //set both names to lowercase to avoid errors
-            return User.GetUsersByName(firstName.ToLower(), lastName.ToLower());
+            return User.GetUsersByName(firstName, lastName);
         }
 
 

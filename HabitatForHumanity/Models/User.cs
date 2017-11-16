@@ -127,71 +127,19 @@ namespace HabitatForHumanity.Models
 
 
         /// <summary>
-        /// Gets all the users with matching names. To be used when you know one name, but not the other. 
+        /// Gets all the users that contain any characters in firstName or lastName.
         /// </summary>
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns>ReturnStatus object containing a list of users</returns>
         public static ReturnStatus GetUsersByName(string firstName, string lastName)
         {
-            ReturnStatus st = new ReturnStatus();
-            st.data = new List<User>();
-            try
-            {
-                VolunteerDbContext db = new VolunteerDbContext();
-                st.data = db.users.Where(x => x.firstName.Equals(firstName) || x.lastName.Equals(lastName)).ToList();
-                st.errorCode = ReturnStatus.ALL_CLEAR;
-                return st;
-            }
-            catch (Exception e)
-            {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
-                return st;
-            }
+            VolunteerDbContext db = new VolunteerDbContext();
 
+            return db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
         }
 
-
-        /// <summary>
-        /// Get a single user out of the database with a matching first and last name.
-        /// Only to be used when you know the exact names
-        /// </summary>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <returns>Id of the returned user</returns>
-        public static ReturnStatus GetUserByName(string firstName, string lastName)
-        {
-            ReturnStatus st = new ReturnStatus();
-            st.data = new User();
-            try
-            {
-                VolunteerDbContext db = new VolunteerDbContext();
-
-                var userCount = db.users.Count(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName));
-
-                //if no users are found or if multiple users are found
-                if (userCount != 1)
-                {
-                    st.errorCode = -1;
-                    st.data = "More than one user found.";
-                    return st;
-                }
-
-                st.errorCode = ReturnStatus.ALL_CLEAR;
-                st.data = db.users.Where(x => x.firstName.Equals(firstName) && x.lastName.Equals(lastName)).Single();
-
-                return st;
-            }
-            catch (Exception e)
-            {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                st.errorMessage = e.ToString();
-                return st;
-            }
-        }
-
-
+     
 
         /// <summary>
         /// Finds email if it exists in the database.
