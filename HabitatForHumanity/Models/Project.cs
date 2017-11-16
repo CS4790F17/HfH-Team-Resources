@@ -15,12 +15,9 @@ namespace HabitatForHumanity.Models
         [Key]
         public int Id { get; set; }
         public string name { get; set; }
+        [Display(Name = "Description")]
         public string description { get; set; }
         public DateTime beginDate { get; set; }
-
-        /// <summary>
-        /// Current open status of the project. 0 - inactive, 1 - active
-        /// </summary>
         public int status { get; set; }
 
 

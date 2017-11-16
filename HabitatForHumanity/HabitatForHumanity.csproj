@@ -154,8 +154,11 @@
     <Compile Include="ViewModels\BadPunchVM.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\OrganizationVM.cs" />
+    <Compile Include="ViewModels\ProjectVM.cs" />
     <Compile Include="ViewModels\PortalVM.cs" />
     <Compile Include="ViewModels\PunchVM.cs" />
+    <Compile Include="ViewModels\SearchTimeDetailVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
     <Compile Include="ViewModels\ToolKitVM.cs" />
   </ItemGroup>
@@ -168,8 +171,11 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
     <Content Include="DBscripts\ageBracketsByGender.txt" />
     <Content Include="DBscripts\VolunteerDBscript.txt" />
+    <Content Include="Docs\adminFlow.png" />
+    <Content Include="Docs\adminFlow.xml" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -182,7 +188,8 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <Content Include="Images\Volunteer Waiver - adult.docx" />
+    <Content Include="Images\HFHLogo.jpg" />
+    <Content Include="Docs\Volunteer Waiver - adult.docx" />
     <Content Include="CustomScripts" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Images\Habitat For Humanity logo.jpg" />
@@ -241,7 +248,9 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -261,12 +270,10 @@
     <Content Include="Views\User\Edit.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
     <Content Include="Views\Organization\Create.cshtml" />
-    <Content Include="Views\Organization\Delete.cshtml" />
     <Content Include="Views\Organization\Details.cshtml" />
     <Content Include="Views\Organization\Edit.cshtml" />
     <Content Include="Views\Organization\Index.cshtml" />
     <Content Include="Views\Project\Create.cshtml" />
-    <Content Include="Views\Project\Delete.cshtml" />
     <Content Include="Views\Project\Details.cshtml" />
     <Content Include="Views\Project\Edit.cshtml" />
     <Content Include="Views\Project\Index.cshtml" />
@@ -287,9 +294,13 @@
     <Content Include="Views\Admin\_DemographicsPie.cshtml" />
     <Content Include="Views\Admin\_BadPunches.cshtml" />
     <Content Include="Views\User\VolunteerPortalOut.cshtml" />
+    <Content Include="Views\Shared\_SharedLayoutUser.cshtml" />
     <Content Include="Views\User\_PunchIn.cshtml" />
     <Content Include="Views\TimeSheet\_PunchIn.cshtml" />
     <Content Include="Views\User\_PunchOut.cshtml" />
+    <Content Include="Views\User\VolunteerSearch.cshtml" />
+    <Content Include="Views\User\VolunteerSearchResults.cshtml" />
+    <Content Include="Views\User\UserTimeDetails.cshtml" />
     <Content Include="Views\User\VolunteerSignup.cshtml" />
     <Content Include="Views\User\SignWaiver.cshtml" />
   </ItemGroup>

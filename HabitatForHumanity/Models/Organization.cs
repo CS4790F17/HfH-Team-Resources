@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Models
 {
@@ -14,6 +15,7 @@ namespace HabitatForHumanity.Models
         [Key]
         public int Id { get; set; }
         public string name { get; set; }
+        public int status { get; set; }
 
         public Organization()
         {
@@ -94,6 +96,16 @@ namespace HabitatForHumanity.Models
                 st.errorMessage = e.ToString();
                 return st;
             }
+        }
+
+        /// <summary>
+        /// Gets all the currently active organizations
+        /// </summary>
+        /// <returns>A list of all organizatinos that are currently active.</returns>
+        public static List<Organization> GetActiveOrganizations()
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            return db.organizations.Where(x => x.status == 1).ToList();
         }
 
         /// <summary>

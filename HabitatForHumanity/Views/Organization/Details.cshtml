@@ -1,4 +1,4 @@
-﻿@model HabitatForHumanity.Models.Organization
+﻿@model HabitatForHumanity.ViewModels.OrganizationVM
 
 @{
     ViewBag.Title = "Details";
@@ -11,16 +11,24 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.name)
+            @Html.DisplayNameFor(model => model._name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.name)
+            @Html.DisplayFor(model => model._name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model._status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model._status)
         </dd>
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model._Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
