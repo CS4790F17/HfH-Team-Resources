@@ -72,25 +72,27 @@ namespace HabitatForHumanity.Controllers
 
         }
 
-        [ChildActionOnly]
+        
         public ActionResult _PunchOut(int id)
         {
-            ReturnStatus rsTimeSheet = Repository.GetClockedInUserTimeSheet((int)id);
+            ReturnStatus rsTimeSheet = Repository.GetClockedInUserTimeSheet(id);
 
 
-            if (rsTimeSheet.errorCode == (int)ReturnStatus.ALL_CLEAR)
+            if (rsTimeSheet.errorCode == ReturnStatus.ALL_CLEAR)
             {
                 PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rsTimeSheet.data);
                 return PartialView("_PunchOut", punchOutVM);
             }
             else
             {
-                return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                //return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                //can't redirect from child action
+                return PartialView("_PunchOut", new PunchOutVM());
             }
         }
 
 
-        [ChildActionOnly]
+       
         public ActionResult _PunchIn(int id)
         {
             ReturnStatus rsPunch = Repository.GetPunchInVM(id);
@@ -102,7 +104,9 @@ namespace HabitatForHumanity.Controllers
             }
             else
             {
-                return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                //return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                //cant redirect from child action
+                return PartialView("_PunchIn", new PunchInVM());
             }
         }
 

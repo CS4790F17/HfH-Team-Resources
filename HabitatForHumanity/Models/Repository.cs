@@ -504,60 +504,52 @@ namespace HabitatForHumanity.Models
 
         public static ReturnStatus GetPunchInVM(int userId)
         {
-            ReturnStatus projList = GetAllProjects();
-            if (projList == null
-                || projList.errorCode != ReturnStatus.ALL_CLEAR
-                    || ((List<Project>)projList.data).Count() < 1)
-            {
-                return new ReturnStatus()
-                {
-                    errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
-                };
-            }
+            //ReturnStatus projList = GetAllProjects();
 
-            ReturnStatus orgResult = GetAllOrganizations();
-            if (orgResult.errorCode != ReturnStatus.ALL_CLEAR)
-            {
-                return new ReturnStatus()
-                {
-                    errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
-                };
-            }
+            //if (projList == null || projList.errorCode != ReturnStatus.ALL_CLEAR || ((List<Project>)projList.data).Count() < 1)
+            //{
+            //    return new ReturnStatus()
+            //    {
+            //        errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
+            //    };
+            //}
+
+            //ReturnStatus orgResult = GetAllOrganizations();
+            //if (orgResult.errorCode != ReturnStatus.ALL_CLEAR)
+            //{
+            //    return new ReturnStatus()
+            //    {
+            //        errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
+            //    };
+            //}
+
             PunchInVM punch = new PunchInVM();
             ReturnStatus st = new ReturnStatus();
 
-            // User user = GetUser(userId); 
 
-            try
+            st = User.GetUser(userId);
+
+            if (st.errorCode == ReturnStatus.ALL_CLEAR && st.data != null)
             {
-                st = User.GetUser(userId);
+                User user = (User)st.data;
+                punch.userId = userId;
+               // punch.userName = user.firstName + " " + user.lastName;
 
-                if (st.errorCode == 0 && st.data != null)
-                {
-                    User user = (User)st.data;
-                    punch.userId = userId;
-                    punch.userName = user.firstName + " " + user.lastName;
+                //reset values in st to all good
+                st.errorCode = 0;
+                st.data = punch;
 
-                    //reset values in st to all good
-                    st.errorCode = 0;
-                    st.data = punch;
-
-                    return st;
-                }
-                else
-                {
-                    //if st was null or had bad error code
-                    return st;
-                }
+                return st;
             }
-            catch (Exception e)
+            else
             {
-                //TODO: improve error handling
-                st.errorCode = -1;
-                st.data = e.ToString();
+                //if st was null or had bad error code
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 return st;
             }
         }
+
+
 
         public static ReturnStatus UpdateTimeSheet(TimeSheet timeSheet)
         {
@@ -572,7 +564,7 @@ namespace HabitatForHumanity.Models
 
         #endregion
 
-   
+
         #region Report functions
 
         //public static double getTotalHoursWorkedByVolunteer(int volunteerId)
@@ -597,41 +589,40 @@ namespace HabitatForHumanity.Models
         //}
         public static ReturnStatus getTotalHoursWorkedByVolunteer(int volunteerId)
         {
-            ReturnStatus ret = new ReturnStatus();
+            ReturnStatus hoursWorked = new ReturnStatus();
+            hoursWorked.data = 0.0;
+
 
             DateTime userClockedIn = DateTime.Today.AddDays(1);
             List<TimeSheet> temp = new List<TimeSheet>();
             List<TimeSheet> volunteerTimes = new List<TimeSheet>();
             ReturnStatus st = new ReturnStatus();
             st.data = new List<TimeSheet>();
-            try
+
+            st = GetAllTimeSheetsByVolunteer(volunteerId);
+            if (st.errorCode != ReturnStatus.ALL_CLEAR)
             {
-                st = GetAllTimeSheetsByVolunteer(volunteerId);
-                if (st.errorCode != ReturnStatus.ALL_CLEAR)
-                {
-                    ret.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                    return ret;
-                }
-                temp = (List<TimeSheet>)st.data;
-                if (temp != null && temp.Count() > 0)
-                {
-                    foreach (TimeSheet ts in temp)
-                    {
-                        if (ts.clockOutTime != userClockedIn)
-                            volunteerTimes.Add(ts);
-                    }
-                    TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
-                    ret.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
-                }
+                //ret.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = 0.0;
+                return st;
             }
-            catch (Exception e)
+            temp = (List<TimeSheet>)st.data;
+            if (temp != null && temp.Count() > 0)
             {
-                ret.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                ret.data = 0.0;
-                ret.errorMessage = e.Message;
+                foreach (TimeSheet ts in temp)
+                {
+                    if (ts.clockOutTime != userClockedIn)
+                        volunteerTimes.Add(ts);
+                }
+                TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
+                hoursWorked.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
             }
-            return ret;
+
+            return hoursWorked;
         }
+
+
+
 
         /// <summary>
         /// Takes a refence to a list and adds all the worked hours up into a total.
