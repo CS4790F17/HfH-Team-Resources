@@ -17,8 +17,13 @@ namespace HabitatForHumanity.ViewModels
         public string ProjectName { get; set; }
         public List<SelectListItem> Projects { get; set; }
 
+        public ProjectDropDownList()
+        {
+            ReturnStatus st = Repository.GetAllProjects();
+            createDropDownList((List<Project>)st.data);
+        }
         /// <summary>
-        /// Takes a list of Organizations and separates them into select list items. To be used in conjunction
+        /// Takes a list of Projects and separates them into select list items. To be used in conjunction
         /// with @Html.DropDownListFor(x => x.pdd.ProjectId, Model.pdd.Projects)
         /// </summary>
         /// <param name="items">List of Projects</param>
@@ -40,6 +45,7 @@ namespace HabitatForHumanity.ViewModels
             }
             Projects = SelectList;
         }
+
     }
 
     public class OrganizationDropDownList
@@ -47,6 +53,12 @@ namespace HabitatForHumanity.ViewModels
         public int OrganizationId { get; set; }
         public string OrganizationName { get; set; }
         public List<SelectListItem> Organizations { get; set; }
+
+        public OrganizationDropDownList()
+        {
+            ReturnStatus st = Repository.GetAllOrganizations();
+            createDropDownList((List<Organization>)st.data);
+        }
 
         /// <summary>
         /// Takes a list of Organizations and separates them into select list items. To be used in conjunction
@@ -72,8 +84,5 @@ namespace HabitatForHumanity.ViewModels
             }
             Organizations = SelectList;
         }
-
     }
-
-
 }

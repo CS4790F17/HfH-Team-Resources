@@ -13,16 +13,55 @@ namespace HabitatForHumanity.Models
         #region User functions
 
         /// <summary>
+        /// Checks whether the user entered a bad password for that log in email.
+        /// </summary>
+        /// <param name="loginVm">The viewmodel containing the users email and password.</param>
+        /// <returns>ReturnStatus object that contains true if user entered a correct password.</returns>
+        public static ReturnStatus AuthenticateUser(LoginVM loginVm)
+        {
+            ReturnStatus userReturn = new ReturnStatus();
+            userReturn.data = new User();
+            ReturnStatus retValue = new ReturnStatus();
+
+            try
+            {
+                userReturn = User.GetUserByEmail(loginVm.email);
+
+                if (userReturn.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    retValue.errorCode = -1;
+                    //retValue.userErrorMsg = "User not found";
+                    retValue.data = false;
+                    return retValue;
+                }
+                User user = (User)userReturn.data;
+                if (user != null && user.Id > 0 && Crypto.VerifyHashedPassword(user.password, loginVm.password))
+                {
+                    retValue.errorCode = ReturnStatus.ALL_CLEAR;
+                    retValue.data = true;
+                }
+                return retValue;
+            }
+            catch (Exception e)
+            {
+                retValue.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                retValue.errorMessage = e.ToString();
+                return retValue;
+            }
+        }
+
+        /// <summary>
         /// Creates a volunteer user
         /// </summary>
         /// <param name="user"></param>
-        public static void CreateVolunteer(User user)
+        public static ReturnStatus CreateVolunteer(User user)
         {
-            if (user.password != null)
-            {
-                user.password = Crypto.HashPassword(user.password);
-            }
-            User.CreateVolunteer(user);
+            //if (user.password != null)
+            //{
+            //    user.password = Crypto.HashPassword(user.password);
+            //}
+            //User.CreateVolunteer(user);
+            return User.CreateUser(user);
         }
 
         /// <summary>
@@ -30,11 +69,9 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="user">User to add.</param>
         /// <returns>The id of the user or 0 if no user could be added.</returns>
-        public static int CreateUser(User user)
+        public static ReturnStatus CreateUser(User user)
         {
-            user.password = Crypto.HashPassword(user.password);
-            user.isAdmin = 0;
-            user.waiverSignDate = DateTime.Today;
+            //user.isAdmin = 0;
             return User.CreateUser(user);
         }
 
@@ -43,39 +80,29 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <returns>True if email exists</returns>
         /// <param name="email">Email to search for.</param>
-        public static bool EmailExists(string email)
+        public static ReturnStatus EmailExists(string email)
         {
             return User.EmailExists(email);
         }
 
 
-        /// <summary>
-        /// Checks whether the user entered a bad password for that log in email.
-        /// </summary>
-        /// <param name="loginVm">The viewmodel containing the users email and password.</param>
-        /// <returns>True if user entered a correct password.</returns>
-        public static bool AuthenticateUser(LoginVM loginVm)
+        public static ReturnStatus GetUser(int id)
         {
-            bool exists = false;
-            User user = User.GetUserByEmail(loginVm.email);
-            if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
-            {
-                exists = true;
-            }
-            return exists;
+            ReturnStatus st = User.GetUser(id);
+            return st;
         }
 
-        public static User GetUser(int id)
-        {
-            return User.GetUser(id);
-        }
+        //public static User GetUser(int id)
+        //{
+        //    return User.GetUser(id);
+        //}
 
         /// <summary>
         /// Gets the user in the database with the matching email.
         /// </summary>
         /// <param name="email"></param>
         /// <returns>User with matching email address.</returns>
-        public static User GetUserByEmail(string email)
+        public static ReturnStatus GetUserByEmail(string email)
         {
             return User.GetUserByEmail(email);
         }
@@ -88,7 +115,7 @@ namespace HabitatForHumanity.Models
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns>List of users</returns>
-        public static List<User> GetUsersByName(string firstName, string lastName)
+        public static ReturnStatus GetUsersByName(string firstName, string lastName)
         {
             if (firstName != null)
                 firstName = firstName.ToLower();
@@ -106,14 +133,38 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="email">Email of current user.</param>
         /// <param name="newPW">New password.</param>
-        public static void ChangePassword(string email, string newPW)
+        /// <returns>ReturnStatus object with error code and data</returns>
+        public static ReturnStatus ChangePassword(string email, string newPW)
         {
-            User user = new User();
-            user = User.GetUserByEmail(email);
-            if (user != null && !String.IsNullOrEmpty(newPW) && !String.IsNullOrWhiteSpace(newPW))
+            ReturnStatus ret = new ReturnStatus();
+            ret.data = null;
+
+            ReturnStatus st = new ReturnStatus();
+            st.data = new User();
+
+            try
             {
-                user.password = Crypto.HashPassword(newPW);
-                EditUser(user);
+                st = User.GetUserByEmail(email);
+                if (st.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    ret.errorCode = -1;
+                    return ret;
+                }
+                User user = (User)st.data;
+                if (user != null && !string.IsNullOrEmpty(newPW) && !string.IsNullOrWhiteSpace(newPW))
+                {
+
+                    user.password = Crypto.HashPassword(newPW);
+                    ret = EditUser(user);
+                }
+
+                return ret;
+            }
+            catch (Exception e)
+            {
+                ret.errorCode = -1;
+                ret.errorMessage = e.ToString();
+                return st;
             }
         }
 
@@ -121,9 +172,9 @@ namespace HabitatForHumanity.Models
         /// Updates the users information based on a new model.
         /// </summary>
         /// <param name="user">User object with new information.</param>
-        public static void EditUser(User user)
+        public static ReturnStatus EditUser(User user)
         {
-            User.EditUser(user);
+            return User.EditUser(user);
         }
 
 
@@ -131,18 +182,18 @@ namespace HabitatForHumanity.Models
         /// Deletes the user from the database.
         /// </summary>
         /// <param name="user">The user object to be deleted.</param>
-        public static void DeleteUser(User user)
+        public static ReturnStatus DeleteUser(User user)
         {
-            User.DeleteUser(user);
+            return User.DeleteUser(user);
         }
 
         /// <summary>
         /// Deletes the user in the database with matching id.
         /// </summary>
         /// <param name="id"></param>
-        public static void DeleteUserById(int id)
+        public static ReturnStatus DeleteUserById(int id)
         {
-            User.DeleteUserById(id);
+            return User.DeleteUserById(id);
         }
 
 
@@ -155,7 +206,11 @@ namespace HabitatForHumanity.Models
         /// Get all projects in the database.
         /// </summary>
         /// <returns>A list of all projects.</returns>
-        public static List<Project> GetAllProjects()
+        //public static List<Project> GetAllProjects()
+        //{
+        //    return Project.GetAllProjects();
+        //}
+        public static ReturnStatus GetAllProjects()
         {
             return Project.GetAllProjects();
         }
@@ -165,7 +220,11 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A single project object with a matching id or null otherwise.</returns>
-        public static Project GetProjectById(int id)
+        //public static Project GetProjectById(int id)
+        //{
+        //    return Project.GetProjectById(id);
+        //}
+        public static ReturnStatus GetProjectById(int id)
         {
             return Project.GetProjectById(id);
         }
@@ -174,7 +233,11 @@ namespace HabitatForHumanity.Models
         /// Gets all the currently active projects
         /// </summary>
         /// <returns>A list of all projects that are currently active.</returns>
-        public static List<Project> GetActiveProjects()
+        //public static List<Project> GetActiveProjects()
+        //{
+        //    return Project.GetActiveProjects();
+        //}
+        public static ReturnStatus GetActiveProjects()
         {
             return Project.GetActiveProjects();
         }
@@ -185,7 +248,11 @@ namespace HabitatForHumanity.Models
         /// <param name="name">Name of the project</param>
         /// <param name="date">MM/DD/YYYY</param>
         /// <returns></returns>
-        public static Project GetProjectByNameAndDate(string name, string date)
+        //public static Project GetProjectByNameAndDate(string name, string date)
+        //{
+        //    return Project.GetProjectByNameAndDate(name, date);
+        //}
+        public static ReturnStatus GetProjectByNameAndDate(string name, string date)
         {
             return Project.GetProjectByNameAndDate(name, date);
         }
@@ -194,19 +261,45 @@ namespace HabitatForHumanity.Models
         /// Inserts a project into the database.
         /// </summary>
         /// <param name="project">The new project to be inserted.</param>
-        public static void AddProject(Project project)
+        //public static void AddProject(Project project)
+        //{
+        //    Project.AddProject(project);
+        //}
+        public static ReturnStatus AddProject(Project project)
         {
-            Project.AddProject(project);
+            return Project.AddProject(project);
         }
 
         /// <summary>
         /// Edit the project with new values.
         /// </summary>
         /// <param name="project">Project object where new values are stored.</param>
-        public static void EditProject(Project project)
+        //public static void EditProject(Project project)
+        //{
+        //    Project.EditProject(project);
+        //}
+        public static ReturnStatus EditProject(Project project)
         {
-            Project.EditProject(project);
+            return Project.EditProject(project);
         }
+
+        /// <summary>
+        /// Deletes a project from the database.
+        /// </summary>
+        /// <param name="project">The project object to delete.</param>
+        //public static void DeleteProject(Project project)
+        //{
+        //    Project.DeleteProject(project);
+        //}
+
+        ///// <summary>
+        ///// Deletes a project from the database by id.
+        ///// </summary>
+        ///// <param name="id">The id of the project to delete</param>
+        //public static void DeleteProjectById(int id)
+        //{
+        //    Project.DeleteProjectById(id);
+        //}
 
         #endregion
 
@@ -216,7 +309,7 @@ namespace HabitatForHumanity.Models
         /// Get all organizations in the database.
         /// </summary>
         /// <returns>A list of all organizations.</returns>
-        public static List<Organization> GetAllOrganizations()
+        public static ReturnStatus GetAllOrganizations()
         {
             return Organization.GetAllOrganizations();
         }
@@ -226,7 +319,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A single organization object with a matching id otherwise null.</returns>
-        public static Organization GetOrganizationById(int id)
+        public static ReturnStatus GetOrganizationById(int id)
         {
             return Organization.GetOrganizationById(id);
         }
@@ -236,7 +329,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="name"></param>
         /// <returns>A single organization object with a matching name otherwise null.</returns>
-        public static Organization GetOrganizationByName(string name)
+        public static ReturnStatus GetOrganizationByName(string name)
         {
             return Organization.GetOrganizationByName(name);
         }
@@ -246,18 +339,36 @@ namespace HabitatForHumanity.Models
         /// Adds an organization to the database.
         /// </summary>
         /// <param name="org">The organization to be added</param>
-        public static void AddOrganization(Organization org)
+        public static ReturnStatus AddOrganization(Organization org)
         {
-            Organization.AddOrganization(org);
+            return Organization.AddOrganization(org);
         }
 
         /// <summary>
         /// Edits the organization with new values.
         /// </summary>
         /// <param name="org">The organization object with new values.</param>
-        public static void EditOrganization(Organization org)
+        public static ReturnStatus EditOrganization(Organization org)
         {
-            Organization.EditOrganization(org);
+            return Organization.EditOrganization(org);
+        }
+
+        /// <summary>
+        /// Deletes an organization from the database.
+        /// </summary>
+        /// <param name="org">The organization object to delete</param>
+        public static ReturnStatus DeleteOrganization(Organization org)
+        {
+            return Organization.DeleteOrganization(org);
+        }
+
+        /// <summary>
+        /// Deletes an organization from the database by id.
+        /// </summary>
+        /// <param name="id">The id of the organization to delete.</param>
+        public static ReturnStatus DeleteOrganizationById(int id)
+        {
+            return Organization.DeleteOrganizationById(id);
         }
 
         #endregion
@@ -272,7 +383,7 @@ namespace HabitatForHumanity.Models
         /// <param name="projectId">Id of the project</param>
         /// <param name="clockInTime">MM/DD/YYYY</param>
         /// <returns>Timesheet Object</returns>
-        public static TimeSheet GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
+        public static ReturnStatus GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
         {
             return TimeSheet.GetTimeSheetByNaturalKey(userId, projectId, clockInTime);
         }
@@ -282,7 +393,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
+        public static ReturnStatus GetAllTimeSheetsByProjectId(int projectId)
         {
             return TimeSheet.GetAllTimeSheetsByProjectId(projectId);
         }
@@ -291,7 +402,7 @@ namespace HabitatForHumanity.Models
         /// Gets all the timesheets for a single volunteer
         /// </summary>
         /// <param name="volunteerId"></param>
-        public static List<TimeSheet> GetAllTimeSheetsByVolunteer(int volunteerId)
+        public static ReturnStatus GetAllTimeSheetsByVolunteer(int volunteerId)
         {
             return TimeSheet.GetAllVolunteerTimeSheets(volunteerId);
         }
@@ -301,7 +412,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="organizationId"></param>
         /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsByOrganizationId(int organizationId)
+        public static ReturnStatus GetAllTimeSheetsByOrganizationId(int organizationId)
         {
             return TimeSheet.GetAllTimeSheetsByOrganizationid(organizationId);
         }
@@ -312,8 +423,8 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="beginDate">Datetime represntation of the begin date</param>
         /// <param name="endDate">Datetime represntation of the begin date</param>
-        /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
+        /// <returns>ReturnStatus object with errorCode and data</returns>
+        public static ReturnStatus GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
         {
             return TimeSheet.GetAllTimeSheetsInDateRange(beginDate, endDate);
         }
@@ -324,7 +435,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A TimeSheet object with matching id otherwise null.</returns>
-        public static TimeSheet GetTimeSheetById(int id)
+        public static ReturnStatus GetTimeSheetById(int id)
         {
             return TimeSheet.GetTimeSheetById(id);
         }
@@ -333,27 +444,27 @@ namespace HabitatForHumanity.Models
         /// Adds the TimeSheet to the database.
         /// </summary>
         /// <param name="ts">TimeSheet object to add.</param>
-        public static void AddTimeSheet(TimeSheet ts)
+        public static ReturnStatus InsertTimeSheet(TimeSheet ts)
         {
-            TimeSheet.AddTimeSheet(ts);
+            return TimeSheet.InsertTimeSheet(ts);
         }
 
         /// <summary>
         /// Updates the timesheet with new information.
         /// </summary>
         /// <param name="ts">TimeSheet object with new values.</param>
-        public static void EditTimeSheet(TimeSheet ts)
+        public static ReturnStatus EditTimeSheet(TimeSheet ts)
         {
-            TimeSheet.EditTimeSheet(ts);
+            return TimeSheet.EditTimeSheet(ts);
         }
 
         /// <summary>
         /// Deletes the TimeSheet from the database.
         /// </summary>
         /// <param name="ts">TimeSheet object to be deleted.</param>
-        public static void DeleteTimeSheet(TimeSheet ts)
+        public static ReturnStatus DeleteTimeSheet(TimeSheet ts)
         {
-            TimeSheet.DeleteTimeSheet(ts);
+            return TimeSheet.DeleteTimeSheet(ts);
         }
 
         /// <summary>
@@ -365,127 +476,148 @@ namespace HabitatForHumanity.Models
             TimeSheet.DeleteTimeSheetById(id);
         }
 
+        public static bool IsUserClockedIn(int userId)
+        {
+            ReturnStatus rs = TimeSheet.GetClockedInUserTimeSheet(userId);
+            TimeSheet userTimeSheet = (TimeSheet)rs.data;
 
-        public static TimeSheet GetClockedInUserTimeSheet(int userId)
+            //if only a default timesheet was found then the user isn't "clocked in"
+            if (userTimeSheet.Id < 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static ReturnStatus GetClockedInUserTimeSheet(int userId)
         {
             return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
 
-        public static PunchInVM GetPunchInVM(int userId)
+        public static ReturnStatus GetPunchInVM(int userId)
         {
+            //ReturnStatus projList = GetAllProjects();
+
+            //if (projList == null || projList.errorCode != ReturnStatus.ALL_CLEAR || ((List<Project>)projList.data).Count() < 1)
+            //{
+            //    return new ReturnStatus()
+            //    {
+            //        errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
+            //    };
+            //}
+
+            //ReturnStatus orgResult = GetAllOrganizations();
+            //if (orgResult.errorCode != ReturnStatus.ALL_CLEAR)
+            //{
+            //    return new ReturnStatus()
+            //    {
+            //        errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
+            //    };
+            //}
+
             PunchInVM punch = new PunchInVM();
-            User user = GetUser(userId);
-            punch.userId = userId;
-            punch.userName = user.firstName + " " + user.lastName;
-            return punch;
+            ReturnStatus st = new ReturnStatus();
+
+
+            st = User.GetUser(userId);
+
+            if (st.errorCode == ReturnStatus.ALL_CLEAR && st.data != null)
+            {
+                User user = (User)st.data;
+                punch.userId = userId;
+               // punch.userName = user.firstName + " " + user.lastName;
+
+                //reset values in st to all good
+                st.errorCode = 0;
+                st.data = punch;
+
+                return st;
+            }
+            else
+            {
+                //if st was null or had bad error code
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return st;
+            }
         }
 
-        public static void UpdateTimeSheet(TimeSheet timeSheet)
+
+
+        public static ReturnStatus UpdateTimeSheet(TimeSheet timeSheet)
         {
-            TimeSheet.UpdateTimeSheet(timeSheet);
+            //TimeSheet.UpdateTimeSheet(timeSheet);
+            return TimeSheet.EditTimeSheet(timeSheet);
         }
 
-        public static void PunchIn(TimeSheet ts)
+        public static ReturnStatus PunchIn(TimeSheet ts)
         {
-            TimeSheet.InsertTimeSheet(ts);
+            return TimeSheet.InsertTimeSheet(ts);
         }
 
         #endregion
 
-        #region OrgUser functions
-        /*
-        
-
-
-        /// <summary>
-        /// Gets all the OrgUsers in the database.
-        /// </summary>
-        /// <returns>A list of OrgUser</returns>
-        public static List<OrgUser> GetAllOrgUsers()
-        {
-            return OrgUser.GetAllOrgUsers();
-        }
-
-        /// <summary>
-        /// Gets all the organization ids for a particular user.
-        /// </summary>
-        /// <param name="userId">The id of the user.</param>
-        /// <returns></returns>
-        public static List<OrgUser> GetOrgUserByUserId(int userId)
-        {
-            return OrgUser.GetOrgUserByUserId(userId);
-        }
-
-        /// <summary>
-        /// Gets all the users that belong to a particular organization
-        /// </summary>
-        /// <param name="orgId">The id of the organization.</param>
-        /// <returns></returns>
-        public static List<OrgUser> GetOrgUserByOrgId(int orgId)
-        {
-            return OrgUser.GetOrgUserByOrgId(orgId);
-        }
-
-        /// <summary>
-        /// Adds an OrgUser object to the database.
-        /// </summary>
-        /// <param name="orgUser">Object with user_Id and org_Id</param>
-        public static void AddOrgUser(OrgUser orgUser)
-        {
-            OrgUser.AddOrgUser(orgUser);
-        }
-
-        /// <summary>
-        /// Adds an OrgUser to the database by ids.
-        /// </summary>
-        /// <param name="orgId">Id of the organization</param>
-        /// <param name="userId">Id of the user.</param>
-        public static void AddOrgUserByIds(int orgId, int userId)
-        {
-            OrgUser.AddOrgUserByIds(orgId, userId);
-        }
-
-        /// <summary>
-        /// Deletes the OrgUser from the database by object.
-        /// </summary>
-        /// <param name="ou"></param>
-        public static void DeleteOrgUser(OrgUser ou)
-        {
-            OrgUser.DeleteOrgUser(ou);
-        }
-
-        /// <summary>
-        /// Deletes an OrgUser with the given orgId and userId.
-        /// </summary>
-        /// <param name="orgId">Id of the organization.</param>
-        /// <param name="userId">Id of the user.</param>
-        public static void DeleteOrgUserByIds(int orgId, int userId)
-        {
-            OrgUser.DeleteOrgUserByIds(orgId, userId);
-        }
-
-
-   
-    */
-        #endregion
 
         #region Report functions
 
-        public static double getTotalHoursWorkedByVolunteer(int volunteerId)
-        {
-            DateTime userClockedIn = DateTime.Today.AddDays(1);
-            List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId);
-            List<TimeSheet> volunteerTimes = new List<TimeSheet>();
-            foreach (TimeSheet ts in temp)
-            {
-                if (ts.clockOutTime != userClockedIn)
-                    volunteerTimes.Add(ts);
-            }
-            TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
-            return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
-            //   return 0;
+        //public static double getTotalHoursWorkedByVolunteer(int volunteerId)
+        //{
+        //    DateTime userClockedIn = DateTime.Today.AddDays(1);
+        //    //List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId)
+        //    List<TimeSheet> volunteerTimes = new List<TimeSheet>();
+        //    ReturnStatus st = GetAllTimeSheetsByVolunteer(volunteerId);
 
+        //    if (ReturnStatus.tryParseTimeSheetList(st, out List < TimeSheet > temp))
+        //    {
+        //        foreach (TimeSheet ts in temp)
+        //        {
+        //            if (ts.clockOutTime != userClockedIn)
+        //                volunteerTimes.Add(ts);
+        //        }
+        //        TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
+        //        return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+        //        //   return 0;
+        //    }
+        //    return 0; //no timesheets were found
+        //}
+        public static ReturnStatus getTotalHoursWorkedByVolunteer(int volunteerId)
+        {
+            ReturnStatus hoursWorked = new ReturnStatus();
+            hoursWorked.data = 0.0;
+
+
+            DateTime userClockedIn = DateTime.Today.AddDays(1);
+            List<TimeSheet> temp = new List<TimeSheet>();
+            List<TimeSheet> volunteerTimes = new List<TimeSheet>();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+
+            st = GetAllTimeSheetsByVolunteer(volunteerId);
+            if (st.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                //ret.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.data = 0.0;
+                return st;
+            }
+            temp = (List<TimeSheet>)st.data;
+            if (temp != null && temp.Count() > 0)
+            {
+                foreach (TimeSheet ts in temp)
+                {
+                    if (ts.clockOutTime != userClockedIn)
+                        volunteerTimes.Add(ts);
+                }
+                TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
+                hoursWorked.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+            }
+
+            return hoursWorked;
         }
+
+
+
 
         /// <summary>
         /// Takes a refence to a list and adds all the worked hours up into a total.
@@ -502,12 +634,31 @@ namespace HabitatForHumanity.Models
             return hoursWorked;
         }
 
-        public static List<User.Demog> GetDemographicsForPie(string gender)
+        //public static List<User.Demog> GetDemographicsForPie(string gender)
+        //{
+        //    return User.GetDemographicsForPie(gender);
+        //}
+        public static ReturnStatus GetDemographicsForPie(string gender)
         {
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<User.Demog>();
+            try
+            {
+                st = User.GetDemographicsForPie(gender);
+                if (st.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                {
+                    st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                    return st;
+                }
+            }
+            catch
+            {
+                //log something
+            }
             return User.GetDemographicsForPie(gender);
         }
 
-        public static List<TimeSheet> GetBadTimeSheets()
+        public static ReturnStatus GetBadTimeSheets()
         {
             return TimeSheet.GetBadTimeSheets();
         }

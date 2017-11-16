@@ -3,12 +3,7 @@
 @{
     ViewBag.Title = "Login";
 }
-@{
-    if (ViewBag.status != null)
-    {
-        <div> <h1>@ViewBag.status</h1></div>
-    }
-}
+
 @using (Html.BeginForm())
 {
     <div class="row">
@@ -46,7 +41,7 @@
                 <div class="form-group">
                     <div class="col-md-offset-4 col-md-8">
                         <input type="submit" value="Log In" class="btn btn-lg btn-primary" style="margin-right:15px"/>
-                        <input type="button" onclick="@("location.href='"+ Url.Action("Create","User")+ "'")" value="Sign Up" class="btn btn-lg" />
+                        <input type="button" onclick="@("location.href='"+ Url.Action("VolunteerSignup","User")+ "'")" value="Sign Up" class="btn btn-lg" />
                     </div>
                 </div>
             </div>

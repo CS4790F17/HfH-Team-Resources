@@ -47,52 +47,71 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            User user = Repository.GetUser((int)id);
-            if(user != null)
+
+            PortalVM portalVM = new PortalVM();
+
+
+            // user part
+            ReturnStatus st = Repository.GetUser((int)id);
+            if (st.errorCode != ReturnStatus.ALL_CLEAR)
             {
-                PortalVM portalVM = new PortalVM();
-                portalVM.punchInVM = new PunchInVM();
-                portalVM.punchOutVM = new PunchOutVM();
-                portalVM.fullName = "";
-                portalVM.cumulativeHours = Repository.getTotalHoursWorkedByVolunteer((int)id);
-                portalVM.isPunchedIn = true;
-
-                TimeSheet temp = Repository.GetClockedInUserTimeSheet((int)id);
- 
-                if (temp == null || temp.Id < 1)
-                {
-                    portalVM.isPunchedIn = false;
-                    portalVM.punchInVM = Repository.GetPunchInVM((int)id);
-                    portalVM.punchInVM.projects.createDropDownList(Repository.GetAllProjects());
-                    portalVM.punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
-                }
-                else
-                {
-                    portalVM.punchOutVM.timeSheetNumber = temp.Id;
-                    portalVM.punchOutVM.userNumber = temp.user_Id;
-                    portalVM.punchOutVM.projectNumber = temp.project_Id;
-                    portalVM.punchOutVM.orgNumber = temp.org_Id;
-                    portalVM.punchOutVM.inTime = temp.clockInTime;
-                }
-
-               
-                if (user.firstName != null)
-                {
-                    portalVM.fullName += user.firstName + " ";
-                }
-                if (user.lastName != null)
-                {
-                    portalVM.fullName += user.lastName;
-                }
-
-              
-
-                return View(portalVM);
+                return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
             }
-  
-    
-            return RedirectToAction("Login", "User");
+
+            User user = (User)st.data;
+
+            portalVM.fullName = user.firstName + " " + user.lastName;
+            portalVM.userId = user.Id;
+            portalVM.isPunchedIn = Repository.IsUserClockedIn(user.Id);
+            portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+
+            return View(portalVM);
+
+
+            // return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+
         }
+
+        
+        public ActionResult _PunchOut(int id)
+        {
+            ReturnStatus rsTimeSheet = Repository.GetClockedInUserTimeSheet(id);
+
+
+            if (rsTimeSheet.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rsTimeSheet.data);
+                return PartialView("_PunchOut", punchOutVM);
+            }
+            else
+            {
+                //return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                //can't redirect from child action
+                return PartialView("_PunchOut", new PunchOutVM());
+            }
+        }
+
+
+       
+        public ActionResult _PunchIn(int id)
+        {
+            ReturnStatus rsPunch = Repository.GetPunchInVM(id);
+
+            if (rsPunch.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                PunchInVM punchInVM = (PunchInVM)rsPunch.data;
+                return PartialView("_PunchIn", punchInVM);
+            }
+            else
+            {
+                //return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                //cant redirect from child action
+                return PartialView("_PunchIn", new PunchInVM());
+            }
+        }
+
+
+
         #endregion
 
         #region Create
@@ -100,7 +119,7 @@ namespace HabitatForHumanity.Controllers
         {
             return View();
         }
-        
+
         // GET: User/VolunteerSignup
         public ActionResult VolunteerSignup()
         {
@@ -123,6 +142,8 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
+
+        //TODO: test 
         // POST: User/SignWaiver
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -137,19 +158,23 @@ namespace HabitatForHumanity.Controllers
                 {
                     return View(signWaiverVM);
                 }
-                User user = Repository.GetUserByEmail(signWaiverVM.userEmail);
-                user.emergencyCity = signWaiverVM.emergencyCity;
-                user.emergencyFirstName = signWaiverVM.emergencyFirstName;
-                user.emergencyHomePhone = signWaiverVM.emergencyHomePhone;
-                user.emergencyLastName = signWaiverVM.emergencyLastName;
-                user.emergencyStreetAddress = signWaiverVM.emergencyStreetAddress;
-                user.emergencyWorkPhone = signWaiverVM.emergencyWorkPhone;
-                user.emergencyZip = signWaiverVM.emergencyZip;
-                user.relation = signWaiverVM.relation;
-                user.waiverSignDate = DateTime.Now;
-                db.Entry(user).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("VolunteerPortal", new { id = user.Id });
+
+                ReturnStatus st = Repository.GetUserByEmail(signWaiverVM.userEmail);
+                if (st.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                {
+                    return RedirectToAction("HandleErrors", "User", "The system is temporarily down, please try again.");
+                }
+                User user = (User)st.data;
+                if (user.Id > 0)
+                {
+                    user.AddWaiverToUser(signWaiverVM);
+                    ReturnStatus saveResult = Repository.EditUser(user);
+                    if (saveResult.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                    {
+                        return RedirectToAction("HandleErrors", "User", "The system is temporarily down, please try again.");
+                    }
+                    return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                }
             }
 
             return View(signWaiverVM);
@@ -165,11 +190,18 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (Repository.EmailExists(user.emailAddress) == false)
+
+                ReturnStatus st = Repository.EmailExists(user.emailAddress);
+
+                if ((bool)st.data == false)
                 {
                     user.isAdmin = 0;
                     user.waiverSignDate = DateTime.Now.AddYears(-2);
-                    Repository.CreateVolunteer(user);
+                    ReturnStatus createResult = Repository.CreateVolunteer(user);
+                    if (createResult.errorCode != ReturnStatus.ALL_CLEAR)
+                    {
+                        return RedirectToAction("HandleErrors", "User", "The system is temporarily down, please try again.");
+                    }
                     Session["isAdmin"] = user.isAdmin;
                     Session["UserName"] = user.emailAddress;
                     return RedirectToAction("SignWaiver", "User");
@@ -181,47 +213,11 @@ namespace HabitatForHumanity.Controllers
                     return RedirectToAction("Login", "User");
                 }
             }
-
-            return View(user);
-        }
-
-        // POST: User/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(
-            Include = "Id,firstName,gender, isAdmin,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate,emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                if(Repository.EmailExists(user.emailAddress) == false)
-                {
-                    int userId = Repository.CreateUser(user);
-                    if (userId > 0)
-                    {
-                        Session["isAdmin"] = null; // if you're admin, you have to have an admin change isAdmin to 1, then log in
-                        Session["UserName"] = user.emailAddress;
-                        return RedirectToAction("VolunteerPortal", new { id = userId });
-                    }
-                    else
-                    {
-                        ViewBag.status = "An error occurred during account creation please try again.";
-                        return View(user);
-                    }        
-                }
-                else
-                {
-                    // this needs some kind of notification
-                    ViewBag.status = "That email already exists in out system. Click the link below.";
-                    return RedirectToAction("Login", "User");
-                }
-            }
-
             return View(user);
         }
         #endregion
+
+       
 
         #region Login
         public ActionResult Login(string excMsg)
@@ -238,18 +234,34 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login([Bind(Include = "email,password")] LoginVM loginVm)
         {
+            ReturnStatus emailExistsResult = new ReturnStatus();
+            ReturnStatus authResult = new ReturnStatus();
+
             if (ModelState.IsValid)
             {
-                if (Repository.EmailExists(loginVm.email))
+
+                emailExistsResult = Repository.EmailExists(loginVm.email);
+                if (emailExistsResult.errorCode != ReturnStatus.ALL_CLEAR)
                 {
-                    if (Repository.AuthenticateUser(loginVm))
+
+                    return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                }
+
+                if ((bool)emailExistsResult.data)
+                {
+                    authResult = Repository.AuthenticateUser(loginVm);
+                    if (authResult.errorCode != ReturnStatus.ALL_CLEAR)
                     {
-                        User user = Repository.GetUserByEmail(loginVm.email);
-                        if(user.isAdmin == 1)
+                        return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                    }
+                    if ((bool)authResult.data)
+                    {
+                        User user = (User)Repository.GetUserByEmail(loginVm.email).data;
+
+                        if (user.isAdmin == 1)
                         {
                             Session["isAdmin"] = "isAdmin";
                         }
-
                         Session["UserName"] = user.emailAddress;
                         return RedirectToAction("VolunteerPortal", new { id = user.Id });
                     }
@@ -265,18 +277,24 @@ namespace HabitatForHumanity.Controllers
                     return View(loginVm);
                 }
             }
-            // model was bad
-            return RedirectToAction("Login", "Volunteer");
+            return RedirectToAction("Login", "User", new { excMsg = "The system is temporarily down, please try again." });
         }
 
+
+        // model was bad
+
+        #endregion
+
+        #region Logout
         public ActionResult Logout(string excMsg)
         {
             Session["UserName"] = null;
             Session["isAdmin"] = null;
-            ViewBag.status = excMsg;
-            return View("Login");
+            return RedirectToAction("Login", new { excMsg = excMsg });
         }
+        #endregion
 
+        #region ForgotPassword
         public ActionResult ForgotPassword()
         {
             LoginVM loginVm = new LoginVM();
@@ -284,56 +302,76 @@ namespace HabitatForHumanity.Controllers
         }
 
 
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ForgotPassword([Bind(Include = "email")] LoginVM forgot)
         {
             if (ModelState.IsValid)
             {
-                if (Repository.EmailExists(forgot.email))
+                try
                 {
-                    try
+                    ReturnStatus existsResult = new ReturnStatus();
+                    existsResult = Repository.EmailExists(forgot.email);
+                    if (existsResult.errorCode != (int)ReturnStatus.ALL_CLEAR)
                     {
-                        //Configuring webMail class to send emails  
-                        //gmail smtp server  
-                        WebMail.SmtpServer = "smtp.gmail.com";
-                        //gmail port to send emails  
-                        WebMail.SmtpPort = 587;
-                        WebMail.SmtpUseDefaultCredentials = true;
-                        //sending emails with secure protocol  
-                        WebMail.EnableSsl = true;
-                        //EmailId used to send emails from application  
-                        WebMail.UserName = "hfhdwvolunteer@gmail.com";
-                        WebMail.Password = "3BlindMice";
-
-                        //Sender email address.  
-                        WebMail.From = "hfhdwvolunteer@gmail.com";
-                        //Reset code
-                        Random rand = new Random();
-                        string resetCode = rand.Next(1000, 9999).ToString();
-                        string newPW = resetCode + "W1!uk";
-                        string pwStr = "New TEMPORARY password is: " + newPW;
-                        //Send email  
-                        WebMail.Send(to: forgot.email, subject: "Password Reset", body: pwStr, isBodyHtml: false);
-                        ViewBag.status = "Email Sent Successfully.";
-                        ViewBag.em = forgot.email;
-                        Repository.ChangePassword(forgot.email, newPW);
+                        return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
                     }
-                    catch (Exception)
+
+                    if ((bool)existsResult.data)
                     {
-                        ViewBag.Status = "Problem while sending email, Please check details.";
+                        try
+                        {
+                            //Configuring webMail class to send emails  
+                            //gmail smtp server  
+                            WebMail.SmtpServer = "smtp.gmail.com";
+                            //gmail port to send emails  
+                            WebMail.SmtpPort = 587;
+                            WebMail.SmtpUseDefaultCredentials = true;
+                            //sending emails with secure protocol  
+                            WebMail.EnableSsl = true;
+                            //EmailId used to send emails from application  
+                            WebMail.UserName = "hfhdwvolunteer@gmail.com";
+                            WebMail.Password = "3BlindMice";
+
+                            //Sender email address.  
+                            WebMail.From = "hfhdwvolunteer@gmail.com";
+                            //Reset code
+                            Random rand = new Random();
+                            string resetCode = rand.Next(1000, 9999).ToString();
+                            string newPW = resetCode + "W1!uk";
+                            string pwStr = "New TEMPORARY password is: " + newPW;
+                            //Send email  
+                            WebMail.Send(to: forgot.email, subject: "Password Reset", body: pwStr, isBodyHtml: false);
+                            ViewBag.status = "Email Sent Successfully.";
+                            ViewBag.em = forgot.email;
+                            Repository.ChangePassword(forgot.email, newPW);
+                        }
+                        catch (Exception)
+                        {
+                            ViewBag.Status = "Problem while sending email, Please check details.";
+                            return View("Login");
+                        }
                         return View("Login");
                     }
-                    return View("Login");
+                    ViewBag.status = "No record of provided email address.";
+                    return RedirectToAction("Login", "Volunteer");
                 }
-                ViewBag.status = "No record of provided email address.";
-                return RedirectToAction("Login", "Volunteer");
-            }
+                catch
+                {
+                    ViewBag.status = "System failed to process your request, try again.";
+                    return RedirectToAction("Login", "Volunteer");
+                }
+            }// end modelstate.isvalid
             ViewBag.status = "Please provide a valid email address.";
             return RedirectToAction("Login", "Volunteer");
         }
         #endregion
+
+        public ActionResult HandleErrors(string excMsg)
+        {
+            return RedirectToAction("Login", "User", new { excMsg = excMsg });
+        }
 
         #region Edit
         public ActionResult Edit(int? id)
@@ -401,7 +439,8 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult VolunteerSearch([Bind(Include = "firstName,lastName")] User user)
         {
-            return View("VolunteerSearchResults", Repository.GetUsersByName(user.firstName, user.lastName));
+            //TODO: add error checking
+            return View("VolunteerSearchResults", (List<User>)Repository.GetUsersByName(user.firstName, user.lastName).data);
         }
 
         /// <summary>
@@ -409,19 +448,21 @@ namespace HabitatForHumanity.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult UserTimeDetails(int id)
+        public ActionResult UserTimeDetails(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             SearchTimeDetailVM userTimeDetails = new SearchTimeDetailVM();
-            User user = Repository.GetUser(id);
+            //TODO: add error checking
+            User user = (User)Repository.GetUser(id.Value).data;
             userTimeDetails.userId = user.Id;
             userTimeDetails.firstName = user.firstName;
             userTimeDetails.lastName = user.lastName;
             userTimeDetails.emailAddress = user.emailAddress;
-            userTimeDetails.timeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
+            //TODO: add error checking
+            userTimeDetails.timeSheets = (List<TimeSheet>)Repository.GetAllTimeSheetsByVolunteer(id.Value).data;
             if (userTimeDetails == null)
             {
                 return HttpNotFound();

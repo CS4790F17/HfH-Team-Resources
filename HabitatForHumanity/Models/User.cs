@@ -84,79 +84,174 @@ namespace HabitatForHumanity.Models
         [Display(Name = "Emergency Zipcode*")]
         public string emergencyZip { get; set; }
 
+        public User()
+        {
+            Id = -1;
+            firstName = "";
+            lastName = "";
+            homePhoneNumber = "";
+            workPhoneNumber = "";
+            emailAddress = "";
+            streetAddress = "";
+            city = "";
+            zip = "";
+            password = "";
+            birthDate = DateTime.Now; //the year 0001 is out of range for a datetime object which is the defaul null value
+            gender = "";
+            isAdmin = 0;
+            waiverSignDate = DateTime.Now.AddYears(-2);
+            emergencyFirstName = "";
+            emergencyLastName = "";
+            emergencyStreetAddress = "";
+            emergencyWorkPhone = "";
+            relation = "";
+            emergencyZip = "";
+            emergencyCity = "";
+            emergencyHomePhone = "";
+        }
 
+        public void AddWaiverToUser(SignWaiverVM waiver)
+        {
+            emergencyCity = waiver.emergencyCity;
+            emergencyFirstName = waiver.emergencyFirstName;
+            emergencyHomePhone = waiver.emergencyHomePhone;
+            emergencyLastName = waiver.emergencyLastName;
+            emergencyStreetAddress = waiver.emergencyStreetAddress;
+            emergencyWorkPhone = waiver.emergencyWorkPhone;
+            emergencyZip = waiver.emergencyZip;
+            relation = waiver.relation;
+            waiverSignDate = DateTime.Now;
+        }
 
         #region Database Access Methods
 
-        /// <summary>
-        /// Checks whether the user entered a bad password for that log in email.
-        /// </summary>
-        /// <param name="loginVm">The viewmodel containing the users email and password.</param>
-        /// <returns>True if user entered a correct password.</returns>
-        public static bool AuthenticateUser(LoginVM loginVm)
-        {
-            bool exists = false;
-            User user = User.GetUserByEmail(loginVm.email);
-            if (user != null && Crypto.VerifyHashedPassword(user.password, loginVm.password))
-            {
-                exists = true;
-            }
-            return exists;
-        }
 
         /// <summary>
         /// Gets all the users that contain any characters in firstName or lastName.
         /// </summary>
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
-        /// <returns>List of users</returns>
-        public static List<User> GetUsersByName(string firstName, string lastName)
+        /// <returns>ReturnStatus object containing a list of users</returns>
+        public static ReturnStatus GetUsersByName(string firstName, string lastName)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-
-            return db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.data = new List<User>();
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
-     
+
 
         /// <summary>
         /// Finds email if it exists in the database.
         /// </summary>
         /// <param name="email">Email to search for.</param>
         /// <returns>True if email exists</returns>
-        public static bool EmailExists(string email)
+        public static ReturnStatus EmailExists(string email)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.users.Any(u => u.emailAddress.Equals(email));
+            ReturnStatus st = new ReturnStatus();
+
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.users.Any(u => u.emailAddress.Equals(email));
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
+
 
         /// <summary>
         /// Gets the user in the database with the matching email.
         /// </summary>
         /// <param name="email"></param>
         /// <returns>User with matching email address.</returns>
-        public static User GetUserByEmail(string email)
+        public static ReturnStatus GetUserByEmail(string email)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            var users = db.users.Where(u => u.emailAddress.Equals(email));
-            return users.FirstOrDefault();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new User();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var users = db.users.Where(u => u.emailAddress.Equals(email));
+
+                st.errorCode = 0;
+                st.data = users.FirstOrDefault();
+
+                return st;
+
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
-        public static User GetUser(int id)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.users.Find(id);
-        }
 
         /// <summary>
-        /// Creates a volunteer user
+        /// Gets the user by id
         /// </summary>
-        /// <param name="user"></param>
-        public static void CreateVolunteer(User user)
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static ReturnStatus GetUser(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.users.Add(user);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new User();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.users.Find(id);
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        }
+
+
+
+        public static ReturnStatus CreateVolunteer(User user)
+        {
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.users.Add(user);
+                db.SaveChanges();
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return st;
+            }
+
         }
 
         /// <summary>
@@ -164,57 +259,134 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="user">User to add.</param>
         /// <returns>The id of the user or 0 if no user could be added.</returns>
-        public static int CreateUser(User user)
+        public static ReturnStatus CreateUser(User user)
         {
-            int userId = 0;
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.users.Add(user);
-            db.SaveChanges();
-
-            var users = db.users.Where(u => u.emailAddress.Equals(user.emailAddress));
-            User newUser = users.FirstOrDefault();
-            if (newUser != null)
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
             {
-                userId = newUser.Id;
+                user.password = Crypto.HashPassword(user.password);
+                //user.waiverSignDate = DateTime.Today;
+
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.users.Add(user);
+                db.SaveChanges();
+
+                //entity framework automagically populates a model with all database generated ids
+                //so the passed in user object will have an id
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+                st.data = user.Id;
+
+
+
+                //var users = db.users.Where(u => u.emailAddress.Equals(user.emailAddress));
+                //User newUser = users.FirstOrDefault();
+                //if (newUser != null)
+                //{
+                //    userId = newUser.Id;
+                //}
+                //return userId;
+
+                return st;
+
             }
-            return userId;
+            catch (ArgumentNullException e)
+            {
+                st.errorCode = (int)ReturnStatus.NULL_ARGUMENT;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Updates the users information based on a new model.
         /// </summary>
         /// <param name="user">User object with new information.</param>
-        public static void EditUser(User user)
+        public static ReturnStatus EditUser(User user)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.Entry(user).State = EntityState.Modified;
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
+            {
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
+
 
         /// <summary>
         /// Deletes the user from the database.
         /// </summary>
         /// <param name="user">The user object to be deleted.</param>
-        public static void DeleteUser(User user)
+        public static ReturnStatus DeleteUser(User user)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.users.Attach(user);
-            db.users.Remove(user);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.users.Attach(user);
+                db.users.Remove(user);
+                db.SaveChanges();
+
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+                return st;
+
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Deletes the user in the database with matching id.
         /// </summary>
         /// <param name="id"></param>
-        public static void DeleteUserById(int id)
+        public static ReturnStatus DeleteUserById(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            User user = db.users.Find(id);
-            if (user != null)
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
             {
-                db.users.Remove(user);
-                db.SaveChanges();
+                VolunteerDbContext db = new VolunteerDbContext();
+                User user = db.users.Find(id);
+                if (user != null)
+                {
+                    db.users.Remove(user);
+                    db.SaveChanges();
+
+                }
+                else
+                {
+                    st.errorCode = (int)ReturnStatus.COULD_NOT_UPDATE_DATABASE;
+                }
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
             }
         }
 
@@ -223,7 +395,9 @@ namespace HabitatForHumanity.Models
             public string ageBracket { get; set; }
             public int numPeople { get; set; }
         }
-        public static List<Demog> GetDemographicsForPie(string gender)
+
+        /*
+          public static List<Demog> GetDemographicsForPie(string gender)
         {
             VolunteerDbContext db = new VolunteerDbContext();
             List<Demog> demogs = new List<Demog>();
@@ -241,10 +415,10 @@ namespace HabitatForHumanity.Models
             Demog d27to40 = new Demog() { ageBracket = "27 to 40", numPeople = 0 };
             Demog d40to55 = new Demog() { ageBracket = "40 to 55", numPeople = 0 };
             Demog dover55 = new Demog() { ageBracket = "Over 55", numPeople = 0 };
-            foreach(User u in users)
+            foreach (User u in users)
             {
                 DateTime present = DateTime.Now;
-                if(present.AddYears(-18) < u.birthDate)
+                if (present.AddYears(-18) < u.birthDate)
                 {
                     dunder18.numPeople++;
                 }
@@ -259,7 +433,7 @@ namespace HabitatForHumanity.Models
                 else if (present.AddYears(-40) <= u.birthDate && present.AddYears(-55) > u.birthDate)
                 {
                     d40to55.numPeople++;
-                }         
+                }
                 else
                 {
                     dover55.numPeople++;
@@ -272,6 +446,65 @@ namespace HabitatForHumanity.Models
             demogs.Add(d40to55);
             demogs.Add(dover55);
             return demogs;
+
+        }
+             */
+        public static ReturnStatus GetDemographicsForPie(string gender)
+        {
+            //TODO:   finish up refactor!!!
+            ReturnStatus ret = new ReturnStatus();
+            ret.data = new List<Demog>();
+
+            VolunteerDbContext db = new VolunteerDbContext();
+            List<Demog> demogs = new List<Demog>();
+            List<User> users = new List<User>();
+            if (gender.Equals("All"))
+            {
+                users = db.users.Where(u => u.birthDate != null).ToList();
+            }
+            else
+            {
+                users = db.users.Where(u => u.birthDate != null && u.gender.Equals(gender)).ToList();
+            }
+            Demog dunder18 = new Demog() { ageBracket = "Under 18", numPeople = 0 };
+            Demog d18to27 = new Demog() { ageBracket = "18 to 27", numPeople = 0 };
+            Demog d27to40 = new Demog() { ageBracket = "27 to 40", numPeople = 0 };
+            Demog d40to55 = new Demog() { ageBracket = "40 to 55", numPeople = 0 };
+            Demog dover55 = new Demog() { ageBracket = "Over 55", numPeople = 0 };
+            foreach (User u in users)
+            {
+                DateTime present = DateTime.Now;
+                if (present.AddYears(-18) < u.birthDate)
+                {
+                    dunder18.numPeople++;
+                }
+                else if (present.AddYears(-18) <= u.birthDate && present.AddYears(-27) > u.birthDate)
+                {
+                    d18to27.numPeople++;
+                }
+                else if (present.AddYears(-27) <= u.birthDate && present.AddYears(-40) > u.birthDate)
+                {
+                    d27to40.numPeople++;
+                }
+                else if (present.AddYears(-40) <= u.birthDate && present.AddYears(-55) > u.birthDate)
+                {
+                    d40to55.numPeople++;
+                }
+                else
+                {
+                    dover55.numPeople++;
+                }
+            }
+
+            demogs.Add(dunder18);
+            demogs.Add(d18to27);
+            demogs.Add(d27to40);
+            demogs.Add(d40to55);
+            demogs.Add(dover55);
+
+            ret.errorCode = (int)ReturnStatus.ALL_CLEAR;
+            ret.data = demogs;
+            return ret;
 
         }
         /*TimeSheet temp = new TimeSheet();

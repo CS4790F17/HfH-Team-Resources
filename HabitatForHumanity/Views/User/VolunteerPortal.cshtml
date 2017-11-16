@@ -15,10 +15,12 @@
 @{
     if (Model.isPunchedIn == false)
     {
-        <div>@{Html.RenderPartial("_PunchIn", Model.punchInVM);}</div>
-    }
+        @*<div>@{Html.RenderPartial("_PunchIn", Model.punchInVM);}</div>*@
+        <div>@Html.Action("_PunchIn", new { id = Model.userId})</div>
+        }
     else
     {
-        <div>@{Html.RenderPartial("_PunchOut", Model.punchOutVM);}</div>
+        @*<div>@{Html.RenderPartial("_PunchOut", Model.punchOutVM);}</div>*@
+        <div>@Html.Action("_PunchOut", new { id = Model.userId })</div>
     }
 }

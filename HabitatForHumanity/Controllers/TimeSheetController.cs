@@ -50,12 +50,29 @@ namespace HabitatForHumanity.Controllers
                 sheet.clockInTime = DateTime.Now;
                 sheet.clockOutTime = DateTime.Today.AddDays(1);
                 sheet.org_Id = punchInVM.orgId;
-                Repository.PunchIn(sheet);
 
+                //TODO: check error code?
+                ReturnStatus st = Repository.PunchIn(sheet);
+                if(st.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
+                }
                 return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
             }
-            punchInVM.projects.createDropDownList(Repository.GetAllProjects());
-            punchInVM.orgs.createDropDownList(Repository.GetAllOrganizations());
+            //ReturnStatus stp = Repository.GetAllProjects();
+            //if (stp.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            //{
+            //    return RedirectToAction("HandleErrors", "User", new { excMsg = stp.userErrorMsg });
+            //}
+
+            //ReturnStatus orgsResult = Repository.GetAllOrganizations();
+            //if (orgsResult.errorCode != (int)ReturnStatus.ErrorCodes.All_CLEAR)
+            //{
+            //    return RedirectToAction("HandleErrors", "User", new { excMsg = orgsResult.userErrorMsg });
+            //}
+
+            //punchInVM.projects.createDropDownList((List<Project>)stp.data);
+            //punchInVM.orgs.createDropDownList((List<Organization>)orgsResult.data);
 
             return View(punchInVM);
         }
@@ -76,6 +93,8 @@ namespace HabitatForHumanity.Controllers
                 timeSheet.org_Id = punchOutVM.orgNumber;
                 timeSheet.clockInTime = punchOutVM.inTime;
                 timeSheet.clockOutTime = DateTime.Now;
+
+                //TODO: add handling to ensure timesheet was properly updated
                 Repository.UpdateTimeSheet(timeSheet);
    
                 return RedirectToAction("VolunteerPortal","User", new { id = timeSheet.user_Id } );
@@ -175,5 +194,6 @@ namespace HabitatForHumanity.Controllers
             }
             base.Dispose(disposing);
         }
+
     }
 }

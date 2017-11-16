@@ -19,6 +19,17 @@ namespace HabitatForHumanity.Models
         public DateTime clockInTime { get; set; }
         public DateTime clockOutTime { get; set; }
 
+        public TimeSheet()
+        {
+            Id = -1;
+            user_Id = -1;
+            project_Id = -1;
+            org_Id = -1;
+            clockInTime = DateTime.Today;
+            clockOutTime = DateTime.Today.AddDays(1);
+        }
+
+
         #region Database Access Methods
 
         /// <summary>
@@ -28,11 +39,31 @@ namespace HabitatForHumanity.Models
         /// <param name="projectId">Id of the project</param>
         /// <param name="clockInTime">MM/DD/YYYY</param>
         /// <returns>Timesheet Object</returns>
-        public static TimeSheet GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
+        public static ReturnStatus GetTimeSheetByNaturalKey(int userId, int projectId, string clockInTime)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            DateTime cit = DateTime.Parse(clockInTime);
-            return db.timeSheets.Where(x => x.user_Id == userId && x.project_Id == projectId && x.clockInTime.Equals(cit)).Single();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new TimeSheet();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                DateTime cit = DateTime.Parse(clockInTime);
+
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.data = db.timeSheets.Where(x => x.user_Id == userId && x.project_Id == projectId && x.clockInTime.Equals(cit)).Single();
+                return st;
+            }
+            catch (InvalidOperationException e)
+            {
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
@@ -40,58 +71,131 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A TimeSheet object with matching id otherwise null.</returns>
-        public static TimeSheet GetTimeSheetById(int id)
+        public static ReturnStatus GetTimeSheetById(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Find(id);
+            ReturnStatus st = new ReturnStatus();
+            st.data = new TimeSheet();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.data = db.timeSheets.Find(id);
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Adds the TimeSheet to the database.
         /// </summary>
         /// <param name="ts">TimeSheet object to add.</param>
-        public static void AddTimeSheet(TimeSheet ts)
+        public static ReturnStatus InsertTimeSheet(TimeSheet ts)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.timeSheets.Add(ts);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.timeSheets.Add(ts);
+                db.SaveChanges();
+
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Updates the timesheet with new information.
         /// </summary>
         /// <param name="ts">TimeSheet object with new values.</param>
-        public static void EditTimeSheet(TimeSheet ts)
+        public static ReturnStatus EditTimeSheet(TimeSheet ts)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.Entry(ts).State = EntityState.Modified;
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.Entry(ts).State = EntityState.Modified;
+                db.SaveChanges();
+
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Deletes the TimeSheet from the database.
         /// </summary>
         /// <param name="ts">TimeSheet object to be deleted.</param>
-        public static void DeleteTimeSheet(TimeSheet ts)
+        public static ReturnStatus DeleteTimeSheet(TimeSheet ts)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.timeSheets.Attach(ts);
-            db.timeSheets.Remove(ts);
-            db.SaveChanges();
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.timeSheets.Attach(ts);
+                db.timeSheets.Remove(ts);
+                db.SaveChanges();
+
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
         /// Deletes the TimeSheet from the database with the matching id.
         /// </summary>
         /// <param name="id"></param>
-        public static void DeleteTimeSheetById(int id)
+        public static ReturnStatus DeleteTimeSheetById(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            TimeSheet ts = db.timeSheets.Find(id);
-            if (ts != null)
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
             {
-                db.timeSheets.Remove(ts);
-                db.SaveChanges();
+                VolunteerDbContext db = new VolunteerDbContext();
+                TimeSheet ts = db.timeSheets.Find(id);
+                if (ts != null)
+                {
+                    db.timeSheets.Remove(ts);
+                    db.SaveChanges();
+
+                    st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+                    return st;
+                }
+
+                st.errorCode = ReturnStatus.NULL_ARGUMENT;
+                return st;
+
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
             }
         }
 
@@ -100,10 +204,24 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsByProjectId(int projectId)
+        public static ReturnStatus GetAllTimeSheetsByProjectId(int projectId)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.data = db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
         /// <summary>
@@ -112,10 +230,24 @@ namespace HabitatForHumanity.Models
         /// <param name="beginDate"></param>
         /// <param name="endDate"></param>
         /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
+        public static ReturnStatus GetAllTimeSheetsInDateRange(DateTime beginDate, DateTime endDate)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Where(x => x.clockInTime >= beginDate && x.clockOutTime <= endDate).OrderBy(x => x.Id).ToList();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.data = db.timeSheets.Where(x => x.clockInTime >= beginDate && x.clockOutTime <= endDate).OrderBy(x => x.Id).ToList();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
 
@@ -124,76 +256,112 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="organizationId"></param>
         /// <returns></returns>
-        public static List<TimeSheet> GetAllTimeSheetsByOrganizationid(int organizationId)
+        public static ReturnStatus GetAllTimeSheetsByOrganizationid(int organizationId)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Where(x => x.org_Id == organizationId).OrderBy(x => x.Id).ToList();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+                st.data = db.timeSheets.Where(x => x.org_Id == organizationId).OrderBy(x => x.Id).ToList();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
+
+        /// <summary>
+        /// Attempts to determine if a user is logged in by fetching all the timesheets by user id and 
+        /// selecting the most recent one. If the most recent timesheet has a clock out time of midnight
+        /// then the user is still clocked in, otherwise they're clocked out.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static ReturnStatus GetClockedInUserTimeSheet(int userId)
+        {
+            ReturnStatus st = new ReturnStatus();
+            st.data = new TimeSheet();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                var sheet = db.timeSheets.Where(x => x.user_Id == userId).ToList().OrderBy(y => y.clockInTime);
+                if (sheet.Count() > 0)
+                {
+                    if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
+                    {
+                        st.errorCode = ReturnStatus.ALL_CLEAR;
+                        st.data = sheet.Last();
+                        return st;
+                    }
+
+                }
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        }
+
+
 
         #endregion
 
-        public static TimeSheet GetClockedInUserTimeSheet(int userId)
+        /// <summary>
+        /// Gets all the supplied volunteers timesheets
+        /// </summary>
+        /// <param name="volunteerId"></param>
+        /// <returns></returns>
+        public static ReturnStatus GetAllVolunteerTimeSheets(int volunteerId)
         {
-            TimeSheet temp = new TimeSheet();
-            VolunteerDbContext db = new VolunteerDbContext();
-
-            //var sheets = from t in db.timeSheets
-            //             group t by t.user_Id into g
-            //             select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
-
-
-            var sheet = db.timeSheets.Where(x => x.user_Id == userId).ToList().OrderBy(y => y.clockInTime);
-            if (sheet.Count() > 0)
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+            try
             {
-                if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
-                    return sheet.Last();
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.data = db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
+                return st;
             }
-
-            //if (sheets.Count() > 0)
-            //{
-            //    temp = sheets.First();
-            //    // only if the clockout is midnight today(tomorrow really)
-            //    if (temp.clockOutTime == DateTime.Today.AddDays(1))
-            //    {
-            //        return temp;
-            //    }
-            //}
-            return new TimeSheet();
-        }
-
-        public static void InsertTimeSheet(TimeSheet ts)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.timeSheets.Add(ts);
-            db.SaveChanges();
-        }
-
-        public static void UpdateTimeSheet(TimeSheet timeSheet)
-        {
-            timeSheet.clockInTime = (DateTime)timeSheet.clockInTime;
-
-            VolunteerDbContext db = new VolunteerDbContext();
-            db.Entry(timeSheet).State = EntityState.Modified;
-            db.SaveChanges();
-        }
-
-        public static List<TimeSheet> GetAllVolunteerTimeSheets(int volunteerId)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.timeSheets.Where(x => x.user_Id == volunteerId).ToList();
-        }
-
-        public static List<TimeSheet> GetBadTimeSheets()
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
-                .OrderByDescending(c => c.clockInTime).
-                ToList();
-
-            if (sheets.Count() > 0)
+            catch (Exception e)
             {
+                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
             }
-            return sheets;
+        }
+
+        public static ReturnStatus GetBadTimeSheets()
+        {
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
+                    .OrderByDescending(c => c.clockInTime).
+                    ToList();
+
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+                st.data = sheets;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
         }
 
 

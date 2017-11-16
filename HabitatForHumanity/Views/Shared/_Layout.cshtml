@@ -31,6 +31,14 @@
         </div>
     </div>
     <div class="container body-content">
+        @{
+            if (ViewBag.status != null)
+            {
+                <div class="alert alert-danger text-center" role="alert" style="margin-top: 15px">
+                    <h3>@ViewBag.status</h3>
+                </div>
+            }
+        }
         @RenderBody()
         <hr />
         <footer>

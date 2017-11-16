@@ -115,57 +115,82 @@ namespace HabitatForHumanity.Controllers
             #region Build Demographics Pie
             /* gender options from javascript radios       
             All, M, F, O */
-
-            Demog[] demogs = Repository.GetDemographicsForPie(gender).ToArray();
-            object[] outer = new object[demogs.Length];
-            for (int i = 0; i < demogs.Length; i++)
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<User.Demog>();
+            try
             {
-                outer[i] = new object[] { demogs[i].ageBracket, demogs[i].numPeople };
-            }
+                st = Repository.GetDemographicsForPie(gender);
 
-           
-            Highcharts chart = new Highcharts("chart")
-                .InitChart(new Chart { PlotShadow = false })
-                .SetTitle(new Title { Text = "" })
-                .SetTooltip(new Tooltip { Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }" })
-                .SetPlotOptions(new PlotOptions
+                Demog[] demogs = ((List<Demog>)st.data).ToArray();
+                object[] outer = new object[demogs.Length];
+                for (int i = 0; i < demogs.Length; i++)
                 {
-                    Pie = new PlotOptionsPie
+                    outer[i] = new object[] { demogs[i].ageBracket, demogs[i].numPeople };
+                }
+
+
+                Highcharts chart = new Highcharts("chart")
+                    .InitChart(new Chart { PlotShadow = false })
+                    .SetTitle(new Title { Text = "" })
+                    .SetTooltip(new Tooltip { Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }" })
+                    .SetPlotOptions(new PlotOptions
                     {
-                        AllowPointSelect = true,
-                        Cursor = Cursors.Pointer,
-                        DataLabels = new PlotOptionsPieDataLabels
+                        Pie = new PlotOptionsPie
                         {
-                            Color = ColorTranslator.FromHtml("#000000"),
-                            ConnectorColor = ColorTranslator.FromHtml("#000000"),
-                            Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }"
+                            AllowPointSelect = true,
+                            Cursor = Cursors.Pointer,
+                            DataLabels = new PlotOptionsPieDataLabels
+                            {
+                                Color = ColorTranslator.FromHtml("#000000"),
+                                ConnectorColor = ColorTranslator.FromHtml("#000000"),
+                                Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }"
+                            }
                         }
-                    }
-                })
-                .SetSeries(
-                     new Series
-                     {
-                         Type = ChartTypes.Pie,
-                         Name = "Male",
-                         Data = new Data(outer)
-                     }
-               );
+                    })
+                    .SetSeries(
+                         new Series
+                         {
+                             Type = ChartTypes.Pie,
+                             Name = "Male",
+                             Data = new Data(outer)
+                         }
+                   );
+                return PartialView("_DemographicsPie", chart);
+            }
+            catch
+            {
+                return null;
+            }
+           
 
             #endregion
-            return PartialView("_DemographicsPie", chart);
+            
         }
 
         public ActionResult GetBadPunches()
         {
-
-            List<TimeSheet> ts = Repository.GetBadTimeSheets();
+            ReturnStatus badTimeSheets = Repository.GetBadTimeSheets();
+           // List<TimeSheet> ts = Repository.GetBadTimeSheets();
             List<BadPunchVM> bp = new List<BadPunchVM>();
-            foreach(TimeSheet t in ts)
+
+            if(badTimeSheets.errorCode != (int)ReturnStatus.ALL_CLEAR)
             {
-                User user = Repository.GetUser(t.user_Id);
-                string volName = "";
-                if(user != null)
-                {
+                return null;
+            }
+            ReturnStatus timesheetReturn = new ReturnStatus();
+            timesheetReturn.data = new List<TimeSheet>();
+            if (timesheetReturn.errorCode != (int)ReturnStatus.ALL_CLEAR)
+            {
+                return null;
+            }
+            List<TimeSheet> ts = (List<TimeSheet>)timesheetReturn.data;
+            foreach (TimeSheet t in ts)
+            {
+                try
+                {         
+                    User user = (User)Repository.GetUser(t.user_Id).data;
+                    string volName = "";
+           
                     if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
                     {
                         volName = user.emailAddress;
@@ -174,7 +199,7 @@ namespace HabitatForHumanity.Controllers
                     {
                         volName += user.emailAddress + " ";
                     }
-                    else if(string.IsNullOrEmpty(user.lastName))
+                    else if (string.IsNullOrEmpty(user.lastName))
                     {
                         volName += user.emailAddress;
                     }
@@ -182,10 +207,18 @@ namespace HabitatForHumanity.Controllers
                     {
                         volName += user.firstName + " " + user.lastName;
                     }
+               
+                    bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
                 }
-                bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
+                catch
+                {
+                    return null;
+                }
+                
+                  
             }
-            //return PartialView("_BadPunches", BadPunchVM.GetDummyBadPunches());
+  
+          
             return PartialView("_BadPunches", bp);
         }
         
