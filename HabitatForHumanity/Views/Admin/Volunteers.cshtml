@@ -12,7 +12,7 @@
 @using (Html.BeginForm("Volunteers", "Admin", FormMethod.Get))
 {
     @Html.ValidationSummary(false)
-    <div style="border-bottom:1px solid #bbb"><h1>Search Product</h1></div>
+    <div style="border-bottom:1px solid #bbb"><h1>Search Volunteers</h1></div>
     <table style="border:0px; width:500px;">
         <tr>
             <td>
@@ -55,8 +55,6 @@
           {
                { "Page", page },
               {"queryString",Model.queryString }
-            //{ "volunteerName", Model.queryString },
-            //    {"email", Model.queryString }
           }),
           PagedListRenderOptions.PageNumbersOnly)
     }
