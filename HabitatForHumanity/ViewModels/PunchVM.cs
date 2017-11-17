@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using HabitatForHumanity.Models;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace HabitatForHumanity.ViewModels
 {
@@ -38,9 +39,11 @@ namespace HabitatForHumanity.ViewModels
     {
         public int userId { get; set; }
         //[Required, Range(1, int.MaxValue, ErrorMessage = "Please Select an Organization")]
+        [DisplayName("Organization")]
         public int orgId { get; set; }
 
-        [Required, Range(1, int.MaxValue, ErrorMessage = "Please Select a Project")]
+        [DisplayName("Project")]
+        [Range(1, int.MaxValue, ErrorMessage = "Please Select a Project")]
         public int projectId { get; set; }
       //  public string userName { get; set; }
         public ProjectDropDownList projects = new ProjectDropDownList();
@@ -50,11 +53,6 @@ namespace HabitatForHumanity.ViewModels
         {
 
         }
-    }
-    public class ProjectListVM
-    {
-        public int Id { get; set; }
-        public string projectName { get; set; }
     }
 
 }

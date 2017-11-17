@@ -48,9 +48,6 @@ namespace HabitatForHumanity.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            PortalVM portalVM = new PortalVM();
-
-
             // user part
             ReturnStatus st = Repository.GetUser((int)id);
             if (st.errorCode != ReturnStatus.ALL_CLEAR)
@@ -58,14 +55,7 @@ namespace HabitatForHumanity.Controllers
                 return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
             }
 
-            User user = (User)st.data;
-
-            portalVM.fullName = user.firstName + " " + user.lastName;
-            portalVM.userId = user.Id;
-            portalVM.isPunchedIn = Repository.IsUserClockedIn(user.Id);
-            portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
-
-            return View(portalVM);
+            return View(Repository.GetPortalVM(id.Value));
 
 
             // return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
