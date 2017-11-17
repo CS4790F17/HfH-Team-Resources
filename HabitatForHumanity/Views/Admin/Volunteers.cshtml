@@ -1,0 +1,63 @@
+﻿@model HabitatForHumanity.ViewModels.VolunteerSearchModel
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Volunteers";
+}
+
+<h2>Volunteers</h2>
+@*<div>@Html.Action("SearchVolunteers")</div>*@
+@*<div>@Html.Action("ViewVolunteers")</div>*@
+
+@using (Html.BeginForm("Volunteers", "Admin", FormMethod.Get))
+{
+   @Html.ValidationSummary(false)
+    <div style="border-bottom:1px solid #bbb"><h1>Search Product</h1></div>
+    <table style="border:0px; width:500px;">
+        <tr>
+            <td>
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.queryString)
+                </div>
+
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.queryString)
+                    @Html.ValidationMessageFor(model => model.queryString)
+                </div>
+            </td>
+            <td style="vertical-align:bottom;">
+                <input name="SearchButton" type="submit" value="Search" />
+            </td>
+        </tr>
+    </table>
+
+    if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+    {
+        <table class="table" style="width:500px;">
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Reorder Level</th>
+            </tr>
+            @foreach (var volunteer in Model.SearchResults)
+            {
+                <tr>
+                    <td>@volunteer.userNumber</td>
+                    <td>@volunteer.volunteerName</td>
+                    <td>@volunteer.email</td>
+                    <td>@volunteer.hoursToDate</td>
+                </tr>
+            }
+        </table>
+        @Html.PagedListPager(Model.SearchResults,
+          page => Url.Action("Volunteers", new RouteValueDictionary()
+          {
+               { "Page", page },
+               { "volunteerName", Model.queryString }
+          }),
+          PagedListRenderOptions.PageNumbersOnly)
+    }
+
+}

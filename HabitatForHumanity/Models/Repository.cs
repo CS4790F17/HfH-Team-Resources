@@ -50,6 +50,11 @@ namespace HabitatForHumanity.Models
             }
         }
 
+        public static ReturnStatus GetUsersByQuery(string queryFilter)
+        {
+            return User.GetUsersByQuery(queryFilter);
+        }
+
         /// <summary>
         /// Creates a volunteer user
         /// </summary>

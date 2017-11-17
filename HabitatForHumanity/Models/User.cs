@@ -6,6 +6,8 @@ using HabitatForHumanity.ViewModels;
 using System.Data.Entity;
 using System.Web.Helpers;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace HabitatForHumanity.Models
 {
@@ -149,6 +151,53 @@ namespace HabitatForHumanity.Models
                 st.errorMessage = e.ToString();
                 return st;
             }
+        }
+        /*        public int userNumber { get; set; }
+        public string volunteerName { get; set; }
+        public string email { get; set; }
+        public double hoursToDate { get; set; }*/
+        public static ReturnStatus GetUsersByQuery(string queryFilter)
+        {
+            ReturnStatus rs = new ReturnStatus();
+
+            int orgNum = 2; // pass these in from select boxes or radio buttons
+            int projNum = 2;
+
+            using (var ctx = new VolunteerDbContext())
+            {
+                string myFilter = "";
+                if (orgNum > 0)
+                {
+                    var userIdList = (from ts in ctx.timeSheets
+                                      where ts.org_Id == orgNum
+                                      select ts.user_Id ).ToArray();
+                
+                    myFilter += " AND [User].Id IN (" + string.Join(" , ", userIdList) + " ) ";
+                }
+                else if (projNum > 0)
+                {
+                    var userIdList = (from ts in ctx.timeSheets
+                                      where ts.project_Id == projNum
+                                      select ts.user_Id).ToArray();
+
+                    myFilter += " AND [User].Id IN (" + string.Join(" , ", userIdList) + " ) ";
+                }
+                var users = ctx.users.SqlQuery(
+                    "DECLARE @QSTRING VARCHAR(50) SELECT TOP 10 * FROM dbo.[User] WHERE 1=1 " + myFilter + queryFilter).ToList();
+
+                try
+                {
+                    rs.data = users;
+                    rs.errorCode = 0;
+                    return rs;
+                }
+                catch
+                {
+                    rs.errorCode = -1;
+                    return rs;
+                }
+            }
+
         }
 
 

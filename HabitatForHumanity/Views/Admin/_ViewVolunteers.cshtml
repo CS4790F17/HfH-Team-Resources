@@ -1,0 +1,60 @@
+﻿@model IEnumerable<HabitatForHumanity.ViewModels.UsersVM>
+
+@using (Html.BeginForm("ViewVolunteers", "Admin", FormMethod.Get))
+{
+    <div>Search Volunteers</div>
+    <div>@Html.Editor()</div>
+}
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.volunteerName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.hoursToDate)
+        </th>
+        <th>
+            Timecards
+        </th>
+        <th>
+            Organizaioths
+        </th>
+        <th>
+            projects
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.volunteerName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.hoursToDate)
+            </td>
+            <td>
+                link here
+            </td>
+            <td>
+                link here
+            </td>
+
+
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.userNumber }) |
+                @Html.ActionLink("Details", "Details", new { id = item.userNumber }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.userNumber })
+            </td>
+        </tr>
+    }
+
+</table>
+

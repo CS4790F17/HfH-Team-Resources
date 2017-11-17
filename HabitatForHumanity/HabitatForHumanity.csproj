@@ -70,6 +70,14 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -161,6 +169,8 @@
     <Compile Include="ViewModels\SearchTimeDetailVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
     <Compile Include="ViewModels\ToolKitVM.cs" />
+    <Compile Include="ViewModels\UsersVM.cs" />
+    <Compile Include="ViewModels\VolunteerSearchModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Volunteer.mdf" />
@@ -171,6 +181,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
     <Content Include="DBscripts\ageBracketsByGender.txt" />
     <Content Include="DBscripts\VolunteerDBscript.txt" />
@@ -303,6 +314,10 @@
     <Content Include="Views\User\UserTimeDetails.cshtml" />
     <Content Include="Views\User\VolunteerSignup.cshtml" />
     <Content Include="Views\User\SignWaiver.cshtml" />
+    <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
+    <Content Include="Views\Admin\Volunteers.cshtml" />
+    <Content Include="Views\Admin\_ViewVolunteers.cshtml" />
+    <Content Include="Views\Admin\_SearchVolunteers.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

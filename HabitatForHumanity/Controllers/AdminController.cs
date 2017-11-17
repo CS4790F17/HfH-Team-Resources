@@ -11,17 +11,60 @@ using System.Drawing;
 using HabitatForHumanity.ViewModels;
 using HabitatForHumanity.Models;
 using static HabitatForHumanity.Models.User;
+using PagedList;
 
 namespace HabitatForHumanity.Controllers
 {
     public class AdminController : Controller
     {
+
+        const int RecordsPerPage = 10;
         // GET: Admin dashboard
         public ActionResult Dashboard()
         {
             return View();
         }
 
+        public ActionResult Volunteers(VolunteerSearchModel vsm)
+        {
+            if(!string.IsNullOrEmpty(vsm.SearchButton) || vsm.Page.HasValue)
+            {
+                List<UsersVM> vols = new List<UsersVM>();
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 4 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 5 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 24 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 43 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 44 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 42 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 41 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 45 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 64 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 244 });
+                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 34 });
+                vols.Add(new UsersVM() { volunteerName = "last one", email = "testing", hoursToDate = 3.3, userNumber = 422 });
+
+                var pageIndex = vsm.Page ?? 1;
+                vsm.SearchResults = vols.ToPagedList(pageIndex, RecordsPerPage);
+            }
+            return View(vsm);
+        }
+
+       
+        public ActionResult ViewVolunteers()
+        {
+            List<UsersVM> vols = new List<UsersVM>();
+            vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 4 });
+            return View("_ViewVolunteers", vols);
+        }
+        public ActionResult GetUsersByQuery(string queryFilter = " AND 1=1 ")
+        {
+            ReturnStatus userResult = Repository.GetUsersByQuery(queryFilter);
+            if(userResult.errorCode == 0)
+            {
+                return View("~/Views/User/Index.cshtml",(List<User>)userResult.data);
+            }
+            return View("~/Views/User/Index.cshtml",new List<User>());
+        }
         public ActionResult GetHoursChartBy(string period)
         {
             #region Build Month Chart
