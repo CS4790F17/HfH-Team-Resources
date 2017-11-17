@@ -50,6 +50,50 @@ namespace HabitatForHumanity.Models
             }
         }
 
+        public static ReturnStatus GetVolunteersByFilter(string queryString)
+        {
+            ReturnStatus userResult = User.GetUsersByQuery(queryString);
+            ReturnStatus rs = new ReturnStatus();
+            if (userResult.errorCode == 0)
+            {
+                List<User> users = (List<User>)userResult.data;
+                List<UsersVM> volunteers = new List<UsersVM>();
+                foreach (User u in users)
+                {
+                    volunteers.Add(new UsersVM()
+                    {
+                        userNumber = u.Id,
+                        volunteerName = u.firstName ?? "NoName" + " " + u.lastName ?? "NoName",
+                        email = u.emailAddress,
+                        hoursToDate = 99.9
+                    });
+                }
+                rs.data = volunteers;
+                rs.errorCode = 0;
+            }
+            else
+            {
+                rs.errorCode = -1;
+            }
+
+            //List<UsersVM> vols = new List<UsersVM>();
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 4 });
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 5 });
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 24 });
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 43 });
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 44 });
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 42 });
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 41 });
+            //vols.Add(new UsersVM() { volunteerName = "fred", email = "steve@test.com", hoursToDate = 3.3, userNumber = 45 });
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 64 });
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 244 });
+            //vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 34 });
+            //vols.Add(new UsersVM() { volunteerName = "last one", email = "testing", hoursToDate = 3.3, userNumber = 422 });
+            //rs.data = vols;
+            //rs.errorCode = 0;
+            return rs;
+        }
+
         public static ReturnStatus GetUsersByQuery(string queryFilter)
         {
             return User.GetUsersByQuery(queryFilter);

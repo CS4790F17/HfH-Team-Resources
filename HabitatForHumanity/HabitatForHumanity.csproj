@@ -316,8 +316,6 @@
     <Content Include="Views\User\SignWaiver.cshtml" />
     <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
     <Content Include="Views\Admin\Volunteers.cshtml" />
-    <Content Include="Views\Admin\_ViewVolunteers.cshtml" />
-    <Content Include="Views\Admin\_SearchVolunteers.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

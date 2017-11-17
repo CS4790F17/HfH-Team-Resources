@@ -11,7 +11,7 @@
 
 @using (Html.BeginForm("Volunteers", "Admin", FormMethod.Get))
 {
-   @Html.ValidationSummary(false)
+    @Html.ValidationSummary(false)
     <div style="border-bottom:1px solid #bbb"><h1>Search Product</h1></div>
     <table style="border:0px; width:500px;">
         <tr>
@@ -36,10 +36,9 @@
         <table class="table" style="width:500px;">
             <tr>
                 <th>ID</th>
-                <th>Product</th>
-                <th>Product Name</th>
-                <th>Price</th>
-                <th>Reorder Level</th>
+                <th>Volunteer</th>
+                <th>Email Address</th>
+                <th>Hours to Date</th>
             </tr>
             @foreach (var volunteer in Model.SearchResults)
             {
@@ -55,7 +54,9 @@
           page => Url.Action("Volunteers", new RouteValueDictionary()
           {
                { "Page", page },
-               { "volunteerName", Model.queryString }
+              {"queryString",Model.queryString }
+            //{ "volunteerName", Model.queryString },
+            //    {"email", Model.queryString }
           }),
           PagedListRenderOptions.PageNumbersOnly)
     }

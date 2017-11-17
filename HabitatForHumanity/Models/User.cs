@@ -159,44 +159,62 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetUsersByQuery(string queryFilter)
         {
             ReturnStatus rs = new ReturnStatus();
-
-            int orgNum = 2; // pass these in from select boxes or radio buttons
-            int projNum = 2;
-
-            using (var ctx = new VolunteerDbContext())
+            ReturnStatus st = new ReturnStatus();
+            try
             {
-                string myFilter = "";
-                if (orgNum > 0)
-                {
-                    var userIdList = (from ts in ctx.timeSheets
-                                      where ts.org_Id == orgNum
-                                      select ts.user_Id ).ToArray();
-                
-                    myFilter += " AND [User].Id IN (" + string.Join(" , ", userIdList) + " ) ";
-                }
-                else if (projNum > 0)
-                {
-                    var userIdList = (from ts in ctx.timeSheets
-                                      where ts.project_Id == projNum
-                                      select ts.user_Id).ToArray();
-
-                    myFilter += " AND [User].Id IN (" + string.Join(" , ", userIdList) + " ) ";
-                }
-                var users = ctx.users.SqlQuery(
-                    "DECLARE @QSTRING VARCHAR(50) SELECT TOP 10 * FROM dbo.[User] WHERE 1=1 " + myFilter + queryFilter).ToList();
-
-                try
-                {
-                    rs.data = users;
-                    rs.errorCode = 0;
-                    return rs;
-                }
-                catch
-                {
-                    rs.errorCode = -1;
-                    return rs;
-                }
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.users.ToList();
+                //st.data = db.users.Where(
+                //    x => x.firstName.Contains(queryFilter) 
+                //        || x.lastName.Contains(queryFilter)
+                //            || x.emailAddress.Contains(queryFilter)).ToList();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                return st;
             }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.data = new List<User>();
+                st.errorMessage = e.ToString();
+                return st;
+            }
+            //int orgNum = 2; // pass these in from select boxes or radio buttons
+            //int projNum = 2;
+
+            //using (var ctx = new VolunteerDbContext())
+            //{
+            //string myFilter = "";
+            //if (orgNum > 0)
+            //{
+            //    var userIdList = (from ts in ctx.timeSheets
+            //                      where ts.org_Id == orgNum
+            //                      select ts.user_Id).ToArray();
+
+            //    myFilter += " AND [User].Id IN (" + string.Join(" , ", userIdList) + " ) ";
+            //}
+            //else if (projNum > 0)
+            //{
+            //    var userIdList = (from ts in ctx.timeSheets
+            //                      where ts.project_Id == projNum
+            //                      select ts.user_Id).ToArray();
+
+            //    myFilter += " AND [User].Id IN (" + string.Join(" , ", userIdList) + " ) ";
+            //}
+            //var users = ctx.users.SqlQuery(
+            //    "DECLARE @QSTRING VARCHAR(50) SELECT TOP 10 * FROM dbo.[User] WHERE 1=1 " + myFilter + queryFilter).ToList();
+
+            //try
+            //{
+            //    rs.data = users;
+            //    rs.errorCode = 0;
+            //    return rs;
+            //}
+            //catch
+            //{
+            //    rs.errorCode = -1;
+            //    return rs;
+            //}
+            // }
 
         }
 

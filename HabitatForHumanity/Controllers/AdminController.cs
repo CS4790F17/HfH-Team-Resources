@@ -27,24 +27,41 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult Volunteers(VolunteerSearchModel vsm)
         {
-            if(!string.IsNullOrEmpty(vsm.SearchButton) || vsm.Page.HasValue)
+            if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
             {
-                List<UsersVM> vols = new List<UsersVM>();
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 4 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 5 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 24 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 43 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 44 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 42 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 41 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 45 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 64 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 244 });
-                vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 34 });
-                vols.Add(new UsersVM() { volunteerName = "last one", email = "testing", hoursToDate = 3.3, userNumber = 422 });
+               
 
-                var pageIndex = vsm.Page ?? 1;
-                vsm.SearchResults = vols.ToPagedList(pageIndex, RecordsPerPage);
+                ReturnStatus rs = Repository.GetVolunteersByFilter(vsm.queryString);
+                if (rs.errorCode == 0)
+                {
+                    List<UsersVM> allVols = (List<UsersVM>)rs.data;
+                    List<UsersVM> filteredVols = new List<UsersVM>();
+                    foreach(UsersVM u in allVols)
+                    {
+                        if (u != null && vsm.queryString != null)
+                        {
+                            if (u.email.ToLower().Contains(vsm.queryString.ToLower()) || u.volunteerName.ToLower().Contains(vsm.queryString.ToLower()))
+                            {
+                                filteredVols.Add(u);
+                            }
+                        }
+                       
+                    }
+                   
+                    var pageIndex = vsm.Page ?? 1;
+                    vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+
+                }
+                else
+                {
+                    ViewBag.status = "Something broke inthe query";
+                    return View(vsm);
+                }
+               
+            }
+            else
+            {
+                // get them all
             }
             return View(vsm);
         }
