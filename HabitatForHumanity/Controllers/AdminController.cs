@@ -31,7 +31,7 @@ namespace HabitatForHumanity.Controllers
             {
                
 
-                ReturnStatus rs = Repository.GetVolunteersByFilter(vsm.queryString);
+                ReturnStatus rs = Repository.GetAllVolunteers();
                 if (rs.errorCode == 0)
                 {
                     List<UsersVM> allVols = (List<UsersVM>)rs.data;
@@ -44,8 +44,7 @@ namespace HabitatForHumanity.Controllers
                             {
                                 filteredVols.Add(u);
                             }
-                        }
-                       
+                        }                 
                     }
                    
                     var pageIndex = vsm.Page ?? 1;
@@ -54,34 +53,16 @@ namespace HabitatForHumanity.Controllers
                 }
                 else
                 {
-                    ViewBag.status = "Something broke inthe query";
+                    ViewBag.status = "We had trouble with that request, try again.";
                     return View(vsm);
                 }
                
             }
-            else
-            {
-                // get them all
-            }
+
             return View(vsm);
         }
 
-       
-        public ActionResult ViewVolunteers()
-        {
-            List<UsersVM> vols = new List<UsersVM>();
-            vols.Add(new UsersVM() { volunteerName = "testing", email = "testing", hoursToDate = 3.3, userNumber = 4 });
-            return View("_ViewVolunteers", vols);
-        }
-        public ActionResult GetUsersByQuery(string queryFilter = " AND 1=1 ")
-        {
-            ReturnStatus userResult = Repository.GetUsersByQuery(queryFilter);
-            if(userResult.errorCode == 0)
-            {
-                return View("~/Views/User/Index.cshtml",(List<User>)userResult.data);
-            }
-            return View("~/Views/User/Index.cshtml",new List<User>());
-        }
+
         public ActionResult GetHoursChartBy(string period)
         {
             #region Build Month Chart
