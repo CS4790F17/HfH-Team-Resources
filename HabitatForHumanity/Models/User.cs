@@ -6,6 +6,8 @@ using HabitatForHumanity.ViewModels;
 using System.Data.Entity;
 using System.Web.Helpers;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace HabitatForHumanity.Models
 {
@@ -139,6 +141,26 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.data = new List<User>();
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        }
+
+        public static ReturnStatus GetAllUsers()
+        {
+            ReturnStatus rs = new ReturnStatus();
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.users.ToList();
                 st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }

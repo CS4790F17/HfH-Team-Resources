@@ -248,11 +248,15 @@ namespace HabitatForHumanity.Controllers
                     {
                         User user = (User)Repository.GetUserByEmail(loginVm.email).data;
 
+                        Session["UserName"] = user.emailAddress;
+
                         if (user.isAdmin == 1)
                         {
                             Session["isAdmin"] = "isAdmin";
+                            return RedirectToAction("Dashboard","Admin");
                         }
-                        Session["UserName"] = user.emailAddress;
+                       
+
                         return RedirectToAction("VolunteerPortal", new { id = user.Id });
                     }
                     else
@@ -267,6 +271,7 @@ namespace HabitatForHumanity.Controllers
                     return View(loginVm);
                 }
             }
+           
             return RedirectToAction("Login", "User", new { excMsg = "The system is temporarily down, please try again." });
         }
 
