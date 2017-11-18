@@ -62,6 +62,73 @@ namespace HabitatForHumanity.Controllers
             return View(vsm);
         }
 
+        public ActionResult TimeCards(TimeCardSearchModel tsm)
+        {
+            int orgNum = 2;
+            int projNum = 3;
+            DateTime strt = Convert.ToDateTime("1/1/1950");
+            DateTime end = Convert.ToDateTime("11/17/2017");
+            ReturnStatus rs = Repository.GetTimeCardsByFilters(orgNum, projNum, strt, end);
+
+            if (!string.IsNullOrEmpty(tsm.queryString) || tsm.Page.HasValue)
+            {                  
+                if (rs.errorCode == 0)
+                {
+                    List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
+                    List<TimeCardVM> filteredVols = new List<TimeCardVM>();
+                    foreach (TimeCardVM t in allVols)
+                    {
+                        if (t != null && tsm.queryString != null)
+                        {
+                            if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
+                            {
+                                filteredVols.Add(t);
+                            }
+                        }
+                    }
+
+                    var pageIndex = tsm.Page ?? 1;
+                    tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+
+                }
+                else
+                {
+                    ViewBag.status = "We had trouble with that request, try again.";
+                    return View(tsm);
+                }
+
+            }
+            else
+            {
+                //if (rs.errorCode == 0)
+                //{
+                //    List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
+                //    List<TimeCardVM> filteredVols = new List<TimeCardVM>();
+                //    foreach (TimeCardVM t in allVols)
+                //    {
+                //        if (t != null && tsm.queryString != null)
+                //        {
+                //            if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
+                //            {
+                //                filteredVols.Add(t);
+                //            }
+                //        }
+                //    }
+
+                //    var pageIndex = tsm.Page ?? 1;
+                //    tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+
+                //}
+                //else
+                //{
+                //    ViewBag.status = "We had trouble with that request, try again.";
+                //    return View(tsm);
+                //}
+            }
+
+            return View(tsm);
+        }
+
 
         public ActionResult GetHoursChartBy(string period)
         {

@@ -250,6 +250,52 @@ namespace HabitatForHumanity.Models
             }
         }
 
+        public static ReturnStatus GetTimeSheetsByFilters(int? orgNum, int? projNum, DateTime strt, DateTime end)
+        {
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                if (orgNum != null && projNum != null)
+                {
+                    st.data = db.timeSheets.Where(
+                        x => x.org_Id == orgNum
+                        && x.project_Id == projNum
+                        && x.clockInTime >= strt
+                        && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+                }
+                else if (orgNum != null)
+                {
+                    st.data = db.timeSheets.Where(
+                       x => x.org_Id == orgNum
+                       && x.clockInTime >= strt
+                       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+                }
+                else if(projNum != null)
+                {
+                    st.data = db.timeSheets.Where(
+                       x => x.project_Id == projNum
+                       && x.clockInTime >= strt
+                       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+                }
+                else
+                {
+                    st.data = db.timeSheets.Where(
+                      x => x.clockInTime >= strt
+                      && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+                }
+                st.errorCode = 0;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = -1;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        }
+
 
         /// <summary>
         /// Gets all timesheets with a specified organization id.
