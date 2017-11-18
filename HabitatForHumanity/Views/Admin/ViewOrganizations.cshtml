@@ -10,9 +10,11 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-lg-8"></div>
+        <div class="col-lg-8">
+            <button class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>   Add new Organization</button>
+        </div>
         <div class="col-lg-4" style="margin-bottom:30px">
-            @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Organization Name" } })
+            @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Find Organization" } })
             <button><span class="glyphicon glyphicon-search"></span></button>
         </div>
     </div>
