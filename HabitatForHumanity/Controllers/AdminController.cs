@@ -11,16 +11,124 @@ using System.Drawing;
 using HabitatForHumanity.ViewModels;
 using HabitatForHumanity.Models;
 using static HabitatForHumanity.Models.User;
+using PagedList;
 
 namespace HabitatForHumanity.Controllers
 {
     public class AdminController : Controller
     {
+
+        const int RecordsPerPage = 10;
         // GET: Admin dashboard
         public ActionResult Dashboard()
         {
             return View();
         }
+
+        public ActionResult Volunteers(VolunteerSearchModel vsm)
+        {
+            if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
+            {
+               
+
+                ReturnStatus rs = Repository.GetAllVolunteers();
+                if (rs.errorCode == 0)
+                {
+                    List<UsersVM> allVols = (List<UsersVM>)rs.data;
+                    List<UsersVM> filteredVols = new List<UsersVM>();
+                    foreach(UsersVM u in allVols)
+                    {
+                        if (u != null && vsm.queryString != null)
+                        {
+                            if (u.email.ToLower().Contains(vsm.queryString.ToLower()) || u.volunteerName.ToLower().Contains(vsm.queryString.ToLower()))
+                            {
+                                filteredVols.Add(u);
+                            }
+                        }                 
+                    }
+                   
+                    var pageIndex = vsm.Page ?? 1;
+                    vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+
+                }
+                else
+                {
+                    ViewBag.status = "We had trouble with that request, try again.";
+                    return View(vsm);
+                }
+               
+            }
+
+            return View(vsm);
+        }
+
+        public ActionResult TimeCards(TimeCardSearchModel tsm)
+        {
+            int orgNum = 2;
+            int projNum = 3;
+            DateTime strt = Convert.ToDateTime("1/1/1950");
+            DateTime end = Convert.ToDateTime("11/17/2017");
+            ReturnStatus rs = Repository.GetTimeCardsByFilters(orgNum, projNum, strt, end);
+
+            if (!string.IsNullOrEmpty(tsm.queryString) || tsm.Page.HasValue)
+            {                  
+                if (rs.errorCode == 0)
+                {
+                    List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
+                    List<TimeCardVM> filteredVols = new List<TimeCardVM>();
+                    foreach (TimeCardVM t in allVols)
+                    {
+                        if (t != null && tsm.queryString != null)
+                        {
+                            if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
+                            {
+                                filteredVols.Add(t);
+                            }
+                        }
+                    }
+
+                    var pageIndex = tsm.Page ?? 1;
+                    tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+
+                }
+                else
+                {
+                    ViewBag.status = "We had trouble with that request, try again.";
+                    return View(tsm);
+                }
+
+            }
+            else
+            {
+                //if (rs.errorCode == 0)
+                //{
+                //    List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
+                //    List<TimeCardVM> filteredVols = new List<TimeCardVM>();
+                //    foreach (TimeCardVM t in allVols)
+                //    {
+                //        if (t != null && tsm.queryString != null)
+                //        {
+                //            if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
+                //            {
+                //                filteredVols.Add(t);
+                //            }
+                //        }
+                //    }
+
+                //    var pageIndex = tsm.Page ?? 1;
+                //    tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+
+                //}
+                //else
+                //{
+                //    ViewBag.status = "We had trouble with that request, try again.";
+                //    return View(tsm);
+                //}
+            }
+
+            return View(tsm);
+        }
+
 
         public ActionResult GetHoursChartBy(string period)
         {

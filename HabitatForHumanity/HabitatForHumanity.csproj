@@ -70,6 +70,14 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -160,7 +168,10 @@
     <Compile Include="ViewModels\PunchVM.cs" />
     <Compile Include="ViewModels\SearchTimeDetailVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
+    <Compile Include="ViewModels\TimeCardSearchModel.cs" />
     <Compile Include="ViewModels\ToolKitVM.cs" />
+    <Compile Include="ViewModels\UsersVM.cs" />
+    <Compile Include="ViewModels\VolunteerSearchModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Volunteer.mdf" />
@@ -171,6 +182,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
     <Content Include="DBscripts\ageBracketsByGender.txt" />
     <Content Include="DBscripts\VolunteerDBscript.txt" />
@@ -286,8 +298,6 @@
     <Content Include="Views\User\VolunteerPortal.cshtml" />
     <Content Include="Views\User\ForgotPassword.cshtml" />
     <Content Include="Views\Home\Examples.cshtml" />
-    <Content Include="Views\User\PunchIn.cshtml" />
-    <Content Include="Views\User\PunchOut.cshtml" />
     <Content Include="Views\Admin\Dashboard.cshtml" />
     <Content Include="Views\Admin\Reports.cshtml" />
     <Content Include="Views\Admin\_HoursMonthChart.cshtml" />
@@ -295,14 +305,16 @@
     <Content Include="Views\Admin\_BadPunches.cshtml" />
     <Content Include="Views\User\VolunteerPortalOut.cshtml" />
     <Content Include="Views\Shared\_SharedLayoutUser.cshtml" />
-    <Content Include="Views\User\_PunchIn.cshtml" />
-    <Content Include="Views\TimeSheet\_PunchIn.cshtml" />
+    <Content Include="Views\Shared\_PunchIn.cshtml" />
     <Content Include="Views\User\_PunchOut.cshtml" />
     <Content Include="Views\User\VolunteerSearch.cshtml" />
     <Content Include="Views\User\VolunteerSearchResults.cshtml" />
     <Content Include="Views\User\UserTimeDetails.cshtml" />
     <Content Include="Views\User\VolunteerSignup.cshtml" />
     <Content Include="Views\User\SignWaiver.cshtml" />
+    <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
+    <Content Include="Views\Admin\Volunteers.cshtml" />
+    <Content Include="Views\Admin\TimeCards.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -325,7 +337,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>56180</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

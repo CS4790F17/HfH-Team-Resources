@@ -1,0 +1,66 @@
+﻿@model HabitatForHumanity.ViewModels.TimeCardSearchModel
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Time Sheets";
+}
+
+<h2>Time Sheets</h2>
+
+
+@using (Html.BeginForm("TimeCards", "Admin", FormMethod.Get))
+{
+    @Html.ValidationSummary(false)
+    <div style="border-bottom:1px solid #bbb"><h1>Search Time Sheets</h1></div>
+    <table style="border:0px; width:500px;">
+        <tr>
+            <td>
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.queryString)
+                </div>
+
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.queryString)
+                    @Html.ValidationMessageFor(model => model.queryString)
+                </div>
+            </td>
+            <td style="vertical-align:bottom;">
+                <input name="SearchButton" type="submit" value="Search" />
+            </td>
+        </tr>
+    </table>
+
+    if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+    {
+        <table class="table" style="width:500px;">
+            <tr>
+                <th>Volunteer</th>
+                <th>Organization</th>
+                <th>Project</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Hours</th>
+            </tr>
+            @foreach (var card in Model.SearchResults)
+            {
+                <tr>
+                    <td>@card.volName</td>
+                    <td>@card.orgName</td>
+                    <td>@card.projName</td>
+                    <td>@card.inTime</td>
+                    <td>@card.outTime</td>
+                    <td>@card.elapsedHrs</td>
+                </tr>
+            }
+        </table>
+        @Html.PagedListPager(Model.SearchResults,
+          page => Url.Action("TimeCards", new RouteValueDictionary()
+          {
+               { "Page", page },
+              {"queryString",Model.queryString }
+          }),
+          PagedListRenderOptions.PageNumbersOnly)
+    }
+
+}
+
