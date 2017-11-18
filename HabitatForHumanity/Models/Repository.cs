@@ -406,6 +406,92 @@ namespace HabitatForHumanity.Models
 
         #region TimeSheet functions
 
+        #region TimeCard VMs by filters
+        public static ReturnStatus GetTimeCardsByFilters(int? orgNum, int? projNum, DateTime strt, DateTime end)
+        {
+            ReturnStatus timeSheetsResult = TimeSheet.GetTimeSheetsByFilters(orgNum, projNum, strt, end);
+            ReturnStatus timeCardsReturn = new ReturnStatus();
+            List<TimeCardVM> cards = new List<TimeCardVM>();
+            List<TimeSheet> sheets = new List<TimeSheet>();
+            if(timeSheetsResult.errorCode == 0)
+            {
+                sheets = (List<TimeSheet>)timeSheetsResult.data;
+                foreach(TimeSheet ts in sheets)
+                {
+                    TimeSpan span = ts.clockOutTime.Subtract(ts.clockInTime);
+
+                    cards.Add(new TimeCardVM()
+                    {
+                        timeId = ts.Id,
+                        userId = ts.user_Id,
+                        projId = ts.project_Id,
+                        orgId = ts.org_Id,
+                        inTime = ts.clockInTime,
+                        outTime = ts.clockOutTime,
+                        orgName = GetOrgName(ts.org_Id),
+                        projName = GetProjName(ts.project_Id),
+                        volName = GetVolName(ts.user_Id),
+                        elapsedHrs = span.Minutes / 60.0
+                    });
+                }
+                timeCardsReturn.data = cards;
+                timeCardsReturn.errorCode = 0;
+                return timeCardsReturn;
+            }
+            else
+            {
+                timeCardsReturn.errorCode = -1;
+                return timeCardsReturn;
+            }
+
+        }
+
+        public static string GetOrgName(int orgId)
+        {
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                return db.organizations.Where(o => o.Id == orgId).ToList().FirstOrDefault().name;
+            }
+            catch
+            {
+                return "none";
+            }
+      
+        }
+        public static string GetProjName(int projId)
+        {
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                return db.projects.Where(o => o.Id == projId).ToList().FirstOrDefault().name;
+            }
+            catch
+            {
+                return "none";
+            }
+        }
+        public static string GetVolName(int userId)
+        {
+            try
+            {
+                string volName = "";
+                VolunteerDbContext db = new VolunteerDbContext();
+                var fname = db.users.Where(o => o.Id == userId).ToList().FirstOrDefault().firstName;
+                var lname = db.users.Where(o => o.Id == userId).ToList().FirstOrDefault().lastName;
+                var email = db.users.Where(o => o.Id == userId).ToList().FirstOrDefault().emailAddress;
+                volName += (fname != null) ? fname : email;
+                volName += " ";
+                volName += (lname != null) ? lname : email;
+                return volName;
+            }
+            catch
+            {
+                return "No Name";
+            }
+        }
+        #endregion timecard vms
+
 
         /// <summary>
         /// Gets the record in the timesheet table by it's natural key: user_id+project_id+clockInTime.
