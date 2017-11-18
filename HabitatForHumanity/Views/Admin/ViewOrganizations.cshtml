@@ -18,37 +18,37 @@
             <button><span class="glyphicon glyphicon-search"></span></button>
         </div>
     </div>
-</div>  
+</div>
 
 
 <div class="container">
     <div class="row">
-        <div class="col-xs-4">Organization Name</div>
-        <div class="col-xs-4">Status</div>
-        <div class="col-xs-4">Admin stuff goes here</div>
+        <div class="col-xs-3">Organization Name</div>
+        <div class="col-xs-3">Status</div>
+        <div class="col-xs-6">Admin stuff goes here</div>
     </div>
 
-    <hr style="border:0.1px solid"/>
+    <hr style="border:0.1px solid" />
 
     @foreach (var item in Model.SearchResults)
     {
         <div class="row">
-            <div class="col-xs-4">@item.name</div>
+            <div class="col-xs-3">@item.name</div>
 
             @switch (item.status)
             {
                 case 0:
-                    <div class="col-xs-4">Inactive</div>
+                    <div class="col-xs-3">Inactive</div>
                     break;
                 case 1:
-                    <div class="col-xs-4">Active</div>
+                    <div class="col-xs-3">Active</div>
                     break;
 
             }
 
 
             <!--Admin based controls-->
-            <div class="col-xs-4">
+            <div class="col-xs-6">
                 @switch (item.status)
                 {
                     case 0:
@@ -60,9 +60,7 @@
                     case 1:
                     <!--Deactivate-->
                         <a href="@Url.Action("Index", "Home")" style="margin:0px 20px" title="Deactivate" id="@item.Id">
-                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red">
-
-                            </span>
+                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red"></span>
                         </a>
                         break;
                 }
@@ -71,8 +69,13 @@
                     <span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit"></span>
                 </a>
 
+                @Html.ActionLink("Associated Projects", "Index", "Home", null, htmlAttributes: new { @class = "btn btn-primary btn-md", @style = "margin:0px 20px;padding:0px" })
                 @Html.ActionLink("Run Report", "Index", "Home", null, htmlAttributes: new { @class = "btn btn-primary btn-md", @style = "margin:0px 20px;padding:0px" })
+
             </div>
+            <!--End of Admin controls-->
+
+
         </div>
         <hr />
     }
