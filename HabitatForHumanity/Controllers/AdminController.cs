@@ -29,14 +29,14 @@ namespace HabitatForHumanity.Controllers
         {
             if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
             {
-               
+
 
                 ReturnStatus rs = Repository.GetAllVolunteers();
                 if (rs.errorCode == 0)
                 {
                     List<UsersVM> allVols = (List<UsersVM>)rs.data;
                     List<UsersVM> filteredVols = new List<UsersVM>();
-                    foreach(UsersVM u in allVols)
+                    foreach (UsersVM u in allVols)
                     {
                         if (u != null && vsm.queryString != null)
                         {
@@ -44,9 +44,9 @@ namespace HabitatForHumanity.Controllers
                             {
                                 filteredVols.Add(u);
                             }
-                        }                 
+                        }
                     }
-                   
+
                     var pageIndex = vsm.Page ?? 1;
                     vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
 
@@ -56,7 +56,7 @@ namespace HabitatForHumanity.Controllers
                     ViewBag.status = "We had trouble with that request, try again.";
                     return View(vsm);
                 }
-               
+
             }
 
             return View(vsm);
@@ -71,7 +71,7 @@ namespace HabitatForHumanity.Controllers
             ReturnStatus rs = Repository.GetTimeCardsByFilters(orgNum, projNum, strt, end);
 
             if (!string.IsNullOrEmpty(tsm.queryString) || tsm.Page.HasValue)
-            {                  
+            {
                 if (rs.errorCode == 0)
                 {
                     List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
@@ -269,19 +269,19 @@ namespace HabitatForHumanity.Controllers
             {
                 return null;
             }
-           
+
 
             #endregion
-            
+
         }
 
         public ActionResult GetBadPunches()
         {
             ReturnStatus badTimeSheets = Repository.GetBadTimeSheets();
-           // List<TimeSheet> ts = Repository.GetBadTimeSheets();
+            // List<TimeSheet> ts = Repository.GetBadTimeSheets();
             List<BadPunchVM> bp = new List<BadPunchVM>();
 
-            if(badTimeSheets.errorCode != (int)ReturnStatus.ALL_CLEAR)
+            if (badTimeSheets.errorCode != (int)ReturnStatus.ALL_CLEAR)
             {
                 return null;
             }
@@ -295,10 +295,10 @@ namespace HabitatForHumanity.Controllers
             foreach (TimeSheet t in ts)
             {
                 try
-                {         
+                {
                     User user = (User)Repository.GetUser(t.user_Id).data;
                     string volName = "";
-           
+
                     if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
                     {
                         volName = user.emailAddress;
@@ -315,26 +315,38 @@ namespace HabitatForHumanity.Controllers
                     {
                         volName += user.firstName + " " + user.lastName;
                     }
-               
+
                     bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
                 }
                 catch
                 {
                     return null;
                 }
-                
-                  
+
+
             }
-  
-          
+
+
             return PartialView("_BadPunches", bp);
         }
 
 
-        public ActionResult GetOrganizations(string queryFilter = "1=1")
+        public ActionResult ViewOrganizations(OrganizationSearchModel model)
         {
-            Repository.GetOrganizationSQL(queryFilter);
-            return View();
+            //Repository.GetOrganizationSQL(queryFilter);
+            ReturnStatus st = Repository.GetAllOrganizations();
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                List<Organization> orgs = (List<Organization>)st.data;
+                var pageIndex = model.Page ?? 1;
+                model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
+            }
+
+
+            
+
+            //tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+            return View(model);
         }
 
 
