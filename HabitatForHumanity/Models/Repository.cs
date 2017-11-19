@@ -50,14 +50,14 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static ReturnStatus GetAllVolunteers(int projectId)
+        public static ReturnStatus GetAllVolunteers(int projectId, int orgId)
         {
             ReturnStatus rs = new ReturnStatus();
 
             #region if filter by project
-            if (projectId > 0)
+            if (projectId > 0 || orgId > 0)
             {
-                ReturnStatus projectUsersReturn = TimeSheet.GetUsersbyTimeSheetFilters(projectId);
+                ReturnStatus projectUsersReturn = TimeSheet.GetUsersbyTimeSheetFilters(projectId,orgId);
                 if(projectUsersReturn.errorCode == 0)
                 {
                     List<User> users = (List<User>)projectUsersReturn.data;

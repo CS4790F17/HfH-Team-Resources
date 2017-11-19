@@ -32,7 +32,7 @@ namespace HabitatForHumanity.Controllers
                 vsm = new VolunteerSearchModel();
                 return View(vsm);
             }
-            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId);
+            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId,vsm.orgId);
 
             if (rs.errorCode == 0)
             {

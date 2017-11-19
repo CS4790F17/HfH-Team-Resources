@@ -10,51 +10,65 @@
     @Html.ValidationSummary(false)
     <div style="border-bottom:1px solid #bbb"><h2>Search Volunteers</h2></div>
 
-    <div class="input-group" style="width:100px">
-        @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Name or email", @class = "form-control", @style = "width:auto; margin:10px" } })
-        <span class="input-group-btn">
-            <button class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span>
-            </button>
-        </span>
-    </div>
-    <!--Search filter options-->
-    <div class="col-xs-5" style="margin-bottom:30px">
-
-        @Html.DropDownListFor(model => model.projectId, Model.projects.Projects, new { @class = "form-control", @style = "width:auto;float:left;margin:10px" } )
-                
-
-        
-
-    </div>
-
-    if (Model.SearchResults != null && Model.SearchResults.Count > 0)
-    {
-        <table class="table" style="width:500px;">
-            <tr>
-                <th>ID</th>
-                <th>Volunteer</th>
-                <th>Email Address</th>
-                <th>Hours to Date</th>
-            </tr>
-            @foreach (var volunteer in Model.SearchResults)
-            {
-                <tr>
-                    <td>@volunteer.userNumber</td>
-                    <td>@volunteer.volunteerName</td>
-                    <td>@volunteer.email</td>
-                    <td>@volunteer.hoursToDate</td>
-                </tr>
-            }
-        </table>
-        @Html.PagedListPager(Model.SearchResults,
-          page => Url.Action("Volunteers", new RouteValueDictionary()
-          {
+    <div class="row">
+        <div class="col-md-3" style="margin-top:10px">
+            <div class="input-group">
+                <div>
+                    @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Name or email", @class = "form-control" } })
+                </div>
+                <span class="input-group-btn">
+                    <button class="btn btn-default">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+            <!--Search filter options-->
+            <div>
+                @Html.DropDownListFor(model => model.projectId, Model.projects.Projects, new { @class = "form-control" , onchange = @"form.submit()"})
+            </div>
+            <div>
+                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, new { @class = "form-control" , onchange = @"form.submit()"})
+            </div>
+        </div>
+        <div class="col-md-9">
+            @{if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+                {
+                    <table class="table" style="width:500px;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Volunteer</th>
+                            <th>Email Address</th>
+                            <th>Hours to Date</th>
+                        </tr>
+                        @foreach (var volunteer in Model.SearchResults)
+                        {
+                            <tr>
+                                <td>@volunteer.userNumber</td>
+                                <td>@volunteer.volunteerName</td>
+                                <td>@volunteer.email</td>
+                                <td>@volunteer.hoursToDate</td>
+                            </tr>
+                        }
+                    </table>
+                    <div class="text-center">
+                        @Html.PagedListPager(Model.SearchResults,
+                       page => Url.Action("Volunteers", new RouteValueDictionary()
+                       {
                { "Page", page },
               {"queryString",Model.queryString },
               {"projectId", Model.projectId }
-          }),
-          PagedListRenderOptions.PageNumbersOnly)
-    }
+                       }),
+                       PagedListRenderOptions.PageNumbersOnly)
+                    </div>
 
-}
+                }
+            }
+        </div>
+    </div>
+
+
+
+
+
+
+                }
