@@ -11,9 +11,9 @@
     
 </head>
 <body>
-    <header>
+    @*<header>
         <img src="~/Images/HFHLogo.jpg" class="BannerLogo" style="width:30%; margin-top:15px"/>
-    </header>
+    </header>*@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -50,6 +50,7 @@
             </div>
         </div>
     </div>
+   
     <div class="container body-content">
         @{
             if (ViewBag.status != null)
@@ -59,8 +60,13 @@
                 </div>
             }
         }
+        <div class="row">
+            <div class="col-md-3 col-md-offset-4"><img src="~/Images/HFHLogo.jpg" style="margin-top:15px" /></div>
+        </div>
+
         @RenderBody()
         <hr />
+        
         <footer>
             <p>&copy; @DateTime.Now.Year - Habitat for Humanity of Davis and Weber Counties</p>
         </footer>
