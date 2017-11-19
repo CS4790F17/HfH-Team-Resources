@@ -317,6 +317,7 @@
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
     <Content Include="Views\Admin\ViewOrganizations.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

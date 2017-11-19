@@ -342,12 +342,25 @@ namespace HabitatForHumanity.Controllers
                 model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
             }
 
-
-            
-
             //tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
             return View(model);
         }
+
+        [HttpGet]
+        public ActionResult EditOrganization(int id)
+        {
+            ReturnStatus st = Repository.GetOrganizationById(id);
+            return PartialView("OrganizationPartialViews/_EditOrganization", (Organization)st.data);
+        }
+
+        [HttpPost]
+        public JsonResult EditOrganization(Organization org)
+        {
+            //save org
+            Repository.EditOrganization(org);
+            return Json(new { name = org.name, status = org.status, id=org.Id }, JsonRequestBehavior.AllowGet);
+        }
+
 
 
 
