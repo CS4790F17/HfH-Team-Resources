@@ -27,16 +27,21 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult Volunteers(VolunteerSearchModel vsm)
         {
-            if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
+            if(vsm.projects == null)
             {
-               
+                vsm = new VolunteerSearchModel();
+                return View(vsm);
+            }
+            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId);
 
-                ReturnStatus rs = Repository.GetAllVolunteers();
-                if (rs.errorCode == 0)
+            if (rs.errorCode == 0)
+            {
+                List<UsersVM> allVols = (List<UsersVM>)rs.data;
+                List<UsersVM> filteredVols = new List<UsersVM>();
+
+                if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
                 {
-                    List<UsersVM> allVols = (List<UsersVM>)rs.data;
-                    List<UsersVM> filteredVols = new List<UsersVM>();
-                    foreach(UsersVM u in allVols)
+                    foreach (UsersVM u in allVols)
                     {
                         if (u != null && vsm.queryString != null)
                         {
@@ -44,21 +49,27 @@ namespace HabitatForHumanity.Controllers
                             {
                                 filteredVols.Add(u);
                             }
-                        }                 
+                        }
                     }
-                   
+
                     var pageIndex = vsm.Page ?? 1;
                     vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
-
                 }
                 else
                 {
-                    ViewBag.status = "We had trouble with that request, try again.";
-                    return View(vsm);
+                   
+                    var pageIndex = vsm.Page ?? 1;
+                    vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
                 }
-               
             }
-
+            else if(rs.errorCode == -1)
+            {
+                ViewBag.status = "Broke in repo";
+            }
+            else // bad returnStatus
+            {
+                ViewBag.status = "Broke in datalayer";
+            }
             return View(vsm);
         }
 
@@ -71,7 +82,7 @@ namespace HabitatForHumanity.Controllers
             ReturnStatus rs = Repository.GetTimeCardsByFilters(orgNum, projNum, strt, end);
 
             if (!string.IsNullOrEmpty(tsm.queryString) || tsm.Page.HasValue)
-            {                  
+            {
                 if (rs.errorCode == 0)
                 {
                     List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
@@ -269,19 +280,19 @@ namespace HabitatForHumanity.Controllers
             {
                 return null;
             }
-           
+
 
             #endregion
-            
+
         }
 
         public ActionResult GetBadPunches()
         {
             ReturnStatus badTimeSheets = Repository.GetBadTimeSheets();
-           // List<TimeSheet> ts = Repository.GetBadTimeSheets();
+            // List<TimeSheet> ts = Repository.GetBadTimeSheets();
             List<BadPunchVM> bp = new List<BadPunchVM>();
 
-            if(badTimeSheets.errorCode != (int)ReturnStatus.ALL_CLEAR)
+            if (badTimeSheets.errorCode != (int)ReturnStatus.ALL_CLEAR)
             {
                 return null;
             }
@@ -295,10 +306,10 @@ namespace HabitatForHumanity.Controllers
             foreach (TimeSheet t in ts)
             {
                 try
-                {         
+                {
                     User user = (User)Repository.GetUser(t.user_Id).data;
                     string volName = "";
-           
+
                     if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
                     {
                         volName = user.emailAddress;
@@ -315,20 +326,20 @@ namespace HabitatForHumanity.Controllers
                     {
                         volName += user.firstName + " " + user.lastName;
                     }
-               
+
                     bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
                 }
                 catch
                 {
                     return null;
                 }
-                
-                  
+
+
             }
-  
-          
+
+
             return PartialView("_BadPunches", bp);
         }
-        
+
     }
 }

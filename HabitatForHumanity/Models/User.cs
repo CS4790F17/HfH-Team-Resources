@@ -68,6 +68,9 @@ namespace HabitatForHumanity.Models
         //[Required(ErrorMessage = "Enter Emergency Relation")]
         [Display(Name = "Relation*")]
         public string relation { get; set; }
+
+
+
         //[Required(ErrorMessage = "Enter Emergency Home Phone")]
         [Display(Name = "Emergency Home Phone*")]
         //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
@@ -172,8 +175,6 @@ namespace HabitatForHumanity.Models
                 return st;
             }
         }
-
-
 
         /// <summary>
         /// Finds email if it exists in the database.
