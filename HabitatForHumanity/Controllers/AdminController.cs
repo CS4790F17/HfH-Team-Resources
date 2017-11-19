@@ -361,6 +361,14 @@ namespace HabitatForHumanity.Controllers
             return Json(new { name = org.name, status = org.status, id=org.Id }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public void ChangeOrganizationStatus(int id)
+        {
+            ReturnStatus st = Repository.GetOrganizationById(id);
+            ((Organization)st.data).status = 1 - ((Organization)st.data).status;
+            Repository.EditOrganization((Organization)st.data);
+        }
+
 
 
 
