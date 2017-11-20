@@ -383,8 +383,11 @@ namespace HabitatForHumanity.Controllers
         public void ChangeOrganizationStatus(int id)
         {
             ReturnStatus st = Repository.GetOrganizationById(id);
-            ((Organization)st.data).status = 1 - ((Organization)st.data).status;
-            Repository.EditOrganization((Organization)st.data);
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                ((Organization)st.data).status = 1 - ((Organization)st.data).status;
+                Repository.EditOrganization((Organization)st.data);
+            }
         }
 
         [HttpGet]
