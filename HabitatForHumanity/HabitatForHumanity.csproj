@@ -181,7 +181,6 @@
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
     <Content Include="DBscripts\ageBracketsByGender.txt" />
@@ -315,6 +314,7 @@
     <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
+    <Content Include="Views\Shared\_LayoutButton.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
