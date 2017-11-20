@@ -44,7 +44,7 @@
             {
                 <tr>
                     <td>@volunteer.userNumber</td>
-                    <td>@volunteer.volunteerName</td>
+                    <td>@Html.ActionLink(@volunteer.volunteerName, "Details", "TimeSheet", new { id = volunteer.userNumber }, null)</td>
                     <td>@volunteer.email</td>
                     <td>@volunteer.hoursToDate</td>
                 </tr>
