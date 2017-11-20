@@ -225,6 +225,32 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
+        /// Gets all the unique user timesheets with the supplied project id.
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public static ReturnStatus GetUniqueUserTimeSheetsByProjectId(int projectId)
+        {
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.data = db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
+               // st.data = db.timeSheets.Count().Where(x => x.project_Id == projectId).OrderBy(x => x.user_Id).ToList();
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        }
+
+        /// <summary>
         /// Gets all timesheets where the clock in and out dates are between beginDate and endDate parameters.
         /// </summary>
         /// <param name="beginDate"></param>

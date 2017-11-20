@@ -21,5 +21,10 @@ namespace HabitatForHumanity.ViewModels
         public string _description { get; set; }
         [Display(Name = "Active")]
         public bool _status { get; set; }
+        [Display(Name = "Total Hours Logged ")]
+        public double hoursLogged { get; set; }
+        [Display(Name = "Total Volunteers")]
+        public double numVolunteers { get; set; }
+
     }
 }

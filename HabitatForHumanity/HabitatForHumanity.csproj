@@ -163,6 +163,7 @@
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\OrganizationVM.cs" />
+    <Compile Include="ViewModels\ProjectIndexVM.cs" />
     <Compile Include="ViewModels\ProjectVM.cs" />
     <Compile Include="ViewModels\PortalVM.cs" />
     <Compile Include="ViewModels\PunchVM.cs" />
