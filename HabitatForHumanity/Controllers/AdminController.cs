@@ -359,6 +359,13 @@ namespace HabitatForHumanity.Controllers
                 var pageIndex = model.Page ?? 1;
                 model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
             }
+            else
+            {
+                //fill search results with empty list
+                List<Organization> orgs = new List<Organization>();
+                var pageIndex = model.Page ?? 1;
+                model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
+            }
 
             //tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
             return View(model);

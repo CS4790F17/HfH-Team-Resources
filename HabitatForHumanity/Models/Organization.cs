@@ -227,6 +227,15 @@ namespace HabitatForHumanity.Models
 
             var orgs = db.organizations.SqlQuery("SELECT * FROM Organization WHERE Organization.name LIKE @Name", orgName).ToList<Organization>();
 
+
+            if(orgs.Count < 1)
+            {
+                List<Organization> orgList = new List<Organization>();
+                st.data = orgList;
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return st;
+            }
+
             st.errorCode = ReturnStatus.ALL_CLEAR;
             st.data = orgs;
             return st;
@@ -237,6 +246,7 @@ namespace HabitatForHumanity.Models
             VolunteerDbContext db = new VolunteerDbContext();
             ReturnStatus st = new ReturnStatus();
 
+            
             var orgStatus = new SqlParameter("@Status", status);
             var orgName = new SqlParameter("@Name", "%" + queryFilter + "%");
             
@@ -246,6 +256,15 @@ namespace HabitatForHumanity.Models
                 "WHERE Organization.status = @Status " +
                 "AND Organization.name in " +
                 "(SELECT Organization.name FROM Organization WHERE Organization.name LIKE @Name)", orgStatus, orgName).ToList<Organization>();
+
+
+            if(orgs.Count < 1)
+            {
+                List<Organization> orgList = new List<Organization>();
+                st.data = orgList;
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return st;
+            }
 
             st.errorCode = ReturnStatus.ALL_CLEAR;
             st.data = orgs;

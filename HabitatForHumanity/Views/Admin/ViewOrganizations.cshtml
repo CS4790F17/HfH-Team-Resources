@@ -6,6 +6,7 @@
 }
 
 @Html.HiddenFor(x => x.Page)
+@Html.HiddenFor(x => x.statusChoice)
 
 <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script src="~/Scripts/jquery-3.2.1.js"></script>
@@ -25,7 +26,7 @@
 
         <!--Search filter options-->
         @using (Html.BeginForm())
-        {
+            {
             <div class="col-xs-5" style="margin-bottom:30px">
                 @Html.DropDownListFor(x => x.statusChoice, Model.statusDropDown, htmlAttributes: new { @class = "form-control", @id = "statusChoiceSelector", @style = "width:auto;float:left;margin-right:10px" })
 
@@ -60,7 +61,7 @@
     <div id="editOrg" style="overflow-y:scroll;overflow-x:hidden;height:300px;width:auto">
 
         @foreach (var item in Model.SearchResults)
-        {
+            {
             <div class="row">
                 @{ var orgId = "org" + item.Id;}
                 <div id="@orgId" class="col-xs-3">@item.name</div>
@@ -105,7 +106,7 @@
                 </div>
                 <hr />
             </div>
-                    }
+          }
     </div>
 </div>
 
@@ -116,7 +117,8 @@
               page => Url.Action("ViewOrganizations", new RouteValueDictionary()
                 {
                     { "Page", page },
-                  {"queryString",Model.queryString }
+                  {"queryString",Model.queryString },
+                  { "statusChoice", Model.statusChoice }
                 }),
               PagedListRenderOptions.PageNumbersOnly)
 
@@ -135,8 +137,7 @@
         $(".statusDeactivate").html("<span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\" style=\"color:red\"></span>");
     });
 
-    $("#createOrganization").click(function ()
-    {
+    $("#createOrganization").click(function () {
         $.ajax(
             {
                 url: '/Admin/AddOrganization',
@@ -148,10 +149,9 @@
     })
 
 
-   
+
 
     function refresh() {
         location.reload();
     }
 </script>
-
