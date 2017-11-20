@@ -27,15 +27,20 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult Volunteers(VolunteerSearchModel vsm)
         {
-            if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
+            if(vsm.projects == null)
             {
+                vsm = new VolunteerSearchModel();
+                return View(vsm);
+            }
+            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId,vsm.orgId);
 
+            if (rs.errorCode == 0)
+            {
+                List<UsersVM> allVols = (List<UsersVM>)rs.data;
+                List<UsersVM> filteredVols = new List<UsersVM>();
 
-                ReturnStatus rs = Repository.GetAllVolunteers();
-                if (rs.errorCode == 0)
+                if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
                 {
-                    List<UsersVM> allVols = (List<UsersVM>)rs.data;
-                    List<UsersVM> filteredVols = new List<UsersVM>();
                     foreach (UsersVM u in allVols)
                     {
                         if (u != null && vsm.queryString != null)
@@ -49,16 +54,22 @@ namespace HabitatForHumanity.Controllers
 
                     var pageIndex = vsm.Page ?? 1;
                     vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
-
                 }
                 else
                 {
-                    ViewBag.status = "We had trouble with that request, try again.";
-                    return View(vsm);
+                   
+                    var pageIndex = vsm.Page ?? 1;
+                    vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
                 }
-
             }
-
+            else if(rs.errorCode == -1)
+            {
+                ViewBag.status = "Broke in repo";
+            }
+            else // bad returnStatus
+            {
+                ViewBag.status = "Broke in datalayer";
+            }
             return View(vsm);
         }
 
