@@ -318,6 +318,7 @@
     <Content Include="Views\Admin\TimeCards.cshtml" />
     <Content Include="Views\Admin\ViewOrganizations.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_AddOrganization.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

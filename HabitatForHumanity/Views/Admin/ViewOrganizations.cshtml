@@ -19,7 +19,7 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-7">
-            <button class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>   Add new Organization</button>
+            <button class="btn btn-success" id="createOrganization"><span class="glyphicon glyphicon-plus"></span>   Add new Organization</button>
         </div>
 
 
@@ -135,7 +135,20 @@
         $(".statusDeactivate").html("<span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\" style=\"color:red\"></span>");
     });
 
+    $("#createOrganization").click(function ()
+    {
+        $.ajax(
+            {
+                url: '/Admin/AddOrganization',
+                type: 'GET',
+                success: function loadAddPanel(data) {
+                    $("#divEmp").html(data);
+                }
+            })
+    })
 
+
+   
 
     function refresh() {
         location.reload();

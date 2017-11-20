@@ -387,6 +387,25 @@ namespace HabitatForHumanity.Controllers
             Repository.EditOrganization((Organization)st.data);
         }
 
+        [HttpGet]
+        public ActionResult AddOrganization()
+        {
+            return PartialView("OrganizationPartialViews/_AddOrganization");
+        }
+
+        [HttpPost]
+        public ActionResult AddOrganization(String name)
+        {
+            Organization org = new Organization()
+            {
+                name = name,
+                status = 1 //active by default
+            };
+
+            Repository.AddOrganization(org);
+            return RedirectToAction("ViewOrganizations");
+        }
+
 
 
 
