@@ -66,6 +66,8 @@ namespace HabitatForHumanity.Models
             }
         }
 
+      
+
         /// <summary>
         /// Get the TimeSheet with the matching id.
         /// </summary>
@@ -250,6 +252,52 @@ namespace HabitatForHumanity.Models
             }
         }
 
+        public static ReturnStatus GetTimeSheetsByFilters(int? orgNum, int? projNum, DateTime strt, DateTime end)
+        {
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                if (orgNum != null && projNum != null)
+                {
+                    st.data = db.timeSheets.Where(
+                        x => x.org_Id == orgNum
+                        && x.project_Id == projNum
+                        && x.clockInTime >= strt
+                        && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+                }
+                else if (orgNum != null)
+                {
+                    st.data = db.timeSheets.Where(
+                       x => x.org_Id == orgNum
+                       && x.clockInTime >= strt
+                       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+                }
+                else if(projNum != null)
+                {
+                    st.data = db.timeSheets.Where(
+                       x => x.project_Id == projNum
+                       && x.clockInTime >= strt
+                       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+                }
+                else
+                {
+                    st.data = db.timeSheets.Where(
+                      x => x.clockInTime >= strt
+                      && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+                }
+                st.errorCode = 0;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = -1;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        }
+
 
         /// <summary>
         /// Gets all timesheets with a specified organization id.
@@ -364,6 +412,51 @@ namespace HabitatForHumanity.Models
             }
         }
 
+        /// <summary>
+        /// Used in Admin/Volunteers
+        /// </summary>
+        /// <param name="projectId">ints > 0 are valid ids</param>
+        /// <returns>returns a list of users for the given project</returns>
+        public static ReturnStatus GetUsersbyTimeSheetFilters(int projectId, int orgId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                string inFilter = "";
+   
+                if(projectId > 0 && orgId > 0)
+                {
+                    var userIds = (from t in db.timeSheets
+                               where t.project_Id == projectId && t.org_Id == orgId
+                               select t.user_Id).ToArray();
+                    inFilter = (userIds.Length > 0) ? " U WHERE U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
+                }
+                else if(projectId > 0)
+                {
+                    var userIds = (from t in db.timeSheets
+                               where t.project_Id == projectId
+                               select t.user_Id).ToArray();
+                    inFilter = (userIds.Length > 0) ? " U WHERE U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
+                }
+                else if(orgId > 0)
+                {
+                    var userIds = (from t in db.timeSheets
+                               where t.org_Id == orgId
+                               select t.user_Id).ToArray();
+                    inFilter = (userIds.Length > 0) ? " U WHERE U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
+                }
+   
+                var users = db.users.SqlQuery("SELECT * FROM dbo.[User]" + inFilter).ToList();
+                rs.data = users;
+                rs.errorCode = 0;
+            }
+            catch
+            {
+                rs.errorCode = -1;
+            }
+            return rs;
+        }
 
 
     }

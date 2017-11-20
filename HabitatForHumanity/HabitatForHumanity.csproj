@@ -162,12 +162,14 @@
     <Compile Include="ViewModels\BadPunchVM.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\OrganizationSearchModel.cs" />
     <Compile Include="ViewModels\OrganizationVM.cs" />
     <Compile Include="ViewModels\ProjectVM.cs" />
     <Compile Include="ViewModels\PortalVM.cs" />
     <Compile Include="ViewModels\PunchVM.cs" />
     <Compile Include="ViewModels\SearchTimeDetailVM.cs" />
     <Compile Include="ViewModels\SignWaiverVM.cs" />
+    <Compile Include="ViewModels\TimeCardSearchModel.cs" />
     <Compile Include="ViewModels\ToolKitVM.cs" />
     <Compile Include="ViewModels\UsersVM.cs" />
     <Compile Include="ViewModels\VolunteerSearchModel.cs" />
@@ -313,6 +315,10 @@
     <Content Include="Views\User\SignWaiver.cshtml" />
     <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
     <Content Include="Views\Admin\Volunteers.cshtml" />
+    <Content Include="Views\Admin\TimeCards.cshtml" />
+    <Content Include="Views\Admin\ViewOrganizations.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_AddOrganization.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -335,7 +341,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>56180</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
