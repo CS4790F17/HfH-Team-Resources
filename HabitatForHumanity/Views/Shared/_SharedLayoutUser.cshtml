@@ -70,7 +70,7 @@
                 @{ if (Session["Username"] != null)
                     {
                         <ul class="nav navbar-nav navbar-right">
-                            <li><span class="glyphicon glyphicon-user" style="color: #54B948; padding-left:7px">@Html.ActionLink("Edit Profile", "Edit", "User", new { id = Repository.GetUserByEmail((string)Session["Username"]).Id } , null)</span></li>
+                            <li><span class="glyphicon glyphicon-user" style="color: #54B948; padding-left:7px">@Html.ActionLink("Edit Profile", "Edit", "User", new {id = Repository.GetUserByEmail((string)Session["Username"]).Id } , null)</span></li>
                             <li><span class="glyphicon glyphicon-log-out" style="color: #54B948; padding-left:3px">@Html.ActionLink("Sign Out", "Logout", "User")</span></li>
                         </ul>
                     }

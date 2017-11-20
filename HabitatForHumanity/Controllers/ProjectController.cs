@@ -19,7 +19,32 @@ namespace HabitatForHumanity.Controllers
         // GET: Project
         public ActionResult Index()
         {
-            return View(db.projects.ToList());
+            //create ne VM and retutn that instead. 
+            //New VM will have Name, Begin Date, Total Hrs contributed to it,
+            //total people registerd(maybe), total people who've logged time in it
+            
+            List<Project> temp = new List<Project>();
+            temp = (List<Project>)Repository.GetAllProjects().data;
+            List<int> tempIds = new List<int>();
+            List<ProjectIndexVM> index = new List<ProjectIndexVM>();
+           
+
+            foreach (Project project in temp)
+            {
+                ProjectIndexVM projectIndexVM = new ProjectIndexVM();
+                projectIndexVM._name = project.name;
+                projectIndexVM._Id = project.Id;
+                projectIndexVM._beginDate = project.beginDate;
+                projectIndexVM._hoursLogged = (double)Repository.getTotalHoursLoggedIntoProject(project.Id).data;
+                tempIds = (List<int>)Repository.getProjectVolunteersPerProject(project.Id).data;
+                projectIndexVM._numVolunteers = tempIds.Count();
+                index.Add(projectIndexVM);
+            }
+            //return View(db.projects.ToList());
+            //List<Project> temp = new List<Project>;
+
+            //return View(Repository.GetAllProjects());
+            return View(index);
         }
 
         // GET: Project/Details/5
@@ -38,6 +63,9 @@ namespace HabitatForHumanity.Controllers
             //TODO: add error checking
             project = (Project)Repository.GetProjectById(projectId).data;
 
+            //include list of people who have logged hrs. 
+            //include total hours logged into this project
+            //maybe include list of everyone assigned to this project
             projectVM._Id = project.Id;
             projectVM._name = project.name;
             projectVM._beginDate = project.beginDate;
