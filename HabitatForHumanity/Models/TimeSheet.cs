@@ -66,6 +66,8 @@ namespace HabitatForHumanity.Models
             }
         }
 
+      
+
         /// <summary>
         /// Get the TimeSheet with the matching id.
         /// </summary>
@@ -410,6 +412,51 @@ namespace HabitatForHumanity.Models
             }
         }
 
+        /// <summary>
+        /// Used in Admin/Volunteers
+        /// </summary>
+        /// <param name="projectId">ints > 0 are valid ids</param>
+        /// <returns>returns a list of users for the given project</returns>
+        public static ReturnStatus GetUsersbyTimeSheetFilters(int projectId, int orgId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                string inFilter = "";
+   
+                if(projectId > 0 && orgId > 0)
+                {
+                    var userIds = (from t in db.timeSheets
+                               where t.project_Id == projectId && t.org_Id == orgId
+                               select t.user_Id).ToArray();
+                    inFilter = (userIds.Length > 0) ? " U WHERE U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
+                }
+                else if(projectId > 0)
+                {
+                    var userIds = (from t in db.timeSheets
+                               where t.project_Id == projectId
+                               select t.user_Id).ToArray();
+                    inFilter = (userIds.Length > 0) ? " U WHERE U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
+                }
+                else if(orgId > 0)
+                {
+                    var userIds = (from t in db.timeSheets
+                               where t.org_Id == orgId
+                               select t.user_Id).ToArray();
+                    inFilter = (userIds.Length > 0) ? " U WHERE U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
+                }
+   
+                var users = db.users.SqlQuery("SELECT * FROM dbo.[User]" + inFilter).ToList();
+                rs.data = users;
+                rs.errorCode = 0;
+            }
+            catch
+            {
+                rs.errorCode = -1;
+            }
+            return rs;
+        }
 
 
     }

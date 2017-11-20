@@ -5,58 +5,70 @@
     ViewBag.Title = "Volunteers";
 }
 
-<h2>Volunteers</h2>
-@*<div>@Html.Action("SearchVolunteers")</div>*@
-@*<div>@Html.Action("ViewVolunteers")</div>*@
-
 @using (Html.BeginForm("Volunteers", "Admin", FormMethod.Get))
 {
     @Html.ValidationSummary(false)
-    <div style="border-bottom:1px solid #bbb"><h1>Search Volunteers</h1></div>
-    <table style="border:0px; width:500px;">
-        <tr>
-            <td>
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.queryString)
-                </div>
+    <div style="border-bottom:1px solid #bbb"><h2>Search Volunteers</h2></div>
 
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.queryString)
-                    @Html.ValidationMessageFor(model => model.queryString)
+    <div class="row">
+        <div class="col-md-3" style="margin-top:10px">
+            <div class="input-group">
+                <div>
+                    @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Name or email", @class = "form-control" } })
                 </div>
-            </td>
-            <td style="vertical-align:bottom;">
-                <input name="SearchButton" type="submit" value="Search" />
-            </td>
-        </tr>
-    </table>
-
-    if (Model.SearchResults != null && Model.SearchResults.Count > 0)
-    {
-        <table class="table" style="width:500px;">
-            <tr>
-                <th>ID</th>
-                <th>Volunteer</th>
-                <th>Email Address</th>
-                <th>Hours to Date</th>
-            </tr>
-            @foreach (var volunteer in Model.SearchResults)
-            {
-                <tr>
-                    <td>@volunteer.userNumber</td>
-                    <td>@volunteer.volunteerName</td>
-                    <td>@volunteer.email</td>
-                    <td>@volunteer.hoursToDate</td>
-                </tr>
-            }
-        </table>
-        @Html.PagedListPager(Model.SearchResults,
-          page => Url.Action("Volunteers", new RouteValueDictionary()
-          {
+                <span class="input-group-btn">
+                    <button class="btn btn-default">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+            <!--Search filter options-->
+            <div>
+                @Html.DropDownListFor(model => model.projectId, Model.projects.Projects, new { @class = "form-control" , onchange = @"form.submit()"})
+            </div>
+            <div>
+                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, new { @class = "form-control" , onchange = @"form.submit()"})
+            </div>
+        </div>
+        <div class="col-md-9">
+            @{if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+                {
+                    <table class="table" style="width:500px;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Volunteer</th>
+                            <th>Email Address</th>
+                            <th>Hours to Date</th>
+                        </tr>
+                        @foreach (var volunteer in Model.SearchResults)
+                        {
+                            <tr>
+                                <td>@volunteer.userNumber</td>
+                                <td>@volunteer.volunteerName</td>
+                                <td>@volunteer.email</td>
+                                <td>@volunteer.hoursToDate</td>
+                            </tr>
+                        }
+                    </table>
+                    <div class="text-center">
+                        @Html.PagedListPager(Model.SearchResults,
+                       page => Url.Action("Volunteers", new RouteValueDictionary()
+                       {
                { "Page", page },
-              {"queryString",Model.queryString }
-          }),
-          PagedListRenderOptions.PageNumbersOnly)
-    }
+              {"queryString",Model.queryString },
+              {"projectId", Model.projectId }
+                       }),
+                       PagedListRenderOptions.PageNumbersOnly)
+                    </div>
 
-}
+                }
+            }
+        </div>
+    </div>
+
+
+
+
+
+
+                }

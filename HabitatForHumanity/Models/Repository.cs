@@ -50,10 +50,43 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static ReturnStatus GetAllVolunteers()
+        public static ReturnStatus GetAllVolunteers(int projectId, int orgId)
         {
-            ReturnStatus userResult = User.GetAllUsers();
             ReturnStatus rs = new ReturnStatus();
+
+            #region if filter by project
+            if (projectId > 0 || orgId > 0)
+            {
+                ReturnStatus projectUsersReturn = TimeSheet.GetUsersbyTimeSheetFilters(projectId,orgId);
+                if(projectUsersReturn.errorCode == 0)
+                {
+                    List<User> users = (List<User>)projectUsersReturn.data;
+                    List<UsersVM> volunteers = new List<UsersVM>();
+                    foreach (User u in users)
+                    {
+                        volunteers.Add(new UsersVM()
+                        {
+                            userNumber = u.Id,
+                            // force alll name to not be null for simple comparison incontroller
+                            volunteerName = u.firstName ?? "NoName" + " " + u.lastName ?? "NoName",
+                            email = u.emailAddress,
+                            hoursToDate = 99.9
+                        });
+                    }
+                    rs.data = volunteers;
+                    rs.errorCode = 0;
+                }
+                else
+                {
+                    rs.errorCode = -2;
+                }
+
+                return rs;
+            }
+            #endregion
+
+            ReturnStatus userResult = User.GetAllUsers();
+
             if (userResult.errorCode == 0)
             {
                 List<User> users = (List<User>)userResult.data;
@@ -81,11 +114,11 @@ namespace HabitatForHumanity.Models
         }
 
 
-        /// <summary>
-        /// Creates a volunteer user
-        /// </summary>
-        /// <param name="user"></param>
-        public static ReturnStatus CreateVolunteer(User user)
+    /// <summary>
+    /// Creates a volunteer user
+    /// </summary>
+    /// <param name="user"></param>
+    public static ReturnStatus CreateVolunteer(User user)
         {
             //if (user.password != null)
             //{
