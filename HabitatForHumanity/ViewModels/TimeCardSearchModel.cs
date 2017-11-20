@@ -40,6 +40,7 @@ namespace HabitatForHumanity.ViewModels
         public string volName { get; set; }
 
         [Display(Name = "Hours")]
+        [DisplayFormat(DataFormatString = "{0:n0}")]
         public double elapsedHrs { get; set; }
     }
 }

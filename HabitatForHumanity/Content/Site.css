@@ -48,3 +48,8 @@ li{
     font-size:large;
     font-weight:400;
 }
+
+.well-sm:hover{
+        background-color: #99d3ff;
+}
+
