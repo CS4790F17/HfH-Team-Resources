@@ -260,10 +260,7 @@ namespace HabitatForHumanity.Models
             return Project.GetProjectById(id);
         }
 
-        public static ReturnStatus GetOrganizationSQL(string queryFilter)
-        {
-            return Organization.GetOrganizationSQL(queryFilter);
-        }
+ 
 
         /// <summary>
         /// Gets all the currently active projects
@@ -406,6 +403,18 @@ namespace HabitatForHumanity.Models
         {
             return Organization.DeleteOrganizationById(id);
         }
+
+
+        public static ReturnStatus GetOrganizationSQL(string queryFilter, int status)
+        {
+            return Organization.GetOrganizationSQL(queryFilter, status);
+        }
+
+        public static ReturnStatus GetOrganizationByNameSQL(string name)
+        {
+            return Organization.GetOrganizationByNameSQL(name);
+        }
+
 
         #endregion
 

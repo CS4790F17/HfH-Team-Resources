@@ -333,10 +333,28 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult ViewOrganizations(OrganizationSearchModel model)
         {
-            //Repository.GetOrganizationSQL(queryFilter);
-            ReturnStatus st = Repository.GetAllOrganizations();
+
+            ReturnStatus st = new ReturnStatus();
+
+            switch (model.statusChoice)
+            {
+                case 0:
+                    st = Repository.GetOrganizationByNameSQL(model.queryString);
+                    break;
+                case 1: //active organizations
+                    st = Repository.GetOrganizationSQL(model.queryString, 1);
+                    break;
+                case 2: //inactive organizations
+                    st = Repository.GetOrganizationSQL(model.queryString, 0);
+                    break;
+            }
+
+
+
+
             if (st.errorCode == ReturnStatus.ALL_CLEAR)
             {
+
                 List<Organization> orgs = (List<Organization>)st.data;
                 var pageIndex = model.Page ?? 1;
                 model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
@@ -358,7 +376,7 @@ namespace HabitatForHumanity.Controllers
         {
             //save org
             Repository.EditOrganization(org);
-            return Json(new { name = org.name, status = org.status, id=org.Id }, JsonRequestBehavior.AllowGet);
+            return Json(new { name = org.name, status = org.status, id = org.Id }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

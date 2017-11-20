@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using HabitatForHumanity.ViewModels;
+using System.Data.SqlClient;
 
 namespace HabitatForHumanity.Models
 {
@@ -217,12 +218,38 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static ReturnStatus GetOrganizationSQL(string queryFilter)
+        public static ReturnStatus GetOrganizationByNameSQL(string name)
         {
             VolunteerDbContext db = new VolunteerDbContext();
             ReturnStatus st = new ReturnStatus();
+
+            var orgName = new SqlParameter("@Name", "%" + name + "%");
+
+            var orgs = db.organizations.SqlQuery("SELECT * FROM Organization WHERE Organization.name LIKE @Name", orgName).ToList<Organization>();
+
+            st.errorCode = ReturnStatus.ALL_CLEAR;
+            st.data = orgs;
             return st;
-           // ReturnStatus st = db.organizations.Where()
+        }
+
+        public static ReturnStatus GetOrganizationSQL(string queryFilter, int status)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            ReturnStatus st = new ReturnStatus();
+
+            var orgStatus = new SqlParameter("@Status", status);
+            var orgName = new SqlParameter("@Name", queryFilter + "%");
+
+
+            var orgs = db.organizations.SqlQuery(
+                "SELECT * FROM Organization " +
+                "WHERE Organization.status = @Status " +
+                "AND Organization.name in " +
+                "(SELECT Organization.name FROM Organization WHERE Organization.name LIKE @Name)", orgStatus, orgName).ToList<Organization>();
+
+            st.errorCode = ReturnStatus.ALL_CLEAR;
+            st.data = orgs;
+            return st;
         }
         #endregion
     }
