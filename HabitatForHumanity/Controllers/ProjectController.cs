@@ -36,14 +36,11 @@ namespace HabitatForHumanity.Controllers
                 projectIndexVM._Id = project.Id;
                 projectIndexVM._beginDate = project.beginDate;
                 projectIndexVM._hoursLogged = (double)Repository.getTotalHoursLoggedIntoProject(project.Id).data;
-                tempIds = (List<int>)Repository.getProjectVolunteersPerProject(project.Id).data;
-                projectIndexVM._numVolunteers = tempIds.Count();
+               // tempIds = (List<int>)Repository.getProjectVolunteersPerProject(project.Id).data;
+                //projectIndexVM._numVolunteers = tempIds.Count();
                 index.Add(projectIndexVM);
             }
-            //return View(db.projects.ToList());
-            //List<Project> temp = new List<Project>;
-
-            //return View(Repository.GetAllProjects());
+           
             return View(index);
         }
 
