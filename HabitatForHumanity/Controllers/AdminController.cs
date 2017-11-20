@@ -341,5 +341,10 @@ namespace HabitatForHumanity.Controllers
             return PartialView("_BadPunches", bp);
         }
 
+        public ActionResult Projects()
+        {
+            return RedirectToAction("Index", "Project");
+        }
+
     }
 }

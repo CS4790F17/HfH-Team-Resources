@@ -869,53 +869,6 @@ namespace HabitatForHumanity.Models
             return hoursLogged;
         }
 
-        ///// <summary>
-        ///// return list of unique userId's
-        ///// </summary>
-        ///// <param name="projectId"></param>
-        ///// <returns></returns>
-        //public static ReturnStatus getProjectVolunteersPerProject(int projectId)
-        //{
-        //    ReturnStatus projectVolunteers = new ReturnStatus();
-        //    List<int> users = new List<int>();
-        //    projectVolunteers.data = users;
-
-        //    List<TimeSheet> temp = new List<TimeSheet>();
-        //    ReturnStatus st = new ReturnStatus();
-        //    st.data = new List<TimeSheet>();
-
-        //    st = GetAllTimeSheetsByProjectId(projectId);
-        //    if (st.errorCode != ReturnStatus.ALL_CLEAR)
-        //    {
-        //        st.data = 0;
-        //        return st;
-        //    }
-        //    temp = (List<TimeSheet>)st.data;
-        //    if (temp != null && temp.Count() > 0)
-        //    {
-        //        for(int i = 0; i<temp.Count(); i++)
-        //            for(int j = 0; j<=)
-        //        //foreach (TimeSheet project in temp)
-        //        //{
-        //        //    if (users != null && users.Count() > 0)
-        //        //    {
-        //        //        for (int i = 0; i < temp.Count; i++)
-        //        //       // foreach (int userId in users)
-        //        //        {
-        //        //            if (project.user_Id !=users[i])
-        //        //                users.Add(project.user_Id);
-        //        //        }
-        //        //    }
-        //        //    else
-        //        //    {
-        //        //        users.Add(project.user_Id);
-        //        //    }
-                        
-        //        //}
-        //    }
-
-        //    return projectVolunteers;
-        //}
         #endregion
     }
 }

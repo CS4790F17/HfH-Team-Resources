@@ -19,13 +19,9 @@ namespace HabitatForHumanity.Controllers
         // GET: Project
         public ActionResult Index()
         {
-            //create ne VM and retutn that instead. 
-            //New VM will have Name, Begin Date, Total Hrs contributed to it,
-            //total people registerd(maybe), total people who've logged time in it
-            
             List<Project> temp = new List<Project>();
             temp = (List<Project>)Repository.GetAllProjects().data;
-            List<int> tempIds = new List<int>();
+            List<User> userIds = new List<User>();
             List<ProjectIndexVM> index = new List<ProjectIndexVM>();
            
 
@@ -36,8 +32,8 @@ namespace HabitatForHumanity.Controllers
                 projectIndexVM._Id = project.Id;
                 projectIndexVM._beginDate = project.beginDate;
                 projectIndexVM._hoursLogged = (double)Repository.getTotalHoursLoggedIntoProject(project.Id).data;
-               // tempIds = (List<int>)Repository.getProjectVolunteersPerProject(project.Id).data;
-                //projectIndexVM._numVolunteers = tempIds.Count();
+                userIds = (List<User>)TimeSheet.GetUsersbyTimeSheetFilters(project.Id, 0).data;
+                projectIndexVM._numVolunteers = userIds.Count();
                 index.Add(projectIndexVM);
             }
            
@@ -63,6 +59,7 @@ namespace HabitatForHumanity.Controllers
             //include list of people who have logged hrs. 
             //include total hours logged into this project
             //maybe include list of everyone assigned to this project
+            projectVM._hoursLogged = (double)Repository.getTotalHoursLoggedIntoProject(project.Id).data;
             projectVM._Id = project.Id;
             projectVM._name = project.name;
             projectVM._beginDate = project.beginDate;
