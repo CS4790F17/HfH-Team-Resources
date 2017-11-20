@@ -91,7 +91,8 @@
                             break;
                     }
                     <!--Edit Organization-->
-                    @Ajax.ActionLink(" ", "EditOrganization", new { id = item.Id }, new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "divEmp" }, htmlAttributes: new { @class = "editLink" })
+
+                    @Ajax.ActionLink(" ", "EditOrganization", new { id = item.Id }, new AjaxOptions { HttpMethod = "GET", UpdateTargetId = orgId }, htmlAttributes: new { @class = "editLink" })
 
 
 

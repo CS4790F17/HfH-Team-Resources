@@ -238,8 +238,8 @@ namespace HabitatForHumanity.Models
             ReturnStatus st = new ReturnStatus();
 
             var orgStatus = new SqlParameter("@Status", status);
-            var orgName = new SqlParameter("@Name", queryFilter + "%");
-
+            var orgName = new SqlParameter("@Name", "%" + queryFilter + "%");
+            
 
             var orgs = db.organizations.SqlQuery(
                 "SELECT * FROM Organization " +
