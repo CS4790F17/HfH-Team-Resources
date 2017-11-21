@@ -140,6 +140,30 @@ namespace HabitatForHumanity.Controllers
             return View(tsm);
         }
 
+        public ActionResult EditTimeCard(int id)
+        {
+            TimeCardVM card = new TimeCardVM();
+            ReturnStatus rs = Repository.GetTimeSheetById(id);
+            if(rs.errorCode == 0)
+            {
+                TimeSheet t = (TimeSheet)rs.data;
+                card.timeId = t.Id;
+                card.userId = t.user_Id;
+                card.projId = t.project_Id;
+                card.orgId = t.org_Id;
+                card.inTime = t.clockInTime;
+                card.outTime = t.clockOutTime;
+                card.orgName = "test";
+                card.projName = "test";
+                card.volName = "test";
+
+                TimeSpan span = t.clockOutTime.Subtract(t.clockInTime);
+                card.elapsedHrs = span.Minutes / 60.0;             
+            }
+
+            return PartialView("_EditTimeCard", card);
+        }
+
 
         public ActionResult GetHoursChartBy(string period)
         {
@@ -340,6 +364,92 @@ namespace HabitatForHumanity.Controllers
 
             return PartialView("_BadPunches", bp);
         }
+
+        public ActionResult ViewOrganizations(OrganizationSearchModel model)
+        {
+
+            ReturnStatus st = new ReturnStatus();
+
+            switch (model.statusChoice)
+            {
+                case 0:
+                    st = Repository.GetOrganizationByNameSQL(model.queryString);
+                    break;
+                case 1: //active organizations
+                    st = Repository.GetOrganizationSQL(model.queryString, 1);
+                    break;
+                case 2: //inactive organizations
+                    st = Repository.GetOrganizationSQL(model.queryString, 0);
+                    break;
+            }
+
+
+
+
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+
+                List<Organization> orgs = (List<Organization>)st.data;
+                var pageIndex = model.Page ?? 1;
+                model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
+            }
+            else
+            {
+                //fill search results with empty list
+                List<Organization> orgs = new List<Organization>();
+                var pageIndex = model.Page ?? 1;
+                model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
+            }
+
+            //tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult EditOrganization(int id)
+        {
+            ReturnStatus st = Repository.GetOrganizationById(id);
+            return PartialView("OrganizationPartialViews/_EditOrganization", (Organization)st.data);
+        }
+
+        [HttpPost]
+        public JsonResult EditOrganization(Organization org)
+        {
+            //save org
+            Repository.EditOrganization(org);
+            return Json(new { name = org.name, status = org.status, id = org.Id }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public void ChangeOrganizationStatus(int id)
+        {
+            ReturnStatus st = Repository.GetOrganizationById(id);
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                ((Organization)st.data).status = 1 - ((Organization)st.data).status;
+                Repository.EditOrganization((Organization)st.data);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult AddOrganization()
+        {
+            return PartialView("OrganizationPartialViews/_AddOrganization");
+        }
+
+        [HttpPost]
+        public ActionResult AddOrganization(String name)
+        {
+            Organization org = new Organization()
+            {
+                name = name,
+                status = 1 //active by default
+            };
+
+            Repository.AddOrganization(org);
+            return RedirectToAction("ViewOrganizations");
+        }
+
 
         public ActionResult Projects()
         {
