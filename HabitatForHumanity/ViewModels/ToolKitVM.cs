@@ -7,8 +7,24 @@ using System.Web.Mvc;
 
 namespace HabitatForHumanity.ViewModels
 {
-    public class ToolKitVM
+    public static class ToolKitVM
     {
+        public static IHtmlString Modal(string title)
+        {
+            string htmlString = String.Format("<!-- Modal --><div class=\"modal fade\" id=\"adminModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"adminModalLabel\"><div class=\"modal-dialog\" role=\"document\">" +
+                "<div class=\"modal-content\"><div class=\"modal-header\">" +
+                "<button type = \"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
+                "<h4 class=\"modal-title\" id=\"adminModallLabel\">{0}</h4></div>" +
+                " <div class=\"modal-body\">" +
+                "<!--The Div to insert returned partial into--><div id = \"partialTarget\"></div></div></div></div></div>", title);
+            return new HtmlString(htmlString);
+        }
+
+        public static IHtmlString ModalButton(int id)
+        {
+            string htmlString = "<button targetId={0} type=\"button\" class=\"btn editButton\" data-toggle=\"modal\" data-target=\"#adminModal\"><span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span></button>";
+            return new HtmlString(htmlString);
+        }
     }
 
     public class ProjectDropDownList
@@ -85,4 +101,5 @@ namespace HabitatForHumanity.ViewModels
             Organizations = SelectList;
         }
     }
+    
 }
