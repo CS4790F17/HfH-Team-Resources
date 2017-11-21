@@ -1,0 +1,12 @@
+﻿@model List<HabitatForHumanity.Models.Project>
+@{
+    ViewBag.Title = "ManageProjects";
+}
+
+<h2>Manage Projects</h2>
+
+
+<div id="projectList" class="row">
+    @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model);}
+</div>
+

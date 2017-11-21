@@ -1,0 +1,25 @@
+﻿@model List<HabitatForHumanity.Models.Project>
+
+
+<!--Title bar-->
+<div class="row">
+    <div class="col-md-3">@Html.DisplayNameFor(model => model.ElementAt(0).name)</div>
+    <div class="col-md-3">@Html.DisplayNameFor(model => model.ElementAt(0).description)</div>
+    <div class="col-md-3">@Html.DisplayNameFor(model => model.ElementAt(0).beginDate)</div>
+    <div class="col-md-3">@Html.DisplayNameFor(model => model.ElementAt(0).status)</div>
+</div>
+<hr />
+<!--End of Title bar-->
+
+
+<!--List of Projects-->
+@foreach (var project in Model)
+{
+    <div class="row">
+        <div class="col-md-3">@project.name</div>
+        <div class="col-md-3">@project.description</div>
+        <div class="col-md-3">@project.beginDate</div>
+        <div class="col-md-3">@project.status</div>
+    </div>
+}
+<!--End of List of Projects-->

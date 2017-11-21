@@ -452,7 +452,18 @@ namespace HabitatForHumanity.Controllers
         }
 
 
+        #region Manage Projects
 
+        [HttpGet]
+        public ActionResult ManageProjects()
+        {
+            ReturnStatus st = Repository.GetAllProjects();
+            return View((List<Project>)st.data);
+        }
+
+
+
+        #endregion
 
     }
 }
