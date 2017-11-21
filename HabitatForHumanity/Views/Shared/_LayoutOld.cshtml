@@ -11,6 +11,9 @@
     
 </head>
 <body>
+    @*<header>
+        <img src="~/Images/HFHLogo.jpg" class="BannerLogo" style="width:30%; margin-top:15px"/>
+    </header>*@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -21,51 +24,23 @@
                 </button>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-right">
     @{
         if (Session["Username"] != null && Session["isAdmin"] != null && Session["isAdmin"].Equals("isAdmin"))
         {
-            <li><div>
-                <a href='@Url.Action("Dashboard", "Admin")' data-toggle="tooltip" title="Admin Dashboard">
-                    <span>
-                        <img src='~/Images/HFHLogo.jpg' />
-                    </span>
-                </a>
-            </div></li>
-
-            //<li class="glyphicon glyphicon-home" style="color: #54B948">@Html.ActionLink("Home", "Dashboard", "Admin")</li>
             <li>@Html.ActionLink("Volunteers", "Volunteers", "Admin")</li>
             <li>@Html.ActionLink("Time Cards", "TimeCards", "Admin")</li>
             <li>@Html.ActionLink("Projects", "Projects", "Admin")</li>
             <li>@Html.ActionLink("Organizations", "Organizations", "Admin")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
-        }
-        else if (Session["Username"] != null)
-        {
-
-            <li>
-                <div>
-                    <a href='@Url.Action("VolunteerPortal", "User")' data-toggle="tooltip" title="Home">
-                        <span>
-                            <img src='~/Images/HFHLogo.jpg' />
-                        </span>
-                    </a>
-                </div>
-            </li>
+            }
+            else if (Session["Username"] != null)
+            {
             <li>@Html.ActionLink("My Account", "UserProfile", "User")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
-        }
-        else
-        {
-            <li>
-                <div>
-                    <a href='@Url.Action("Login", "User")' data-toggle="tooltip" title="Login">
-                        <span>
-                            <img src='~/Images/HFHLogo.jpg' />
-                        </span>
-                    </a>
-                </div>
-            </li>
+            }
+            else
+            {
             <li>@Html.ActionLink("Create Account", "VolunteerSignup", "User")</li>
             <li>@Html.ActionLink("Log In", "Login", "User")</li>
             }
@@ -75,7 +50,7 @@
             </div>
         </div>
     </div>
-
+   
     <div class="container body-content">
         @{
             if (ViewBag.status != null)
@@ -85,21 +60,21 @@
                 </div>
             }
         }
-        @*<div class="row">
-        <div class="col-md-3 col-md-offset-4"><img src="~/Images/HFHLogo.jpg" style="margin-top:15px" /></div>
-    </div>*@
+        <div class="row">
+            <div class="col-md-3 col-md-offset-4"><img src="~/Images/HFHLogo.jpg" style="margin-top:15px" /></div>
+        </div>
 
         @RenderBody()
         <hr />
-
-        <footer class="HFHFooter">
+        
+        <footer>
             <p>&copy; @DateTime.Now.Year - Habitat for Humanity of Davis and Weber Counties</p>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    <script src="~/Scripts/Highcharts-4.0.1/js/highcharts.js"></script>
+    <script src="~/Scripts/Highcharts-4.0.1/js/highcharts.js"></script>  
     @RenderSection("scripts", required: false)
 </body>
 </html>
