@@ -1,9 +1,27 @@
 ﻿@model HabitatForHumanity.ViewModels.TimeCardSearchModel
 @using PagedList.Mvc;
+@using HabitatForHumanity.ViewModels;
 
 @{
     ViewBag.Title = "Time Sheets";
+    var editHtml = "<span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span>";
 }
+
+@Html.HiddenFor(x => x.Page)
+
+<style>
+    .editButton {
+        background: none;
+    }
+</style>
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<script src="~/Scripts/jquery-3.2.1.js"></script>
+<script src="~/OurScripts/timeCards.js"></script>
+
+@ToolKitVM.Modal("Edit Organization", "editModal", "editPartial")
+
+<div id="divEmp"></div>   @*what is this for ?*@
 
 @using (Html.BeginForm("TimeCards", "Admin", FormMethod.Get))
 {
@@ -21,7 +39,8 @@
             </div>
         </div>
     </div>
-
+}
+@{
     if (Model.SearchResults != null && Model.SearchResults.Count > 0)
     {
         <div class="row">
@@ -37,37 +56,69 @@
         </div>
 
 
-    foreach (var card in Model.SearchResults)
-    {
-        var timeCardId = "timeCard" + card.timeId;
-        string classList = "row well well-sm divlink ";
-        classList += (card.outTime.Hour == 0 && card.outTime.Minute == 0) ? " warning " : "";
-        <div id="@timeCardId" class="@classList" style="margin:1px;">
-            <div class="col-md-2">@card.volName   </div> 
-            <div class="col-md-2">@card.orgName   </div> 
-            <div class="col-md-2">@card.projName  </div> 
-            <div class="col-md-1">@card.inTime.ToString("M/dd/yy")    </div> 
-            <div class="col-md-1">@card.inTime.ToShortTimeString()    </div> 
-            <div class="col-md-1">@card.outTime.ToShortTimeString()   </div>   
-            <div class="col-md-1 text-center"> @string.Format("{0:N2}",card.elapsedHrs) </div>
-            @{ string methodCall = "loadAjaxEdit('#timeCard" + card.timeId.ToString() + "', " + card.timeId.ToString() +  ")";}
-            <div class="col-md-1"><a onclick="@(methodCall)" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit     </a></div>
-        </div>
-        }
+        foreach (var card in Model.SearchResults)
+        {
+            var timeCardId = "timeCard" + card.timeId;
+            string classList = "row well well-sm divlink ";
+            classList += (card.outTime.Hour == 0 && card.outTime.Minute == 0) ? " warning " : "";
+            <div id="@timeCardId" class="@classList" style="margin:1px;">
+                <div class="col-md-2">@card.volName   </div>
+                <div class="col-md-2">@card.orgName   </div>
+                <div class="col-md-2">@card.projName  </div>
+                <div class="col-md-1">@card.inTime.ToString("M/dd/yy")    </div>
+                <div class="col-md-1">@card.inTime.ToShortTimeString()    </div>
+                <div class="col-md-1">@card.outTime.ToShortTimeString()   </div>
+                <div class="col-md-1 text-center"> @string.Format("{0:N2}", card.elapsedHrs) </div>
+                @ToolKitVM.ModalButton("editButton", "editModal", editHtml, card.timeId.ToString())
+                @*@{ string methodCall = "loadAjaxEdit('#timeCard" + card.timeId.ToString() + "', " + card.timeId.ToString() + ")";}
+                <div class="col-md-1"><a onclick="@(methodCall)" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit     </a></div>*@
+            </div>
+                    }
 
-        @Html.PagedListPager(Model.SearchResults,
+                    @Html.PagedListPager(Model.SearchResults,
           page => Url.Action("TimeCards", new RouteValueDictionary()
           {
                { "Page", page },
               {"queryString",Model.queryString }
           }),
           PagedListRenderOptions.PageNumbersOnly)
-    }
-
+                    }
 }
 
-@section Scripts {
+@*@section Scripts {
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/OurScripts/timeCards.js"></script>
-}
+}*@
+<script>
+    //does magic! sets the html of the editing ajax links to by a glyph icon
+    $("document").ready(function () {
+        $(".editLink").html("<span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span >");
+    });
+
+    $(".editButton").click(function () {
+        // console.log('clicked');
+        var id = $(this).attr("dataId");
+        console.log(id);
+        inputData = { 'id': id }
+
+        $.ajax(
+            {
+                url: '/Admin/EditTimeCard',
+                type: 'GET',
+                data: inputData,
+                success: function (response) {
+                    $("#editPartial").html(response);
+                }
+            }
+        );
+
+    })
+
+
+
+    function refresh() {
+        location.reload();
+    }
+</script>
+
 

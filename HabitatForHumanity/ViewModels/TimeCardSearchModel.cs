@@ -25,8 +25,9 @@ namespace HabitatForHumanity.ViewModels
         public int orgId { get; set; }
 
         [Display(Name = "Time In")]
+        [DataType(DataType.DateTime)]
         public DateTime inTime { get; set; }
-
+        [DataType(DataType.DateTime)]
         [Display(Name = "Time Out")]
         public DateTime outTime { get; set; }
 

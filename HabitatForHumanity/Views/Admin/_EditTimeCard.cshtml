@@ -1,52 +1,56 @@
 ﻿@model HabitatForHumanity.ViewModels.TimeCardVM
 
-@*@using (Html.BeginForm())
+@using (Ajax.BeginForm("EditTimeCard", new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }))
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.timeId)
-        @Html.HiddenFor(model => model.userId)
-        @Html.HiddenFor(model => model.projId)
-        @Html.HiddenFor(model => model.orgId)
-
-            <div class="col-md-2">
-                @Html.EditorFor(model => model.volName, new { htmlAttributes = new { @class = "form-control",disabled="disabled" } })
-            </div>  
-            <div class="col-md-2">
-                @Html.EditorFor(model => model.orgName, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-            </div>
-            <div class="col-md-2">
-                @Html.EditorFor(model => model.projName, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-            </div>    
-            <div class="col-md-1">
-                @Html.EditorFor(model => model.Time, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.outTime, "", new { @class = "text-danger" })
-            </div>
-        <div class="col-md-1">
-            @Html.EditorFor(model => model.outTime, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.outTime, "", new { @class = "text-danger" })
+    @Html.HiddenFor(x => x.timeId)
+    @Html.HiddenFor(x => x.userId)
+    @Html.HiddenFor(x => x.projId)
+    @Html.HiddenFor(x => x.orgId)
+    @Html.HiddenFor(x => x.orgName)
+    @Html.HiddenFor(x => x.projName)
+    @Html.HiddenFor(x => x.volName)
+    @Html.HiddenFor(x => x.elapsedHrs)
+    <div>
+        <h4>@Model.volName</h4>
+        <p>@Model.orgName</p>
+        <p>@Model.projName</p>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            Time in:
         </div>
-        <div class="col-md-1">
-            @Html.EditorFor(model => model.outTime, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.outTime, "", new { @class = "text-danger" })
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
+        <div class="col-md-5">
+            @Html.EditorFor(x => x.inTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(x => x.inTime, "", new { @class = "text-danger" })
         </div>
     </div>
-}*@
-<div>
-    <div class="col-md-2">@Model.volName   </div>
-    <div class="col-md-2">@Model.orgName   </div>
-    <div class="col-md-2">@Model.projName  </div>
-    <div class="col-md-1">@Model.inTime.ToString("M/dd/yy")    </div>
-    <div class="col-md-1">@Model.inTime.ToShortTimeString()    </div>
-    <div class="col-md-1">@Model.outTime.ToShortTimeString()   </div>
-    <div class="col-md-1 text-center"> @string.Format("{0:N2}", Model.elapsedHrs) </div>
-    <div class="col-md-1"><a href="#" onclick="save()" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-save"></span> Save    </a></div>
-</div>
+
+    <div class="row">
+        <div class="col-md-2">
+            Time out:
+        </div>
+        <div class="col-md-5">
+            @Html.EditorFor(x => x.outTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(x => x.outTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <input type="submit" value="Save" class="btn btn-default" />
+
+}
+
+<script>
+    function testFunction(data)
+    {
+        var name = data.name;
+        console.log(name);
+        console.log(data.status);
+        var id = data.id;
+        var div = "#org" + id;
+        console.log(div);
+        $(div).text(name);
+        refresh();
+    }
+</script>
