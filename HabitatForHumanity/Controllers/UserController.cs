@@ -40,6 +40,7 @@ namespace HabitatForHumanity.Controllers
         #endregion
 
         #region VolunteerPortal
+        
         public ActionResult VolunteerPortal(int? id)
         {
 
@@ -48,29 +49,25 @@ namespace HabitatForHumanity.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            // user part
-            ReturnStatus st = Repository.GetUser((int)id);
-            if (st.errorCode != ReturnStatus.ALL_CLEAR)
+            ReturnStatus rs = Repository.GetUser((int)id);
+          
+            if(rs.errorCode != 0)
             {
-                return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                return RedirectToAction("Login", "User", new { excMsg = "The system is temporarily down, please try again later." });
             }
 
             return View(Repository.GetPortalVM(id.Value));
-
-
-            // return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
-
         }
 
         
         public ActionResult _PunchOut(int id)
         {
-            ReturnStatus rsTimeSheet = Repository.GetClockedInUserTimeSheet(id);
+            ReturnStatus rs = Repository.GetClockedInUserTimeSheet(id);
 
 
-            if (rsTimeSheet.errorCode == ReturnStatus.ALL_CLEAR)
+            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rsTimeSheet.data);
+                PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rs.data);
                 return PartialView("_PunchOut", punchOutVM);
             }
             else
