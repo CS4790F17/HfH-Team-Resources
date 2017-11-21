@@ -22,7 +22,7 @@ namespace HabitatForHumanity.ViewModels
 
         public static IHtmlString ModalButton(int id)
         {
-            string htmlString = "<button targetId={0} type=\"button\" class=\"btn editButton\" data-toggle=\"modal\" data-target=\"#adminModal\"><span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span></button>";
+            string htmlString = String.Format("<button targetId={0} type=\"button\" class=\"btn editButton\" data-toggle=\"modal\" data-target=\"#adminModal\"><span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span></button>", id);
             return new HtmlString(htmlString);
         }
     }
