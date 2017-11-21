@@ -1,17 +1,36 @@
 ﻿@model HabitatForHumanity.ViewModels.OrganizationSearchModel
 @using PagedList.Mvc;
+@using HabitatForHumanity.ViewModels;
 
 @{
     ViewBag.Title = "Manage Organizations";
+    var editHtml = "<span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span>";
+    var createHtml = "<span class=\"glyphicon glyphicon-plus\" style=\"color:white\" title=\"Activate\"></span>   Add new Organization";
 }
 
 @Html.HiddenFor(x => x.Page)
 @Html.HiddenFor(x => x.statusChoice)
 
+<style>
+    .editButton {
+        background: none
+    }
+
+    .createButton{
+        background-color:forestgreen;
+        color:white
+    }
+</style>
+
 <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script src="~/Scripts/jquery-3.2.1.js"></script>
 
 <h2 style="margin-bottom:100px">Manage Organizations</h2>
+
+
+@ToolKitVM.Modal("Edit Organization", "editModal", "editPartial")
+@ToolKitVM.Modal("Create Organization", "createModal", "createPartial")
+
 
 
 
@@ -20,7 +39,8 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-7">
-            <button class="btn btn-success" id="createOrganization"><span class="glyphicon glyphicon-plus"></span>   Add new Organization</button>
+            @ToolKitVM.ModalButton("createButton", "createModal", createHtml, "")
+          @*  <button class="btn btn-success" id="createOrganization" data-target="#adminModal" data-toggle="modal"><span class="glyphicon glyphicon-plus" style=""></span>   Add new Organization</button>*@
         </div>
 
 
@@ -92,8 +112,8 @@
                             break;
                     }
                     <!--Edit Organization-->
-
-                    @Ajax.ActionLink(" ", "EditOrganization", new { id = item.Id }, new AjaxOptions { HttpMethod = "GET", UpdateTargetId = orgId }, htmlAttributes: new { @class = "editLink" })
+                    @ToolKitVM.ModalButton("editButton", "editModal", editHtml, item.Id.ToString())
+                    @* @Ajax.ActionLink(" ", "EditOrganization", new { id = item.Id }, new AjaxOptions { HttpMethod = "GET", UpdateTargetId = orgId }, htmlAttributes: new { @class = "editLink" })*@
 
 
 
@@ -106,7 +126,7 @@
                 </div>
                 <hr />
             </div>
-          }
+                    }
     </div>
 </div>
 
@@ -137,17 +157,37 @@
         $(".statusDeactivate").html("<span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\" style=\"color:red\"></span>");
     });
 
-    $("#createOrganization").click(function () {
+    $(".createButton").click(function () {
         $.ajax(
             {
                 url: '/Admin/AddOrganization',
                 type: 'GET',
-                success: function loadAddPanel(data) {
-                    $("#divEmp").html(data);
+                success: function (data) {
+                    $("#createPartial").html(data);
                 }
             })
     })
 
+
+
+    $(".editButton").click(function () {
+        // console.log('clicked');
+        var id = $(this).attr("dataId");
+        console.log(id);
+        inputData = { 'id': id }
+
+        $.ajax(
+            {
+                url: '/Admin/EditOrganization',
+                type: 'GET',
+                data: inputData,
+                success: function (response) {
+                    $("#editPartial").html(response);
+                }
+            }
+        );
+
+    })
 
 
 
