@@ -24,10 +24,10 @@
             </div>
             <!--Search filter options-->
             <div>
-                @Html.DropDownListFor(model => model.projectId, Model.projects.Projects, new { @class = "form-control" , onchange = @"form.submit()"})
+                @Html.DropDownListFor(model => model.projectId, Model.projects.Projects, new { @class = "form-control", onchange = @"form.submit()" })
             </div>
             <div>
-                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, new { @class = "form-control" , onchange = @"form.submit()"})
+                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, new { @class = "form-control", onchange = @"form.submit()" })
             </div>
         </div>
         <div class="col-md-9">
@@ -65,10 +65,4 @@
             }
         </div>
     </div>
-
-
-
-
-
-
-                }
+}
