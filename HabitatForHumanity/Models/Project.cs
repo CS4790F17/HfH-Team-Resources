@@ -14,12 +14,17 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
+        [Display(Name = "Project Name")]
         public string name { get; set; }
         [Display(Name = "Description")]
         public string description { get; set; }
+        [Display(Name = "Begin Date")]
         public DateTime beginDate { get; set; }
         public int status { get; set; }
-
+        //[Display(Name = "Total Hours Logged ")]
+        //public double hoursLogged { get; set; }
+        //[Display(Name = "Total Volunteers")]
+        //public double numVolunteers { get; set; }
 
         public Project()
         {
@@ -43,16 +48,24 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 projects = db.projects.ToList();
-                
+                //foreach (Project p in projects)
+                //{
+                //    add up total hours
+
+
+                //    p.hoursLogged = (double)Repository.getTotalHoursLoggedIntoProject(p.Id).data;
+                //    add up total people
+                //}
+
             }
             catch (Exception e)
             {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
-                st.data = "Could not connect to database. Try again later.";
-                return st;
-            }
-            st.errorCode = ReturnStatus.ALL_CLEAR;
+                    st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                    st.errorMessage = e.ToString();
+                    st.data = "Could not connect to database. Try again later.";
+                    return st;
+                }
+                st.errorCode = ReturnStatus.ALL_CLEAR;
             st.errorMessage = "";
             st.data = projects;
             return st;

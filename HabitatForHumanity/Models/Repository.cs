@@ -844,6 +844,45 @@ namespace HabitatForHumanity.Models
         {
             return TimeSheet.GetBadTimeSheets();
         }
+
+        /// <summary>
+        /// return total hours logged into given project
+        /// </summary>
+        /// <param name="volunteerId"></param>
+        /// <returns></returns>
+        public static ReturnStatus getTotalHoursLoggedIntoProject(int projectId)
+        {
+            ReturnStatus hoursLogged = new ReturnStatus();
+            hoursLogged.data = 0.0;
+
+
+            DateTime userClockedIn = DateTime.Today.AddDays(1);
+            List<TimeSheet> temp = new List<TimeSheet>();
+            List<TimeSheet> volunteerHours = new List<TimeSheet>();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+
+            st = GetAllTimeSheetsByProjectId(projectId);
+            if (st.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                st.data = 0.0;
+                return st;
+            }
+            temp = (List<TimeSheet>)st.data;
+            if (temp != null && temp.Count() > 0)
+            {
+                foreach (TimeSheet ts in temp)
+                {
+                    if (ts.clockOutTime != userClockedIn)
+                        volunteerHours.Add(ts);
+                }
+                TimeSpan totalHours = AddTimeSheetHours(volunteerHours);
+                hoursLogged.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+            }
+
+            return hoursLogged;
+        }
+
         #endregion
     }
 }

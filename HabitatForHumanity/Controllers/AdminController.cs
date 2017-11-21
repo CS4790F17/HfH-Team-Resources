@@ -365,7 +365,6 @@ namespace HabitatForHumanity.Controllers
             return PartialView("_BadPunches", bp);
         }
 
-
         public ActionResult ViewOrganizations(OrganizationSearchModel model)
         {
 
@@ -452,7 +451,10 @@ namespace HabitatForHumanity.Controllers
         }
 
 
-
+        public ActionResult Projects()
+        {
+            return RedirectToAction("Index", "Project");
+        }
 
     }
 }
