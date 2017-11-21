@@ -39,14 +39,33 @@
             <li>@Html.ActionLink("Projects", "Projects", "Admin")</li>
             <li>@Html.ActionLink("Organizations", "Organizations", "Admin")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
-            }
-            else if (Session["Username"] != null)
-            {
+        }
+        else if (Session["Username"] != null)
+        {
+
+            <li>
+                <div>
+                    <a href='@Url.Action("VolunteerPortal", "User")' data-toggle="tooltip" title="Home">
+                        <span>
+                            <img src='~/Images/HFHLogo.jpg' />
+                        </span>
+                    </a>
+                </div>
+            </li>
             <li>@Html.ActionLink("My Account", "UserProfile", "User")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
-            }
-            else
-            {
+        }
+        else
+        {
+            <li>
+                <div>
+                    <a href='@Url.Action("Login", "User")' data-toggle="tooltip" title="Login">
+                        <span>
+                            <img src='~/Images/HFHLogo.jpg' />
+                        </span>
+                    </a>
+                </div>
+            </li>
             <li>@Html.ActionLink("Create Account", "VolunteerSignup", "User")</li>
             <li>@Html.ActionLink("Log In", "Login", "User")</li>
             }
