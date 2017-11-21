@@ -539,6 +539,18 @@ namespace HabitatForHumanity.Models
         }
         #endregion timecard vms
 
+        public static ReturnStatus EditTimeCard(TimeCardVM card)
+        {
+            TimeSheet ts = new TimeSheet();
+            ts.Id = card.timeId;
+            ts.user_Id = card.userId;
+            ts.project_Id = card.projId;
+            ts.org_Id = card.orgId;
+            ts.clockInTime = card.inTime;
+            ts.clockOutTime = card.outTime;
+
+            return EditTimeSheet(ts);
+        }
 
         /// <summary>
         /// Gets the record in the timesheet table by it's natural key: user_id+project_id+clockInTime.
