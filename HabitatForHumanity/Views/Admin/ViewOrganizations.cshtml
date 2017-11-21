@@ -1,5 +1,6 @@
 ﻿@model HabitatForHumanity.ViewModels.OrganizationSearchModel
 @using PagedList.Mvc;
+@using HabitatForHumanity.ViewModels;
 
 @{
     ViewBag.Title = "Manage Organizations";
@@ -7,12 +8,18 @@
 
 @Html.HiddenFor(x => x.Page)
 @Html.HiddenFor(x => x.statusChoice)
-
+<style>
+    .editButton {
+        background:none
+    }
+</style>
 <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script src="~/Scripts/jquery-3.2.1.js"></script>
 
 <h2 style="margin-bottom:100px">Manage Organizations</h2>
 
+
+@ToolKitVM.Modal("Edit Organization")
 
 
 <div id="divEmp"></div>
@@ -92,8 +99,8 @@
                             break;
                     }
                     <!--Edit Organization-->
-
-                    @Ajax.ActionLink(" ", "EditOrganization", new { id = item.Id }, new AjaxOptions { HttpMethod = "GET", UpdateTargetId = orgId }, htmlAttributes: new { @class = "editLink" })
+                    @ToolKitVM.ModalButton(item.Id)
+                   @* @Ajax.ActionLink(" ", "EditOrganization", new { id = item.Id }, new AjaxOptions { HttpMethod = "GET", UpdateTargetId = orgId }, htmlAttributes: new { @class = "editLink" })*@
 
 
 
@@ -106,7 +113,7 @@
                 </div>
                 <hr />
             </div>
-          }
+                    }
     </div>
 </div>
 
@@ -148,6 +155,26 @@
             })
     })
 
+
+
+    $(".editButton").click(function () {
+       // console.log('clicked');
+        var id = $(this).attr("targetId");
+        console.log(id);
+        inputData = { 'id': id }
+
+        $.ajax(
+            {
+                url: '/Admin/EditOrganization',
+                type: 'GET',
+                data: inputData,
+                success: function (response) {
+                    $("#partialTarget").html(response);
+                }
+            }
+        );
+
+    })
 
 
 
