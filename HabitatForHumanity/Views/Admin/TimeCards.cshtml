@@ -21,23 +21,6 @@
             </div>
         </div>
     </div>
-    @*<table style="border:0px; width:500px;">
-        <tr>
-            <td>
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.queryString)
-                </div>
-
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.queryString)
-                    @Html.ValidationMessageFor(model => model.queryString)
-                </div>
-            </td>
-            <td style="vertical-align:bottom;">
-                <input name="SearchButton" type="submit" value="Search" />
-            </td>
-        </tr>
-    </table>*@
 
     if (Model.SearchResults != null && Model.SearchResults.Count > 0)
     {
@@ -54,46 +37,24 @@
         </div>
 
 
-        foreach (var card in Model.SearchResults)
-        {
-            var timeCardId = "timeCard" + card.timeId;
-            <div id="@timeCardId" class="row well well-sm divlink" style="margin:1px;">
-                <div class="col-md-2">@card.volName   </div> 
-                <div class="col-md-2">@card.orgName   </div> 
-                <div class="col-md-2">@card.projName  </div> 
-                <div class="col-md-1">@card.inTime.ToString("M/dd/yy")    </div> 
-                <div class="col-md-1">@card.inTime.ToShortTimeString()    </div> 
-                <div class="col-md-1">@card.outTime.ToShortTimeString()   </div>   
-                <div class="col-md-1 text-center"> @string.Format("{0:N2}",card.elapsedHrs) </div>
-                <div class="col-md-1"><a href="#" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit     </a></div>
-           
-            </div>
+    foreach (var card in Model.SearchResults)
+    {
+        var timeCardId = "timeCard" + card.timeId;
+        string classList = "row well well-sm divlink ";
+        classList += (card.outTime.Hour == 0 && card.outTime.Minute == 0) ? " warning " : "";
+        <div id="@timeCardId" class="@classList" style="margin:1px;">
+            <div class="col-md-2">@card.volName   </div> 
+            <div class="col-md-2">@card.orgName   </div> 
+            <div class="col-md-2">@card.projName  </div> 
+            <div class="col-md-1">@card.inTime.ToString("M/dd/yy")    </div> 
+            <div class="col-md-1">@card.inTime.ToShortTimeString()    </div> 
+            <div class="col-md-1">@card.outTime.ToShortTimeString()   </div>   
+            <div class="col-md-1 text-center"> @string.Format("{0:N2}",card.elapsedHrs) </div>
+            @{ string methodCall = "loadAjaxEdit('#timeCard" + card.timeId.ToString() + "', " + card.timeId.ToString() +  ")";}
+            <div class="col-md-1"><a onclick="@(methodCall)" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit     </a></div>
+        </div>
         }
 
-
-
-
-        @*<table class="table" style="width:500px;">
-            <tr>
-                <th>Volunteer   </th>
-                <th>Organization</th>
-                <th>Project     </th>
-                <th>Time In     </th>
-                <th>Time Out     </th>
-                <th>Hours       </th>
-            </tr>
-            @foreach (var card in Model.SearchResults)
-            {
-                <tr>
-                    <td>@card.volName</td>
-                    <td>@card.orgName</td>
-                    <td>@card.projName</td>
-                    <td>@card.inTime</td>
-                    <td>@card.outTime</td>
-                    <td>@card.elapsedHrs</td>
-                </tr>
-            }
-        </table>*@
         @Html.PagedListPager(Model.SearchResults,
           page => Url.Action("TimeCards", new RouteValueDictionary()
           {
@@ -103,5 +64,10 @@
           PagedListRenderOptions.PageNumbersOnly)
     }
 
+}
+
+@section Scripts {
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/OurScripts/timeCards.js"></script>
 }
 

@@ -208,6 +208,7 @@
     <Content Include="Images\Habitat For Humanity logo.jpg" />
     <Content Include="Images\hfhwd logo %281%29.jpg" />
     <Content Include="OurScripts\Charts.js" />
+    <Content Include="OurScripts\timeCards.js" />
     <Content Include="OurScripts\timePunch.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -319,6 +320,7 @@
     <Content Include="Views\Admin\ViewOrganizations.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_AddOrganization.cshtml" />
+    <Content Include="Views\Admin\_EditTimeCard.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -140,6 +140,30 @@ namespace HabitatForHumanity.Controllers
             return View(tsm);
         }
 
+        public ActionResult EditTimeCard(int id)
+        {
+            TimeCardVM card = new TimeCardVM();
+            ReturnStatus rs = Repository.GetTimeSheetById(id);
+            if(rs.errorCode == 0)
+            {
+                TimeSheet t = (TimeSheet)rs.data;
+                card.timeId = t.Id;
+                card.userId = t.user_Id;
+                card.projId = t.project_Id;
+                card.orgId = t.org_Id;
+                card.inTime = t.clockInTime;
+                card.outTime = t.clockOutTime;
+                card.orgName = "test";
+                card.projName = "test";
+                card.volName = "test";
+
+                TimeSpan span = t.clockOutTime.Subtract(t.clockInTime);
+                card.elapsedHrs = span.Minutes / 60.0;             
+            }
+
+            return PartialView("_EditTimeCard", card);
+        }
+
 
         public ActionResult GetHoursChartBy(string period)
         {
