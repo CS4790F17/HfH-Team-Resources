@@ -478,7 +478,7 @@ namespace HabitatForHumanity.Models
                         orgName = GetOrgName(ts.org_Id),
                         projName = GetProjName(ts.project_Id),
                         volName = GetVolName(ts.user_Id),
-                        elapsedHrs = span.Minutes / 60.0
+                        elapsedHrs = span.Hours + span.Minutes / 60.0
                     });
                 }
                 timeCardsReturn.data = cards;
