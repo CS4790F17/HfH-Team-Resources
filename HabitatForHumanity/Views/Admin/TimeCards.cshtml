@@ -12,62 +12,81 @@
     <div class="row" style="margin-top:10px">
         <div class="col-xs-5">
             <div class="input-group" style="width:100px">
-                @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Search", @class = "form-control", @style = "width:auto" } })
-                <span class="input-group-btn">
-                    <button class="btn btn-default">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-                </span>
+                @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Search Name", @class = "form-control", @style = "width:auto" } })
+                @*<span class="input-group-btn">
+                        <button class="btn btn-default">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>*@
             </div>
         </div>
     </div>
-
-    if (Model.SearchResults != null && Model.SearchResults.Count > 0)
-    {
-        <div class="row">
-            <div class="col-md-2"><h4>Volunteer   </h4></div>
-            <div class="col-md-2"><h4>Organization</h4></div>
-            <div class="col-md-2"><h4>Project     </h4></div>
-            <div class="col-md-1"><h4>Date     </h4></div>
-            <div class="col-md-1"><h4>Time In     </h4></div>
-            <div class="col-md-1"><h4>Time Out    </h4></div>
-            <div class="col-md-1"><h4>Hours       </h4></div>
-            <div class="col-md-1"></div>
-
+    <div class="row" style="margin-top:5px">
+        <div class="col-xs-5">
+            <div class="input-group" style="width:100px">
+                @Html.DropDownListFor(model => model.orgId, Model.odd.Organizations, new { htmlAttributes = new { @class = "form-control", @style = "width:auto" } })
+            </div>
         </div>
-
-
-    foreach (var card in Model.SearchResults)
-    {
-        var timeCardId = "timeCard" + card.timeId;
-        string classList = "row well well-sm divlink ";
-        classList += (card.outTime.Hour == 0 && card.outTime.Minute == 0) ? " warning " : "";
-        <div id="@timeCardId" class="@classList" style="margin:1px;">
-            <div class="col-md-2">@card.volName   </div> 
-            <div class="col-md-2">@card.orgName   </div> 
-            <div class="col-md-2">@card.projName  </div> 
-            <div class="col-md-1">@card.inTime.ToString("M/dd/yy")    </div> 
-            <div class="col-md-1">@card.inTime.ToShortTimeString()    </div> 
-            <div class="col-md-1">@card.outTime.ToShortTimeString()   </div>   
-            <div class="col-md-1 text-center"> @string.Format("{0:N2}",card.elapsedHrs) </div>
-            @{ string methodCall = "loadAjaxEdit('#timeCard" + card.timeId.ToString() + "', " + card.timeId.ToString() +  ")";}
-            <div class="col-md-1"><a onclick="@(methodCall)" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit     </a></div>
+    </div>
+    <div class="row" style="margin-top:5px">
+        <div class="col-xs-5">
+            <div class="input-group" style="width:100px">
+                @Html.DropDownListFor(model => model.projId, Model.pdd.Projects, new { htmlAttributes = new { @class = "form-control", @style = "width:auto" } })
+            </div>
         </div>
-        }
+    </div>
+    <div class="row" style="margin-top:5px">
+        <div class="col-xs-5">
+            <button type="submit" value="Search">Search</button>
+        </div>
+    </div>
+    <hr />
+            if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+            {
+            <div class="row">
+                <div class="col-md-2"><h4>Volunteer   </h4></div>
+                <div class="col-md-2"><h4>Organization</h4></div>
+                <div class="col-md-2"><h4>Project     </h4></div>
+                <div class="col-md-1"><h4>Date     </h4></div>
+                <div class="col-md-1"><h4>Time In     </h4></div>
+                <div class="col-md-1"><h4>Time Out    </h4></div>
+                <div class="col-md-1"><h4>Hours       </h4></div>
+                <div class="col-md-1"></div>
 
-        @Html.PagedListPager(Model.SearchResults,
-          page => Url.Action("TimeCards", new RouteValueDictionary()
-          {
-               { "Page", page },
-              {"queryString",Model.queryString }
-          }),
-          PagedListRenderOptions.PageNumbersOnly)
-    }
+            </div>
 
-}
 
-@section Scripts {
-    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="~/OurScripts/timeCards.js"></script>
-}
+            foreach (var card in Model.SearchResults)
+            {
+            var timeCardId = "timeCard" + card.timeId;
+            string classList = "row well well-sm divlink ";
+            classList += (card.outTime.Hour == 0 && card.outTime.Minute == 0) ? " warning " : "";
+            <div id="@timeCardId" class="@classList" style="margin:1px;">
+                <div class="col-md-2">@card.volName   </div>
+                <div class="col-md-2">@card.orgName   </div>
+                <div class="col-md-2">@card.projName  </div>
+                <div class="col-md-1">@card.inTime.ToString("M/dd/yy")    </div>
+                <div class="col-md-1">@card.inTime.ToShortTimeString()    </div>
+                <div class="col-md-1">@card.outTime.ToShortTimeString()   </div>
+                <div class="col-md-1 text-center"> @string.Format("{0:N2}", card.elapsedHrs) </div>
+                @{ string methodCall = "loadAjaxEdit('#timeCard" + card.timeId.ToString() + "', " + card.timeId.ToString() + ")";}
+                <div class="col-md-1"><a onclick="@(methodCall)" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit     </a></div>
+            </div>
+            }
+
+            @Html.PagedListPager(Model.SearchResults,
+        page => Url.Action("TimeCards", new RouteValueDictionary()
+        {
+            { "Page", page },
+            {"queryString",Model.queryString }
+        }),
+        PagedListRenderOptions.PageNumbersOnly)
+            }
+
+            }
+
+            @section Scripts {
+                <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+                <script src="~/OurScripts/timeCards.js"></script>
+            }
 

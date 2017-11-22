@@ -10,11 +10,14 @@ namespace HabitatForHumanity.ViewModels
     public class TimeCardSearchModel
     {
         public int? Page { get; set; }
-
+        public int projId { get; set; }
+        public int orgId { get; set; }
         [Display(Name = "Name or email")]
         public string queryString { get; set; }
         public IPagedList<TimeCardVM> SearchResults { get; set; }
         public string SearchButton { get; set; }
+        public ProjectDropDownList pdd = new ProjectDropDownList();
+        public OrganizationDropDownList odd = new OrganizationDropDownList();
     }
 
     public class TimeCardVM

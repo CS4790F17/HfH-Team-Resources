@@ -75,10 +75,10 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
-            int orgNum = 2;
-            int projNum = 3;
+            int orgNum = tsm.orgId;
+            int projNum = tsm.projId;
             DateTime strt = Convert.ToDateTime("1/1/1950");
-            DateTime end = Convert.ToDateTime("11/17/2017");
+            DateTime end = Convert.ToDateTime("12/31/2017");
             ReturnStatus rs = Repository.GetTimeCardsByFilters(orgNum, projNum, strt, end);
 
             if (!string.IsNullOrEmpty(tsm.queryString) || tsm.Page.HasValue)
