@@ -8,6 +8,7 @@ using System.Web.Helpers;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace HabitatForHumanity.Models
 {
@@ -264,6 +265,10 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
+                user.homePhoneNumber = user.homePhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.homePhoneNumber = Regex.Replace(user.homePhoneNumber, @"\s", "");
+                user.workPhoneNumber = user.workPhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.workPhoneNumber = Regex.Replace(user.workPhoneNumber, @"\s", "");
                 db.users.Add(user);
                 db.SaveChanges();
                 st.errorCode = (int)ReturnStatus.ALL_CLEAR;
@@ -340,6 +345,14 @@ namespace HabitatForHumanity.Models
                 st.errorCode = (int)ReturnStatus.ALL_CLEAR;
 
                 VolunteerDbContext db = new VolunteerDbContext();
+                user.homePhoneNumber = user.homePhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.homePhoneNumber = Regex.Replace(user.homePhoneNumber, @"\s", "");
+                user.workPhoneNumber = user.workPhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.workPhoneNumber = Regex.Replace(user.workPhoneNumber, @"\s", "");
+                user.emergencyHomePhone = user.homePhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.emergencyHomePhone = Regex.Replace(user.homePhoneNumber, @"\s", "");
+                user.emergencyWorkPhone = user.workPhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.emergencyWorkPhone = Regex.Replace(user.workPhoneNumber, @"\s", "");
                 db.Entry(user).State = EntityState.Modified;
                 db.SaveChanges();
 

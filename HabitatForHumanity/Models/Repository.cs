@@ -120,12 +120,12 @@ namespace HabitatForHumanity.Models
     /// <param name="user"></param>
     public static ReturnStatus CreateVolunteer(User user)
         {
-            //if (user.password != null)
-            //{
-            //    user.password = Crypto.HashPassword(user.password);
-            //}
+            if (user.password != null)
+            {
+                user.password = Crypto.HashPassword(user.password);
+            }
             //User.CreateVolunteer(user);
-            return User.CreateUser(user);
+            return User.CreateVolunteer(user);
         }
 
         /// <summary>

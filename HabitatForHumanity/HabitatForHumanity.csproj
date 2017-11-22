@@ -161,6 +161,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\BadPunchVM.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
+    <Compile Include="ViewModels\IsEditingVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\OrganizationSearchModel.cs" />
     <Compile Include="ViewModels\OrganizationVM.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="ViewModels\ToolKitVM.cs" />
     <Compile Include="ViewModels\UsersVM.cs" />
     <Compile Include="ViewModels\VolunteerSearchModel.cs" />
+    <Compile Include="ViewModels\UserProfileVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Volunteer.mdf" />
@@ -317,12 +319,14 @@
     <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
+    <Content Include="Views\User\UserProfile.cshtml" />
+    <Content Include="Views\User\_EditProfile.cshtml" />
+    <Content Include="Views\User\_ViewProfile.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Admin\ViewOrganizations.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_AddOrganization.cshtml" />
     <Content Include="Views\Admin\_EditTimeCard.cshtml" />
-
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
