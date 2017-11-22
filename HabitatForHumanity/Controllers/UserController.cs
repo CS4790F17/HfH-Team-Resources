@@ -59,7 +59,7 @@ namespace HabitatForHumanity.Controllers
             return View(Repository.GetPortalVM(id.Value));
         }
 
-        
+
         public ActionResult _PunchOut(int id)
         {
             ReturnStatus rs = Repository.GetClockedInUserTimeSheet(id);
@@ -78,8 +78,6 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
-
-       
         public ActionResult _PunchIn(int id)
         {
             ReturnStatus rsPunch = Repository.GetPunchInVM(id);
@@ -97,7 +95,106 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
+        public ActionResult UserProfile()
+        {
+            if (Session["UserName"] != null)
+            {
+                IsEditingVM isEdit = new IsEditingVM();
+                isEdit.isEditing = false;
+                return View(isEdit);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
 
+        public ActionResult _ViewProfile()
+        {
+            if (Session["UserName"] != null)
+            {
+                UserProfileVM userProfile = new UserProfileVM();
+                User user = (User)Repository.GetUserByEmail(Session["UserName"].ToString()).data;
+                if (user == null)
+                {
+                    return RedirectToAction("Login", "User");
+                }
+                userProfile.firstName = user.firstName;
+                userProfile.lastName = user.lastName;
+                userProfile.homePhone = user.homePhoneNumber;
+                userProfile.workPhone = user.workPhoneNumber;
+                userProfile.userEmail = Session["UserName"].ToString();
+                userProfile.streetAddress = user.streetAddress;
+                userProfile.city = user.city;
+                userProfile.zip = user.zip;
+                userProfile.newPassword = "";
+                userProfile.confirmPassword = "";
+                return PartialView(userProfile);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+        [HttpGet]
+        public ActionResult _EditProfile()
+        {
+            if (Session["UserName"] != null)
+            {
+                UserProfileVM userProfile = new UserProfileVM();
+                User user = (User) Repository.GetUserByEmail(Session["UserName"].ToString()).data;
+                if (user == null)
+                {
+                    return RedirectToAction("Login", "User");
+                }
+                userProfile.firstName = user.firstName;
+                userProfile.lastName = user.lastName;
+                userProfile.homePhone = user.homePhoneNumber;
+                userProfile.workPhone = user.workPhoneNumber;
+                userProfile.userEmail = Session["UserName"].ToString();
+                userProfile.streetAddress = user.streetAddress;
+                userProfile.city = user.city;
+                userProfile.zip = user.zip;
+                userProfile.newPassword = "";
+                userProfile.confirmPassword = "";
+                return PartialView(userProfile);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult _EditProfile([Bind(Include = "firstName,lastName,homePhone,workPhone,userEmail,streetAddress,city,zip,newPassword,confirmPassword")] UserProfileVM userProfile)
+        {
+            if (Session["UserName"] == null)
+            {
+                return RedirectToAction("Login", "User");
+            }
+            if (ModelState.IsValid)
+            {
+                User user = (User) Repository.GetUserByEmail(Session["UserName"].ToString()).data;
+                if (userProfile.newPassword != null)
+                {
+                    user.password = Crypto.HashPassword(user.password);
+                }
+                user.firstName = userProfile.firstName;
+                user.lastName = userProfile.lastName;
+                user.homePhoneNumber = userProfile.homePhone;
+                user.workPhoneNumber = userProfile.workPhone;
+                user.streetAddress = userProfile.streetAddress;
+                user.city = userProfile.city;
+                user.zip = userProfile.zip;
+                db.Entry(user).State = EntityState.Modified; 
+                db.SaveChanges();
+                return RedirectToAction("UserProfile", "User");
+            }
+            ViewBag.status = "An Error Has Occured";
+            return View(userProfile);
+        }
 
         #endregion
 
