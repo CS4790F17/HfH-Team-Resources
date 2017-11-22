@@ -315,6 +315,7 @@
     <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
+    <Content Include="Views\Admin\EditVolunteer.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

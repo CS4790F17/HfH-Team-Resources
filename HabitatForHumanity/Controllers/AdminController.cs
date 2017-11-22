@@ -286,6 +286,82 @@ namespace HabitatForHumanity.Controllers
 
         }
 
+        // GET: Admin/EditVolunteer
+        public ActionResult EditVolunteer(int id)
+        {
+            ReturnStatus getUser = Repository.GetUser(id);
+            ReturnStatus getTimeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
+
+            if (getUser.errorCode != 0)
+            {
+                ViewBag.status = "There was a problem getting that user. Please try again later";
+                return RedirectToAction("Volunteers", "Admin");
+            }
+            else if (getTimeSheets.errorCode != 0)
+            {
+                ViewBag.status = "There was a problem getting that user's time sheets. Please try again later";
+                return RedirectToAction("Volunteers", "Admin");
+            }
+            else
+            {
+                User user = new User();
+                user = (User)getUser.data;
+
+                UsersVM volunteer = new UsersVM();
+                volunteer.userNumber = user.Id;
+                // force all name to not be null for simple comparison in controller
+                volunteer.volunteerName = user.firstName ?? "NoName" + " " + user.lastName ?? "NoName";
+                volunteer.email = user.emailAddress;
+                volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
+                if (volunteer.waiverExpiration > DateTime.Now)
+                {
+                    volunteer.waiverStatus = true;
+                }
+                else
+                {
+                    volunteer.waiverStatus = false;
+                }
+                volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+
+                List<TimeSheet> timeSheets = new List<TimeSheet>();
+                timeSheets = (List<TimeSheet>)getTimeSheets.data;
+
+                int i = 0;
+                double hours = 0.0;
+                foreach (TimeSheet t in timeSheets)
+                {
+                    volunteer.timeCardVM[i].timeId = t.Id;
+                    ReturnStatus orgRS = Repository.GetOrganizationById(t.org_Id);
+                    if (orgRS.errorCode == 0)
+                    {
+                        volunteer.timeCardVM[i].orgName = (String)orgRS.data;
+                    }
+                    ReturnStatus projRS = Repository.GetProjectById(t.project_Id);
+                    if (projRS.errorCode == 0)
+                    {
+                        volunteer.timeCardVM[i].projName = (String)projRS.data;
+                    }
+                    volunteer.timeCardVM[i].inTime = t.clockInTime;
+                    volunteer.timeCardVM[i].outTime = t.clockOutTime;
+                    TimeSpan elapsedHrs = t.clockOutTime.Subtract(t.clockInTime);
+                    hours = Math.Round(elapsedHrs.TotalHours, 2, MidpointRounding.AwayFromZero);
+                    volunteer.timeCardVM[i].elapsedHrs = hours;
+
+                    
+                    i++;
+                }
+                return View(volunteer);
+            }
+        }
+
+        //// POST: Admin/EditVolunteer
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult EditVolunteer([Bind(Include = "")] UsersVM usersVM)
+        //{
+
+        //}
+
         public ActionResult GetBadPunches()
         {
             ReturnStatus badTimeSheets = Repository.GetBadTimeSheets();
