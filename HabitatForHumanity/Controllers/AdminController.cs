@@ -325,31 +325,33 @@ namespace HabitatForHumanity.Controllers
 
                 List<TimeSheet> timeSheets = new List<TimeSheet>();
                 timeSheets = (List<TimeSheet>)getTimeSheets.data;
+                List<TimeCardVM> test = new List<TimeCardVM>();
 
-                int i = 0;
                 double hours = 0.0;
                 foreach (TimeSheet t in timeSheets)
                 {
-                    volunteer.timeCardVM[i].timeId = t.Id;
+                    TimeCardVM temp = new TimeCardVM();
+                    temp.timeId = t.Id;
+                    temp.volName = volunteer.volunteerName;
                     ReturnStatus orgRS = Repository.GetOrganizationById(t.org_Id);
                     if (orgRS.errorCode == 0)
                     {
-                        volunteer.timeCardVM[i].orgName = (String)orgRS.data;
+                        temp.orgName = ((Organization)orgRS.data).name;
                     }
                     ReturnStatus projRS = Repository.GetProjectById(t.project_Id);
                     if (projRS.errorCode == 0)
                     {
-                        volunteer.timeCardVM[i].projName = (String)projRS.data;
+                        temp.projName = ((Project)projRS.data).name;
                     }
-                    volunteer.timeCardVM[i].inTime = t.clockInTime;
-                    volunteer.timeCardVM[i].outTime = t.clockOutTime;
+                    temp.inTime = t.clockInTime;
+                    temp.outTime = t.clockOutTime;
                     TimeSpan elapsedHrs = t.clockOutTime.Subtract(t.clockInTime);
                     hours = Math.Round(elapsedHrs.TotalHours, 2, MidpointRounding.AwayFromZero);
-                    volunteer.timeCardVM[i].elapsedHrs = hours;
+                    temp.elapsedHrs = hours;
 
-                    
-                    i++;
+                    test.Add(temp);
                 }
+                volunteer.timeCardVM = test;
                 return View(volunteer);
             }
         }
