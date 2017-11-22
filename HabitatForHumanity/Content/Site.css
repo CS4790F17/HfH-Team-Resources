@@ -1,5 +1,5 @@
 ﻿body {
-    padding-top: 50px;
+    padding-top: 105px;
     padding-bottom: 20px;
 }
 
@@ -24,14 +24,8 @@ textarea {
 }
 
 .navbar {
-    background-color: #005596;
-}
-
-.BannerLogo{
-    display: block;
-    margin : auto;
-    padding-bottom: 30px;
-    width: 40%;
+    background-color: #fff;
+    border-bottom: none;
 }
 
 .HFHFooter{

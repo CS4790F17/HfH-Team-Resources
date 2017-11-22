@@ -1,5 +1,5 @@
 ﻿@model HabitatForHumanity.Models.Organization
-@using (Ajax.BeginForm("EditOrganization", new AjaxOptions {  HttpMethod = "POST", OnSuccess="testFunction(data)" }))
+@using (Ajax.BeginForm("EditOrganization", new AjaxOptions {  HttpMethod = "POST", OnSuccess = "refresh()" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(x => x.Id)

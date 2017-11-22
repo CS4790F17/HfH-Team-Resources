@@ -164,6 +164,29 @@ namespace HabitatForHumanity.Controllers
             return PartialView("_EditTimeCard", card);
         }
 
+        [HttpPost]
+        //public JsonResult EditTimeCard(TimeCardVM card)
+        public ActionResult EditTimeCard(TimeCardVM card)
+        {
+            ReturnStatus rs = Repository.EditTimeCard(card);
+            //return Json(new {
+            //    timeId = card.timeId,
+            //    userId = card.userId,
+            //    projId = card.projId,
+            //    inTime = card.inTime,
+            //    outTime = card.outTime,
+            //    orgName = card.orgName,
+            //    projName = card.projName,
+            //    volName = "holy canoli",//card.volName,
+            //    elapsedHrs = card.elapsedHrs
+            //    }, JsonRequestBehavior.AllowGet);
+            if(rs.errorCode == 0)
+            {
+                return RedirectToAction("Timecards");
+            }
+            return RedirectToAction("Dashboard");
+        }
+
 
         public ActionResult GetHoursChartBy(string period)
         {
@@ -365,7 +388,6 @@ namespace HabitatForHumanity.Controllers
             return PartialView("_BadPunches", bp);
         }
 
-
         public ActionResult ViewOrganizations(OrganizationSearchModel model)
         {
 
@@ -452,7 +474,10 @@ namespace HabitatForHumanity.Controllers
         }
 
 
-
+        public ActionResult Projects()
+        {
+            return RedirectToAction("Index", "Project");
+        }
 
     }
 }
