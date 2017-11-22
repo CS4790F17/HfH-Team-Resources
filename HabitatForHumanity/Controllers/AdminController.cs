@@ -27,12 +27,12 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult Volunteers(VolunteerSearchModel vsm)
         {
-            if(vsm.projects == null)
+            if (vsm.projects == null)
             {
                 vsm = new VolunteerSearchModel();
                 return View(vsm);
             }
-            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId,vsm.orgId);
+            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId, vsm.orgId);
 
             if (rs.errorCode == 0)
             {
@@ -57,12 +57,12 @@ namespace HabitatForHumanity.Controllers
                 }
                 else
                 {
-                   
+
                     var pageIndex = vsm.Page ?? 1;
                     vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
                 }
             }
-            else if(rs.errorCode == -1)
+            else if (rs.errorCode == -1)
             {
                 ViewBag.status = "Broke in repo";
             }
@@ -144,7 +144,7 @@ namespace HabitatForHumanity.Controllers
         {
             TimeCardVM card = new TimeCardVM();
             ReturnStatus rs = Repository.GetTimeSheetById(id);
-            if(rs.errorCode == 0)
+            if (rs.errorCode == 0)
             {
                 TimeSheet t = (TimeSheet)rs.data;
                 card.timeId = t.Id;
@@ -158,7 +158,7 @@ namespace HabitatForHumanity.Controllers
                 card.volName = "test";
 
                 TimeSpan span = t.clockOutTime.Subtract(t.clockInTime);
-                card.elapsedHrs = span.Minutes / 60.0;             
+                card.elapsedHrs = span.Minutes / 60.0;
             }
 
             return PartialView("_EditTimeCard", card);
@@ -365,7 +365,7 @@ namespace HabitatForHumanity.Controllers
             return PartialView("_BadPunches", bp);
         }
 
-
+        #region Manage Organization
         public ActionResult ViewOrganizations(OrganizationSearchModel model)
         {
 
@@ -450,17 +450,28 @@ namespace HabitatForHumanity.Controllers
             Repository.AddOrganization(org);
             return RedirectToAction("ViewOrganizations");
         }
-
+        #endregion
 
         #region Manage Projects
 
+
+        //Main view
         [HttpGet]
-        public ActionResult ManageProjects()
+        public ActionResult ManageProjects(ProjectSearchModel model)
         {
-            ReturnStatus st = Repository.GetAllProjects();
-            return View((List<Project>)st.data);
+         
+            var page = (model.Page ?? 1) - 1;
+            int totalCount = 0;
+            ReturnStatus st = Project.GetProjectPage(page, RecordsPerPage, ref totalCount);
+            
+            //supposed to help reduce the load on the database by only getting what's needed
+            model.SearchResults = ((List<Project>)st.data).ToPagedList(page + 1, RecordsPerPage);
+            model.SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), page + 1, RecordsPerPage, totalCount);
+
+            return View(model);
         }
 
+    
 
 
         #endregion

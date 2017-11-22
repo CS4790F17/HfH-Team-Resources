@@ -1,4 +1,5 @@
-﻿@model List<HabitatForHumanity.Models.Project>
+﻿@model HabitatForHumanity.ViewModels.ProjectSearchModel
+@using PagedList.Mvc;
 @{
     ViewBag.Title = "ManageProjects";
 }
@@ -23,7 +24,7 @@
     <div class="col-md-1"></div>
     <div class="col-md-1"></div>
     <div class="col-md-1"></div>
-   
+
     <div class="col-md-1">
         <!--Filter Dropdowns-->
         <div id="dropdowns" class="col-md-4">
@@ -45,12 +46,15 @@
             </span>
         </div>
     </div>
-
 </div>
 
 
 <!--Project List-->
 <div id="projectList" class="row well well-lg">
-    @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model);}
+    @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
 </div>
+
+
+@Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
+
 

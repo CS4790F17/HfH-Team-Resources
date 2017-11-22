@@ -1,4 +1,5 @@
-﻿@model List<HabitatForHumanity.Models.Project>
+﻿@using PagedList.Mvc;
+@model PagedList.StaticPagedList<HabitatForHumanity.Models.Project>
 
 
 <!--Title bar-->
@@ -10,8 +11,8 @@
 </div>
 <hr />
 <!--End of Title bar-->
-
 <!--List of Projects-->
+
 @foreach (var project in Model)
 {
     <div class="row">
@@ -33,3 +34,5 @@
     </div>
 }
 <!--End of List of Projects-->
+
+
