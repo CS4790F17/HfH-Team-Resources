@@ -243,13 +243,13 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.Find(id);
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
 
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = -1;
                 st.errorMessage = e.ToString();
                 return st;
             }

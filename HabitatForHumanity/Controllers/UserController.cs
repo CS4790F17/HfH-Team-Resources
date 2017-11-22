@@ -164,7 +164,7 @@ namespace HabitatForHumanity.Controllers
                         return View(signWaiverVM);
                     }
                     return RedirectToAction("VolunteerPortal", new { id = user.Id });
-                }
+                 }
             }
             return View(signWaiverVM);
         }
