@@ -25,8 +25,9 @@ namespace HabitatForHumanity.ViewModels
         public int orgId { get; set; }
 
         [Display(Name = "Time In")]
+        [DataType(DataType.DateTime)]
         public DateTime inTime { get; set; }
-
+        [DataType(DataType.DateTime)]
         [Display(Name = "Time Out")]
         public DateTime outTime { get; set; }
 
@@ -40,6 +41,7 @@ namespace HabitatForHumanity.ViewModels
         public string volName { get; set; }
 
         [Display(Name = "Hours")]
+        [DisplayFormat(DataFormatString = "{0:n0}")]
         public double elapsedHrs { get; set; }
     }
 }

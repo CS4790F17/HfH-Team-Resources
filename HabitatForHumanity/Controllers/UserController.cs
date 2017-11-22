@@ -40,6 +40,7 @@ namespace HabitatForHumanity.Controllers
         #endregion
 
         #region VolunteerPortal
+        
         public ActionResult VolunteerPortal(int? id)
         {
 
@@ -48,29 +49,25 @@ namespace HabitatForHumanity.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            // user part
-            ReturnStatus st = Repository.GetUser((int)id);
-            if (st.errorCode != ReturnStatus.ALL_CLEAR)
+            ReturnStatus rs = Repository.GetUser((int)id);
+          
+            if(rs.errorCode != 0)
             {
-                return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
             }
 
             return View(Repository.GetPortalVM(id.Value));
-
-
-            // return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
-
         }
 
 
         public ActionResult _PunchOut(int id)
         {
-            ReturnStatus rsTimeSheet = Repository.GetClockedInUserTimeSheet(id);
+            ReturnStatus rs = Repository.GetClockedInUserTimeSheet(id);
 
 
-            if (rsTimeSheet.errorCode == ReturnStatus.ALL_CLEAR)
+            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rsTimeSheet.data);
+                PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rs.data);
                 return PartialView("_PunchOut", punchOutVM);
             }
             else
@@ -246,24 +243,26 @@ namespace HabitatForHumanity.Controllers
                     return View(signWaiverVM);
                 }
 
-                ReturnStatus st = Repository.GetUserByEmail(signWaiverVM.userEmail);
-                if (st.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                ReturnStatus rs = Repository.GetUserByEmail(signWaiverVM.userEmail);
+                if (rs.errorCode != 0)
                 {
-                    return RedirectToAction("HandleErrors", "User", "The system is temporarily down, please try again.");
+                    ViewBag.status = "Sorry, our system is down. Please try again later.";
+                    return View(signWaiverVM);
                 }
-                User user = (User)st.data;
+             
+                User user = (User)rs.data;
                 if (user.Id > 0)
                 {
                     user.AddWaiverToUser(signWaiverVM);
                     ReturnStatus saveResult = Repository.EditUser(user);
-                    if (saveResult.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                    if (saveResult.errorCode != 0)
                     {
-                        return RedirectToAction("HandleErrors", "User", "The system is temporarily down, please try again.");
+                        ViewBag.status = "Sorry, our system is down. Please try again later.";
+                        return View(signWaiverVM);
                     }
                     return RedirectToAction("VolunteerPortal", new { id = user.Id });
                 }
             }
-
             return View(signWaiverVM);
         }
 

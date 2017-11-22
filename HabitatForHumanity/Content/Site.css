@@ -1,5 +1,5 @@
 ﻿body {
-    padding-top: 50px;
+    padding-top: 105px;
     padding-bottom: 20px;
 }
 
@@ -24,14 +24,8 @@ textarea {
 }
 
 .navbar {
-    background-color: #005596;
-}
-
-.BannerLogo{
-    display: block;
-    margin : auto;
-    padding-bottom: 30px;
-    width: 40%;
+    background-color: #fff;
+    border-bottom: none;
 }
 
 .HFHFooter{
@@ -44,6 +38,7 @@ textarea {
 .dropdown{
         color: #005596;
 }
+
 li {
     font-size: large;
     font-weight: 400;
@@ -135,3 +130,12 @@ input[type=password] {
 }
 
 h4 { font-family: 'Enriqueta', arial, serif; line-height: 1.25; margin: 0 0 10px; font-size: 40px; font-weight: bold; }
+
+li{
+    font-size:large;
+    font-weight:400;
+}
+
+.well-sm:hover{
+        background-color: #99d3ff;
+}
