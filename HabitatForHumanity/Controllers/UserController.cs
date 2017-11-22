@@ -102,6 +102,48 @@ namespace HabitatForHumanity.Controllers
         {
             if (Session["UserName"] != null)
             {
+                IsEditingVM isEdit = new IsEditingVM();
+                isEdit.isEditing = false;
+                return View(isEdit);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+        public ActionResult _ViewProfile()
+        {
+            if (Session["UserName"] != null)
+            {
+                UserProfileVM userProfile = new UserProfileVM();
+                User user = (User)Repository.GetUserByEmail(Session["UserName"].ToString()).data;
+                if (user == null)
+                {
+                    return RedirectToAction("Login", "User");
+                }
+                userProfile.firstName = user.firstName;
+                userProfile.lastName = user.lastName;
+                userProfile.homePhone = user.homePhoneNumber;
+                userProfile.workPhone = user.workPhoneNumber;
+                userProfile.userEmail = Session["UserName"].ToString();
+                userProfile.streetAddress = user.streetAddress;
+                userProfile.city = user.city;
+                userProfile.zip = user.zip;
+                userProfile.newPassword = "";
+                userProfile.confirmPassword = "";
+                return PartialView(userProfile);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+        public ActionResult _EditProfile()
+        {
+            if (Session["UserName"] != null)
+            {
                 UserProfileVM userProfile = new UserProfileVM();
                 User user = (User) Repository.GetUserByEmail(Session["UserName"].ToString()).data;
                 if (user == null)
@@ -118,7 +160,7 @@ namespace HabitatForHumanity.Controllers
                 userProfile.zip = user.zip;
                 userProfile.newPassword = "";
                 userProfile.confirmPassword = "";
-                return View(userProfile);
+                return PartialView(userProfile);
             }
             else
             {
@@ -128,7 +170,7 @@ namespace HabitatForHumanity.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult UserProfile([Bind(Include = "firstName,lastName,homePhone,workPhone,userEmail,streetAddress,city,zip,newPassword,confirmPassword")] UserProfileVM userProfile)
+        public ActionResult _EditProfile([Bind(Include = "firstName,lastName,homePhone,workPhone,userEmail,streetAddress,city,zip,newPassword,confirmPassword")] UserProfileVM userProfile)
         {
             if (Session["UserName"] == null)
             {
@@ -150,9 +192,9 @@ namespace HabitatForHumanity.Controllers
                 user.zip = userProfile.zip;
                 db.Entry(user).State = EntityState.Modified; 
                 db.SaveChanges();
-                return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                return RedirectToAction("UserProfile", "User");
             }
-            return View(userProfile);
+            return PartialView("_EditProfile", userProfile);
         }
 
         #endregion
