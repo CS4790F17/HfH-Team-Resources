@@ -5,8 +5,52 @@
 
 <h2>Manage Projects</h2>
 
+<!--Filter bar-->
+<div class="row">
+    <!--Create button-->
+    <div class="col-md-1">
+        <div id="createProjectButton">
+            <button class="btn btn-success"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Create New Project</span></button>
+        </div>
+    </div>
 
-<div id="projectList" class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-1"></div>
+    <div class="col-md-1"></div>
+    <div class="col-md-1"></div>
+    <div class="col-md-1"></div>
+    <div class="col-md-1"></div>
+    <div class="col-md-1"></div>
+    <div class="col-md-1"></div>
+    <div class="col-md-1"></div>
+   
+    <div class="col-md-1">
+        <!--Filter Dropdowns-->
+        <div id="dropdowns" class="col-md-4">
+            @Html.DropDownList("status", new List<SelectListItem> { new SelectListItem { Text = "All", Value = "0"},
+   new SelectListItem { Text = "Active", Value = "1"},
+   new SelectListItem { Text = "Inactive", Value = "2"}})
+        </div>
+    </div>
+
+    <div class="col-md-1">
+        <!--Search Bar-->
+        <div class="col-md-8 input-group" style="width:150px">
+            <!--TODO Replace with query string-->
+            @Html.Editor("Search", new { htmlAttributes = new { placeholder = "Find Project", @class = "form-control", @style = "width:auto" } })
+            <span class="input-group-btn">
+                <button class="btn btn-default">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+
+</div>
+
+
+<!--Project List-->
+<div id="projectList" class="row well well-lg">
     @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model);}
 </div>
 

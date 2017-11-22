@@ -11,15 +11,25 @@
 <hr />
 <!--End of Title bar-->
 
-
 <!--List of Projects-->
 @foreach (var project in Model)
 {
     <div class="row">
-        <div class="col-md-3">@project.name</div>
-        <div class="col-md-3">@project.description</div>
-        <div class="col-md-3">@project.beginDate</div>
-        <div class="col-md-3">@project.status</div>
+        <div class="col-xs-3">@project.name</div>
+        <div class="col-xs-3">@project.description</div>
+        <div class="col-xs-3">@project.beginDate</div>
+
+
+        @switch (project.status)
+        {
+            case 0:
+                <div class="col-xs-3">Inactive</div>
+                break;
+            case 1:
+                <div class="col-xs-3">Active</div>
+                break;
+        }
+
     </div>
 }
 <!--End of List of Projects-->
