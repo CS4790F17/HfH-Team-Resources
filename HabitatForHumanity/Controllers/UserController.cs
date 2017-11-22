@@ -195,7 +195,8 @@ namespace HabitatForHumanity.Controllers
                 db.SaveChanges();
                 return RedirectToAction("UserProfile", "User");
             }
-            return PartialView("_EditProfile", userProfile);
+            ViewBag.status = "An Error Has Occured";
+            return View(userProfile);
         }
 
         #endregion
