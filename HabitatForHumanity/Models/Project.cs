@@ -43,7 +43,7 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 projects = db.projects.ToList();
-                
+
             }
             catch (Exception e)
             {
@@ -63,7 +63,7 @@ namespace HabitatForHumanity.Models
         {
             ReturnStatus st = new ReturnStatus();
             Project project = new Project();
-            
+
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -112,7 +112,7 @@ namespace HabitatForHumanity.Models
             //probably not a good method of handling keys
             //seems to work with and without a 24 hour time
             DateTime beginDate = DateTime.Parse(date);
-          
+
 
             //find the record with PK_name+beginDate
             //doesn't work with auto incrementing id field
@@ -154,7 +154,7 @@ namespace HabitatForHumanity.Models
                 db.projects.Add(project);
                 db.SaveChanges();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 st.errorCode = ReturnStatus.FAIL_ON_INSERT;
                 st.errorMessage = e.Message; // project data here?
@@ -186,10 +186,23 @@ namespace HabitatForHumanity.Models
             }
             st.errorCode = (int)ReturnStatus.ALL_CLEAR;
             st.errorMessage = "";
-            return st;     
+            return st;
         }
 
- 
+
+        public static ReturnStatus GetProjectPage(int page, int itemsPerPage, ref int totalProjects)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            List<Project> proj = new List<Project>();
+
+            proj = (from p in db.projects
+                    orderby p.Id ascending
+                    select p)
+                    .Skip(itemsPerPage * page)
+                    .Take(itemsPerPage).ToList();
+            totalProjects = db.projects.Count();
+            return new ReturnStatus { errorCode = ReturnStatus.ALL_CLEAR, data = proj };
+        }
 
         #endregion
     }

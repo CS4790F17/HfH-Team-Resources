@@ -349,6 +349,12 @@ namespace HabitatForHumanity.Models
             return Project.EditProject(project);
         }
 
+
+        public static ReturnStatus GetProjectPage(int page, int itemsPerPage, ref int totalProjects)
+        {
+            return Project.GetProjectPage(page,itemsPerPage, ref totalProjects);
+        }
+
         /// <summary>
         /// Deletes a project from the database.
         /// </summary>
