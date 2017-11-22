@@ -5,30 +5,32 @@
 }
 
 @*@{
-    if (Model.isEditing == true)
-    {
-        <div>@Html.Action("_EditProfile", new { })</div>
-    }
-    else
-    {
-        <div>@Html.Action("_ViewProfile", new { })</div>
-        using (Html.BeginForm("UserProfile", "User"))
+        if (Model.isEditing == true)
         {
-            @Html.AntiForgeryToken()
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            @Html.HiddenFor(model => model.isEditing)
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Edit Information" class="btn btn-default" />
-                </div>
-            </div>
+            <div>@Html.Action("_EditProfile", new { })</div>
         }
-    }
-}*@
+        else
+        {
+            <div>@Html.Action("_ViewProfile", new { })</div>
+            using (Html.BeginForm("UserProfile", "User"))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.isEditing)
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Edit Information" class="btn btn-default" />
+                    </div>
+                </div>
+            }
+        }
+    }*@
 
 <div id="profile"></div>
 
-<script>
+
+
+<script type="text/javascript">
     $(document).ready(function () {
         _ViewProfile();
     });
@@ -41,13 +43,7 @@
             }
         });
     }
-    function _EditProfile() {
-        var path = "/User/_EditProfile/"
-        $.ajax({
-            url: path,
-            success: function (response) {
-                $("#profile").html(response);
-            }
-        });
-    }
+
+
+
 </script>

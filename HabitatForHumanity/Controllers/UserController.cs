@@ -140,6 +140,7 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
+        [HttpGet]
         public ActionResult _EditProfile()
         {
             if (Session["UserName"] != null)

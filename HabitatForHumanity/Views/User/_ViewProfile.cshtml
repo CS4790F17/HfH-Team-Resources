@@ -1,7 +1,7 @@
 ﻿@model HabitatForHumanity.ViewModels.UserProfileVM
 
-@using (Html.BeginForm("_ViewProfile", "User"))
-{
+@*@using (Html.BeginForm("_EditProfile", "User"))
+{*@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.newPassword)
     @Html.HiddenFor(model => model.confirmPassword)
@@ -75,13 +75,25 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Edit" class="btn btn-default" />
+              @*  <input id="editbutton" value="Edit" class="btn btn-default" />*@
+                <button id="editButton" class="btn">Edit</button>
             </div>
         </div>
 
     </div>
-}
 
+<script type="text/javascript">
+    $("#editButton").click(function () {
+        var path = "/User/_EditProfile/"
+        $.ajax({
+            url: path,
+            type: 'GET',
+            success: function (response) {
+                $("#profile").html(response);
+            }
+        });
+    })
+</script>
 
 
 
