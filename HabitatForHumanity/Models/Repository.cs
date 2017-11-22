@@ -293,6 +293,8 @@ namespace HabitatForHumanity.Models
             return Project.GetProjectById(id);
         }
 
+ 
+
         /// <summary>
         /// Gets all the currently active projects
         /// </summary>
@@ -435,6 +437,18 @@ namespace HabitatForHumanity.Models
             return Organization.DeleteOrganizationById(id);
         }
 
+
+        public static ReturnStatus GetOrganizationSQL(string queryFilter, int status)
+        {
+            return Organization.GetOrganizationSQL(queryFilter, status);
+        }
+
+        public static ReturnStatus GetOrganizationByNameSQL(string name)
+        {
+            return Organization.GetOrganizationByNameSQL(name);
+        }
+
+
         #endregion
 
         #region TimeSheet functions
@@ -464,7 +478,7 @@ namespace HabitatForHumanity.Models
                         orgName = GetOrgName(ts.org_Id),
                         projName = GetProjName(ts.project_Id),
                         volName = GetVolName(ts.user_Id),
-                        elapsedHrs = span.Minutes / 60.0
+                        elapsedHrs = span.Hours + span.Minutes / 60.0
                     });
                 }
                 timeCardsReturn.data = cards;
@@ -525,6 +539,18 @@ namespace HabitatForHumanity.Models
         }
         #endregion timecard vms
 
+        public static ReturnStatus EditTimeCard(TimeCardVM card)
+        {
+            TimeSheet ts = new TimeSheet();
+            ts.Id = card.timeId;
+            ts.user_Id = card.userId;
+            ts.project_Id = card.projId;
+            ts.org_Id = card.orgId;
+            ts.clockInTime = card.inTime;
+            ts.clockOutTime = card.outTime;
+
+            return EditTimeSheet(ts);
+        }
 
         /// <summary>
         /// Gets the record in the timesheet table by it's natural key: user_id+project_id+clockInTime.
@@ -830,6 +856,45 @@ namespace HabitatForHumanity.Models
         {
             return TimeSheet.GetBadTimeSheets();
         }
+
+        /// <summary>
+        /// return total hours logged into given project
+        /// </summary>
+        /// <param name="volunteerId"></param>
+        /// <returns></returns>
+        public static ReturnStatus getTotalHoursLoggedIntoProject(int projectId)
+        {
+            ReturnStatus hoursLogged = new ReturnStatus();
+            hoursLogged.data = 0.0;
+
+
+            DateTime userClockedIn = DateTime.Today.AddDays(1);
+            List<TimeSheet> temp = new List<TimeSheet>();
+            List<TimeSheet> volunteerHours = new List<TimeSheet>();
+            ReturnStatus st = new ReturnStatus();
+            st.data = new List<TimeSheet>();
+
+            st = GetAllTimeSheetsByProjectId(projectId);
+            if (st.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                st.data = 0.0;
+                return st;
+            }
+            temp = (List<TimeSheet>)st.data;
+            if (temp != null && temp.Count() > 0)
+            {
+                foreach (TimeSheet ts in temp)
+                {
+                    if (ts.clockOutTime != userClockedIn)
+                        volunteerHours.Add(ts);
+                }
+                TimeSpan totalHours = AddTimeSheetHours(volunteerHours);
+                hoursLogged.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+            }
+
+            return hoursLogged;
+        }
+
         #endregion
     }
 }

@@ -70,6 +70,7 @@
                 @{ if (Session["Username"] != null)
                     {
                         <ul class="nav navbar-nav navbar-right">
+
                             <li><span class="glyphicon glyphicon-user" style="color: #54B948; padding-left:7px">
                                 @Html.ActionLink("Edit Profile", "Edit", "User", new {
                                     id = Repository.GetUserByEmail((string)Session["Username"]) } , null)</span></li>

@@ -162,7 +162,9 @@
     <Compile Include="ViewModels\BadPunchVM.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\OrganizationSearchModel.cs" />
     <Compile Include="ViewModels\OrganizationVM.cs" />
+    <Compile Include="ViewModels\ProjectIndexVM.cs" />
     <Compile Include="ViewModels\ProjectVM.cs" />
     <Compile Include="ViewModels\PortalVM.cs" />
     <Compile Include="ViewModels\PunchVM.cs" />
@@ -206,6 +208,7 @@
     <Content Include="Images\Habitat For Humanity logo.jpg" />
     <Content Include="Images\hfhwd logo %281%29.jpg" />
     <Content Include="OurScripts\Charts.js" />
+    <Content Include="OurScripts\timeCards.js" />
     <Content Include="OurScripts\timePunch.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -315,6 +318,11 @@
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Admin\ViewOrganizations.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_AddOrganization.cshtml" />
+    <Content Include="Views\Admin\_EditTimeCard.cshtml" />
+
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
