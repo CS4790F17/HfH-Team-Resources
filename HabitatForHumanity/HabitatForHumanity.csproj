@@ -183,7 +183,6 @@
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
     <Content Include="DBscripts\ageBracketsByGender.txt" />
@@ -275,7 +274,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_LayoutOld.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -318,10 +317,12 @@
     <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Admin\ViewOrganizations.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_AddOrganization.cshtml" />
     <Content Include="Views\Admin\_EditTimeCard.cshtml" />
+
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
