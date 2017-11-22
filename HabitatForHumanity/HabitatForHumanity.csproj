@@ -172,6 +172,7 @@
     <Compile Include="ViewModels\ToolKitVM.cs" />
     <Compile Include="ViewModels\UsersVM.cs" />
     <Compile Include="ViewModels\VolunteerSearchModel.cs" />
+    <Compile Include="ViewModels\UserProfileVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Volunteer.mdf" />
@@ -315,6 +316,7 @@
     <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
+    <Content Include="Views\User\UserProfile.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
