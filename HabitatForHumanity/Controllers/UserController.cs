@@ -53,7 +53,7 @@ namespace HabitatForHumanity.Controllers
           
             if(rs.errorCode != 0)
             {
-                return RedirectToAction("Login", "User", new { excMsg = "The system is temporarily down, please try again later." });
+                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
             }
 
             return View(Repository.GetPortalVM(id.Value));
@@ -146,24 +146,26 @@ namespace HabitatForHumanity.Controllers
                     return View(signWaiverVM);
                 }
 
-                ReturnStatus st = Repository.GetUserByEmail(signWaiverVM.userEmail);
-                if (st.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                ReturnStatus rs = Repository.GetUserByEmail(signWaiverVM.userEmail);
+                if (rs.errorCode != 0)
                 {
-                    return RedirectToAction("HandleErrors", "User", "The system is temporarily down, please try again.");
+                    ViewBag.status = "Sorry, our system is down. Please try again later.";
+                    return View(signWaiverVM);
                 }
-                User user = (User)st.data;
+             
+                User user = (User)rs.data;
                 if (user.Id > 0)
                 {
                     user.AddWaiverToUser(signWaiverVM);
                     ReturnStatus saveResult = Repository.EditUser(user);
-                    if (saveResult.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                    if (saveResult.errorCode != 0)
                     {
-                        return RedirectToAction("HandleErrors", "User", "The system is temporarily down, please try again.");
+                        ViewBag.status = "Sorry, our system is down. Please try again later.";
+                        return View(signWaiverVM);
                     }
                     return RedirectToAction("VolunteerPortal", new { id = user.Id });
                 }
             }
-
             return View(signWaiverVM);
         }
 

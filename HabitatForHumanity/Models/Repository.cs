@@ -237,7 +237,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="user">User object with new information.</param>
         public static ReturnStatus EditUser(User user)
-        {
+        {          
             return User.EditUser(user);
         }
 
