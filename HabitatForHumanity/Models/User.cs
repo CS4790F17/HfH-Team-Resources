@@ -218,12 +218,10 @@ namespace HabitatForHumanity.Models
                 st.data = users.FirstOrDefault();
 
                 return st;
-
             }
-            catch (Exception e)
+            catch 
             {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
+                st.errorCode = -1;
                 return st;
             }
         }

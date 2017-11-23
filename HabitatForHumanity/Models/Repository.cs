@@ -27,25 +27,23 @@ namespace HabitatForHumanity.Models
             {
                 userReturn = User.GetUserByEmail(loginVm.email);
 
-                if (userReturn.errorCode != ReturnStatus.ALL_CLEAR)
+                if (userReturn.errorCode != 0)
                 {
                     retValue.errorCode = -1;
-                    //retValue.userErrorMsg = "User not found";
                     retValue.data = false;
                     return retValue;
                 }
                 User user = (User)userReturn.data;
                 if (user != null && user.Id > 0 && Crypto.VerifyHashedPassword(user.password, loginVm.password))
                 {
-                    retValue.errorCode = ReturnStatus.ALL_CLEAR;
+                    retValue.errorCode = 0;
                     retValue.data = true;
                 }
                 return retValue;
             }
-            catch (Exception e)
+            catch 
             {
-                retValue.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                retValue.errorMessage = e.ToString();
+                retValue.errorCode = 1;
                 return retValue;
             }
         }

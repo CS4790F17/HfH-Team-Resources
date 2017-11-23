@@ -328,28 +328,36 @@ namespace HabitatForHumanity.Controllers
         {
             ReturnStatus emailExistsResult = new ReturnStatus();
             ReturnStatus authResult = new ReturnStatus();
-
             if (ModelState.IsValid)
             {
 
                 emailExistsResult = Repository.EmailExists(loginVm.email);
-                if (emailExistsResult.errorCode != ReturnStatus.ALL_CLEAR)
+                if (emailExistsResult.errorCode != 0)
                 {
-
-                    return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                    ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
+                    return View(loginVm);
+                    //return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
                 }
 
                 if ((bool)emailExistsResult.data)
                 {
                     authResult = Repository.AuthenticateUser(loginVm);
-                    if (authResult.errorCode != ReturnStatus.ALL_CLEAR)
+                    if (authResult.errorCode != 0)
                     {
-                        return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                        ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
+                        return View(loginVm);
                     }
                     if ((bool)authResult.data)
                     {
-                        User user = (User)Repository.GetUserByEmail(loginVm.email).data;
+                        ReturnStatus rsUser = Repository.GetUserByEmail(loginVm.email);
+                        
+                        if (rsUser.errorCode != 0)
+                        {
+                            ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
+                            return View(loginVm);
+                        }
 
+                        User user = (User)rsUser.data;
                         Session["UserName"] = user.emailAddress;
 
                         if (user.isAdmin == 1)
@@ -357,8 +365,7 @@ namespace HabitatForHumanity.Controllers
                             Session["isAdmin"] = "isAdmin";
                             return RedirectToAction("Dashboard","Admin");
                         }
-                       
-
+                                               
                         return RedirectToAction("VolunteerPortal", new { id = user.Id });
                     }
                     else
@@ -373,12 +380,13 @@ namespace HabitatForHumanity.Controllers
                     return View(loginVm);
                 }
             }
-           
-            return RedirectToAction("Login", "User", new { excMsg = "The system is temporarily down, please try again." });
+            // model was bad
+            ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
+            return View(loginVm);          
         }
 
 
-        // model was bad
+        
 
         #endregion
 
