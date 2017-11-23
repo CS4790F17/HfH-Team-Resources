@@ -652,44 +652,87 @@ namespace HabitatForHumanity.Models
             TimeSheet.DeleteTimeSheetById(id);
         }
 
-        public static bool IsUserClockedIn(int userId)
+        /// <summary>
+        /// check to see if the user is clocked in
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>       
+        public static ReturnStatus IsUserClockedIn(int userId)
         {
+            //get user's timesheet
             ReturnStatus rs = TimeSheet.GetClockedInUserTimeSheet(userId);
-            TimeSheet userTimeSheet = (TimeSheet)rs.data;
+            if(rs.errorCode != 0)
+            {
+                return rs;
+            }
 
+            TimeSheet userTimeSheet = (TimeSheet)rs.data;
+            
             //if only a default timesheet was found then the user isn't "clocked in"
             if (userTimeSheet.Id < 0)
             {
-                return false;
+                rs.data = false;
+                return rs;
             }
             else
             {
-                return true;
+                rs.data = true;
+                return rs;
             }
         }
+       
 
         public static ReturnStatus GetClockedInUserTimeSheet(int userId)
         {
             return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
 
-        public static PortalVM GetPortalVM(int id)
+
+        /// <summary>
+        /// get information to populate volunteer portal page
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static ReturnStatus GetPortalVM(int id)
         {
-            ReturnStatus st = Repository.GetUser(id);
-
+            ReturnStatus returnable = new ReturnStatus();
             PortalVM portalVM = new PortalVM();
-            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            returnable.data = portalVM;
+
+            ReturnStatus rs = Repository.GetUser(id);
+            if (rs.errorCode != 0)
             {
-                User user = (User)st.data;
-
-                portalVM.fullName = user.firstName + " " + user.lastName;
-                portalVM.userId = user.Id;
-                portalVM.isPunchedIn = Repository.IsUserClockedIn(user.Id);
-                portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+                returnable.errorCode = rs.errorCode;
+                return returnable;
             }
-            return portalVM;
-        }
+       
+            //get users info
+            User user = (User)rs.data;
+            portalVM.fullName = user.firstName + " " + user.lastName;
+            portalVM.userId = user.Id;
 
+            //is user clocked in
+            ReturnStatus isPunched = Repository.IsUserClockedIn(user.Id);
+            if(isPunched.errorCode != 0)
+            {
+                returnable.errorCode = isPunched.errorCode;
+                return returnable;
+            }
+            portalVM.isPunchedIn = (bool)isPunched.data;
+
+            //get  volunteer's total hours
+            ReturnStatus hrs = Repository.getTotalHoursWorkedByVolunteer(user.Id);
+            if(hrs.errorCode != 0)
+            {
+                returnable.errorCode = hrs.errorCode;
+                return returnable;
+            }
+
+            portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+        
+            return returnable;
+        }
+        
 
         public static ReturnStatus GetPunchInVM(int userId)
         {
@@ -756,58 +799,48 @@ namespace HabitatForHumanity.Models
 
         #region Report functions
 
-        //public static double getTotalHoursWorkedByVolunteer(int volunteerId)
-        //{
-        //    DateTime userClockedIn = DateTime.Today.AddDays(1);
-        //    //List<TimeSheet> temp = GetAllTimeSheetsByVolunteer(volunteerId)
-        //    List<TimeSheet> volunteerTimes = new List<TimeSheet>();
-        //    ReturnStatus st = GetAllTimeSheetsByVolunteer(volunteerId);
 
-        //    if (ReturnStatus.tryParseTimeSheetList(st, out List < TimeSheet > temp))
-        //    {
-        //        foreach (TimeSheet ts in temp)
-        //        {
-        //            if (ts.clockOutTime != userClockedIn)
-        //                volunteerTimes.Add(ts);
-        //        }
-        //        TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
-        //        return Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
-        //        //   return 0;
-        //    }
-        //    return 0; //no timesheets were found
-        //}
         public static ReturnStatus getTotalHoursWorkedByVolunteer(int volunteerId)
         {
+           
             ReturnStatus hoursWorked = new ReturnStatus();
             hoursWorked.data = 0.0;
 
-
-            DateTime userClockedIn = DateTime.Today.AddDays(1);
-            List<TimeSheet> temp = new List<TimeSheet>();
-            List<TimeSheet> volunteerTimes = new List<TimeSheet>();
-            ReturnStatus st = new ReturnStatus();
-            st.data = new List<TimeSheet>();
-
-            st = GetAllTimeSheetsByVolunteer(volunteerId);
-            if (st.errorCode != ReturnStatus.ALL_CLEAR)
+            try
             {
-                //ret.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.data = 0.0;
-                return st;
-            }
-            temp = (List<TimeSheet>)st.data;
-            if (temp != null && temp.Count() > 0)
-            {
-                foreach (TimeSheet ts in temp)
+                ReturnStatus st = new ReturnStatus();
+                st.data = new List<TimeSheet>();
+
+                st = GetAllTimeSheetsByVolunteer(volunteerId);
+                if (st.errorCode != 0)
                 {
-                    if (ts.clockOutTime != userClockedIn)
-                        volunteerTimes.Add(ts);
+                    return st;
                 }
-                TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
-                hoursWorked.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
-            }
+            
+                DateTime userClockedIn = DateTime.Today.AddDays(1);
+                List<TimeSheet> temp = new List<TimeSheet>();
+                List<TimeSheet> volunteerTimes = new List<TimeSheet>();
 
-            return hoursWorked;
+                temp = (List<TimeSheet>)st.data;
+                if (temp != null && temp.Count() > 0)
+                {
+                    foreach (TimeSheet ts in temp)
+                    {
+                        if (ts.clockOutTime != userClockedIn)
+                            volunteerTimes.Add(ts);
+                    }
+                    TimeSpan totalHours = AddTimeSheetHours(volunteerTimes);
+                    hoursWorked.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+                }
+                return hoursWorked;
+            }
+                          
+            catch
+            {
+                hoursWorked.errorCode = -1;
+                return hoursWorked;
+            }
+            
         }
 
 

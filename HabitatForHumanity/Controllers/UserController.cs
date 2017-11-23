@@ -49,14 +49,14 @@ namespace HabitatForHumanity.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            ReturnStatus rs = Repository.GetUser((int)id);
-          
-            if(rs.errorCode != 0)
+            ReturnStatus rs = Repository.GetPortalVM(id.Value);
+
+            if (rs.errorCode != 0)
             {
                 return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
             }
-
-            return View(Repository.GetPortalVM(id.Value));
+            
+            return View((PortalVM)rs.data);
         }
 
 

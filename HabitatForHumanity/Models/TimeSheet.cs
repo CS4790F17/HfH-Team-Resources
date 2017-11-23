@@ -379,10 +379,9 @@ namespace HabitatForHumanity.Models
                 st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
-            catch (Exception e)
+            catch
             {
-                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
+                st.errorCode = -1;
                 return st;
             }
         }
