@@ -190,13 +190,11 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.Any(u => u.emailAddress.Equals(email));
-                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
-            catch (Exception e)
+            catch 
             {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                st.errorMessage = e.ToString();
+                st.errorCode = -1; 
                 return st;
             }
         }

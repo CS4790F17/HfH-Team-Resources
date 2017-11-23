@@ -124,7 +124,6 @@ namespace HabitatForHumanity.Models
             {
                 user.password = Crypto.HashPassword(user.password);
             }
-            //User.CreateVolunteer(user);
             return User.CreateVolunteer(user);
         }
 

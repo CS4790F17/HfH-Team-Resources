@@ -278,15 +278,21 @@ namespace HabitatForHumanity.Controllers
             {
 
                 ReturnStatus st = Repository.EmailExists(user.emailAddress);
+                if(st.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, the system is currently down. Please try signing up later.";
+                    return View(user);
+                }
 
                 if ((bool)st.data == false)
                 {
                     user.isAdmin = 0;
                     user.waiverSignDate = DateTime.Now.AddYears(-2);
                     ReturnStatus createResult = Repository.CreateVolunteer(user);
-                    if (createResult.errorCode != ReturnStatus.ALL_CLEAR)
+                    if (createResult.errorCode != 0)
                     {
-                        return RedirectToAction("HandleErrors", "User", "The system is temporarily down, please try again.");
+                        ViewBag.status = "Sorry, the system is currently down. Please try signing up later.";
+                        return View(user);
                     }
                     Session["isAdmin"] = user.isAdmin;
                     Session["UserName"] = user.emailAddress;
@@ -295,7 +301,7 @@ namespace HabitatForHumanity.Controllers
                 else
                 {
                     // this needs some kind of notification
-                    ViewBag.status = "That email already exists in out system. Click the link below.";
+                    ViewBag.status = "That email already exists in our system. Please login below.";
                     return RedirectToAction("Login", "User");
                 }
             }
