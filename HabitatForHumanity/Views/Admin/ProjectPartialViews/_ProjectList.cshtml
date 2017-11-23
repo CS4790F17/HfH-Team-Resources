@@ -1,38 +1,40 @@
 ﻿@using PagedList.Mvc;
+@using HabitatForHumanity.ViewModels;
 @model PagedList.StaticPagedList<HabitatForHumanity.Models.Project>
 
-
-<!--Title bar-->
-<div class="row">
-    <div class="col-md-3">@Html.DisplayNameFor(model => model.ElementAt(0).name)</div>
-    <div class="col-md-3">@Html.DisplayNameFor(model => model.ElementAt(0).description)</div>
-    <div class="col-md-3">@Html.DisplayNameFor(model => model.ElementAt(0).beginDate)</div>
-    <div class="col-md-3">@Html.DisplayNameFor(model => model.ElementAt(0).status)</div>
-</div>
-<hr />
-<!--End of Title bar-->
-<!--List of Projects-->
-
-@foreach (var project in Model)
-{
-    <div class="row">
-        <div class="col-xs-3">@project.name</div>
-        <div class="col-xs-3">@project.description</div>
-        <div class="col-xs-3">@project.beginDate</div>
-
-
-        @switch (project.status)
+<table style="width:500px">
+    <!--Title bar-->
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.ElementAt(0).name)</th>
+            <th>@Html.DisplayNameFor(model => model.ElementAt(0).description)</th>
+            <th>@Html.DisplayNameFor(model => model.ElementAt(0).beginDate)</th>
+            <th>@Html.DisplayNameFor(model => model.ElementAt(0).status)</th>
+        </tr>
+    </thead>
+    <!--End of Title bar-->
+    <!--List of Projects-->
+    <tbody>
+        @foreach (var project in Model)
         {
-            case 0:
-                <div class="col-xs-3">Inactive</div>
-                break;
-            case 1:
-                <div class="col-xs-3">Active</div>
-                break;
+            <tr>
+                <td>@project.name</td>
+                <td>@project.description</td>
+                <td>@project.beginDate</td>
+
+
+                @switch (project.status)
+                {
+                    case 0:
+                        <td>Inactive</td>
+                        break;
+                    case 1:
+                        <td>Active</td>
+                        break;
+                }
+
+            </tr>
         }
-
-    </div>
-}
+    </tbody>
+</table>
 <!--End of List of Projects-->
-
-

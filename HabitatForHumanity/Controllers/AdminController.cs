@@ -180,7 +180,7 @@ namespace HabitatForHumanity.Controllers
             //    volName = "holy canoli",//card.volName,
             //    elapsedHrs = card.elapsedHrs
             //    }, JsonRequestBehavior.AllowGet);
-            if(rs.errorCode == 0)
+            if (rs.errorCode == 0)
             {
                 return RedirectToAction("Timecards");
             }
@@ -486,11 +486,11 @@ namespace HabitatForHumanity.Controllers
         [HttpGet]
         public ActionResult ManageProjects(ProjectSearchModel model)
         {
-         
+
             var page = (model.Page ?? 1) - 1;
             int totalCount = 0;
             ReturnStatus st = Project.GetProjectPage(page, RecordsPerPage, ref totalCount);
-            
+
             //supposed to help reduce the load on the database by only getting what's needed
             model.SearchResults = ((List<Project>)st.data).ToPagedList(page + 1, RecordsPerPage);
             model.SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), page + 1, RecordsPerPage, totalCount);
@@ -498,7 +498,23 @@ namespace HabitatForHumanity.Controllers
             return View(model);
         }
 
-    
+        [HttpGet]
+        public ActionResult CreateProject()
+        {
+            return PartialView("ProjectPartialViews/_CreateProject");
+        }
+
+        [HttpPost]
+        public ActionResult CreateProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        {
+            if(!ModelState.IsValid)
+            {
+                return PartialView("ProjectPartialViews/_CreateProject", proj);
+            }
+            proj.status = 0;
+            Repository.AddProject(proj);
+            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+        }
 
 
         #endregion

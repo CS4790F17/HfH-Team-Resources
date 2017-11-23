@@ -1,22 +1,26 @@
 ﻿@model HabitatForHumanity.ViewModels.ProjectSearchModel
 @using PagedList.Mvc;
+@using HabitatForHumanity.ViewModels;
 @{
     ViewBag.Title = "ManageProjects";
+    var createButton = "<span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"> Create New Project</span>";
 }
 
 <h2>Manage Projects</h2>
+
+@ToolKitVM.Modal("Create Project", "createProjectModal", "createPartialTarget")
+
 
 <!--Filter bar-->
 <div class="row">
     <!--Create button-->
     <div class="col-md-1">
         <div id="createProjectButton">
-            <button class="btn btn-success"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Create New Project</span></button>
+            @* <button class="btn btn-success"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Create New Project</span></button>*@
+            @ToolKitVM.ModalButton("createButton", "createProjectModal", createButton, "")
         </div>
     </div>
 
-    <div class="col-md-1"></div>
-    <div class="col-md-1"></div>
     <div class="col-md-1"></div>
     <div class="col-md-1"></div>
     <div class="col-md-1"></div>
@@ -40,17 +44,22 @@
             <!--TODO Replace with query string-->
             @Html.Editor("Search", new { htmlAttributes = new { placeholder = "Find Project", @class = "form-control", @style = "width:auto" } })
             <span class="input-group-btn">
-                <button class="btn btn-default">
+                <button class="btn">
                     <span class="glyphicon glyphicon-search"></span>
                 </button>
             </span>
+            <!--End of Search Bar-->
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-1">
+
         </div>
     </div>
 </div>
 
 
 <!--Project List-->
-<div id="projectList" class="row well well-lg">
+<div id="projectList" class="row well well-lg" style="min-width:500px">
     @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
 </div>
 
@@ -58,3 +67,36 @@
 @Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
 
 
+<script type="text/javascript">
+    $(".createButton").click(function () {
+        $.ajax({
+            url: '/Admin/CreateProject',
+            type: 'GET',
+            success: function (data)
+            {
+                $("#createPartialTarget").html(data);
+            }
+        });
+    })
+
+    //https://stackoverflow.com/questions/31053460/how-to-make-a-net-mvc-form-inside-a-modal-using-jquery-with-validation
+    //prevents the modal from automatically redirecting when the submit button is clicked
+    //instead we send our post method our form data to do a validation check server side
+    //and return a marked up view to the modal if it's an invalid form
+    $("#createProjectModal").on('submit',   function (e) {
+        e.preventDefault();
+        console.log("prevented from submitting");
+        var form = $("#createProjectForm");
+        $.ajax({
+            url: '/Admin/CreateProject',
+            type: 'POST',
+            data: form.serialize(),
+            success: function (partialResult)
+            {
+                console.log(partialResult);
+                $("#createPartialTarget").html(partialResult);
+            }
+        })
+    })
+
+</script>
