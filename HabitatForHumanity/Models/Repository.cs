@@ -680,7 +680,7 @@ namespace HabitatForHumanity.Models
        
 
         public static ReturnStatus GetClockedInUserTimeSheet(int userId)
-        {
+        {          
             return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
 
@@ -695,87 +695,74 @@ namespace HabitatForHumanity.Models
             ReturnStatus returnable = new ReturnStatus();
             PortalVM portalVM = new PortalVM();
             returnable.data = portalVM;
-
-            ReturnStatus rs = Repository.GetUser(id);
-            if (rs.errorCode != 0)
+            try
             {
-                returnable.errorCode = rs.errorCode;
+                ReturnStatus rs = Repository.GetUser(id);
+                if (rs.errorCode != 0)
+                {
+                    returnable.errorCode = rs.errorCode;
+                    return returnable;
+                }
+
+                //get users info
+                User user = (User)rs.data;
+                portalVM.fullName = user.firstName + " " + user.lastName;
+                portalVM.userId = user.Id;
+
+                //is user clocked in
+                ReturnStatus isPunched = Repository.IsUserClockedIn(user.Id);
+                if (isPunched.errorCode != 0)
+                {
+                    returnable.errorCode = isPunched.errorCode;
+                    return returnable;
+                }
+                portalVM.isPunchedIn = (bool)isPunched.data;
+
+                //get  volunteer's total hours
+                ReturnStatus hrs = Repository.getTotalHoursWorkedByVolunteer(user.Id);
+                if (hrs.errorCode != 0)
+                {
+                    returnable.errorCode = hrs.errorCode;
+                    return returnable;
+                }
+
+                portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+
                 return returnable;
             }
-       
-            //get users info
-            User user = (User)rs.data;
-            portalVM.fullName = user.firstName + " " + user.lastName;
-            portalVM.userId = user.Id;
-
-            //is user clocked in
-            ReturnStatus isPunched = Repository.IsUserClockedIn(user.Id);
-            if(isPunched.errorCode != 0)
+            catch
             {
-                returnable.errorCode = isPunched.errorCode;
+                returnable.errorCode = -1;
                 return returnable;
             }
-            portalVM.isPunchedIn = (bool)isPunched.data;
-
-            //get  volunteer's total hours
-            ReturnStatus hrs = Repository.getTotalHoursWorkedByVolunteer(user.Id);
-            if(hrs.errorCode != 0)
-            {
-                returnable.errorCode = hrs.errorCode;
-                return returnable;
-            }
-
-            portalVM.cumulativeHours = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
-        
-            return returnable;
         }
         
 
         public static ReturnStatus GetPunchInVM(int userId)
-        {
-            //ReturnStatus projList = GetAllProjects();
-
-            //if (projList == null || projList.errorCode != ReturnStatus.ALL_CLEAR || ((List<Project>)projList.data).Count() < 1)
-            //{
-            //    return new ReturnStatus()
-            //    {
-            //        errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
-            //    };
-            //}
-
-            //ReturnStatus orgResult = GetAllOrganizations();
-            //if (orgResult.errorCode != ReturnStatus.ALL_CLEAR)
-            //{
-            //    return new ReturnStatus()
-            //    {
-            //        errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE,
-            //    };
-            //}
-
+        {         
             PunchInVM punch = new PunchInVM();
             ReturnStatus st = new ReturnStatus();
-
-
-            st = User.GetUser(userId);
-
-            if (st.errorCode == ReturnStatus.ALL_CLEAR && st.data != null)
+            try
             {
+                st = User.GetUser(userId);
+                if (st.errorCode != 0)
+                {
+                    return st;
+                }
+
                 User user = (User)st.data;
                 punch.userId = userId;
-                // punch.userName = user.firstName + " " + user.lastName;
 
-                //reset values in st to all good
                 st.errorCode = 0;
                 st.data = punch;
 
                 return st;
             }
-            else
+            catch
             {
-                //if st was null or had bad error code
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorCode = -1;
                 return st;
-            }
+            }   
         }
 
 

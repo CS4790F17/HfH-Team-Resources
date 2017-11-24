@@ -237,7 +237,7 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                st.data = db.users.Find(id);
+                st.data = db.users.Find(id);               
                 st.errorCode = 0;
                 return st;
             }

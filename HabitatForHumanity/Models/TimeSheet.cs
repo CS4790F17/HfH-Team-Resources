@@ -370,13 +370,12 @@ namespace HabitatForHumanity.Models
                 {
                     if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
                     {
-                        st.errorCode = ReturnStatus.ALL_CLEAR;
+                        st.errorCode = 0;
                         st.data = sheet.Last();
                         return st;
                     }
-
                 }
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
                 return st;
             }
             catch

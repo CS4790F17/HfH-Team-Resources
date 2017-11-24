@@ -327,6 +327,8 @@
     <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_AddOrganization.cshtml" />
     <Content Include="Views\Admin\_EditTimeCard.cshtml" />
+    <Content Include="Views\User\_ErrorPunchOut.cshtml" />
+    <Content Include="Views\User\_ErrorPunchIn.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

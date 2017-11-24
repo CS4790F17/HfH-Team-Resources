@@ -64,35 +64,26 @@ namespace HabitatForHumanity.Controllers
         {
             ReturnStatus rs = Repository.GetClockedInUserTimeSheet(id);
 
-
-            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+            if (rs.errorCode != 0)
             {
-                PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rs.data);
-                return PartialView("_PunchOut", punchOutVM);
+                ViewBag.status = "Sorry, system is temporarily down.";
+                return PartialView("_ErrorPunchOut");
             }
-            else
-            {
-                //return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
-                //can't redirect from child action
-                return PartialView("_PunchOut", new PunchOutVM());
-            }
+            PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rs.data);
+            return PartialView("_PunchOut", punchOutVM);
         }
 
         public ActionResult _PunchIn(int id)
         {
-            ReturnStatus rsPunch = Repository.GetPunchInVM(id);
+            ReturnStatus rs = Repository.GetPunchInVM(id);
 
-            if (rsPunch.errorCode == ReturnStatus.ALL_CLEAR)
+            if (rs.errorCode != 0)
             {
-                PunchInVM punchInVM = (PunchInVM)rsPunch.data;
-                return PartialView("_PunchIn", punchInVM);
+                ViewBag.status = "Sorry, system is temporarily down.";
+                return PartialView("_ErrorPunchIn");
             }
-            else
-            {
-                //return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
-                //cant redirect from child action
-                return PartialView("_PunchIn", new PunchInVM());
-            }
+            PunchInVM punchInVM = (PunchInVM)rs.data;
+            return PartialView("_PunchIn", punchInVM);
         }
 
         public ActionResult UserProfile()
@@ -105,7 +96,7 @@ namespace HabitatForHumanity.Controllers
             }
             else
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login", "User", new { excMsg = "Something went wrong. Please try logging in again." });
             }
         }
 
@@ -114,7 +105,12 @@ namespace HabitatForHumanity.Controllers
             if (Session["UserName"] != null)
             {
                 UserProfileVM userProfile = new UserProfileVM();
-                User user = (User)Repository.GetUserByEmail(Session["UserName"].ToString()).data;
+                ReturnStatus rs = Repository.GetUserByEmail(Session["UserName"].ToString());
+                if(rs.errorCode != 0)
+                {
+                    return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+                }
+                User user = (User)rs.data;
                 if (user == null)
                 {
                     return RedirectToAction("Login", "User");
@@ -133,7 +129,7 @@ namespace HabitatForHumanity.Controllers
             }
             else
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login", "User", new { excMsg = "Something went wrong. Please try logging in again." });
             }
         }
 
@@ -143,7 +139,12 @@ namespace HabitatForHumanity.Controllers
             if (Session["UserName"] != null)
             {
                 UserProfileVM userProfile = new UserProfileVM();
-                User user = (User) Repository.GetUserByEmail(Session["UserName"].ToString()).data;
+                ReturnStatus rs = Repository.GetUserByEmail(Session["UserName"].ToString());
+                if(rs.errorCode != 0)
+                {
+                    return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+                }
+                User user = (User)rs.data;
                 if (user == null)
                 {
                     return RedirectToAction("Login", "User");
@@ -162,7 +163,7 @@ namespace HabitatForHumanity.Controllers
             }
             else
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login", "User", new { excMsg = "Something went wrong. Please try logging in again." });
             }
         }
 
@@ -176,7 +177,13 @@ namespace HabitatForHumanity.Controllers
             }
             if (ModelState.IsValid)
             {
-                User user = (User) Repository.GetUserByEmail(Session["UserName"].ToString()).data;
+                ReturnStatus rs = Repository.GetUserByEmail(Session["UserName"].ToString());
+                if(rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                    return View(userProfile);
+                }
+                User user = (User)rs.data;
                 if (userProfile.newPassword != null)
                 {
                     user.password = Crypto.HashPassword(user.password);
@@ -188,8 +195,10 @@ namespace HabitatForHumanity.Controllers
                 user.streetAddress = userProfile.streetAddress;
                 user.city = userProfile.city;
                 user.zip = userProfile.zip;
+                //shouldn't this vv be done from the repository??
                 db.Entry(user).State = EntityState.Modified; 
                 db.SaveChanges();
+                //move ^^to repo?? 
                 return RedirectToAction("UserProfile", "User");
             }
             ViewBag.status = "An Error Has Occured";
