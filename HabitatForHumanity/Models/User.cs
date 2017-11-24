@@ -8,6 +8,7 @@ using System.Web.Helpers;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace HabitatForHumanity.Models
 {
@@ -144,14 +145,13 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
                 return st;
             }
-            catch (Exception e)
+            catch 
             {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorCode = -1;
                 st.data = new List<User>();
-                st.errorMessage = e.ToString();
                 return st;
             }
         }
@@ -164,14 +164,13 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.ToList();
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
                 return st;
             }
-            catch (Exception e)
+            catch
             {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                st.data = new List<User>();
-                st.errorMessage = e.ToString();
+                st.errorCode = -1;
+                st.data = new List<User>();                
                 return st;
             }
         }
@@ -189,13 +188,11 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.Any(u => u.emailAddress.Equals(email));
-                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
-            catch (Exception e)
+            catch 
             {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                st.errorMessage = e.ToString();
+                st.errorCode = -1; 
                 return st;
             }
         }
@@ -219,12 +216,10 @@ namespace HabitatForHumanity.Models
                 st.data = users.FirstOrDefault();
 
                 return st;
-
             }
-            catch (Exception e)
+            catch 
             {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
+                st.errorCode = -1;
                 return st;
             }
         }
@@ -242,15 +237,13 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                st.data = db.users.Find(id);
-                st.errorCode = ReturnStatus.ALL_CLEAR;
-
+                st.data = db.users.Find(id);               
+                st.errorCode = 0;
                 return st;
             }
-            catch (Exception e)
+            catch
             {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
+                st.errorCode = -1;
                 return st;
             }
         }
@@ -264,6 +257,10 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
+                user.homePhoneNumber = user.homePhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.homePhoneNumber = Regex.Replace(user.homePhoneNumber, @"\s", "");
+                user.workPhoneNumber = user.workPhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.workPhoneNumber = Regex.Replace(user.workPhoneNumber, @"\s", "");
                 db.users.Add(user);
                 db.SaveChanges();
                 st.errorCode = (int)ReturnStatus.ALL_CLEAR;
@@ -340,6 +337,14 @@ namespace HabitatForHumanity.Models
                 st.errorCode = (int)ReturnStatus.ALL_CLEAR;
 
                 VolunteerDbContext db = new VolunteerDbContext();
+                user.homePhoneNumber = user.homePhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.homePhoneNumber = Regex.Replace(user.homePhoneNumber, @"\s", "");
+                user.workPhoneNumber = user.workPhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.workPhoneNumber = Regex.Replace(user.workPhoneNumber, @"\s", "");
+                user.emergencyHomePhone = user.homePhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.emergencyHomePhone = Regex.Replace(user.homePhoneNumber, @"\s", "");
+                user.emergencyWorkPhone = user.workPhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
+                user.emergencyWorkPhone = Regex.Replace(user.workPhoneNumber, @"\s", "");
                 db.Entry(user).State = EntityState.Modified;
                 db.SaveChanges();
 

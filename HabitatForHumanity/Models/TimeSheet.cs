@@ -370,19 +370,17 @@ namespace HabitatForHumanity.Models
                 {
                     if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
                     {
-                        st.errorCode = ReturnStatus.ALL_CLEAR;
+                        st.errorCode = 0;
                         st.data = sheet.Last();
                         return st;
                     }
-
                 }
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
                 return st;
             }
-            catch (Exception e)
+            catch
             {
-                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
+                st.errorCode = -1;
                 return st;
             }
         }
