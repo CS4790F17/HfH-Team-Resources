@@ -350,9 +350,9 @@ namespace HabitatForHumanity.Models
         }
 
 
-        public static ReturnStatus GetProjectPage(int page, int itemsPerPage, ref int totalProjects)
+        public static ReturnStatus GetProjectPage(int page, int itemsPerPage, ref int totalProjects, string queryString)
         {
-            return Project.GetProjectPage(page,itemsPerPage, ref totalProjects);
+            return Project.GetProjectPage(page,itemsPerPage, ref totalProjects, queryString);
         }
 
         /// <summary>

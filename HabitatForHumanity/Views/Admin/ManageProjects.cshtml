@@ -14,58 +14,48 @@
 <!--Filter bar-->
 <div class="row">
     <!--Create button-->
-    <div class="col-md-1">
+    <div class="col-md-4">
         <div id="createProjectButton">
             @* <button class="btn btn-success"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Create New Project</span></button>*@
             @ToolKitVM.ModalButton("createButton", "createProjectModal", createButton, "")
         </div>
     </div>
 
-    <div class="col-md-1"></div>
-    <div class="col-md-1"></div>
-    <div class="col-md-1"></div>
-    <div class="col-md-1"></div>
-    <div class="col-md-1"></div>
-    <div class="col-md-1"></div>
-    <div class="col-md-1"></div>
-
-    <div class="col-md-1">
-        <!--Filter Dropdowns-->
-        <div id="dropdowns" class="col-md-4">
-            @Html.DropDownList("status", new List<SelectListItem> { new SelectListItem { Text = "All", Value = "0"},
-   new SelectListItem { Text = "Active", Value = "1"},
-   new SelectListItem { Text = "Inactive", Value = "2"}})
+    <!--Search Form-->
+    @using (Html.BeginForm("ProjectSearch", "Admin", FormMethod.Post, new { @class = "form-inline", id="searchForm" }))
+    {
+        <div class="form-group">@Html.HiddenFor(x => x.Page)</div>
+        <div class="form-group">
+            <!--Filter Dropdowns-->
+            @Html.DropDownListFor(x => x.statusChoice, Model.statusDropDown, htmlAttributes: new { @class = "form-control", @id = "statusChoiceSelector", @style = "width:auto" })
         </div>
-    </div>
-
-    <div class="col-md-1">
         <!--Search Bar-->
-        <div class="col-md-8 input-group" style="width:150px">
-            <!--TODO Replace with query string-->
-            @Html.Editor("Search", new { htmlAttributes = new { placeholder = "Find Project", @class = "form-control", @style = "width:auto" } })
-            <span class="input-group-btn">
-                <button class="btn">
-                    <span class="glyphicon glyphicon-search"></span>
-                </button>
-            </span>
-            <!--End of Search Bar-->
+        <div class="form-group">
+            <div class="input-group">
+                <!--TODO Replace with query string-->
+                @Html.EditorFor(x => x.queryString, new { htmlAttributes = new { placeholder = "Find Project", @class = "form-control", @style = "width:auto" } })
+                <span class="input-group-btn">
+                    <button class="btn" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+                <!--End of Search Bar-->
+            </div>
         </div>
-        <div class="col-md-1"></div>
-        <div class="col-md-1">
-
-        </div>
-    </div>
+    }
+    <!--End of Search Form-->
 </div>
 
 
+
 <!--Project List-->
+<div id="mainPageProjectList">
+    @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
+</div>
 
- @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
 
 
-
-
-@Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
+@Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "queryString", Model.queryString  },  { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
 
 
 <script type="text/javascript">
@@ -87,21 +77,34 @@
     //and return a marked up view to the modal if it's an invalid form
     $("#createProjectModal").on('submit', function (e) {
         e.preventDefault();
-       // console.log("prevented from submitting");
+        // console.log("prevented from submitting");
         var form = $("#createProjectForm");
         $.ajax({
             url: '/Admin/CreateProject',
             type: 'POST',
             data: form.serialize(),
             success: function (partialResult) {
-              //  console.log(partialResult);
+                //  console.log(partialResult);
                 $("#createPartialTarget").html(partialResult);
             }
         })
     });
 
-
-
+    $("#searchForm").on('submit', function (e) {
+        e.preventDefault();
+        console.log("stopping");
+        var form = $(this).serialize();
+        console.log(form);
+        $.ajax({
+            url: "/Admin/ProjectSearch",
+            type: "POST",
+            data: form,
+            success: function (response)
+            {
+                $("#mainPageProjectList").html(response);
+            }
+        })
+    });
 
 
 
