@@ -59,7 +59,8 @@
 
 
 <!--Project List-->
-@{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
+
+ @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
 
 
 
@@ -86,14 +87,14 @@
     //and return a marked up view to the modal if it's an invalid form
     $("#createProjectModal").on('submit', function (e) {
         e.preventDefault();
-        console.log("prevented from submitting");
+       // console.log("prevented from submitting");
         var form = $("#createProjectForm");
         $.ajax({
             url: '/Admin/CreateProject',
             type: 'POST',
             data: form.serialize(),
             success: function (partialResult) {
-                console.log(partialResult);
+              //  console.log(partialResult);
                 $("#createPartialTarget").html(partialResult);
             }
         })

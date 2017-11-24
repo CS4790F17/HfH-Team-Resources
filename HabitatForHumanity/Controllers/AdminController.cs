@@ -525,7 +525,32 @@ namespace HabitatForHumanity.Controllers
 
         }
 
+        [HttpGet]
+        public ActionResult EditProject(int id)
+        {
+            ReturnStatus st = Repository.GetProjectById(id);
+            if(st.errorCode == 0)
+            {
+                return PartialView("ProjectPartialViews/_EditProject", (Project)st.data);
+            }
+            //if no edit was found return create
+            return CreateProject();
+        }
 
+        [HttpPost]
+        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        {
+            //if model state isn't valid
+            if(!ModelState.IsValid)
+            {
+                return PartialView("ProjectPartialViews/_EditProject", proj);
+            }
+            Repository.EditProject(proj);
+            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+        }
+
+
+        //TODO: move to repo
         private StaticPagedList<Project> GetProjectPage(int? Page)
         {
 

@@ -1,0 +1,59 @@
+﻿@model HabitatForHumanity.Models.Project
+
+@using (Html.BeginForm("EditProject", "Admin", FormMethod.Post, new { id = "editProjectForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.beginDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    //default date methods dont want to cooperate with me
+                    //laugh it up chuckles who made MM mean month when yyyy and dd are year and day
+
+                    var reversedDate = Model.beginDate.ToString("yyyy-MM-dd");
+                }
+                <input type="date" id="beginDate" class="form-control" data-val="true" data-val-date="The field Begin Date must be a date." data-val-required="The Begin Date field is required."
+                       name="beginDate" value="@reversedDate" />
+                @* @Html.EditorFor(model => model.beginDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @value="2043-1-2" } })*@
+                @Html.ValidationMessageFor(model => model.beginDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.status, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.status, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+ }
+

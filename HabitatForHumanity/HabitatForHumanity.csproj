@@ -332,6 +332,7 @@
     <Content Include="Views\Admin\ProjectPartialViews\_ProjectList.cshtml" />
     <Content Include="Views\Admin\ProjectPartialViews\_CreateProject.cshtml" />
     <Content Include="Views\Admin\ProjectPartialViews\_ProjectCreateSuccess.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_EditProject.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
