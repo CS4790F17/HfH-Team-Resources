@@ -51,17 +51,19 @@
             </div>
         </div>
     </div>
+
+
     <div class="row" style="margin-top:5px">
         <div class="col-xs-5">
             <div class="input-group" style="width:100px">
-                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, new { htmlAttributes = new { @class = "form-control", @style = "width:auto" } })
+                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, htmlAttributes : new { @class = "form-control", @style = "width:auto" } )
             </div>
         </div>
     </div>
     <div class="row" style="margin-top:5px">
         <div class="col-xs-5">
             <div class="input-group" style="width:100px">
-                @Html.DropDownListFor(model => model.projId, Model.projects.Projects, new { htmlAttributes = new { @class = "form-control", @style = "width:auto" } })
+                @Html.DropDownListFor(model => model.projId, Model.projects.Projects, htmlAttributes : new { @class = "form-control", @style = "width:auto" } )
             </div>
         </div>
     </div>
@@ -70,13 +72,13 @@
     if (Model.SearchResults != null && Model.SearchResults.Count > 0)
     {
         <div class="row">
-            <div class="col-md-2"><h4>Volunteer   </h4></div>
-            <div class="col-md-2"><h4>Organization</h4></div>
-            <div class="col-md-2"><h4>Project     </h4></div>
-            <div class="col-md-1"><h4>Date     </h4></div>
-            <div class="col-md-1"><h4>Time In     </h4></div>
-            <div class="col-md-1"><h4>Time Out    </h4></div>
-            <div class="col-md-1"><h4>Hours       </h4></div>
+            <div class="col-md-2"><p>Volunteer   </p></div>
+            <div class="col-md-2"><p>Organization</p></div>
+            <div class="col-md-2"><p>Project     </p></div>
+            <div class="col-md-1"><p>Date        </p></div>
+            <div class="col-md-1"><p>Time In     </p></div>
+            <div class="col-md-1"><p>Time Out    </p></div>
+            <div class="col-md-1"><p>Hours       </p></div>
             <div class="col-md-1"></div>
 
         </div>
