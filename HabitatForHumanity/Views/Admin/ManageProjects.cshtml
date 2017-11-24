@@ -5,7 +5,7 @@
     ViewBag.Title = "ManageProjects";
     var createButton = "<span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"> Create New Project</span>";
 }
-
+@Scripts.Render("~/bundles/jquery")
 <h2>Manage Projects</h2>
 
 @ToolKitVM.Modal("Create Project", "createProjectModal", "createPartialTarget")
@@ -59,31 +59,32 @@
 
 
 <!--Project List-->
-<div id="projectList" class="row well well-lg" style="min-width:500px">
-    @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
-</div>
+@{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
+
+
 
 
 @Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
 
 
 <script type="text/javascript">
+
+
     $(".createButton").click(function () {
         $.ajax({
             url: '/Admin/CreateProject',
             type: 'GET',
-            success: function (data)
-            {
+            success: function (data) {
                 $("#createPartialTarget").html(data);
             }
         });
-    })
+    });
 
     //https://stackoverflow.com/questions/31053460/how-to-make-a-net-mvc-form-inside-a-modal-using-jquery-with-validation
     //prevents the modal from automatically redirecting when the submit button is clicked
     //instead we send our post method our form data to do a validation check server side
     //and return a marked up view to the modal if it's an invalid form
-    $("#createProjectModal").on('submit',   function (e) {
+    $("#createProjectModal").on('submit', function (e) {
         e.preventDefault();
         console.log("prevented from submitting");
         var form = $("#createProjectForm");
@@ -91,12 +92,16 @@
             url: '/Admin/CreateProject',
             type: 'POST',
             data: form.serialize(),
-            success: function (partialResult)
-            {
+            success: function (partialResult) {
                 console.log(partialResult);
                 $("#createPartialTarget").html(partialResult);
             }
         })
-    })
+    });
+
+
+
+
+
 
 </script>

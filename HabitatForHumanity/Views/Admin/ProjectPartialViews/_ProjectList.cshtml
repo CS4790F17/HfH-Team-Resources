@@ -1,40 +1,88 @@
 ﻿@using PagedList.Mvc;
 @using HabitatForHumanity.ViewModels;
 @model PagedList.StaticPagedList<HabitatForHumanity.Models.Project>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
 
-<table style="width:500px">
-    <!--Title bar-->
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.ElementAt(0).name)</th>
-            <th>@Html.DisplayNameFor(model => model.ElementAt(0).description)</th>
-            <th>@Html.DisplayNameFor(model => model.ElementAt(0).beginDate)</th>
-            <th>@Html.DisplayNameFor(model => model.ElementAt(0).status)</th>
-        </tr>
-    </thead>
-    <!--End of Title bar-->
-    <!--List of Projects-->
-    <tbody>
-        @foreach (var project in Model)
-        {
+@Html.HiddenFor(x => x.PageNumber)
+
+<div id="projectList" class="well well-lg" style="min-width:500px">
+    <table style="width:auto">
+        <!--Title bar-->
+        <thead>
             <tr>
-                <td>@project.name</td>
-                <td>@project.description</td>
-                <td>@project.beginDate</td>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).name)</th>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).description)</th>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).beginDate)</th>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).status)</th>
+            </tr>
+        </thead>
+        <!--End of Title bar-->
+        <!--List of Projects-->
+        <tbody>
+            @foreach (var project in Model)
+            {
+                <tr>
+                    <td>@project.name</td>
+                    <td>@project.description</td>
+                    <td>@project.beginDate</td>
 
 
-                @switch (project.status)
+                    @switch (project.status)
                 {
                     case 0:
-                        <td>Inactive</td>
+                            <td>Inactive</td>
+                            break;
+                        case 1:
+                            <td>Active</td>
+                            break;
+                    }
+
+
+                    @switch (project.status)
+                {
+                    case 0:
+                                <!--Activate-->
+                            <td>
+                                <button class="changeStatus" projectId="@project.Id" style="background:none;border:none">
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:green" title="Activate"></span>
+                                </button>
+                            </td>
+                            @*<td>@Ajax.ActionLink("Activate", "ChangeProjectStatus", new { id = project.Id, page = Model.PageNumber }, new AjaxOptions { HttpMethod = "GET", OnSuccess = "reloadProjectList(data)" }, htmlAttributes: new { @class = "statusActivate", @style = "margin:0px 20px" })</td>*@
                         break;
                     case 1:
-                        <td>Active</td>
+                                <!--Deactivate-->
+                            <td>
+                                <button class="changeStatus" projectId="@project.Id" style="background:none;border:none">
+                                    <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red" title="Activate"></span>
+                                </button>
+                            </td>
+                            @*<td>@Ajax.ActionLink("Deactivate", "ChangeProjectStatus", new { id = project.Id, page = Model.PageNumber }, new AjaxOptions { HttpMethod = "GET", OnSuccess = "reloadProjectList(data)" }, htmlAttributes: new { @class = "statusDeactivate", @style = "margin:0px 20px" })</td>*@
                         break;
-                }
+                    }
 
-            </tr>
-        }
-    </tbody>
-</table>
-<!--End of List of Projects-->
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <!--End of List of Projects-->
+</div>
+<script type="text/javascript">
+    $(".changeStatus").click(function () {
+        var id = $(this).attr("projectId");
+        var page = $("#PageNumber").attr("value");
+        console.log(id);
+        console.log(page);
+
+        var data = { "id": id, "page": page }
+        $.ajax({
+            url: "/Admin/ChangeProjectStatus",
+            data: data,
+            success: function (response) {
+                // console.log(response);
+                $("#projectList").replaceWith(response);
+            }
+        })
+    });
+</script>

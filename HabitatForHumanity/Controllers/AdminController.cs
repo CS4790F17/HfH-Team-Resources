@@ -487,13 +487,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult ManageProjects(ProjectSearchModel model)
         {
 
-            var page = (model.Page ?? 1) - 1;
-            int totalCount = 0;
-            ReturnStatus st = Project.GetProjectPage(page, RecordsPerPage, ref totalCount);
-
-            //supposed to help reduce the load on the database by only getting what's needed
-            model.SearchResults = ((List<Project>)st.data).ToPagedList(page + 1, RecordsPerPage);
-            model.SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), page + 1, RecordsPerPage, totalCount);
+            model.SearchResults = GetProjectPage(model.Page);
 
             return View(model);
         }
@@ -514,6 +508,40 @@ namespace HabitatForHumanity.Controllers
             proj.status = 0;
             Repository.AddProject(proj);
             return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+        }
+
+        
+        public ActionResult ChangeProjectStatus(int id, int page)
+        {
+            ReturnStatus st = Repository.GetProjectById(id);
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                ((Project)st.data).status = 1 - ((Project)st.data).status;
+                Repository.EditProject((Project)st.data);
+            }
+
+            StaticPagedList<Project> SearchResults = GetProjectPage(page);
+            return PartialView("ProjectPartialViews/_ProjectList", SearchResults);
+
+        }
+
+
+        private StaticPagedList<Project> GetProjectPage(int? Page)
+        {
+
+            //page can't be 0 or below
+            if(Page < 1 || Page == null)
+            {
+                Page = 1;
+            }
+            
+            //send in Page - 1 so that the index works correctly
+            int totalCount = 0;
+            ReturnStatus st = Project.GetProjectPage((Page.Value - 1), RecordsPerPage, ref totalCount);
+
+            //supposed to help reduce the load on the database by only getting what's needed
+            StaticPagedList<Project> SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), Page.Value, RecordsPerPage, totalCount);
+            return SearchResults;
         }
 
 
