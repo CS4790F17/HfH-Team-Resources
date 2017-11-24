@@ -15,6 +15,22 @@ namespace HabitatForHumanity.ViewModels
         public string queryString { get; set; }
         public IPagedList<TimeCardVM> SearchResults { get; set; }
         public string SearchButton { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "From")]
+        public DateTime rangeStart { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "To")]
+        public DateTime rangeEnd { get; set; }
+
+        public TimeCardSearchModel()
+        {
+            rangeStart = DateTime.Now.AddMonths(-1);
+            rangeEnd = DateTime.Now;
+        }
     }
 
     public class TimeCardVM
