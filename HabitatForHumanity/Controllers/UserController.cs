@@ -552,7 +552,6 @@ namespace HabitatForHumanity.Controllers
                 ViewBag.status = "Sorry, system is temporarily down. Please try again later";
                 return View(user);
             }
-
             List<User> users = (List<User>)rs.data;
             return View("VolunteerSearchResults", users);
         }
@@ -568,15 +567,27 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             SearchTimeDetailVM userTimeDetails = new SearchTimeDetailVM();
-            //TODO: add error checking
-            User user = (User)Repository.GetUser(id.Value).data;
+            ReturnStatus rs = Repository.GetUser(id.Value);
+            if(rs.errorCode != 0)
+            {
+                ViewBag.status = "Sorry, system is temporarily down. Please try again later";
+                return View();
+            }
+            User user = (User)rs.data;
             userTimeDetails.userId = user.Id;
             userTimeDetails.firstName = user.firstName;
             userTimeDetails.lastName = user.lastName;
             userTimeDetails.emailAddress = user.emailAddress;
             //TODO: add error checking
-            userTimeDetails.timeSheets = (List<TimeSheet>)Repository.GetAllTimeSheetsByVolunteer(id.Value).data;
+            ReturnStatus st = Repository.GetAllTimeSheetsByVolunteer(id.Value);
+            if(st.errorCode != 0)
+            {
+                ViewBag.status = "Sorry, system is temporarily down. Please try again later";
+                return View();
+            }
+            userTimeDetails.timeSheets = (List<TimeSheet>)st.data;
             if (userTimeDetails == null)
             {
                 return HttpNotFound();
