@@ -477,17 +477,12 @@ namespace HabitatForHumanity.Controllers
 
         #region Manage Projects
 
-        public ActionResult Projects()
-        {
-            return RedirectToAction("Index", "Project");
-        }
-
         //Main view
         [HttpGet]
         public ActionResult ManageProjects(ProjectSearchModel model)
         {
 
-            model.SearchResults = GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString);
+            model.SearchResults = Repository.GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString);
             model.Page = model.SearchResults.PageNumber;
 
             return View(model);
@@ -512,7 +507,7 @@ namespace HabitatForHumanity.Controllers
         }
 
 
-        public ActionResult ChangeProjectStatus(int id, int page)
+        public ActionResult ChangeProjectStatus(int id, int page, int statusChoice, string queryString)
         {
             ReturnStatus st = Repository.GetProjectById(id);
             if (st.errorCode == ReturnStatus.ALL_CLEAR)
@@ -520,8 +515,10 @@ namespace HabitatForHumanity.Controllers
                 ((Project)st.data).status = 1 - ((Project)st.data).status;
                 Repository.EditProject((Project)st.data);
             }
-
-            StaticPagedList<Project> SearchResults = GetProjectPage(page, "");
+            //once the status has been changed return a project list with filters
+            //grabs the filters even though they hadn't been submitted
+            StaticPagedList<Project> SearchResults = Repository.GetProjectPageWithFilter(page, statusChoice, queryString);
+            //StaticPagedList<Project> SearchResults = GetProjectPage(page, "");
             return PartialView("ProjectPartialViews/_ProjectList", SearchResults);
 
         }
@@ -553,64 +550,15 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         public ActionResult ProjectSearch(int? Page, int statusChoice, string queryString)
         {
-            //ProjectSearchModel model = new ProjectSearchModel();
-            //model.Page = Page;
-            //model.statusChoice = statusChoice;
-            //model.queryString = queryString;
-            //return RedirectToAction("ManageProjects", model);
-           return PartialView("ProjectPartialViews/_ProjectList", GetProjectPageWithFilter(Page, statusChoice, queryString));
+            ProjectSearchModel model = new ProjectSearchModel();
+            model.Page = Page;
+            model.statusChoice = statusChoice;
+            model.queryString = queryString;
+            return RedirectToAction("ManageProjects", model);
+            //return PartialView("ProjectPartialViews/_ProjectList", GetProjectPageWithFilter(Page, statusChoice, queryString));
         }
 
-        public StaticPagedList<Project> GetProjectPageWithFilter(int? Page, int statusChoice, string queryString)
-        {
-
-            //page can't be 0 or below
-            if (Page < 1 || Page == null)
-            {
-                Page = 1;
-            }
-
-            int totalCount = 0;
-            ReturnStatus st = new ReturnStatus();
-            switch (statusChoice)
-            {
-                case 0:
-                    st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString);
-                    break;
-                case 1:
-                    //search for all active projects
-                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 1, queryString);
-                    break;
-                case 2:
-                    //search for all inactive projects
-                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 0, queryString);
-                    break;
-
-            }
-
-            //ReturnStatus st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, statusChoice, queryString);
-            StaticPagedList<Project> SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), Page.Value, RecordsPerPage, totalCount);
-            return SearchResults;
-        }
-
-        //TODO: move to repo
-        private StaticPagedList<Project> GetProjectPage(int? Page, string queryString)
-        {
-
-            //page can't be 0 or below
-            if (Page < 1 || Page == null)
-            {
-                Page = 1;
-            }
-
-            //send in Page - 1 so that the index works correctly
-            int totalCount = 0;
-            ReturnStatus st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString);
-
-            //supposed to help reduce the load on the database by only getting what's needed
-            StaticPagedList<Project> SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), Page.Value, RecordsPerPage, totalCount);
-            return SearchResults;
-        }
+ 
 
 
         #endregion

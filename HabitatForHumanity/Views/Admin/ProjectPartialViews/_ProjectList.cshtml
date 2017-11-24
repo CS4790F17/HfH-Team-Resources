@@ -75,13 +75,20 @@
     <!--End of List of Projects-->
 </div>
 <script type="text/javascript">
+
+
+    //changes the status of the project from active to inactive or vice versa
     $(".changeStatus").click(function () {
         var id = $(this).attr("projectId");
         var page = $("#PageNumber").attr("value");
-        console.log(id);
-        console.log(page);
-
-        var data = { "id": id, "page": page }
+        var query = $("#queryString").val();
+        var choice = $("#statusChoiceSelector").val();
+        //console.log(id);
+        //console.log(page);
+        //console.log(query);
+       // console.log(choice);
+        
+        var data = { "id": id, "page": page, "statusChoice": choice, "queryString": query }
         $.ajax({
             url: "/Admin/ChangeProjectStatus",
             data: data,
@@ -92,6 +99,8 @@
         })
     });
 
+    //when the edit button is clicked opens a modal and fills out a partial view
+    //with relevant model data
     $(".editModalButton").click(function () {
         var id = $(this).attr("dataId");
         var data = { "id": id }

@@ -32,7 +32,6 @@
         <!--Search Bar-->
         <div class="form-group">
             <div class="input-group">
-                <!--TODO Replace with query string-->
                 @Html.EditorFor(x => x.queryString, new { htmlAttributes = new { placeholder = "Find Project", @class = "form-control", @style = "width:auto" } })
                 <span class="input-group-btn">
                     <button class="btn" type="submit">
@@ -55,12 +54,12 @@
 
 
 
-@Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "queryString", Model.queryString  },  { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
+@Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "queryString", Model.queryString  },{ "statusChoice", Model.statusChoice},  { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
 
 
 <script type="text/javascript">
 
-
+    //action listener for creating projects
     $(".createButton").click(function () {
         $.ajax({
             url: '/Admin/CreateProject',
@@ -90,22 +89,23 @@
         })
     });
 
-    $("#searchForm").on('submit', function (e) {
-        e.preventDefault();
-        console.log("stopping");
-        var form = $(this).serialize();
-        console.log(form);
-        $.ajax({
-            url: "/Admin/ProjectSearch",
-            type: "POST",
-            data: form,
-            success: function (response)
-            {
-                $("#mainPageProjectList").html(response);
-            }
-        })
-    });
-
+    //action listener for the filter options
+    //uncomment to activate ajax behavior. comes with logic errors and page inconsistencies
+    //$("#searchForm").on('submit', function (e) {
+    //    e.preventDefault(); 
+    //    console.log("stopping");
+    //    var form = $(this).serialize();
+    //    console.log(form);
+    //    $.ajax({
+    //        url: "/Admin/ProjectSearch",
+    //        type: "POST",
+    //        data: form,
+    //        success: function (response)
+    //        {
+    //            $("#mainPageProjectList").html(response);
+    //        }
+    //    })
+    //});
 
 
 </script>
