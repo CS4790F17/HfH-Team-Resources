@@ -68,11 +68,7 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
-            int orgNum = 2;
-            int projNum = 3;
-            DateTime strt = Convert.ToDateTime("1/1/1950");
-            DateTime end = Convert.ToDateTime("11/17/2017");
-            ReturnStatus rs = Repository.GetTimeCardsByFilters(orgNum, projNum, tsm.rangeStart, tsm.rangeEnd);
+            ReturnStatus rs = Repository.GetTimeCardsByFilters(tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd);
             if(rs.errorCode != 0)
             {
                 ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";

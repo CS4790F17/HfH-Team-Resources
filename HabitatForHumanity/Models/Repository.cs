@@ -522,7 +522,7 @@ namespace HabitatForHumanity.Models
         #region TimeSheet functions
 
         #region TimeCard VMs by filters
-        public static ReturnStatus GetTimeCardsByFilters(int? orgNum, int? projNum, DateTime strt, DateTime end)
+        public static ReturnStatus GetTimeCardsByFilters(int orgNum, int projNum, DateTime strt, DateTime end)
         {
             ReturnStatus timeSheetsResult = TimeSheet.GetTimeSheetsByFilters(orgNum, projNum, strt, end);
             ReturnStatus timeCardsReturn = new ReturnStatus();

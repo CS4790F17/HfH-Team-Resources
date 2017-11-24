@@ -278,14 +278,14 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static ReturnStatus GetTimeSheetsByFilters(int? orgNum, int? projNum, DateTime strt, DateTime end)
+        public static ReturnStatus GetTimeSheetsByFilters(int orgNum, int projNum, DateTime strt, DateTime end)
         {
             ReturnStatus st = new ReturnStatus();
             st.data = new List<TimeSheet>();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                if (orgNum != null && projNum != null)
+                if (orgNum > 0 && projNum > 0)
                 {
                     st.data = db.timeSheets.Where(
                         x => x.org_Id == orgNum
@@ -293,14 +293,14 @@ namespace HabitatForHumanity.Models
                         && x.clockInTime >= strt
                         && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
                 }
-                else if (orgNum != null)
+                else if (orgNum > 0)
                 {
                     st.data = db.timeSheets.Where(
                        x => x.org_Id == orgNum
                        && x.clockInTime >= strt
                        && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
                 }
-                else if(projNum != null)
+                else if(projNum > 0)
                 {
                     st.data = db.timeSheets.Where(
                        x => x.project_Id == projNum

@@ -25,11 +25,17 @@ namespace HabitatForHumanity.ViewModels
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "To")]
         public DateTime rangeEnd { get; set; }
+        public int orgId { get; set; }
+        public int projId { get; set; }
+        public ProjectDropDownList projects { get; set; }
+        public OrganizationDropDownList orgs { get; set; }
 
         public TimeCardSearchModel()
         {
             rangeStart = DateTime.Now.AddMonths(-1);
             rangeEnd = DateTime.Now;
+            projects = new ProjectDropDownList();
+            orgs = new OrganizationDropDownList();
         }
     }
 

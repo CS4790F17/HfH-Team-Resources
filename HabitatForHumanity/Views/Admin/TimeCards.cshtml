@@ -51,6 +51,20 @@
             </div>
         </div>
     </div>
+    <div class="row" style="margin-top:5px">
+        <div class="col-xs-5">
+            <div class="input-group" style="width:100px">
+                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, new { htmlAttributes = new { @class = "form-control", @style = "width:auto" } })
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top:5px">
+        <div class="col-xs-5">
+            <div class="input-group" style="width:100px">
+                @Html.DropDownListFor(model => model.projId, Model.projects.Projects, new { htmlAttributes = new { @class = "form-control", @style = "width:auto" } })
+            </div>
+        </div>
+    </div>
 }
 @{
     if (Model.SearchResults != null && Model.SearchResults.Count > 0)
