@@ -34,42 +34,35 @@ namespace HabitatForHumanity.Controllers
             }
             ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId, vsm.orgId);
 
-            if (rs.errorCode == 0)
+            if (rs.errorCode != 0)
             {
-                List<UsersVM> allVols = (List<UsersVM>)rs.data;
-                List<UsersVM> filteredVols = new List<UsersVM>();
+                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                return View(vsm);
+            }
+            
+            List<UsersVM> allVols = (List<UsersVM>)rs.data;
+            List<UsersVM> filteredVols = new List<UsersVM>();
 
-                if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
+            if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
+            {
+                foreach (UsersVM u in allVols)
                 {
-                    foreach (UsersVM u in allVols)
+                    if (u != null && vsm.queryString != null)
                     {
-                        if (u != null && vsm.queryString != null)
+                        if (u.email.ToLower().Contains(vsm.queryString.ToLower()) || u.volunteerName.ToLower().Contains(vsm.queryString.ToLower()))
                         {
-                            if (u.email.ToLower().Contains(vsm.queryString.ToLower()) || u.volunteerName.ToLower().Contains(vsm.queryString.ToLower()))
-                            {
-                                filteredVols.Add(u);
-                            }
+                            filteredVols.Add(u);
                         }
                     }
-
-                    var pageIndex = vsm.Page ?? 1;
-                    vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
                 }
-                else
-                {
-
-                    var pageIndex = vsm.Page ?? 1;
-                    vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
-                }
+                var pageIndex = vsm.Page ?? 1;
+                vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
             }
-            else if (rs.errorCode == -1)
-            {
-                ViewBag.status = "Broke in repo";
-            }
-            else // bad returnStatus
-            {
-                ViewBag.status = "Broke in datalayer";
-            }
+            else
+            {                 
+                var pageIndex = vsm.Page ?? 1;
+                vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
+            }           
             return View(vsm);
         }
 
@@ -80,37 +73,32 @@ namespace HabitatForHumanity.Controllers
             DateTime strt = Convert.ToDateTime("1/1/1950");
             DateTime end = Convert.ToDateTime("11/17/2017");
             ReturnStatus rs = Repository.GetTimeCardsByFilters(orgNum, projNum, strt, end);
+            if(rs.errorCode != 0)
+            {
+                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                return View(tsm);
+            }
 
             if (!string.IsNullOrEmpty(tsm.queryString) || tsm.Page.HasValue)
             {
-                if (rs.errorCode == 0)
+                List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
+                List<TimeCardVM> filteredVols = new List<TimeCardVM>();
+                foreach (TimeCardVM t in allVols)
                 {
-                    List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
-                    List<TimeCardVM> filteredVols = new List<TimeCardVM>();
-                    foreach (TimeCardVM t in allVols)
+                    if (t != null && tsm.queryString != null)
                     {
-                        if (t != null && tsm.queryString != null)
+                        if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
                         {
-                            if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
-                            {
-                                filteredVols.Add(t);
-                            }
+                            filteredVols.Add(t);
                         }
                     }
-
-                    var pageIndex = tsm.Page ?? 1;
-                    tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
-
-                }
-                else
-                {
-                    ViewBag.status = "We had trouble with that request, try again.";
-                    return View(tsm);
                 }
 
+                var pageIndex = tsm.Page ?? 1;
+                tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);              
             }
-            else
-            {
+           // else
+          //  {
                 //if (rs.errorCode == 0)
                 //{
                 //    List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
@@ -135,7 +123,7 @@ namespace HabitatForHumanity.Controllers
                 //    ViewBag.status = "We had trouble with that request, try again.";
                 //    return View(tsm);
                 //}
-            }
+         //   }
 
             return View(tsm);
         }
@@ -144,23 +132,25 @@ namespace HabitatForHumanity.Controllers
         {
             TimeCardVM card = new TimeCardVM();
             ReturnStatus rs = Repository.GetTimeSheetById(id);
-            if (rs.errorCode == 0)
+            if (rs.errorCode != 0)
             {
-                TimeSheet t = (TimeSheet)rs.data;
-                card.timeId = t.Id;
-                card.userId = t.user_Id;
-                card.projId = t.project_Id;
-                card.orgId = t.org_Id;
-                card.inTime = t.clockInTime;
-                card.outTime = t.clockOutTime;
-                card.orgName = "test";
-                card.projName = "test";
-                card.volName = "test";
-
-                TimeSpan span = t.clockOutTime.Subtract(t.clockInTime);
-                card.elapsedHrs = span.Minutes / 60.0;
+                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                return View();
             }
+            TimeSheet t = (TimeSheet)rs.data;
+            card.timeId = t.Id;
+            card.userId = t.user_Id;
+            card.projId = t.project_Id;
+            card.orgId = t.org_Id;
+            card.inTime = t.clockInTime;
+            card.outTime = t.clockOutTime;
+            card.orgName = "test";
+            card.projName = "test";
+            card.volName = "test";
 
+            TimeSpan span = t.clockOutTime.Subtract(t.clockInTime);
+            card.elapsedHrs = span.Minutes / 60.0;             
+            
             return PartialView("_EditTimeCard", card);
         }
 
@@ -169,6 +159,10 @@ namespace HabitatForHumanity.Controllers
         public ActionResult EditTimeCard(TimeCardVM card)
         {
             ReturnStatus rs = Repository.EditTimeCard(card);
+            if (rs.errorCode != 0)
+            {
+                return RedirectToAction("Dashboard");
+            }
             //return Json(new {
             //    timeId = card.timeId,
             //    userId = card.userId,
@@ -180,11 +174,8 @@ namespace HabitatForHumanity.Controllers
             //    volName = "holy canoli",//card.volName,
             //    elapsedHrs = card.elapsedHrs
             //    }, JsonRequestBehavior.AllowGet);
-            if (rs.errorCode == 0)
-            {
-                return RedirectToAction("Timecards");
-            }
-            return RedirectToAction("Dashboard");
+
+            return RedirectToAction("Timecards");
         }
 
 
@@ -325,6 +316,7 @@ namespace HabitatForHumanity.Controllers
             }
             catch
             {
+                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
                 return null;
             }
 
@@ -339,16 +331,14 @@ namespace HabitatForHumanity.Controllers
             // List<TimeSheet> ts = Repository.GetBadTimeSheets();
             List<BadPunchVM> bp = new List<BadPunchVM>();
 
-            if (badTimeSheets.errorCode != (int)ReturnStatus.ALL_CLEAR)
+            if (badTimeSheets.errorCode != 0)
             {
+                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
                 return null;
             }
             ReturnStatus timesheetReturn = new ReturnStatus();
             timesheetReturn.data = new List<TimeSheet>();
-            if (timesheetReturn.errorCode != (int)ReturnStatus.ALL_CLEAR)
-            {
-                return null;
-            }
+          
             List<TimeSheet> ts = (List<TimeSheet>)timesheetReturn.data;
             foreach (TimeSheet t in ts)
             {
@@ -391,7 +381,7 @@ namespace HabitatForHumanity.Controllers
         #region Manage Organization
         public ActionResult ViewOrganizations(OrganizationSearchModel model)
         {
-
+            List<Organization> orgs = new List<Organization>();
             ReturnStatus st = new ReturnStatus();
 
             switch (model.statusChoice)
@@ -406,25 +396,17 @@ namespace HabitatForHumanity.Controllers
                     st = Repository.GetOrganizationSQL(model.queryString, 0);
                     break;
             }
+            var pageIndex = model.Page ?? 1;
 
-
-
-
-            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            if (st.errorCode != 0)
             {
-
-                List<Organization> orgs = (List<Organization>)st.data;
-                var pageIndex = model.Page ?? 1;
-                model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
-            }
-            else
-            {
-                //fill search results with empty list
-                List<Organization> orgs = new List<Organization>();
-                var pageIndex = model.Page ?? 1;
+                //fill search results with empty list                              
                 model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
             }
 
+            orgs = (List<Organization>)st.data;               
+            model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
+            
             //tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
             return View(model);
         }
@@ -432,8 +414,13 @@ namespace HabitatForHumanity.Controllers
         [HttpGet]
         public ActionResult EditOrganization(int id)
         {
-            ReturnStatus st = Repository.GetOrganizationById(id);
-            return PartialView("OrganizationPartialViews/_EditOrganization", (Organization)st.data);
+            ReturnStatus rs = Repository.GetOrganizationById(id);
+            if(rs.errorCode != 0)
+            {
+                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                return View();
+            }
+            return PartialView("OrganizationPartialViews/_EditOrganization", (Organization)rs.data);
         }
 
         [HttpPost]
@@ -448,7 +435,11 @@ namespace HabitatForHumanity.Controllers
         public void ChangeOrganizationStatus(int id)
         {
             ReturnStatus st = Repository.GetOrganizationById(id);
-            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            if (st.errorCode != 0)
+            {
+                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+            }
+            else
             {
                 ((Organization)st.data).status = 1 - ((Organization)st.data).status;
                 Repository.EditOrganization((Organization)st.data);
