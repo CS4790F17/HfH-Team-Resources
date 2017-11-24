@@ -418,9 +418,10 @@ namespace HabitatForHumanity.Controllers
                 {
                     ReturnStatus existsResult = new ReturnStatus();
                     existsResult = Repository.EmailExists(forgot.email);
-                    if (existsResult.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                    if (existsResult.errorCode != 0)
                     {
-                        return RedirectToAction("HandleErrors", "User", new { excMsg = "The system is temporarily down, please try again." });
+                        ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
+                        return View("Login");                      
                     }
 
                     if ((bool)existsResult.data)
@@ -473,10 +474,10 @@ namespace HabitatForHumanity.Controllers
         }
         #endregion
 
-        public ActionResult HandleErrors(string excMsg)
-        {
-            return RedirectToAction("Login", "User", new { excMsg = excMsg });
-        }
+        //public ActionResult HandleErrors(string excMsg)
+        //{
+        //    return RedirectToAction("Login", "User", new { excMsg = excMsg });
+        //}
 
         #region Edit
         public ActionResult Edit(int? id)
@@ -545,7 +546,15 @@ namespace HabitatForHumanity.Controllers
         public ActionResult VolunteerSearch([Bind(Include = "firstName,lastName")] User user)
         {
             //TODO: add error checking
-            return View("VolunteerSearchResults", (List<User>)Repository.GetUsersByName(user.firstName, user.lastName).data);
+            ReturnStatus rs = Repository.GetUsersByName(user.firstName, user.lastName);
+            if(rs.errorCode != 0)
+            {
+                ViewBag.status = "Sorry, system is temporarily down. Please try again later";
+                return View(user);
+            }
+
+            List<User> users = (List<User>)rs.data;
+            return View("VolunteerSearchResults", users);
         }
 
         /// <summary>

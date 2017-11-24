@@ -145,14 +145,13 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
                 return st;
             }
-            catch (Exception e)
+            catch 
             {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorCode = -1;
                 st.data = new List<User>();
-                st.errorMessage = e.ToString();
                 return st;
             }
         }
@@ -165,14 +164,13 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.ToList();
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
                 return st;
             }
-            catch (Exception e)
+            catch
             {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                st.data = new List<User>();
-                st.errorMessage = e.ToString();
+                st.errorCode = -1;
+                st.data = new List<User>();                
                 return st;
             }
         }
