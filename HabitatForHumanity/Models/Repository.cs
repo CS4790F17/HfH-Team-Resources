@@ -5,11 +5,16 @@ using System.Web;
 using System.Web.Helpers;
 using HabitatForHumanity.ViewModels;
 using HabitatForHumanity.Models;
+using PagedList;
 
 namespace HabitatForHumanity.Models
 {
     public class Repository
     {
+        //used for building paginated lists
+        private const int RecordsPerPage = 10;
+
+
         #region User functions
 
         /// <summary>
@@ -55,8 +60,8 @@ namespace HabitatForHumanity.Models
             #region if filter by project
             if (projectId > 0 || orgId > 0)
             {
-                ReturnStatus projectUsersReturn = TimeSheet.GetUsersbyTimeSheetFilters(projectId,orgId);
-                if(projectUsersReturn.errorCode == 0)
+                ReturnStatus projectUsersReturn = TimeSheet.GetUsersbyTimeSheetFilters(projectId, orgId);
+                if (projectUsersReturn.errorCode == 0)
                 {
                     List<User> users = (List<User>)projectUsersReturn.data;
                     List<UsersVM> volunteers = new List<UsersVM>();
@@ -112,11 +117,11 @@ namespace HabitatForHumanity.Models
         }
 
 
-    /// <summary>
-    /// Creates a volunteer user
-    /// </summary>
-    /// <param name="user"></param>
-    public static ReturnStatus CreateVolunteer(User user)
+        /// <summary>
+        /// Creates a volunteer user
+        /// </summary>
+        /// <param name="user"></param>
+        public static ReturnStatus CreateVolunteer(User user)
         {
             if (user.password != null)
             {
@@ -234,7 +239,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="user">User object with new information.</param>
         public static ReturnStatus EditUser(User user)
-        {          
+        {
             return User.EditUser(user);
         }
 
@@ -290,7 +295,7 @@ namespace HabitatForHumanity.Models
             return Project.GetProjectById(id);
         }
 
- 
+
 
         /// <summary>
         /// Gets all the currently active projects
@@ -337,14 +342,80 @@ namespace HabitatForHumanity.Models
         /// Edit the project with new values.
         /// </summary>
         /// <param name="project">Project object where new values are stored.</param>
-        //public static void EditProject(Project project)
-        //{
-        //    Project.EditProject(project);
-        //}
         public static ReturnStatus EditProject(Project project)
         {
             return Project.EditProject(project);
         }
+
+
+
+        /// <summary>
+        /// Builds a paginated list of projects to display with the _ProjectList partial view. 
+        /// </summary>
+        /// <param name="Page">The current page number. Page cannot be null or less than 1.</param>
+        /// <param name="statusChoice">The currently selected status choice. 0 - All, 1 - Active, 2 - Inactive</param>
+        /// <param name="queryString">The name of the project to search for.</param>
+        /// <returns></returns>
+        public static StaticPagedList<Project> GetProjectPageWithFilter(int? Page, int statusChoice, string queryString)
+        {
+
+            //page can't be 0 or below
+            if (Page < 1 || Page == null)
+            {
+                Page = 1;
+            }
+
+            int totalCount = 0;
+            ReturnStatus st = new ReturnStatus();
+            switch (statusChoice)
+            {
+                case 0:
+                    st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString);
+                    break;
+                case 1:
+                    //search for all active projects
+                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 1, queryString);
+                    break;
+                case 2:
+                    //search for all inactive projects
+                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 0, queryString);
+                    break;
+
+            }
+
+            //ReturnStatus st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, statusChoice, queryString);
+            StaticPagedList<Project> SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), Page.Value, RecordsPerPage, totalCount);
+            return SearchResults;
+        }
+
+        /// <summary>
+        /// Builds a paginated list of projects to display with the _ProjectList partial view. 
+        /// </summary>
+        /// <param name="Page">The current page number. Page cannot be null or less than 1.</param>
+        /// <param name="queryString">The name of the project to search for.</param>
+        /// <returns></returns>
+        public static StaticPagedList<Project> GetProjectPage(int? Page, string queryString)
+        {
+
+            //page can't be 0 or below
+            if (Page < 1 || Page == null)
+            {
+                Page = 1;
+            }
+
+            //send in Page - 1 so that the index works correctly
+            int totalCount = 0;
+            ReturnStatus st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString);
+
+            //supposed to help reduce the load on the database by only getting what's needed
+            StaticPagedList<Project> SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), Page.Value, RecordsPerPage, totalCount);
+            return SearchResults;
+        }
+
+
+
+
+
 
         /// <summary>
         /// Deletes a project from the database.
@@ -457,10 +528,10 @@ namespace HabitatForHumanity.Models
             ReturnStatus timeCardsReturn = new ReturnStatus();
             List<TimeCardVM> cards = new List<TimeCardVM>();
             List<TimeSheet> sheets = new List<TimeSheet>();
-            if(timeSheetsResult.errorCode == 0)
+            if (timeSheetsResult.errorCode == 0)
             {
                 sheets = (List<TimeSheet>)timeSheetsResult.data;
-                foreach(TimeSheet ts in sheets)
+                foreach (TimeSheet ts in sheets)
                 {
                     TimeSpan span = ts.clockOutTime.Subtract(ts.clockInTime);
 
@@ -501,7 +572,7 @@ namespace HabitatForHumanity.Models
             {
                 return "none";
             }
-      
+
         }
         public static string GetProjName(int projId)
         {

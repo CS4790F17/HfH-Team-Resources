@@ -27,12 +27,12 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult Volunteers(VolunteerSearchModel vsm)
         {
-            if(vsm.projects == null)
+            if (vsm.projects == null)
             {
                 vsm = new VolunteerSearchModel();
                 return View(vsm);
             }
-            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId,vsm.orgId);
+            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId, vsm.orgId);
 
             if (rs.errorCode != 0)
             {
@@ -378,6 +378,7 @@ namespace HabitatForHumanity.Controllers
             return PartialView("_BadPunches", bp);
         }
 
+        #region Manage Organization
         public ActionResult ViewOrganizations(OrganizationSearchModel model)
         {
             List<Organization> orgs = new List<Organization>();
@@ -463,12 +464,95 @@ namespace HabitatForHumanity.Controllers
             Repository.AddOrganization(org);
             return RedirectToAction("ViewOrganizations");
         }
+        #endregion
 
+        #region Manage Projects
 
-        public ActionResult Projects()
+        //Main view
+        [HttpGet]
+        public ActionResult ManageProjects(ProjectSearchModel model)
         {
-            return RedirectToAction("Index", "Project");
+
+            model.SearchResults = Repository.GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString);
+            model.Page = model.SearchResults.PageNumber;
+
+            return View(model);
         }
+
+        [HttpGet]
+        public ActionResult CreateProject()
+        {
+            return PartialView("ProjectPartialViews/_CreateProject");
+        }
+
+        [HttpPost]
+        public ActionResult CreateProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView("ProjectPartialViews/_CreateProject", proj);
+            }
+            proj.status = 0;
+            Repository.AddProject(proj);
+            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+        }
+
+
+        public ActionResult ChangeProjectStatus(int id, int page, int statusChoice, string queryString)
+        {
+            ReturnStatus st = Repository.GetProjectById(id);
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                ((Project)st.data).status = 1 - ((Project)st.data).status;
+                Repository.EditProject((Project)st.data);
+            }
+            //once the status has been changed return a project list with filters
+            //grabs the filters even though they hadn't been submitted
+            StaticPagedList<Project> SearchResults = Repository.GetProjectPageWithFilter(page, statusChoice, queryString);
+            //StaticPagedList<Project> SearchResults = GetProjectPage(page, "");
+            return PartialView("ProjectPartialViews/_ProjectList", SearchResults);
+
+        }
+
+        [HttpGet]
+        public ActionResult EditProject(int id)
+        {
+            ReturnStatus st = Repository.GetProjectById(id);
+            if (st.errorCode == 0)
+            {
+                return PartialView("ProjectPartialViews/_EditProject", (Project)st.data);
+            }
+            //if no edit was found return create
+            return CreateProject();
+        }
+
+        [HttpPost]
+        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        {
+            //if model state isn't valid
+            if (!ModelState.IsValid)
+            {
+                return PartialView("ProjectPartialViews/_EditProject", proj);
+            }
+            Repository.EditProject(proj);
+            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+        }
+
+        [HttpPost]
+        public ActionResult ProjectSearch(int? Page, int statusChoice, string queryString)
+        {
+            ProjectSearchModel model = new ProjectSearchModel();
+            model.Page = Page;
+            model.statusChoice = statusChoice;
+            model.queryString = queryString;
+            return RedirectToAction("ManageProjects", model);
+            //return PartialView("ProjectPartialViews/_ProjectList", GetProjectPageWithFilter(Page, statusChoice, queryString));
+        }
+
+ 
+
+
+        #endregion
 
     }
 }
