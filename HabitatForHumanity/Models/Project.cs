@@ -48,16 +48,6 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 projects = db.projects.ToList();
-
-                //foreach (Project p in projects)
-                //{
-                //    add up total hours
-
-
-                //    p.hoursLogged = (double)Repository.getTotalHoursLoggedIntoProject(p.Id).data;
-                //    add up total people
-                //}
-
             }
             catch (Exception e)
             {

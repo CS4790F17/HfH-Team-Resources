@@ -18,7 +18,7 @@ namespace HabitatForHumanity.Controllers
     public class AdminController : Controller
     {
 
-        const int RecordsPerPage = 10;
+        const int RecordsPerPage = 25;
         // GET: Admin dashboard
         public ActionResult Dashboard()
         {
@@ -68,64 +68,52 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
-            int orgNum = 2;
-            int projNum = 3;
-            DateTime strt = Convert.ToDateTime("1/1/1950");
-            DateTime end = Convert.ToDateTime("11/17/2017");
-            ReturnStatus rs = Repository.GetTimeCardsByFilters(orgNum, projNum, strt, end);
-            if(rs.errorCode != 0)
-            {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
-                return View(tsm);
-            }
-
-            if (!string.IsNullOrEmpty(tsm.queryString) || tsm.Page.HasValue)
-            {
-                List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
-                List<TimeCardVM> filteredVols = new List<TimeCardVM>();
-                foreach (TimeCardVM t in allVols)
-                {
-                    if (t != null && tsm.queryString != null)
-                    {
-                        if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
-                        {
-                            filteredVols.Add(t);
-                        }
-                    }
-                }
-
-                var pageIndex = tsm.Page ?? 1;
-                tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);              
-            }
-           // else
-          //  {
-                //if (rs.errorCode == 0)
-                //{
-                //    List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
-                //    List<TimeCardVM> filteredVols = new List<TimeCardVM>();
-                //    foreach (TimeCardVM t in allVols)
-                //    {
-                //        if (t != null && tsm.queryString != null)
-                //        {
-                //            if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
-                //            {
-                //                filteredVols.Add(t);
-                //            }
-                //        }
-                //    }
-
-                //    var pageIndex = tsm.Page ?? 1;
-                //    tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
-
-                //}
-                //else
-                //{
-                //    ViewBag.status = "We had trouble with that request, try again.";
-                //    return View(tsm);
-                //}
-         //   }
-
+            //StaticPagedList<TimeCardVM> pagedCards = Repository.GetTimeCardPageWithFilter(
+            //        tsm.Page, 0, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
+            ReturnStatus rs = Repository.GetTimeCardPageWithFilter(
+                    tsm.Page, 0, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
+            var pageIndex = tsm.Page ?? 1;
+            List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
+            tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
+            tsm.Page = tsm.SearchResults.PageNumber;
             return View(tsm);
+
+            //ReturnStatus rs = Repository.GetTimeCardsByFilters(tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd);
+            //if(rs.errorCode != 0)
+            //{
+            //    ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+            //    return View(tsm);
+            //}
+            //else
+            //{
+            //    List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
+            //    List<TimeCardVM> filteredVols = new List<TimeCardVM>();
+
+            //    if (!string.IsNullOrEmpty(tsm.queryString))// || tsm.Page.HasValue)
+            //    {
+                   
+            //        foreach (TimeCardVM t in allVols)
+            //        {
+            //            if (t != null && !string.IsNullOrEmpty(tsm.queryString))
+            //            {
+            //                if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
+            //                {
+            //                    filteredVols.Add(t);
+            //                }
+            //            }
+            //        }
+            //        var pageIndex = tsm.Page ?? 1;
+            //        tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+            //    }
+            //    else
+            //    {
+            //        var pageIndex = tsm.Page ?? 1;
+            //        tsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
+            //    }
+            //}
+            
+
+            //return View(tsm);
         }
 
         public ActionResult EditTimeCard(int id)
