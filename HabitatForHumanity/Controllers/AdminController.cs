@@ -18,7 +18,7 @@ namespace HabitatForHumanity.Controllers
     public class AdminController : Controller
     {
 
-        const int RecordsPerPage = 10;
+        const int RecordsPerPage = 25;
         // GET: Admin dashboard
         public ActionResult Dashboard()
         {
@@ -70,7 +70,9 @@ namespace HabitatForHumanity.Controllers
         {
             StaticPagedList<TimeCardVM> pagedCards = Repository.GetTimeCardPageWithFilter(
                     tsm.Page, 0, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
+      
             tsm.SearchResults = pagedCards;
+            tsm.Page = tsm.SearchResults.PageNumber;
             return View(tsm);
 
             //ReturnStatus rs = Repository.GetTimeCardsByFilters(tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd);

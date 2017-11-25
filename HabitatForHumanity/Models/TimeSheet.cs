@@ -296,7 +296,7 @@ namespace HabitatForHumanity.Models
                 //List<int> userIds = new List<int>();
                 List<string> userTerms = queryString.Split(' ').ToList();
                 var userIds = (from u in db.users
-                               where userTerms.Any(term => u.firstName.Contains(term))
+                               where userTerms.Any(term => u.firstName.Contains(term)) || userTerms.Any(term => u.lastName.Contains(term))
                                select u.Id).ToArray();
                 userIdInList = (userIds.Length > 0) ? " AND U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
             }
@@ -331,7 +331,7 @@ namespace HabitatForHumanity.Models
             cardsReturn.errorCode = 0;
             cardsReturn.data = cards.Skip(itemsPerPage * page).Take(itemsPerPage).ToList();
             return cardsReturn;
-         
+            
             //VolunteerDbContext db = new VolunteerDbContext();
             ////List<TimeCardVM> cards = new List<TimeCardVM>();
             //List<string> userTerms = new List<string>();
@@ -373,64 +373,66 @@ namespace HabitatForHumanity.Models
             //return new ReturnStatus { errorCode = ReturnStatus.ALL_CLEAR, data = cards };
         }
 
-        public static ReturnStatus GetTimeSheetsByFilters(int orgNum, int projNum, DateTime strt, DateTime end)
-        {
-            ReturnStatus st = new ReturnStatus();
-            st.data = new List<TimeSheet>();
+        // deprecated
 
-            try
-            {
-                VolunteerDbContext db = new VolunteerDbContext();
-                int? org = null;
-                int? proj = null;
-                var query = db.timeSheets.AsQueryable();
-                if (org != null)
-                {
-                    query = query.Where(t => t.org_Id == org);
-                }
-                if (proj != null)
-                {
-                    query = query.Where(t => t.project_Id == proj);
-                }
-                st.data = query.OrderByDescending(x => x.clockInTime).ToList();
-                //if (orgNum > 0 && projNum > 0)
-                //{
-                //    st.data = db.timeSheets.Where(
-                //        x => x.org_Id == orgNum
-                //        && x.project_Id == projNum
-                //        && x.clockInTime >= strt
-                //        && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
-                //}
-                //else if (orgNum > 0)
-                //{
-                //    st.data = db.timeSheets.Where(
-                //       x => x.org_Id == orgNum
-                //       && x.clockInTime >= strt
-                //       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
-                //}
-                //else if (projNum > 0)
-                //{
-                //    st.data = db.timeSheets.Where(
-                //       x => x.project_Id == projNum
-                //       && x.clockInTime >= strt
-                //       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
-                //}
-                //else
-                //{
-                //    st.data = db.timeSheets.Where(
-                //      x => x.clockInTime >= strt
-                //      && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
-                //}
-                st.errorCode = 0;
-                return st;
-            }
-            catch (Exception e)
-            {
-                st.errorCode = -1;
-                st.errorMessage = e.ToString();
-                return st;
-            }
-        }
+        //public static ReturnStatus GetTimeSheetsByFilters(int orgNum, int projNum, DateTime strt, DateTime end)
+        //{
+        //    ReturnStatus st = new ReturnStatus();
+        //    st.data = new List<TimeSheet>();
+
+        //    try
+        //    {
+        //        VolunteerDbContext db = new VolunteerDbContext();
+        //        int? org = null;
+        //        int? proj = null;
+        //        var query = db.timeSheets.AsQueryable();
+        //        if (org != null)
+        //        {
+        //            query = query.Where(t => t.org_Id == org);
+        //        }
+        //        if (proj != null)
+        //        {
+        //            query = query.Where(t => t.project_Id == proj);
+        //        }
+        //        st.data = query.OrderByDescending(x => x.clockInTime).ToList();
+        //        //if (orgNum > 0 && projNum > 0)
+        //        //{
+        //        //    st.data = db.timeSheets.Where(
+        //        //        x => x.org_Id == orgNum
+        //        //        && x.project_Id == projNum
+        //        //        && x.clockInTime >= strt
+        //        //        && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+        //        //}
+        //        //else if (orgNum > 0)
+        //        //{
+        //        //    st.data = db.timeSheets.Where(
+        //        //       x => x.org_Id == orgNum
+        //        //       && x.clockInTime >= strt
+        //        //       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+        //        //}
+        //        //else if (projNum > 0)
+        //        //{
+        //        //    st.data = db.timeSheets.Where(
+        //        //       x => x.project_Id == projNum
+        //        //       && x.clockInTime >= strt
+        //        //       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+        //        //}
+        //        //else
+        //        //{
+        //        //    st.data = db.timeSheets.Where(
+        //        //      x => x.clockInTime >= strt
+        //        //      && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+        //        //}
+        //        st.errorCode = 0;
+        //        return st;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        st.errorCode = -1;
+        //        st.errorMessage = e.ToString();
+        //        return st;
+        //    }
+        //}
 
 
         /// <summary>
