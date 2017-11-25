@@ -10,7 +10,7 @@
 @ToolKitVM.Modal("Edit Project", "editProjectModal", "editPartialTarget")
 
 <div id="projectList" class="well well-lg" style="min-width:500px">
-    <table style="width:auto">
+    <table class="table" style="width:auto">
         <!--Title bar-->
         <thead>
             <tr>
@@ -73,6 +73,9 @@
         </tbody>
     </table>
     <!--End of List of Projects-->
+    @Html.PagedListPager(Model, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
+
+
 </div>
 <script type="text/javascript">
 

@@ -546,7 +546,7 @@ namespace HabitatForHumanity.Controllers
             model.statusChoice = statusChoice;
             model.queryString = queryString;
             return RedirectToAction("ManageProjects", model);
-            //return PartialView("ProjectPartialViews/_ProjectList", GetProjectPageWithFilter(Page, statusChoice, queryString));
+           // return PartialView("ProjectPartialViews/_ProjectList", Repository.GetProjectPageWithFilter(Page, statusChoice, queryString));
         }
 
  
