@@ -561,6 +561,32 @@ namespace HabitatForHumanity.Models
 
         }
 
+        /*       public static ReturnStatus GetTimeCardPageWithFilter(
+            int page, int itemsPerPage, ref int totalTimeCards, int? userId, int? orgId, int? projId,
+                DateTime rangeStart, DateTime rangeEnd, string queryString)
+                          //page can't be 0 or below
+            if (Page == null || Page < 1 )
+            {
+                Page = 1;
+            }*/
+
+        public static StaticPagedList<TimeCardVM> GetTimeCardPageWithFilter(int? Page, int userId, int orgId, 
+               int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
+        {
+
+            //page can't be 0 or below
+            if (Page == null || Page < 1)
+            {
+                Page = 1;
+            }
+
+            int totalCount = 0;
+            ReturnStatus st = new ReturnStatus();
+            st = TimeSheet.GetTimeCardPageWithFilter(Page.Value - 1, RecordsPerPage, ref totalCount, orgId, projId, rangeStart, rangeEnd, queryString);
+
+            StaticPagedList<TimeCardVM> SearchResults = new StaticPagedList<TimeCardVM>(((List<TimeCardVM>)st.data), Page.Value, RecordsPerPage, totalCount);
+            return SearchResults;
+        }
         public static string GetOrgName(int orgId)
         {
             try
