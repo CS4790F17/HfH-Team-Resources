@@ -132,12 +132,12 @@ namespace HabitatForHumanity.Models
                 db.Entry(ts).State = EntityState.Modified;
                 db.SaveChanges();
 
-                st.errorCode = 0;// ReturnStatus.ALL_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = -1;// ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }

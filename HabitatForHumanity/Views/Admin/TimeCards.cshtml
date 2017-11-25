@@ -56,14 +56,14 @@
     <div class="row" style="margin-top:5px">
         <div class="col-xs-5">
             <div class="input-group" style="width:100px">
-                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, htmlAttributes : new { @class = "form-control", @style = "width:auto", onchange = @"form.submit()" } )
+                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, htmlAttributes: new { @class = "form-control", @style = "width:auto", onchange = @"form.submit()" })
             </div>
         </div>
     </div>
     <div class="row" style="margin-top:5px">
         <div class="col-xs-5">
             <div class="input-group" style="width:100px">
-                @Html.DropDownListFor(model => model.projId, Model.projects.Projects, htmlAttributes : new { @class = "form-control", @style = "width:auto", onchange = @"form.submit()" } )
+                @Html.DropDownListFor(model => model.projId, Model.projects.Projects, htmlAttributes: new { @class = "form-control", @style = "width:auto", onchange = @"form.submit()" })
             </div>
         </div>
     </div>
@@ -96,7 +96,11 @@
                 <div class="col-md-1">@card.inTime.ToString("M/dd/yy")    </div>
                 <div class="col-md-1">@card.inTime.ToShortTimeString()    </div>
                 <div class="col-md-1">@card.outTime.ToShortTimeString()   </div>
-                <div class="col-md-1 text-center"> @string.Format("{0:N2}", card.elapsedHrs) </div>
+                @{
+                    TimeSpan span = card.outTime.Subtract(card.inTime);
+                    double hours = span.Hours + span.Minutes / 60.0;
+                 }
+                <div class="col-md-1 text-center"> @string.Format("{0:N2}", hours) </div>
                 @ToolKitVM.ModalButton("editButton", "editModal", editHtml, card.timeId.ToString())
             </div>
                     }
@@ -117,9 +121,9 @@
 }
 
 @*@section Scripts {
-    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="~/OurScripts/timeCards.js"></script>
-}*@
+        <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+        <script src="~/OurScripts/timeCards.js"></script>
+    }*@
 <script>
     //does magic! sets the html of the editing ajax links to by a glyph icon
     $("document").ready(function () {
