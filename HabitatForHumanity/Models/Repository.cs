@@ -563,8 +563,9 @@ namespace HabitatForHumanity.Models
 
         //}
 
-        public static StaticPagedList<TimeCardVM> GetTimeCardPageWithFilter(int? Page, int userId, int orgId, 
-               int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
+        //public static StaticPagedList<TimeCardVM> GetTimeCardPageWithFilter(int? Page, int userId, int orgId, 
+        //       int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
+        public static ReturnStatus GetTimeCardPageWithFilter(int? Page, int userId, int orgId,int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
         {
 
             //page can't be 0 or below
@@ -576,9 +577,10 @@ namespace HabitatForHumanity.Models
             int totalCount = 0;
             ReturnStatus st = new ReturnStatus();
             st = TimeSheet.GetTimeCardPageWithFilter(Page.Value - 1, RecordsPerPage, ref totalCount, orgId, projId, rangeStart, rangeEnd, queryString);
-
-            StaticPagedList<TimeCardVM> SearchResults = new StaticPagedList<TimeCardVM>(((List<TimeCardVM>)st.data), Page.Value, RecordsPerPage, totalCount);
-            return SearchResults;
+            st.errorCode = 0;
+            return st;
+            //StaticPagedList<TimeCardVM> SearchResults = new StaticPagedList<TimeCardVM>(((List<TimeCardVM>)st.data), Page.Value, RecordsPerPage, totalCount);
+            //return SearchResults;
         }
 
         // deprecated 

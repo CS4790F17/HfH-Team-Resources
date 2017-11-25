@@ -68,10 +68,13 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
-            StaticPagedList<TimeCardVM> pagedCards = Repository.GetTimeCardPageWithFilter(
+            //StaticPagedList<TimeCardVM> pagedCards = Repository.GetTimeCardPageWithFilter(
+            //        tsm.Page, 0, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
+            ReturnStatus rs = Repository.GetTimeCardPageWithFilter(
                     tsm.Page, 0, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
-      
-            tsm.SearchResults = pagedCards;
+            var pageIndex = tsm.Page ?? 1;
+            List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
+            tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
             tsm.Page = tsm.SearchResults.PageNumber;
             return View(tsm);
 

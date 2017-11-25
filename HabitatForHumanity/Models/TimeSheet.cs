@@ -329,7 +329,7 @@ namespace HabitatForHumanity.Models
                         " ORDER BY T.clockInTime DESC ").ToList();
          
             cardsReturn.errorCode = 0;
-            cardsReturn.data = cards.Skip(itemsPerPage * page).Take(itemsPerPage).ToList();
+            cardsReturn.data = cards.ToList();// Skip(itemsPerPage * page).Take(itemsPerPage).ToList();
             return cardsReturn;
             
             //VolunteerDbContext db = new VolunteerDbContext();
