@@ -79,22 +79,19 @@ namespace HabitatForHumanity.Controllers
                 List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
                 List<TimeCardVM> filteredVols = new List<TimeCardVM>();
 
-                if (!string.IsNullOrEmpty(tsm.queryString) || tsm.Page.HasValue)
+                if (!string.IsNullOrEmpty(tsm.queryString))// || tsm.Page.HasValue)
                 {
                    
                     foreach (TimeCardVM t in allVols)
                     {
-                        if (t != null && tsm.queryString != null)
+                        if (t != null && !string.IsNullOrEmpty(tsm.queryString))
                         {
-                            if (t.volName.ToLower().Contains(tsm.queryString.ToLower())
-                                    || t.orgName.ToLower().Contains(tsm.queryString.ToLower())
-                                        || t.projName.ToLower().Contains(tsm.queryString.ToLower()) )
+                            if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
                             {
                                 filteredVols.Add(t);
                             }
                         }
                     }
-
                     var pageIndex = tsm.Page ?? 1;
                     tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
                 }

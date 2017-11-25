@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Models
 {
@@ -282,6 +283,7 @@ namespace HabitatForHumanity.Models
         {
             ReturnStatus st = new ReturnStatus();
             st.data = new List<TimeSheet>();
+
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
@@ -300,7 +302,7 @@ namespace HabitatForHumanity.Models
                        && x.clockInTime >= strt
                        && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
                 }
-                else if(projNum > 0)
+                else if (projNum > 0)
                 {
                     st.data = db.timeSheets.Where(
                        x => x.project_Id == projNum

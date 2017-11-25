@@ -360,7 +360,7 @@ namespace HabitatForHumanity.Models
         {
 
             //page can't be 0 or below
-            if (Page < 1 || Page == null)
+            if (Page == null || Page < 1 )
             {
                 Page = 1;
             }
