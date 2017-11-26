@@ -145,6 +145,14 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         public ActionResult EditTimeCard(TimeCardVM card)
         {
+            TimeSpan span = card.outTime.Subtract(card.inTime);
+            if(span.Hours > 24 || span.Minutes < 0)
+            {
+                // this doesn't work
+                ViewBag.status = "Time can't be more than 24 hours or less than zero.";
+                return PartialView("_EditTimeCard", card);
+            }
+            card.elapsedHrs = span.Hours + span.Minutes / 60.0;
             ReturnStatus rs = Repository.EditTimeCard(card);
             if (rs.errorCode != ReturnStatus.ALL_CLEAR)
             {
