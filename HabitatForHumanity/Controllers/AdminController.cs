@@ -143,26 +143,22 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        //public JsonResult EditTimeCard(TimeCardVM card)
         public ActionResult EditTimeCard(TimeCardVM card)
         {
-            ReturnStatus rs = Repository.EditTimeCard(card);
-            if (rs.errorCode != 0)
+            TimeSpan span = card.outTime.Subtract(card.inTime);
+            if(span.Hours > 24 || span.Minutes < 0)
             {
-                return RedirectToAction("Dashboard");
+                // this doesn't work
+                ViewBag.status = "Time can't be more than 24 hours or less than zero.";
+                return PartialView("_EditTimeCard", card);
             }
-            //return Json(new {
-            //    timeId = card.timeId,
-            //    userId = card.userId,
-            //    projId = card.projId,
-            //    inTime = card.inTime,
-            //    outTime = card.outTime,
-            //    orgName = card.orgName,
-            //    projName = card.projName,
-            //    volName = "holy canoli",//card.volName,
-            //    elapsedHrs = card.elapsedHrs
-            //    }, JsonRequestBehavior.AllowGet);
-
+            card.elapsedHrs = span.Hours + span.Minutes / 60.0;
+            ReturnStatus rs = Repository.EditTimeCard(card);
+            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                ViewBag.status = "Failed to update time card, please try again later.";
+                return PartialView("_EditTimeCard", card);
+            }
             return RedirectToAction("Timecards");
         }
 

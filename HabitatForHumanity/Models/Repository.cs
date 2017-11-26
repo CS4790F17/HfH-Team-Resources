@@ -633,11 +633,13 @@ namespace HabitatForHumanity.Models
 
         public static ReturnStatus EditTimeCard(TimeCardVM card)
         {
-            TimeSheet ts = new TimeSheet();
-            ts.Id = card.timeId;
-            ts.user_Id = card.userId;
-            ts.project_Id = card.projId;
-            ts.org_Id = card.orgId;
+            ReturnStatus rs = GetTimeSheetById(card.timeId);
+            if(rs.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                rs.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return rs;
+            }
+            TimeSheet ts = (TimeSheet)rs.data;
             ts.clockInTime = card.inTime;
             ts.clockOutTime = card.outTime;
 
