@@ -12,11 +12,13 @@ using HabitatForHumanity.ViewModels;
 using HabitatForHumanity.Models;
 using static HabitatForHumanity.Models.User;
 using PagedList;
+using System.Data.Entity;
 
 namespace HabitatForHumanity.Controllers
 {
     public class AdminController : Controller
     {
+        private VolunteerDbContext db = new VolunteerDbContext();
 
         const int RecordsPerPage = 10;
         // GET: Admin dashboard
@@ -310,7 +312,7 @@ namespace HabitatForHumanity.Controllers
                 UsersVM volunteer = new UsersVM();
                 volunteer.userNumber = user.Id;
                 // force all name to not be null for simple comparison in controller
-                volunteer.volunteerName = user.firstName ?? "NoName" + " " + user.lastName ?? "NoName";
+                volunteer.volunteerName = user.firstName + " " + user.lastName;
                 volunteer.email = user.emailAddress;
                 volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
                 if (volunteer.waiverExpiration > DateTime.Now)
@@ -338,10 +340,20 @@ namespace HabitatForHumanity.Controllers
                     {
                         temp.orgName = ((Organization)orgRS.data).name;
                     }
+                    else
+                    {
+                        ViewBag.status = "There was a problem getting the organization. Please try again later";
+                        return RedirectToAction("Volunteers", "Admin");
+                    }
                     ReturnStatus projRS = Repository.GetProjectById(t.project_Id);
                     if (projRS.errorCode == 0)
                     {
                         temp.projName = ((Project)projRS.data).name;
+                    }
+                    else
+                    {
+                        ViewBag.status = "There was a problem getting the project. Please try again later";
+                        return RedirectToAction("Volunteers", "Admin");
                     }
                     temp.inTime = t.clockInTime;
                     temp.outTime = t.clockOutTime;
@@ -356,13 +368,45 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
-        //// POST: Admin/EditVolunteer
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult EditVolunteer([Bind(Include = "")] UsersVM usersVM)
-        //{
+        // POST: Admin/EditVolunteer
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditVolunteer(string userNumber, string volunteerName, string email)
+        {
+            if (ModelState.IsValid)
+            {
+                int id = Int32.Parse(userNumber);
+                ReturnStatus rs = Repository.GetUser(id);
+                if (rs.errorCode != 0)
+                {
+                    
+                }
+                else
+                {
+                    User user = (User)rs.data;
+                    user.Id = id;
+                    String[] tempName = volunteerName.Split(' ');
+                    user.firstName = tempName[0];
+                    if (tempName[1] != null)
+                    {
+                        user.lastName = tempName[1];
+                    }
+                    user.emailAddress = email;
 
-        //}
+                    ReturnStatus us = new ReturnStatus();
+                    us = Repository.EditUser(user);
+                    if (us.errorCode != 0)
+                    {
+                        ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                        return View("EditVolunteer");
+                    }
+                }
+                
+
+                return RedirectToAction("Volunteers");
+            }
+            return View("EditVolunteer");
+        }
 
         public ActionResult GetBadPunches()
         {
