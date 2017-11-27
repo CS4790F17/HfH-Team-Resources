@@ -46,7 +46,8 @@
         else if (Session["Username"] != null)
         {
 
-            <li>@Html.ActionLink("My Account", "VolunteerPortal", "User")</li>
+            <li>@Html.ActionLink("My Portal", "VolunteerPortal", "User")</li>
+            <li>@Html.ActionLink("Profile", "UserProfile", "User")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
         }
         else
