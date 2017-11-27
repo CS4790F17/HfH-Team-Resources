@@ -54,6 +54,7 @@ namespace HabitatForHumanity.Models
             ReturnStatus userReturn = new ReturnStatus();
             userReturn.data = new User();
             ReturnStatus retValue = new ReturnStatus();
+            retValue.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
 
             try
             {
