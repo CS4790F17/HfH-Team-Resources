@@ -18,6 +18,33 @@ namespace HabitatForHumanity.Models
         #region User functions
 
         /// <summary>
+        /// Returns whether a user waiver is outdated
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static ReturnStatus waiverNotSigned (int userId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+
+            try
+            {
+                rs = User.waiverNotSigned(userId);
+                if (rs.errorCode != 0)
+                {
+                    rs.errorCode = -1;
+                    rs.data = false;
+                    return rs;
+                }
+                return rs;
+            }
+            catch
+            {
+                rs.errorCode = 1;
+                return rs;
+            }
+        }
+
+        /// <summary>
         /// Checks whether the user entered a bad password for that log in email.
         /// </summary>
         /// <param name="loginVm">The viewmodel containing the users email and password.</param>
@@ -27,6 +54,7 @@ namespace HabitatForHumanity.Models
             ReturnStatus userReturn = new ReturnStatus();
             userReturn.data = new User();
             ReturnStatus retValue = new ReturnStatus();
+            retValue.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
 
             try
             {

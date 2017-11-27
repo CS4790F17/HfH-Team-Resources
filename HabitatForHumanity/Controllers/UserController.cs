@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using HabitatForHumanity.Models;
 using HabitatForHumanity.ViewModels;
 using System.Web.Helpers;
+using System.Net.Mail;
+
 
 namespace HabitatForHumanity.Controllers
 {
@@ -54,6 +56,19 @@ namespace HabitatForHumanity.Controllers
             if (rs.errorCode != 0)
             {
                 return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+            }
+
+            ReturnStatus waiverSigned = Repository.waiverNotSigned(((PortalVM)rs.data).userId);
+
+            if ( waiverSigned.errorCode != 0)
+            {
+                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+            }
+
+            if ((bool)waiverSigned.data)
+            {
+                ViewBag.status = "Your Waiver is outdated, please sign below.";
+                return RedirectToAction("SignWaiver", "User");
             }
             
             return View((PortalVM)rs.data);
@@ -195,10 +210,13 @@ namespace HabitatForHumanity.Controllers
                 user.streetAddress = userProfile.streetAddress;
                 user.city = userProfile.city;
                 user.zip = userProfile.zip;
-                //shouldn't this vv be done from the repository??//////////////////////////////////////////////////////////////////////////
-                db.Entry(user).State = EntityState.Modified; 
-                db.SaveChanges();
-                //move ^^to repository?? //////////////////////////////////////////////////////////////////////////////////////////////////
+                ReturnStatus us = new ReturnStatus();
+                us = Repository.EditUser(user);
+                if (us.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                    return View(userProfile);
+                }
                 return RedirectToAction("UserProfile", "User");
             }
             ViewBag.status = "An Error Has Occured";
@@ -305,6 +323,23 @@ namespace HabitatForHumanity.Controllers
                     }
                     Session["isAdmin"] = user.isAdmin;
                     Session["UserName"] = user.emailAddress;
+
+                    //gmail smtp server  
+                    WebMail.SmtpServer = "smtp.gmail.com";
+                    //gmail port to send emails  
+                    WebMail.SmtpPort = 587;
+                    WebMail.SmtpUseDefaultCredentials = true;
+                    //sending emails with secure protocol  
+                    WebMail.EnableSsl = true;
+                    //EmailId used to send emails from application  
+                    WebMail.UserName = "hfhdwvolunteer@gmail.com";
+                    WebMail.Password = "3BlindMice";
+                    //Sender email address.  
+                    WebMail.From = "hfhdwvolunteer@gmail.com";
+                    //Send email  
+                    string body = "New user created at email: " + user.emailAddress;
+                    WebMail.Send(to: "trevororgill@weber.edu", subject: "New Volunteer", body: body, isBodyHtml: false);
+
                     return RedirectToAction("SignWaiver", "User");
                 }
                 else
