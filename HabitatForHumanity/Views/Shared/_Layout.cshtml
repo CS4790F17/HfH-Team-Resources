@@ -22,18 +22,21 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+
+                    <li>
+                        <div>
+                            <a href='https://habitatwd.org/' data-toggle="tooltip" title="HFH main page">
+                                <span>
+                                    <img src='~/Images/HFHLogo.jpg' style="width:150px;height:70px;"/>
+                                </span>
+                            </a>
+                        </div>
+                    </li>
     @{
         if (Session["Username"] != null && Session["isAdmin"] != null && Session["isAdmin"].Equals("isAdmin"))
         {
-            <li><div>
-                <a href='@Url.Action("Dashboard", "Admin")' data-toggle="tooltip" title="Admin Dashboard">
-                    <span>
-                        <img src='~/Images/HFHLogo.jpg' />
-                    </span>
-                </a>
-            </div></li>
 
-            //<li class="glyphicon glyphicon-home" style="color: #54B948">@Html.ActionLink("Home", "Dashboard", "Admin")</li>
+            <li>@Html.ActionLink("Dashboard", "Dashboard", "Admin")</li>
             <li>@Html.ActionLink("Volunteers", "Volunteers", "Admin")</li>
             <li>@Html.ActionLink("Time Cards", "TimeCards", "Admin")</li>
             <li>@Html.ActionLink("Projects", "Projects", "Admin")</li>
@@ -43,29 +46,12 @@
         else if (Session["Username"] != null)
         {
 
-            <li>
-                <div>
-                    <a href='@Url.Action("VolunteerPortal", "User")' data-toggle="tooltip" title="Home">
-                        <span>
-                            <img src='~/Images/HFHLogo.jpg' />
-                        </span>
-                    </a>
-                </div>
-            </li>
-            <li>@Html.ActionLink("My Account", "UserProfile", "User")</li>
+            <li>@Html.ActionLink("My Account", "VolunteerPortal", "User")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
         }
         else
         {
-            <li>
-                <div>
-                    <a href='@Url.Action("Login", "User")' data-toggle="tooltip" title="Login">
-                        <span>
-                            <img src='~/Images/HFHLogo.jpg' />
-                        </span>
-                    </a>
-                </div>
-            </li>
+ 
             <li>@Html.ActionLink("Create Account", "VolunteerSignup", "User")</li>
             <li>@Html.ActionLink("Log In", "Login", "User")</li>
             }
@@ -76,18 +62,15 @@
         </div>
     </div>
 
-    <div class="container body-content">
+    <div class="container body-content" >
         @{
             if (ViewBag.status != null)
             {
-                <div class="alert alert-danger text-center" role="alert" style="margin-top: 15px">
+                <div class="alert alert-danger text-center" role="alert" style="margin-top: 15px" id="alerts">
                     <h3>@ViewBag.status</h3>
                 </div>
             }
         }
-        @*<div class="row">
-        <div class="col-md-3 col-md-offset-4"><img src="~/Images/HFHLogo.jpg" style="margin-top:15px" /></div>
-    </div>*@
 
         @RenderBody()
         <hr />
@@ -101,5 +84,14 @@
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/Highcharts-4.0.1/js/highcharts.js"></script>
     @RenderSection("scripts", required: false)
+    <script>
+        // close the div in 5 secs
+        window.setTimeout("closeDiv();", 1500);
+
+
+        function closeDiv() {
+            $("#alerts").fadeOut("slow", null);
+        }
+    </script>
 </body>
 </html>
