@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using HabitatForHumanity.Models;
 using HabitatForHumanity.ViewModels;
 using System.Web.Helpers;
+using System.Net.Mail;
+
 
 namespace HabitatForHumanity.Controllers
 {
@@ -321,6 +323,23 @@ namespace HabitatForHumanity.Controllers
                     }
                     Session["isAdmin"] = user.isAdmin;
                     Session["UserName"] = user.emailAddress;
+
+                    //gmail smtp server  
+                    WebMail.SmtpServer = "smtp.gmail.com";
+                    //gmail port to send emails  
+                    WebMail.SmtpPort = 587;
+                    WebMail.SmtpUseDefaultCredentials = true;
+                    //sending emails with secure protocol  
+                    WebMail.EnableSsl = true;
+                    //EmailId used to send emails from application  
+                    WebMail.UserName = "hfhdwvolunteer@gmail.com";
+                    WebMail.Password = "3BlindMice";
+                    //Sender email address.  
+                    WebMail.From = "hfhdwvolunteer@gmail.com";
+                    //Send email  
+                    string body = "New user created at email: " + user.emailAddress;
+                    WebMail.Send(to: "trevororgill@weber.edu", subject: "New Volunteer", body: body, isBodyHtml: false);
+
                     return RedirectToAction("SignWaiver", "User");
                 }
                 else
