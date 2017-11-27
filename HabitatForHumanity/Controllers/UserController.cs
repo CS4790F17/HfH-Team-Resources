@@ -289,7 +289,7 @@ namespace HabitatForHumanity.Controllers
                         ViewBag.status = "Sorry, our system is down. Please try again later.";
                         return View(signWaiverVM);
                     }
-                    return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                    return RedirectToAction("VolunteerPortal");
                  }
             }
             return View(signWaiverVM);
@@ -412,7 +412,7 @@ namespace HabitatForHumanity.Controllers
                             return RedirectToAction("Dashboard","Admin");
                         }
                                                
-                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        return RedirectToAction("VolunteerPortal");
                     }
                     else
                     {
