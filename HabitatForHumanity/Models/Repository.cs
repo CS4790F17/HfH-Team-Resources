@@ -95,17 +95,23 @@ namespace HabitatForHumanity.Models
                     List<UsersVM> volunteers = new List<UsersVM>();
                     foreach (User u in users)
                     {
+                        double volHours = 0.0;
+                        ReturnStatus hoursRS = getTotalHoursWorkedByVolunteer(u.Id);
+                        if(hoursRS.errorCode == ReturnStatus.ALL_CLEAR)
+                        {
+                            volHours = (double)hoursRS.data;
+                        }
                         volunteers.Add(new UsersVM()
                         {
                             userNumber = u.Id,
                             // force alll name to not be null for simple comparison incontroller
-                            volunteerName = u.firstName ?? "NoName" + " " + u.lastName ?? "NoName",
+                            volunteerName = u.firstName + " " + u.lastName,
                             email = u.emailAddress,
-                            hoursToDate = 99.9
+                            hoursToDate = volHours
                         });
                     }
                     rs.data = volunteers;
-                    rs.errorCode = 0;
+                    rs.errorCode = ReturnStatus.ALL_CLEAR;
                 }
                 else
                 {
@@ -124,13 +130,19 @@ namespace HabitatForHumanity.Models
                 List<UsersVM> volunteers = new List<UsersVM>();
                 foreach (User u in users)
                 {
+                    double volHours = 0.0;
+                    ReturnStatus hoursRS = getTotalHoursWorkedByVolunteer(u.Id);
+                    if (hoursRS.errorCode == ReturnStatus.ALL_CLEAR)
+                    {
+                        volHours = (double)hoursRS.data;
+                    }
                     volunteers.Add(new UsersVM()
                     {
                         userNumber = u.Id,
                         // force alll name to not be null for simple comparison incontroller
-                        volunteerName = u.firstName ?? "NoName" + " " + u.lastName ?? "NoName",
+                        volunteerName = u.firstName + " " + u.lastName,
                         email = u.emailAddress,
-                        hoursToDate = 99.9
+                        hoursToDate = volHours
                     });
                 }
                 rs.data = volunteers;
