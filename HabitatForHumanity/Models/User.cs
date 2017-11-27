@@ -145,14 +145,13 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.Where(x => x.firstName.Contains(firstName) || x.lastName.Contains(lastName)).ToList();
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
                 return st;
             }
-            catch (Exception e)
+            catch 
             {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorCode = -1;
                 st.data = new List<User>();
-                st.errorMessage = e.ToString();
                 return st;
             }
         }
@@ -165,14 +164,13 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.ToList();
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
                 return st;
             }
-            catch (Exception e)
+            catch
             {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                st.data = new List<User>();
-                st.errorMessage = e.ToString();
+                st.errorCode = -1;
+                st.data = new List<User>();                
                 return st;
             }
         }
@@ -190,13 +188,11 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 st.data = db.users.Any(u => u.emailAddress.Equals(email));
-                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
-            catch (Exception e)
+            catch 
             {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                st.errorMessage = e.ToString();
+                st.errorCode = -1; 
                 return st;
             }
         }
@@ -220,12 +216,10 @@ namespace HabitatForHumanity.Models
                 st.data = users.FirstOrDefault();
 
                 return st;
-
             }
-            catch (Exception e)
+            catch 
             {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
+                st.errorCode = -1;
                 return st;
             }
         }
@@ -243,15 +237,13 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                st.data = db.users.Find(id);
+                st.data = db.users.Find(id);               
                 st.errorCode = 0;
-
                 return st;
             }
-            catch (Exception e)
+            catch
             {
                 st.errorCode = -1;
-                st.errorMessage = e.ToString();
                 return st;
             }
         }
@@ -503,26 +495,27 @@ namespace HabitatForHumanity.Models
                 users = db.users.Where(u => u.birthDate != null && u.gender.Equals(gender)).ToList();
             }
             Demog dunder18 = new Demog() { ageBracket = "Under 18", numPeople = 0 };
-            Demog d18to27 = new Demog() { ageBracket = "18 to 27", numPeople = 0 };
-            Demog d27to40 = new Demog() { ageBracket = "27 to 40", numPeople = 0 };
+            Demog d18to27 = new Demog() { ageBracket = "18 to 26", numPeople = 0 };
+            Demog d27to40 = new Demog() { ageBracket = "27 to 39", numPeople = 0 };
             Demog d40to55 = new Demog() { ageBracket = "40 to 55", numPeople = 0 };
             Demog dover55 = new Demog() { ageBracket = "Over 55", numPeople = 0 };
             foreach (User u in users)
             {
                 DateTime present = DateTime.Now;
-                if (present.AddYears(-18) < u.birthDate)
+                if (u.birthDate >= present.AddYears(-18))
                 {
-                    dunder18.numPeople++;
+                    dunder18.numPeople++;            
                 }
-                else if (present.AddYears(-18) <= u.birthDate && present.AddYears(-27) > u.birthDate)
-                {
+                else if (u.birthDate > present.AddYears(-27))
+                {   
                     d18to27.numPeople++;
                 }
-                else if (present.AddYears(-27) <= u.birthDate && present.AddYears(-40) > u.birthDate)
+                else if (u.birthDate > present.AddYears(-40))
                 {
                     d27to40.numPeople++;
+
                 }
-                else if (present.AddYears(-40) <= u.birthDate && present.AddYears(-55) > u.birthDate)
+                else if (u.birthDate > present.AddYears(-55))
                 {
                     d40to55.numPeople++;
                 }

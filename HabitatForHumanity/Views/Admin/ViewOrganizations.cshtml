@@ -104,11 +104,11 @@
                     {
                         case 0:
                         <!--Activate-->
-                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusActivate", @style = "margin:0px 20px" })
+                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusActivate" })
                             break;
                         case 1:
                         <!--Deactivate-->
-                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusDeactivate", @style = "margin:0px 20px" })
+                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusDeactivate"})
                             break;
                     }
                     <!--Edit Organization-->

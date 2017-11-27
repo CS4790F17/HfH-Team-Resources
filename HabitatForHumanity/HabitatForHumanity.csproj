@@ -165,6 +165,7 @@
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\OrganizationSearchModel.cs" />
     <Compile Include="ViewModels\OrganizationVM.cs" />
+    <Compile Include="ViewModels\ProjectSearchModel.cs" />
     <Compile Include="ViewModels\ProjectIndexVM.cs" />
     <Compile Include="ViewModels\ProjectVM.cs" />
     <Compile Include="ViewModels\PortalVM.cs" />
@@ -327,6 +328,13 @@
     <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_AddOrganization.cshtml" />
     <Content Include="Views\Admin\_EditTimeCard.cshtml" />
+    <Content Include="Views\User\_ErrorPunchOut.cshtml" />
+    <Content Include="Views\User\_ErrorPunchIn.cshtml" />
+    <Content Include="Views\Admin\ManageProjects.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_ProjectList.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_CreateProject.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_ProjectCreateSuccess.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_EditProject.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

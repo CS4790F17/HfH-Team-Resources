@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Models
 {
@@ -66,7 +67,7 @@ namespace HabitatForHumanity.Models
             }
         }
 
-      
+
 
         /// <summary>
         /// Get the TimeSheet with the matching id.
@@ -131,12 +132,12 @@ namespace HabitatForHumanity.Models
                 db.Entry(ts).State = EntityState.Modified;
                 db.SaveChanges();
 
-                st.errorCode = 0;// ReturnStatus.ALL_CLEAR;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
             catch (Exception e)
             {
-                st.errorCode = -1;// ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
             }
@@ -241,7 +242,7 @@ namespace HabitatForHumanity.Models
 
                 st.errorCode = ReturnStatus.ALL_CLEAR;
                 st.data = db.timeSheets.Where(x => x.project_Id == projectId).OrderBy(x => x.Id).ToList();
-               // st.data = db.timeSheets.Count().Where(x => x.project_Id == projectId).OrderBy(x => x.user_Id).ToList();
+                // st.data = db.timeSheets.Count().Where(x => x.project_Id == projectId).OrderBy(x => x.user_Id).ToList();
                 return st;
             }
             catch (Exception e)
@@ -278,52 +279,59 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static ReturnStatus GetTimeSheetsByFilters(int? orgNum, int? projNum, DateTime strt, DateTime end)
+        public static ReturnStatus GetTimeCardPageWithFilter(int page, int itemsPerPage, ref int totalTimeCards, int orgId, int projId,DateTime rangeStart, DateTime rangeEnd, string queryString)
         {
-            ReturnStatus st = new ReturnStatus();
-            st.data = new List<TimeSheet>();
+            ReturnStatus cardsReturn = new ReturnStatus();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                if (orgNum != null && projNum != null)
+                string userIdInList = "";
+                if (!string.IsNullOrEmpty(queryString))
                 {
-                    st.data = db.timeSheets.Where(
-                        x => x.org_Id == orgNum
-                        && x.project_Id == projNum
-                        && x.clockInTime >= strt
-                        && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
+                    List<string> userTerms = queryString.Split(' ').ToList();
+                    var userIds = (from u in db.users
+                                   where userTerms.Any(term => u.firstName.Contains(term)) || userTerms.Any(term => u.lastName.Contains(term))
+                                   select u.Id).ToArray();
+                    userIdInList = (userIds.Length > 0) ? " AND U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
                 }
-                else if (orgNum != null)
-                {
-                    st.data = db.timeSheets.Where(
-                       x => x.org_Id == orgNum
-                       && x.clockInTime >= strt
-                       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
-                }
-                else if(projNum != null)
-                {
-                    st.data = db.timeSheets.Where(
-                       x => x.project_Id == projNum
-                       && x.clockInTime >= strt
-                       && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
-                }
-                else
-                {
-                    st.data = db.timeSheets.Where(
-                      x => x.clockInTime >= strt
-                      && x.clockOutTime <= end).OrderByDescending(x => x.clockInTime).ToList();
-                }
-                st.errorCode = 0;
-                return st;
-            }
-            catch (Exception e)
-            {
-                st.errorCode = -1;
-                st.errorMessage = e.ToString();
-                return st;
-            }
-        }
 
+           
+                string whereClause = " WHERE 1 = 1 ";
+                //whereClause += (userId > 0) ? " AND U.Id = " + userId.ToString() + " " : ""; // make whole other function for know userid
+                whereClause += userIdInList;
+                whereClause += (projId > 0) ? " AND P.Id = " + projId.ToString() + " " : "";
+                whereClause += (orgId > 0) ? " AND O.Id = " + orgId.ToString() + " " : "";
+                whereClause += " AND CONVERT(DATE, T.clockInTime) >= CONVERT(DATE, '" + rangeStart.Date.ToString("d") + "' ) ";
+                whereClause += " AND CONVERT(DATE, T.clockInTime) <= CONVERT(DATE, '" + rangeEnd.Date.ToString("d") + "' ) ";
+
+                var cards = db.Database.SqlQuery<TimeCardVM>(
+                    " SELECT T.Id AS timeId, " +
+                        " T.user_Id AS userId, " +
+                        " P.Id AS projId, " +
+                        " O.Id AS orgId, " +
+                        " T.clockInTime AS inTime, " +
+                        " T.clockOutTime AS outTime, " +
+                        " O.name AS orgName, " +
+                        " P.name AS projName, " +
+                        " ISNULL(U.firstName,U.emailAddress) + ' ' + ISNULL(U.lastName,U.emailAddress) AS volName " +
+
+                            " FROM dbo.TimeSheet T LEFT JOIN dbo.[User] U ON T.user_Id = U.Id " +
+                        " LEFT JOIN Organization O ON T.org_Id = O.Id " +
+                        " LEFT JOIN Project P ON P.Id = T.project_Id " +
+                        whereClause +
+                            " ORDER BY T.clockInTime DESC ").ToList();
+
+                cardsReturn.errorCode = 0;
+                cardsReturn.data = cards.ToList();// Skip(itemsPerPage * page).Take(itemsPerPage).ToList();
+                return cardsReturn;
+            }
+            catch
+            {
+                cardsReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return cardsReturn;
+            }
+ 
+        }
 
         /// <summary>
         /// Gets all timesheets with a specified organization id.
@@ -370,13 +378,12 @@ namespace HabitatForHumanity.Models
                 {
                     if (sheet.Last().clockOutTime == DateTime.Today.AddDays(1))
                     {
-                        st.errorCode = ReturnStatus.ALL_CLEAR;
+                        st.errorCode = 0;
                         st.data = sheet.Last();
                         return st;
                     }
-
                 }
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = 0;
                 return st;
             }
             catch
@@ -449,29 +456,29 @@ namespace HabitatForHumanity.Models
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 string inFilter = "";
-   
-                if(projectId > 0 && orgId > 0)
+
+                if (projectId > 0 && orgId > 0)
                 {
                     var userIds = (from t in db.timeSheets
-                               where t.project_Id == projectId && t.org_Id == orgId
-                               select t.user_Id).ToArray();
+                                   where t.project_Id == projectId && t.org_Id == orgId
+                                   select t.user_Id).ToArray();
                     inFilter = (userIds.Length > 0) ? " U WHERE U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
                 }
-                else if(projectId > 0)
+                else if (projectId > 0)
                 {
                     var userIds = (from t in db.timeSheets
-                               where t.project_Id == projectId
-                               select t.user_Id).ToArray();
+                                   where t.project_Id == projectId
+                                   select t.user_Id).ToArray();
                     inFilter = (userIds.Length > 0) ? " U WHERE U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
                 }
-                else if(orgId > 0)
+                else if (orgId > 0)
                 {
                     var userIds = (from t in db.timeSheets
-                               where t.org_Id == orgId
-                               select t.user_Id).ToArray();
+                                   where t.org_Id == orgId
+                                   select t.user_Id).ToArray();
                     inFilter = (userIds.Length > 0) ? " U WHERE U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
                 }
-   
+
                 var users = db.users.SqlQuery("SELECT * FROM dbo.[User]" + inFilter).ToList();
                 rs.data = users;
                 rs.errorCode = 0;
