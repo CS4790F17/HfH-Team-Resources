@@ -55,6 +55,19 @@ namespace HabitatForHumanity.Controllers
             {
                 return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
             }
+
+            ReturnStatus waiverSigned = Repository.waiverNotSigned(((PortalVM)rs.data).userId);
+
+            if ( waiverSigned.errorCode != 0)
+            {
+                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+            }
+
+            if ((bool)waiverSigned.data)
+            {
+                ViewBag.status = "Your Waiver is outdated, please sign below.";
+                return RedirectToAction("SignWaiver", "User");
+            }
             
             return View((PortalVM)rs.data);
         }
