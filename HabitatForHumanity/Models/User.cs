@@ -131,6 +131,37 @@ namespace HabitatForHumanity.Models
 
         #region Database Access Methods
 
+        /// <summary>
+        /// Returns whether or not a user's waiver is outdated
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static ReturnStatus waiverNotSigned(int userId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                User user = db.users.Find(userId);
+                if ((DateTime.Now.AddYears(-1) - user.waiverSignDate).TotalDays < (DateTime.Now - DateTime.Now.AddYears(-1)).TotalDays)
+                {
+                    rs.data = false;
+                }
+                else
+                {
+                    rs.data = true;
+                }
+                rs.errorCode = 0;
+                return rs;
+            }
+            catch
+            {
+                rs.errorCode = -1;
+                rs.data = new List<User>();
+                return rs;
+            }
+        }
 
         /// <summary>
         /// Gets all the users that contain any characters in firstName or lastName.
