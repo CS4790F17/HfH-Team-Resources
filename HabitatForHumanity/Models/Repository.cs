@@ -522,113 +522,80 @@ namespace HabitatForHumanity.Models
         #region TimeSheet functions
 
         #region TimeCard VMs by filters
-        // deprecated
-
-        //public static ReturnStatus GetTimeCardsByFilters(int orgNum, int projNum, DateTime strt, DateTime end)
-        //{
-        //    ReturnStatus timeSheetsResult = TimeSheet.GetTimeSheetsByFilters(orgNum, projNum, strt, end);
-        //    ReturnStatus timeCardsReturn = new ReturnStatus();
-        //    List<TimeCardVM> cards = new List<TimeCardVM>();
-        //    List<TimeSheet> sheets = new List<TimeSheet>();
-        //    if (timeSheetsResult.errorCode == 0)
-        //    {
-        //        sheets = (List<TimeSheet>)timeSheetsResult.data;
-        //        foreach (TimeSheet ts in sheets)
-        //        {
-        //            TimeSpan span = ts.clockOutTime.Subtract(ts.clockInTime);
-
-        //            cards.Add(new TimeCardVM()
-        //            {
-        //                timeId = ts.Id,
-        //                userId = ts.user_Id,
-        //                projId = ts.project_Id,
-        //                orgId = ts.org_Id,
-        //                inTime = ts.clockInTime,
-        //                outTime = ts.clockOutTime,
-        //                orgName = GetOrgName(ts.org_Id),
-        //                projName = GetProjName(ts.project_Id),
-        //                volName = GetVolName(ts.user_Id),
-        //                elapsedHrs = span.Hours + span.Minutes / 60.0
-        //            });
-        //        }
-        //        timeCardsReturn.data = cards;
-        //        timeCardsReturn.errorCode = 0;
-        //        return timeCardsReturn;
-        //    }
-        //    else
-        //    {
-        //        timeCardsReturn.errorCode = -1;
-        //        return timeCardsReturn;
-        //    }
-
-        //}
-
-        //public static StaticPagedList<TimeCardVM> GetTimeCardPageWithFilter(int? Page, int userId, int orgId, 
-        //       int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
-        public static ReturnStatus GetTimeCardPageWithFilter(int? Page, int userId, int orgId,int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
+       /// <summary>
+       /// Gets list of timecard vms with the following optional filters
+       /// </summary>
+       /// <param name="Page"></param>
+       /// <param name="orgId"></param>
+       /// <param name="projId"></param>
+       /// <param name="rangeStart"></param>
+       /// <param name="rangeEnd"></param>
+       /// <param name="queryString"></param>
+       /// <returns>List of timecard viewmodels</returns>
+        public static ReturnStatus GetTimeCardPageWithFilter(int? Page, int orgId,int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
         {
-
             //page can't be 0 or below
             if (Page == null || Page < 1)
             {
                 Page = 1;
             }
-
             int totalCount = 0;
-            ReturnStatus st = new ReturnStatus();
-            st = TimeSheet.GetTimeCardPageWithFilter(Page.Value - 1, RecordsPerPage, ref totalCount, orgId, projId, rangeStart, rangeEnd, queryString);
-            st.errorCode = 0;
-            return st;
-            //StaticPagedList<TimeCardVM> SearchResults = new StaticPagedList<TimeCardVM>(((List<TimeCardVM>)st.data), Page.Value, RecordsPerPage, totalCount);
-            //return SearchResults;
+            return TimeSheet.GetTimeCardPageWithFilter(Page.Value - 1, RecordsPerPage, ref totalCount, orgId, projId, rangeStart, rangeEnd, queryString);
         }
 
-        // deprecated 
+        /// <summary>
+        /// Gets a unique timecard based on timesheet id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static ReturnStatus GetTimeCardVM(int id)
+        {
+            ReturnStatus cardReturn = new ReturnStatus();
+            ReturnStatus timesheetRS = GetTimeSheetById(id);
+  
+            if (timesheetRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                TimeSheet ts = (TimeSheet)timesheetRS.data;
+                TimeCardVM card = new TimeCardVM();
+                card.timeId = ts.Id;
+                card.userId = ts.user_Id;
+                card.projId = ts.project_Id;
+                card.orgId = ts.org_Id;
+                card.inTime = ts.clockInTime;
+                card.outTime = ts.clockOutTime;
 
-        //public static string GetOrgName(int orgId)
-        //{
-        //    try
-        //    {
-        //        VolunteerDbContext db = new VolunteerDbContext();
-        //        return db.organizations.Where(o => o.Id == orgId).ToList().FirstOrDefault().name;
-        //    }
-        //    catch
-        //    {
-        //        return "none";
-        //    }
+                ReturnStatus orgRS = GetOrganizationById(ts.org_Id);
+                if (orgRS.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    Organization org = (Organization)orgRS.data;
+                    card.orgName = org.name;
+                }
 
-        //}
-        //public static string GetProjName(int projId)
-        //{
-        //    try
-        //    {
-        //        VolunteerDbContext db = new VolunteerDbContext();
-        //        return db.projects.Where(o => o.Id == projId).ToList().FirstOrDefault().name;
-        //    }
-        //    catch
-        //    {
-        //        return "none";
-        //    }
-        //}
-        //public static string GetVolName(int userId)
-        //{
-        //    try
-        //    {
-        //        string volName = "";
-        //        VolunteerDbContext db = new VolunteerDbContext();
-        //        var fname = db.users.Where(o => o.Id == userId).ToList().FirstOrDefault().firstName;
-        //        var lname = db.users.Where(o => o.Id == userId).ToList().FirstOrDefault().lastName;
-        //        var email = db.users.Where(o => o.Id == userId).ToList().FirstOrDefault().emailAddress;
-        //        volName += (fname != null) ? fname : email;
-        //        volName += " ";
-        //        volName += (lname != null) ? lname : email;
-        //        return volName;
-        //    }
-        //    catch
-        //    {
-        //        return "No Name";
-        //    }
-        //}
+                ReturnStatus projRS = GetProjectById(ts.project_Id);
+                if (projRS.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    Project project = (Project)projRS.data;
+                    card.projName = project.name;
+                }
+
+                ReturnStatus userRS = GetUser(ts.user_Id);
+                if(userRS.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    User user = (User)userRS.data;
+                    card.volName = (user.firstName != null) ? user.firstName : user.emailAddress;
+                    card.volName += " ";
+                    card.volName += (user.lastName != null) ? user.lastName : user.emailAddress;
+                }
+                cardReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                cardReturn.data = card;
+            }
+            else
+            {
+                cardReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return cardReturn;
+        }
+
         #endregion timecard vms
 
         public static ReturnStatus EditTimeCard(TimeCardVM card)

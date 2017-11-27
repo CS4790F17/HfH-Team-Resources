@@ -19,7 +19,7 @@
 <script src="~/Scripts/jquery-3.2.1.js"></script>
 <script src="~/OurScripts/timeCards.js"></script>
 
-@ToolKitVM.Modal("Edit Organization", "editModal", "editPartial")
+@ToolKitVM.Modal("Edit Time Card", "editModal", "editPartial")
 
 <div id="divEmp"></div>   @*what is this for ?*@
 
@@ -88,8 +88,9 @@
         {
             var timeCardId = "timeCard" + card.timeId;
             string classList = "row well well-sm divlink ";
-            classList += (card.outTime.Hour == 0 && card.outTime.Minute == 0) ? " warning " : "";
-            <div id="@timeCardId" class="@classList" style="margin:1px;">
+            string styles = "margin:1px; ";
+            styles += (card.outTime.Hour == 0 && card.outTime.Minute == 0 && card.inTime.Date < DateTime.Now.Date) ? " background-color: #ff9999 " : "";
+            <div id="@timeCardId" class="@classList" style="@styles">
                 <div class="col-md-2">@card.volName   </div>
                 <div class="col-md-2">@card.orgName   </div>
                 <div class="col-md-2">@card.projName  </div>
@@ -149,6 +150,7 @@
 
     })
 
+   
 
 
     function refresh() {

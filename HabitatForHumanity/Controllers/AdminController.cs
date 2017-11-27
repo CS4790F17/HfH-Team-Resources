@@ -68,78 +68,24 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
-            //StaticPagedList<TimeCardVM> pagedCards = Repository.GetTimeCardPageWithFilter(
-            //        tsm.Page, 0, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
-            ReturnStatus rs = Repository.GetTimeCardPageWithFilter(
-                    tsm.Page, 0, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
+            ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
             var pageIndex = tsm.Page ?? 1;
             List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
             tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
             tsm.Page = tsm.SearchResults.PageNumber;
             return View(tsm);
-
-            //ReturnStatus rs = Repository.GetTimeCardsByFilters(tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd);
-            //if(rs.errorCode != 0)
-            //{
-            //    ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
-            //    return View(tsm);
-            //}
-            //else
-            //{
-            //    List<TimeCardVM> allVols = (List<TimeCardVM>)rs.data;
-            //    List<TimeCardVM> filteredVols = new List<TimeCardVM>();
-
-            //    if (!string.IsNullOrEmpty(tsm.queryString))// || tsm.Page.HasValue)
-            //    {
-                   
-            //        foreach (TimeCardVM t in allVols)
-            //        {
-            //            if (t != null && !string.IsNullOrEmpty(tsm.queryString))
-            //            {
-            //                if (t.volName.ToLower().Contains(tsm.queryString.ToLower()))
-            //                {
-            //                    filteredVols.Add(t);
-            //                }
-            //            }
-            //        }
-            //        var pageIndex = tsm.Page ?? 1;
-            //        tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
-            //    }
-            //    else
-            //    {
-            //        var pageIndex = tsm.Page ?? 1;
-            //        tsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
-            //    }
-            //}
-            
-
-            //return View(tsm);
         }
 
         public ActionResult EditTimeCard(int id)
         {
-            TimeCardVM card = new TimeCardVM();
-            ReturnStatus rs = Repository.GetTimeSheetById(id);
-            if (rs.errorCode != 0)
+            ReturnStatus rs = Repository.GetTimeCardVM(id);
+            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
             {
                 ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
                 return View();
-            }
-            TimeSheet t = (TimeSheet)rs.data;
-            card.timeId = t.Id;
-            card.userId = t.user_Id;
-            card.projId = t.project_Id;
-            card.orgId = t.org_Id;
-            card.inTime = t.clockInTime;
-            card.outTime = t.clockOutTime;
-            card.orgName = "test";
-            card.projName = "test";
-            card.volName = "test";
-
-            TimeSpan span = t.clockOutTime.Subtract(t.clockInTime);
-            card.elapsedHrs = span.Minutes / 60.0;             
+            }           
             
-            return PartialView("_EditTimeCard", card);
+            return PartialView("_EditTimeCard", (TimeCardVM)rs.data);
         }
 
         [HttpPost]
@@ -152,7 +98,6 @@ namespace HabitatForHumanity.Controllers
                 ViewBag.status = "Time can't be more than 24 hours or less than zero.";
                 return PartialView("_EditTimeCard", card);
             }
-            card.elapsedHrs = span.Hours + span.Minutes / 60.0;
             ReturnStatus rs = Repository.EditTimeCard(card);
             if (rs.errorCode != ReturnStatus.ALL_CLEAR)
             {
