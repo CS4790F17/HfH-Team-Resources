@@ -12,7 +12,7 @@ using HabitatForHumanity.ViewModels;
 using HabitatForHumanity.Models;
 using static HabitatForHumanity.Models.User;
 using PagedList;
-using HabitatForHumanity.CustomHelpers;
+using HabitatForHumanity.Controllers;
 
 namespace HabitatForHumanity.Controllers
 {
