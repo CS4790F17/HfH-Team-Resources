@@ -43,15 +43,17 @@ namespace HabitatForHumanity.Controllers
 
         #region VolunteerPortal
         
-        public ActionResult VolunteerPortal(int? id)
+        public ActionResult VolunteerPortal()
         {
 
-            if (id == null)
+            ReturnStatus us = Repository.GetUserByEmail(Session["UserName"].ToString());
+            if (us.errorCode != 0)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
             }
+            User user = (User)us.data;
 
-            ReturnStatus rs = Repository.GetPortalVM(id.Value);
+            ReturnStatus rs = Repository.GetPortalVM(user.Id);
 
             if (rs.errorCode != 0)
             {
@@ -287,7 +289,7 @@ namespace HabitatForHumanity.Controllers
                         ViewBag.status = "Sorry, our system is down. Please try again later.";
                         return View(signWaiverVM);
                     }
-                    return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                    return RedirectToAction("VolunteerPortal");
                  }
             }
             return View(signWaiverVM);
@@ -410,7 +412,7 @@ namespace HabitatForHumanity.Controllers
                             return RedirectToAction("Dashboard","Admin");
                         }
                                                
-                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        return RedirectToAction("VolunteerPortal");
                     }
                     else
                     {
