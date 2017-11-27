@@ -208,10 +208,13 @@ namespace HabitatForHumanity.Controllers
                 user.streetAddress = userProfile.streetAddress;
                 user.city = userProfile.city;
                 user.zip = userProfile.zip;
-                //shouldn't this vv be done from the repository??//////////////////////////////////////////////////////////////////////////
-                db.Entry(user).State = EntityState.Modified; 
-                db.SaveChanges();
-                //move ^^to repository?? //////////////////////////////////////////////////////////////////////////////////////////////////
+                ReturnStatus us = new ReturnStatus();
+                us = Repository.EditUser(user);
+                if (us.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                    return View(userProfile);
+                }
                 return RedirectToAction("UserProfile", "User");
             }
             ViewBag.status = "An Error Has Occured";
