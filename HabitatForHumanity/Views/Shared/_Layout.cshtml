@@ -39,14 +39,15 @@
             <li>@Html.ActionLink("Dashboard", "Dashboard", "Admin")</li>
             <li>@Html.ActionLink("Volunteers", "Volunteers", "Admin")</li>
             <li>@Html.ActionLink("Time Cards", "TimeCards", "Admin")</li>
-            <li>@Html.ActionLink("Projects", "Projects", "Admin")</li>
-            <li>@Html.ActionLink("Organizations", "Organizations", "Admin")</li>
+            <li>@Html.ActionLink("Projects", "ManageProjects", "Admin")</li>
+            <li>@Html.ActionLink("Organizations", "ViewOrganizations", "Admin")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
         }
         else if (Session["Username"] != null)
         {
 
-            <li>@Html.ActionLink("My Account", "VolunteerPortal", "User")</li>
+            <li>@Html.ActionLink("My Portal", "VolunteerPortal", "User")</li>
+            <li>@Html.ActionLink("Profile", "UserProfile", "User")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
         }
         else
@@ -62,11 +63,11 @@
         </div>
     </div>
 
-    <div class="container body-content">
+    <div class="container body-content" >
         @{
             if (ViewBag.status != null)
             {
-                <div class="alert alert-danger text-center" role="alert" style="margin-top: 15px">
+                <div class="alert alert-danger text-center" role="alert" style="margin-top: 15px" id="alerts">
                     <h3>@ViewBag.status</h3>
                 </div>
             }
@@ -84,5 +85,14 @@
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/Highcharts-4.0.1/js/highcharts.js"></script>
     @RenderSection("scripts", required: false)
+    <script>
+        // close the div in 5 secs
+        window.setTimeout("closeDiv();", 1500);
+
+
+        function closeDiv() {
+            $("#alerts").fadeOut("slow", null);
+        }
+    </script>
 </body>
 </html>

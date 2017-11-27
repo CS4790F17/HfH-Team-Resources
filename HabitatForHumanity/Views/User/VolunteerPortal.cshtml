@@ -1,6 +1,8 @@
 ﻿@model HabitatForHumanity.ViewModels.PortalVM
+@using HabitatForHumanity.ViewModels;
 @{
     ViewBag.Title = "VolunteerPortal";
+    ViewBag.timeDelay = 5000;
 }
 @{
     if (Session["Username"] != null)
@@ -8,6 +10,29 @@
         @*<h1>@Session["Username"]</h1>*@
     }
 }
+
+  <!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Thanks for your service!</h4>
+            </div>
+            <div class="modal-body">
+              <div id="timer_div"></div> @*<p>Thanks for your service!</p>*@
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="logout()">Logout Now</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Need more time?</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <h2>Volunteer Portal</h2>
 <h3>Welcome @Model.fullName!</h3>
 <h3>You have logged @Model.cumulativeHours hours to date.</h3>
@@ -15,12 +40,36 @@
 @{
     if (Model.isPunchedIn == false)
     {
-        @*<div>@{Html.RenderPartial("_PunchIn", Model.punchInVM);}</div>*@
-        <div>@Html.Action("_PunchIn", new { id = Model.userId})</div>
-        }
+        ViewBag.timeDelay = 6000; 
+        <div>@Html.Action("_PunchIn", new { id = Model.userId })</div>
+    }
     else
     {
+        ViewBag.timeDelay = 3000; 
         @*<div>@{Html.RenderPartial("_PunchOut", Model.punchOutVM);}</div>*@
         <div>@Html.Action("_PunchOut", new { id = Model.userId })</div>
     }
 }
+
+<script>
+   setTimeout(function () {
+            $('#myModal').modal();
+        }, @(ViewBag.timeDelay));
+
+    function logout(){
+        window.location.href = '/User/Logout/?excMsg=Thanks. Have a Great Day';
+    }
+
+    var seconds_left = 10;
+    var interval = setInterval(function() {
+        document.getElementById('timer_div').innerHTML = 
+            'You will be automatically logged out in ' + --seconds_left;
+
+        if (seconds_left <= 0)
+        {
+            clearInterval(interval);
+            window.location.href = '/User/Logout/?excMsg=Time exceeded. You have been automatically logged out.';
+        }
+    }, 1000);
+
+</script>

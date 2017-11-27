@@ -131,6 +131,37 @@ namespace HabitatForHumanity.Models
 
         #region Database Access Methods
 
+        /// <summary>
+        /// Returns whether or not a user's waiver is outdated
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static ReturnStatus waiverNotSigned(int userId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                User user = db.users.Find(userId);
+                if ((DateTime.Now.AddYears(-1) - user.waiverSignDate).TotalDays < (DateTime.Now - DateTime.Now.AddYears(-1)).TotalDays)
+                {
+                    rs.data = false;
+                }
+                else
+                {
+                    rs.data = true;
+                }
+                rs.errorCode = 0;
+                return rs;
+            }
+            catch
+            {
+                rs.errorCode = -1;
+                rs.data = new List<User>();
+                return rs;
+            }
+        }
 
         /// <summary>
         /// Gets all the users that contain any characters in firstName or lastName.
@@ -495,26 +526,27 @@ namespace HabitatForHumanity.Models
                 users = db.users.Where(u => u.birthDate != null && u.gender.Equals(gender)).ToList();
             }
             Demog dunder18 = new Demog() { ageBracket = "Under 18", numPeople = 0 };
-            Demog d18to27 = new Demog() { ageBracket = "18 to 27", numPeople = 0 };
-            Demog d27to40 = new Demog() { ageBracket = "27 to 40", numPeople = 0 };
+            Demog d18to27 = new Demog() { ageBracket = "18 to 26", numPeople = 0 };
+            Demog d27to40 = new Demog() { ageBracket = "27 to 39", numPeople = 0 };
             Demog d40to55 = new Demog() { ageBracket = "40 to 55", numPeople = 0 };
             Demog dover55 = new Demog() { ageBracket = "Over 55", numPeople = 0 };
             foreach (User u in users)
             {
                 DateTime present = DateTime.Now;
-                if (present.AddYears(-18) < u.birthDate)
+                if (u.birthDate >= present.AddYears(-18))
                 {
-                    dunder18.numPeople++;
+                    dunder18.numPeople++;            
                 }
-                else if (present.AddYears(-18) <= u.birthDate && present.AddYears(-27) > u.birthDate)
-                {
+                else if (u.birthDate > present.AddYears(-27))
+                {   
                     d18to27.numPeople++;
                 }
-                else if (present.AddYears(-27) <= u.birthDate && present.AddYears(-40) > u.birthDate)
+                else if (u.birthDate > present.AddYears(-40))
                 {
                     d27to40.numPeople++;
+
                 }
-                else if (present.AddYears(-40) <= u.birthDate && present.AddYears(-55) > u.birthDate)
+                else if (u.birthDate > present.AddYears(-55))
                 {
                     d40to55.numPeople++;
                 }

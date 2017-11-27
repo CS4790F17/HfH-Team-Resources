@@ -59,10 +59,10 @@ namespace HabitatForHumanity.Controllers
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
                 }
-                return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
+                return RedirectToAction("VolunteerPortal", "User");
             }
 
-            return RedirectToAction("VolunteerPortal", "User", new { id = punchInVM.userId });
+            return RedirectToAction("VolunteerPortal", "User");
 
         }
         #endregion
@@ -86,7 +86,7 @@ namespace HabitatForHumanity.Controllers
                 //TODO: add handling to ensure timesheet was properly updated
                 Repository.UpdateTimeSheet(timeSheet);
 
-                return RedirectToAction("VolunteerPortal", "User", new { id = timeSheet.user_Id });
+                return RedirectToAction("VolunteerPortal", "User");
             }
             return View(punchOutVM);
         }

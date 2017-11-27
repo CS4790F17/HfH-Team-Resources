@@ -11,18 +11,17 @@
     @Html.HiddenFor(x => x.orgName)
     @Html.HiddenFor(x => x.projName)
     @Html.HiddenFor(x => x.volName)
-    @Html.HiddenFor(x => x.elapsedHrs)
     <div>
-        <h4>@Model.volName</h4>
-        <p>@Model.orgName</p>
-        <p>@Model.projName</p>
+        <p>@Model.volName  -  @Model.orgName  -  @Model.projName</p>
     </div>
+   
     <div class="row">
         <div class="col-md-2">
             Time in:
         </div>
         <div class="col-md-3">
             @Html.EditorFor(model => model.inTime, new { htmlAttributes = new { @class = "form-control", @style = "width:auto", @type = "datetime-local" } })
+
             @Html.ValidationMessageFor(x => x.inTime, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -33,24 +32,16 @@
         </div>
         <div class="col-md-3">
             @Html.EditorFor(model => model.outTime, new { htmlAttributes = new { @class = "form-control", @style = "width:auto", @type = "datetime-local" } })
+
             @Html.ValidationMessageFor(x => x.outTime, "", new { @class = "text-danger" })
         </div>
     </div>
+    
+
 
     <input type="submit" value="Save" class="btn btn-default" />
 
 }
 
-<script>
-    function testFunction(data)
-    {
-        var name = data.name;
-        console.log(name);
-        console.log(data.status);
-        var id = data.id;
-        var div = "#org" + id;
-        console.log(div);
-        $(div).text(name);
-        refresh();
-    }
-</script>
+
+

@@ -47,9 +47,11 @@ namespace HabitatForHumanity.ViewModels
         public int orgId { get; set; }
 
         [Display(Name = "Time In")]
+        [DisplayFormat(DataFormatString = "{0:M/d/yy h:mm tt}", ApplyFormatInEditMode = true)]
         [DataType(DataType.DateTime)]
         public DateTime inTime { get; set; }
         [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:M/d/yy h:mm tt}", ApplyFormatInEditMode = true)]
         [Display(Name = "Time Out")]
         public DateTime outTime { get; set; }
 
@@ -62,8 +64,8 @@ namespace HabitatForHumanity.ViewModels
         [Display(Name = "Volunteer")]
         public string volName { get; set; }
 
-        [Display(Name = "Hours")]
-        [DisplayFormat(DataFormatString = "{0:n0}")]
-        public double elapsedHrs { get; set; }
+        //[Display(Name = "Hours")]
+        //[DisplayFormat(DataFormatString = "{0:n0}")]
+        //public double elapsedHrs { get; set; }
     }
 }
