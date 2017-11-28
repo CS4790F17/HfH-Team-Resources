@@ -484,13 +484,13 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult ChangeOrganizationStatus(int id)
+        public void ChangeOrganizationStatus(int id, int status)
         {
             ReturnStatus st = Repository.GetOrganizationById(id);
 
 
-
-            ((Organization)st.data).status = 1 - ((Organization)st.data).status;
+            ((Organization)st.data).status = status;
+            //((Organization)st.data).status = 1 - ((Organization)st.data).status;
             Repository.EditOrganization((Organization)st.data);
 
             st = Repository.GetAllOrganizations();
@@ -498,7 +498,7 @@ namespace HabitatForHumanity.Controllers
             //TODO: add in query details
             IPagedList<Organization> SearchResults = ((List<Organization>)st.data).ToPagedList<Organization>(1, RecordsPerPage);
            // StaticPagedList<Organization> SearchResults = new StaticPagedList<Organization>((List<Organization>)st.data, 1, RecordsPerPage, ((List<Organization>)st.data).Count);
-            return PartialView("OrganizationPartialViews/_OrganizationList", SearchResults);
+           // return PartialView("OrganizationPartialViews/_OrganizationList", SearchResults);
 
 
         }
