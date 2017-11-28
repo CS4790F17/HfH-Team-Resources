@@ -1,0 +1,185 @@
+﻿@using PagedList.Mvc;
+@using HabitatForHumanity.Models
+@using HabitatForHumanity.ViewModels
+@model PagedList.PagedList<Organization>
+
+
+
+@ToolKitVM.Modal("Edit Organization", "editOrganizationModal", "editPartial")
+
+<div id="organizationList" class="container">
+
+    <div class="row">
+        <div class="col-xs-4">Name</div>
+        <div class="col-xs-4">Status</div>
+    </div>
+
+    <div style="overflow-y:scroll;overflow-x:hidden;max-height:350px">
+        @foreach (var org in Model)
+        {
+            var opac = 1.0;
+            if (org.status == 0)
+            {
+                //change for disabled orgs opacity
+                opac = 0.3;
+            }
+
+            var orgId = "org" + org.Id;
+            <div id="@orgId" class="row well well-sm" style="margin:1px;opacity:@opac">
+                <div class="col-xs-3 text-center">@org.name</div>
+
+
+
+
+                @switch (org.status)
+                {
+                    case 0:
+                        <!--Activate-->
+                        @*<div class="col-xs-3">Disabled</div>*@
+                        <div class="col-xs-3 text-center">
+                            <label class="switch">
+                                <input type="checkbox" class="statusSlider" organizationId="@org.Id">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        break;
+                    case 1:
+                        <!--Deactivate-->
+                        @*<div class="col-xs-3">Enabled</div>*@
+                        <div class="col-xs-3 text-center">
+                            <label class="switch">
+                                <input type="checkbox" checked="checked" class="statusSlider" organizationId="@org.Id">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        break;
+                }
+
+                @*<div class="col-xs-3">
+                        <label class="switch">
+                            <input type="checkbox" class="statusSlider" organizationId="@org.Id">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>*@
+
+
+                <div class="col-xs-3">
+                    <button dataId=@org.Id class="editModalButton btn" data-toggle="modal" data-target="#editOrganizationModal">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true" title="Edit" style="margin-right:5px"></span>Edit
+                    </button>
+                </div>
+            </div>
+
+        }
+    </div>
+
+
+
+
+
+
+
+    @*<table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).name)</th>
+                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).status)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var org in Model)
+                {
+                    <tr>
+                        <td>@org.name</td>
+
+                        @switch (org.status)
+                        {
+                            case 0:
+                                    <!--Activate-->
+                                <td>
+                                    <button type="button" class="changeStatus btn greenbtn" organizationId="@org.Id" title="Activate">Enable</button>
+                                </td>
+                                break;
+                            case 1:
+                                    <!--Deactivate-->
+                                <td>
+                                    <button class="changeStatus btn redbtn" organizationId="@org.Id" title="Deactivate">Disable</button>
+                                </td>
+                                break;
+                        }
+
+
+
+                        <td>
+                            <button dataId=@org.Id class="editModalButton btn" data-toggle="modal" data-target="#editOrganizationModal">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true" title="Edit" style="margin-right:5px"></span>Edit
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>*@
+</div>
+
+
+<script>
+
+
+
+    $(".statusSlider").click(function () {
+        console.log("clicked");
+        var thisSlider = $(this);
+        var id = $(this).attr("organizationId");
+
+
+        if ($(this).is(":checked")) {
+            console.log("checked");
+            //then project is now active
+            var status = 1;
+        } else {
+            //project is deactive
+            var status = 0;
+        }
+
+
+        var data = { "id": id, "status": status }
+        //  console.log($(this).attr("organizationId"));
+
+        $.ajax({
+            url: "/Admin/ChangeOrganizationStatus",
+            type: "POST",
+            data: data,
+            success: function () {
+
+                if (status == 1) {
+                    var orgId = "#org" + id;
+                    $(orgId).css("opacity", "1");
+                } else {
+                    var orgId = "#org" + id;
+                    $(orgId).css("opacity", "0.3");
+                }
+
+            }
+        }
+        )
+    })
+
+
+     //when the edit button is clicked opens a modal and fills out a partial view
+    //with relevant model data
+    $(".editModalButton").click(function () {
+        var id = $(this).attr("dataId");
+        var data = { "id": id }
+        //console.log(data);
+        $.ajax(
+            {
+                url: "/Admin/EditOrganization",
+                type: "GET",
+                data: data,
+                success: function (response) {
+                    //console.log(response);
+                    $("#editPartial").html(response);
+                }
+            });
+    })
+</script>

@@ -1,6 +1,13 @@
 ﻿@using (Html.BeginForm())
 {
-    @Html.Editor("name", new { htmlAttributes = new { placeholder = "Organization Name" } })
-    <input type="submit" value="Submit" class="btn btn-default" />
+    <div class="row">
+        <div class="col-xs-4 col-xs-offset-3">
+            @Html.Editor("name", new { htmlAttributes = new { placeholder = "Organization Name" } })
+        </div>
+
+        <div class="col-xs-2">
+            <input type="submit" value="Submit" class="btn btn-default" />
+        </div>
+    </div>
 
 }
