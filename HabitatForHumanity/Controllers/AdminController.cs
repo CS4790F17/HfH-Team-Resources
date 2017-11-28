@@ -326,9 +326,6 @@ namespace HabitatForHumanity.Controllers
                     }
                     temp.inTime = t.clockInTime;
                     temp.outTime = t.clockOutTime;
-                    TimeSpan elapsedHrs = t.clockOutTime.Subtract(t.clockInTime);
-                    hours = Math.Round(elapsedHrs.TotalHours, 2, MidpointRounding.AwayFromZero);
-                    temp.elapsedHrs = hours;
 
                     test.Add(temp);
                 }
