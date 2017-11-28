@@ -11,11 +11,7 @@ namespace HabitatForHumanity.Models
 {
     public class Repository
     {
-        //used for building paginated lists
-        private const int RecordsPerPage = 10;
-        
-
-
+      
         #region User functions
 
         /// <summary>
@@ -404,7 +400,7 @@ namespace HabitatForHumanity.Models
         /// <returns></returns>
         public static StaticPagedList<Project> GetProjectPageWithFilter(int? Page, int statusChoice, string queryString)
         {
-
+            int RecordsPerPage = 10;
             //page can't be 0 or below
             if (Page == null || Page < 1 )
             {
@@ -442,7 +438,7 @@ namespace HabitatForHumanity.Models
         /// <returns></returns>
         public static StaticPagedList<Project> GetProjectPage(int? Page, string queryString)
         {
-
+            int RecordsPerPage = 10;
             //page can't be 0 or below
             if (Page < 1 || Page == null)
             {
@@ -580,6 +576,10 @@ namespace HabitatForHumanity.Models
        /// <returns>List of timecard viewmodels</returns>
         public static ReturnStatus GetTimeCardPageWithFilter(int? Page, int orgId,int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
         {
+
+            int RecordsPerPage = 10;
+
+
             //page can't be 0 or below
             if (Page == null || Page < 1)
             {
