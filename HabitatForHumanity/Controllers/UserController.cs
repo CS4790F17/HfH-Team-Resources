@@ -245,7 +245,14 @@ namespace HabitatForHumanity.Controllers
             if (Session["UserName"] != null)
             {
                 SignWaiverVM signWaiver = new SignWaiverVM();
-                signWaiver.signature = "";
+                signWaiver.signature = false;
+                signWaiver.emergencyCity = null;
+                signWaiver.emergencyFirstName = null;
+                signWaiver.emergencyHomePhone = null;
+                signWaiver.emergencyLastName = null;
+                signWaiver.emergencyStreetAddress = null;
+                signWaiver.emergencyWorkPhone = null;
+                signWaiver.emergencyZip = null;
                 signWaiver.userEmail = Session["UserName"].ToString();
                 return View(signWaiver);
             }
@@ -267,10 +274,6 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (signWaiverVM.signature == null)
-                {
-                    return View(signWaiverVM);
-                }
 
                 ReturnStatus rs = Repository.GetUserByEmail(signWaiverVM.userEmail);
                 if (rs.errorCode != 0)
@@ -292,6 +295,7 @@ namespace HabitatForHumanity.Controllers
                     return RedirectToAction("VolunteerPortal");
                  }
             }
+            ViewBag.status = "An error has occured below.";
             return View(signWaiverVM);
         }
 
