@@ -9,77 +9,166 @@
 @Html.HiddenFor(x => x.PageNumber)
 @ToolKitVM.Modal("Edit Project", "editProjectModal", "editPartialTarget")
 
-<div id="projectList"  class="" style="min-width:500px">
-    <table class="table table-striped" style="width:auto;">
-        <!--Title bar-->
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.ElementAt(0).name)</th>
-                <th>@Html.DisplayNameFor(model => model.ElementAt(0).description)</th>
-                <th>@Html.DisplayNameFor(model => model.ElementAt(0).beginDate)</th>
-                <th>@Html.DisplayNameFor(model => model.ElementAt(0).status)</th>
-            </tr>
-        </thead>
-        <!--End of Title bar-->
-        <!--List of Projects-->
-        <tbody>
-            @foreach (var project in Model)
+
+<div id="" class="container" style="margin-top:25px">
+
+    <!--Table Head-->
+    <div class="row">
+        <div class="col-xs-2">Project Name</div>
+        <div class="col-xs-5">Description</div>
+        <div class="col-xs-2">Begin Date</div>
+        <div class="col-xs-3">Status</div>
+    </div>
+
+    <!--Scrollable Div-->
+    <div style="overflow-y:scroll;overflow-x:hidden;max-height:350px;min-height:350px">
+        <!--Table Body-->
+        @foreach (var project in Model)
+        {
+            var opac = 1.0;
+            if (project.status == 0)
             {
-                <tr>
-                    <td>@project.name</td>
-                    <td>@project.description</td>
-                    <td>@project.beginDate.ToString("dd-MM-yyyy")</td>
+                //change for disabled orgs opacity
+                opac = 0.3;
+            }
 
 
-                    @*@switch (project.status)
-                    {
-                        case 0:
-                            <td>
-                                <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:green"></span>
-                            </td>
-                            break;
-                        case 1:
-                            <td>
-                                <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red" title="Deactivate"></span>
-                            </td>
-                            break;
-                    }*@
-
+            var projectId = "project" + project.Id;
+            <div id="@projectId" class="row well well-sm" style="margin:5px;opacity:@opac">
+                <div class="col-xs-2">@project.name</div>
+                <div class="col-xs-5">@project.description</div>
+                <div class="col-xs-2">@project.beginDate.ToString("MM-dd-yyyy")</div>
+                <div class="col-xs-3">
 
 
                     @switch (project.status)
                     {
                         case 0:
-                                <!--Activate-->
-                            <td>
-                                <button type="button" class="changeStatus btn greenbtn" projectId="@project.Id" title="Activate">Enable</button>
-                            </td>
+                            <label class="switch" style="float:left">
+                                <input type="checkbox" class="statusSlider" projectId="@project.Id">
+                                <span class="slider round"></span>
+                            </label>
                             break;
                         case 1:
-                                <!--Deactivate-->
-                            <td>
-                                <button class="changeStatus btn redbtn" projectId="@project.Id" title="Deactivate">Disable</button>
-                            </td>
+                            <label class="switch" style="float:left">
+                                <input type="checkbox" checked="checked" class="statusSlider" projectId="@project.Id">
+                                <span class="slider round"></span>
+                            </label>
                             break;
                     }
 
 
-                    <td>
-                        <button dataId=@project.Id class="editModalButton btn" data-toggle="modal" data-target="#editProjectModal" >
-                            <span class="glyphicon glyphicon-edit" aria-hidden="true" title="Edit" style="margin-right:5px"></span>Edit
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <!--End of List of Projects-->
-    @Html.PagedListPager(Model, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
 
+  
+                    <button dataId=@project.Id class="editModalButton btn" data-toggle="modal" data-target="#editProjectModal" style="float:right">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true" title="Edit" style="margin-right:5px"></span>Edit
+                    </button>
+                </div>
+            </div>
+        }
+
+    </div>
 
 </div>
+
+@*Same page using tables instead of divs for data layout. DO NOT REMOVE*@
+@*<div id="projectList" class="" style="min-width:500px">
+        <table class="table table-striped" style="width:auto;">
+            <!--Title bar-->
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).name)</th>
+                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).description)</th>
+                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).beginDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).status)</th>
+                </tr>
+            </thead>
+            <!--End of Title bar-->
+            <!--List of Projects-->
+            <tbody>
+                @foreach (var project in Model)
+                        {
+                    <tr>
+                        <td>@project.name</td>
+                        <td>@project.description</td>
+                        <td>@project.beginDate.ToString("dd-MM-yyyy")</td>
+
+
+
+                        @switch (project.status)
+                        {
+                            case 0:
+                                    <!--Activate-->
+                                <td>
+                                    <button type="button" class="changeStatus btn greenbtn" projectId="@project.Id" title="Activate">Enable</button>
+                                </td>
+                                break;
+                            case 1:
+                                    <!--Deactivate-->
+                                <td>
+                                    <button class="changeStatus btn redbtn" projectId="@project.Id" title="Deactivate">Disable</button>
+                                </td>
+                                break;
+                        }
+
+
+                        <td>
+                            <button dataId=@project.Id class="editModalButton btn" data-toggle="modal" data-target="#editProjectModal">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true" title="Edit" style="margin-right:5px"></span>Edit
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <!--End of List of Projects-->
+    </div>*@
+
+@*@Html.PagedListPager(Model, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)*@
+
+
+
+
+
 <script type="text/javascript">
 
+    $(".statusSlider").click(function () {
+        console.log("clicked");
+        var thisSlider = $(this);
+        var id = $(this).attr("projectId");
+
+
+        if ($(this).is(":checked")) {
+            console.log("checked");
+            //then project is now active
+            var status = 1;
+        } else {
+            //project is deactive
+            var status = 0;
+        }
+
+
+        var data = { "id": id, "status": status }
+        //  console.log($(this).attr("organizationId"));
+
+        $.ajax({
+            url: "/Admin/ChangeProjectStatus",
+            type: "POST",
+            data: data,
+            success: function () {
+
+                if (status == 1) {
+                    var projectId = "#project" + id;
+                    $(projectId).css("opacity", "1");
+                } else {
+                    var projectId = "#project" + id;
+                    $(projectId).css("opacity", "0.3");
+                }
+
+            }
+        }
+        )
+    });
 
     //changes the status of the project from active to inactive or vice versa
     $(".changeStatus").click(function () {

@@ -21,7 +21,7 @@ namespace HabitatForHumanity.Controllers
     {
         private VolunteerDbContext db = new VolunteerDbContext();
 
-        const int RecordsPerPage = 25;
+        const int RecordsPerPage = 10;
         // GET: Admin dashboard
         public ActionResult Dashboard()
         {
@@ -529,22 +529,34 @@ namespace HabitatForHumanity.Controllers
             return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
         }
 
-
-        public ActionResult ChangeProjectStatus(int id, int page, int statusChoice, string queryString)
+        [HttpPost]
+        public void ChangeProjectStatus(int id, int status)
         {
             ReturnStatus st = Repository.GetProjectById(id);
             if (st.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                ((Project)st.data).status = 1 - ((Project)st.data).status;
+                ((Project)st.data).status = status;
                 Repository.EditProject((Project)st.data);
             }
-            //once the status has been changed return a project list with filters
-            //grabs the filters even though they hadn't been submitted
-            StaticPagedList<Project> SearchResults = Repository.GetProjectPageWithFilter(page, statusChoice, queryString);
-            //StaticPagedList<Project> SearchResults = GetProjectPage(page, "");
-            return PartialView("ProjectPartialViews/_ProjectList", SearchResults);
-
         }
+
+
+
+        //public ActionResult ChangeProjectStatus(int id, int page, int statusChoice, string queryString)
+        //{
+        //    ReturnStatus st = Repository.GetProjectById(id);
+        //    if (st.errorCode == ReturnStatus.ALL_CLEAR)
+        //    {
+        //        ((Project)st.data).status = 1 - ((Project)st.data).status;
+        //        Repository.EditProject((Project)st.data);
+        //    }
+        //    //once the status has been changed return a project list with filters
+        //    //grabs the filters even though they hadn't been submitted
+        //    StaticPagedList<Project> SearchResults = Repository.GetProjectPageWithFilter(page, statusChoice, queryString);
+        //    //StaticPagedList<Project> SearchResults = GetProjectPage(page, "");
+        //    return PartialView("ProjectPartialViews/_ProjectList", SearchResults);
+
+        //}
 
         [HttpGet]
         public ActionResult EditProject(int id)
@@ -574,7 +586,8 @@ namespace HabitatForHumanity.Controllers
         public ActionResult ProjectSearch(int? Page, int statusChoice, string queryString)
         {
             ProjectSearchModel model = new ProjectSearchModel();
-            model.Page = Page;
+            //model.Page = Page;
+            model.Page = 1;//return to first page
             model.statusChoice = statusChoice;
             model.queryString = queryString;
             return RedirectToAction("ManageProjects", model);
