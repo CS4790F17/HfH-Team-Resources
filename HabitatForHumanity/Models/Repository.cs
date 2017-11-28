@@ -13,6 +13,7 @@ namespace HabitatForHumanity.Models
     {
         //used for building paginated lists
         private const int RecordsPerPage = 10;
+        
 
 
         #region User functions
@@ -60,7 +61,7 @@ namespace HabitatForHumanity.Models
             {
                 userReturn = User.GetUserByEmail(loginVm.email);
 
-                if (userReturn.errorCode != 0)
+                if (userReturn.errorCode != ReturnStatus.ALL_CLEAR)
                 {
                     retValue.errorCode = -1;
                     retValue.data = false;
@@ -71,6 +72,11 @@ namespace HabitatForHumanity.Models
                 {
                     retValue.errorCode = 0;
                     retValue.data = true;
+                }
+                else
+                {
+                    retValue.errorCode = 0;
+                    retValue.data = false;
                 }
                 return retValue;
             }

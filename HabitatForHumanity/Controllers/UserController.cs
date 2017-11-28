@@ -17,6 +17,7 @@ namespace HabitatForHumanity.Controllers
     public class UserController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
+        private const string awwSnapMsg = "We're experiencing technical difficulties, try again later";
 
         #region Index
         public ActionResult Index()
@@ -386,9 +387,9 @@ namespace HabitatForHumanity.Controllers
                 if ((bool)emailExistsResult.data)
                 {
                     authResult = Repository.AuthenticateUser(loginVm);
-                    if (authResult.errorCode != 0)
+                    if (authResult.errorCode != ReturnStatus.ALL_CLEAR)
                     {
-                        ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
+                        ViewBag.status = awwSnapMsg;
                         return View(loginVm);
                     }
                     if ((bool)authResult.data)
@@ -397,7 +398,7 @@ namespace HabitatForHumanity.Controllers
                         
                         if (rsUser.errorCode != 0)
                         {
-                            ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
+                            ViewBag.status = awwSnapMsg;
                             return View(loginVm);
                         }
 
@@ -425,7 +426,7 @@ namespace HabitatForHumanity.Controllers
                 }
             }
             // model was bad
-            ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
+            ViewBag.status = awwSnapMsg;
             return View(loginVm);          
         }
 
