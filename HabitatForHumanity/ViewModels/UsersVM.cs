@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 using PagedList;
@@ -11,9 +12,11 @@ namespace HabitatForHumanity.ViewModels
     {
         public int userNumber { get; set; }
 
+        [Required(ErrorMessage = "Enter Volunteer Name")]
         [Display(Name ="Name")]
         public string volunteerName { get; set; }
-        
+
+        [Required(ErrorMessage = "Enter valid email")]
         [Display(Name = "Email Address")]
         public string email { get; set; }
         

@@ -371,27 +371,31 @@ namespace HabitatForHumanity.Controllers
         // POST: Admin/EditVolunteer
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditVolunteer(string userNumber, string volunteerName, string email)
+        public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email")] UsersVM usersVM)
         {
             if (ModelState.IsValid)
             {
-                int id = Int32.Parse(userNumber);
-                ReturnStatus rs = Repository.GetUser(id);
+                ReturnStatus rs = Repository.GetUser(usersVM.userNumber);
                 if (rs.errorCode != 0)
                 {
-                    
+                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                    return View("EditVolunteer");
                 }
                 else
                 {
                     User user = (User)rs.data;
-                    user.Id = id;
-                    String[] tempName = volunteerName.Split(' ');
+                    user.Id = usersVM.userNumber;
+                    String[] tempName = usersVM.volunteerName.Split(' ');
                     user.firstName = tempName[0];
-                    if (tempName[1] != null)
+                    if (tempName.Length > 1)
                     {
-                        user.lastName = tempName[1];
+                        if (tempName[1] != null)
+                        {
+                            user.lastName = tempName[1];
+                        }
                     }
-                    user.emailAddress = email;
+                    
+                    user.emailAddress = usersVM.email;
 
                     ReturnStatus us = new ReturnStatus();
                     us = Repository.EditUser(user);
@@ -401,11 +405,9 @@ namespace HabitatForHumanity.Controllers
                         return View("EditVolunteer");
                     }
                 }
-                
-
                 return RedirectToAction("Volunteers");
             }
-            return View("EditVolunteer");
+            return View(usersVM);
         }
 
         public ActionResult GetBadPunches()
