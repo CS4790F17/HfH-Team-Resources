@@ -21,7 +21,7 @@
             if (org.status == 0)
             {
                 //change for disabled orgs opacity
-                opac = 0.5;
+                opac = 0.3;
             }
 
             var orgId = "org" + org.Id;
@@ -35,8 +35,8 @@
                 {
                     case 0:
                         <!--Activate-->
-                        <div class="col-xs-3">Disabled</div>
-                        <div class="col-xs-3">
+                        @*<div class="col-xs-3">Disabled</div>*@
+                        <div class="col-xs-3 text-center">
                             <label class="switch">
                                 <input type="checkbox" class="statusSlider" organizationId="@org.Id">
                                 <span class="slider round"></span>
@@ -45,8 +45,8 @@
                         break;
                     case 1:
                         <!--Deactivate-->
-                        <div class="col-xs-3">Enabled</div>
-                        <div class="col-xs-3">
+                        @*<div class="col-xs-3">Enabled</div>*@
+                        <div class="col-xs-3 text-center">
                             <label class="switch">
                                 <input type="checkbox" checked="checked" class="statusSlider" organizationId="@org.Id">
                                 <span class="slider round"></span>
@@ -156,7 +156,7 @@
                     $(orgId).css("opacity", "1");
                 } else {
                     var orgId = "#org" + id;
-                    $(orgId).css("opacity", "0.5");
+                    $(orgId).css("opacity", "0.3");
                 }
 
             }
