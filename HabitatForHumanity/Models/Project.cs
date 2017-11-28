@@ -201,7 +201,7 @@ namespace HabitatForHumanity.Models
 
             proj = (from p in db.projects
                     where p.name.Contains(queryString)
-                    orderby p.Id ascending
+                    orderby p.status descending
                     select p)
                     .Skip(itemsPerPage * page)
                     .Take(itemsPerPage).ToList();
@@ -216,7 +216,7 @@ namespace HabitatForHumanity.Models
 
             proj = (from p in db.projects
                     where p.status.Equals(statusChoice) && p.name.Contains(queryString)
-                    orderby p.Id ascending
+                    orderby p.status descending
                     select p)
                     .Skip(itemsPerPage * page)
                     .Take(itemsPerPage).ToList();
