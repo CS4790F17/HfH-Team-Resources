@@ -488,19 +488,15 @@ namespace HabitatForHumanity.Controllers
         {
             ReturnStatus st = Repository.GetOrganizationById(id);
 
-
-            ((Organization)st.data).status = status;
-            //((Organization)st.data).status = 1 - ((Organization)st.data).status;
-            Repository.EditOrganization((Organization)st.data);
-
-            st = Repository.GetAllOrganizations();
-
-            //TODO: add in query details
-            IPagedList<Organization> SearchResults = ((List<Organization>)st.data).ToPagedList<Organization>(1, RecordsPerPage);
-           // StaticPagedList<Organization> SearchResults = new StaticPagedList<Organization>((List<Organization>)st.data, 1, RecordsPerPage, ((List<Organization>)st.data).Count);
-           // return PartialView("OrganizationPartialViews/_OrganizationList", SearchResults);
-
-
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                ((Organization)st.data).status = status;
+                Repository.EditOrganization((Organization)st.data);
+            }
+            else
+            {
+                ViewBag.status = "Error while attempting to change organization status.";
+            }
         }
 
         [HttpGet]
