@@ -21,7 +21,7 @@ namespace HabitatForHumanity.Controllers
     {
         private VolunteerDbContext db = new VolunteerDbContext();
 
-        const int RecordsPerPage = 3;
+        const int RecordsPerPage = 10;
         // GET: Admin dashboard
         public ActionResult Dashboard()
         {

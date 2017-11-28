@@ -229,7 +229,7 @@ namespace HabitatForHumanity.Models
 
             var orgName = new SqlParameter("@Name", "%" + name + "%");
 
-            var orgs = db.organizations.SqlQuery("SELECT * FROM Organization WHERE Organization.name LIKE @Name", orgName).ToList<Organization>();
+            var orgs = db.organizations.SqlQuery("SELECT * FROM Organization WHERE Organization.name LIKE @Name", orgName).OrderByDescending(x => x.status).ToList<Organization>();
 
 
             if(orgs.Count < 1)
@@ -259,7 +259,7 @@ namespace HabitatForHumanity.Models
                 "SELECT * FROM Organization " +
                 "WHERE Organization.status = @Status " +
                 "AND Organization.name in " +
-                "(SELECT Organization.name FROM Organization WHERE Organization.name LIKE @Name)", orgStatus, orgName).ToList<Organization>();
+                "(SELECT Organization.name FROM Organization WHERE Organization.name LIKE @Name)", orgStatus, orgName).OrderByDescending(x => x.status).ToList<Organization>();
 
 
             if(orgs.Count < 1)
