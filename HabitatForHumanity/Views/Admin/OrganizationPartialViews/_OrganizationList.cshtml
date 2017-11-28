@@ -5,70 +5,95 @@
 
 
 
-@ToolKitVM.Modal("Edit Organization", "editModal", "editPartial")
+@ToolKitVM.Modal("Edit Organization", "editOrganizationModal", "editPartial")
 
-
-
-<div class="container" style="width:auto">
-    <div class="row">
-        <div class="col-xs-3">Organization Name</div>
-        <div class="col-xs-3">Status</div>
-        <div class="col-xs-6"><!--Admin stuff goes here--></div>
-    </div>
-
-    <hr style="border:0.1px solid" />
-
-    <!--List of organizations-->
-    <div id="editOrg" style="overflow-y:scroll;overflow-x:hidden;height:300px;width:auto">
-
-        @foreach (var item in Model)
+<div id="organizationList">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).name)</th>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).status)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var org in Model)
             {
-            <div class="row">
-                @{ var orgId = "org" + item.Id;}
-                <div id="@orgId" class="col-xs-3">@item.name</div>
-
-                @switch (item.status)
-                {
-                    case 0:
-                        <div class="col-xs-3">Inactive</div>
-                        break;
-                    case 1:
-                        <div class="col-xs-3">Active</div>
-                        break;
-
-                }
-
-
-                <!--Admin based controls-->
-                <div class="col-xs-6">
-                    @switch (item.status)
-                    {
-                        case 0:
-                        <!--Activate-->
-                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusActivate" })
-                            break;
-                        case 1:
-                        <!--Deactivate-->
-                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusDeactivate" })
-                            break;
-                    }
-                    <!--Edit Organization-->
-                    @*@ToolKitVM.ModalButton("editButton", "editModal", editHtml, item.Id.ToString())*@
-                    @* @Ajax.ActionLink(" ", "EditOrganization", new { id = item.Id }, new AjaxOptions { HttpMethod = "GET", UpdateTargetId = orgId }, htmlAttributes: new { @class = "editLink" })*@
+                <tr>
+                    <td>@org.name</td>
+                    
+                        @switch (org.status)
+                        {
+                            case 0:
+                                <!--Activate-->
+                            <td>
+                                <button type="button" class="changeStatus btn greenbtn" organizationId="@org.Id" title="Activate">Enable</button>
+                            </td>
+                                break;
+                            case 1:
+                                <!--Deactivate-->
+                                <td>
+                                    <button class="changeStatus btn redbtn" organizationId="@org.Id" title="Deactivate">Disable</button>
+                                </td>
+                                break;
+                        }
+                   
 
 
-
-                    @*@Html.ActionLink("Associated Projects", "Index", "Home", null, htmlAttributes: new { @class = "btn btn-primary btn-md", @style = "margin:0px 20px;padding:0px" })
-                    @Html.ActionLink("Run Report", "Index", "Home", null, htmlAttributes: new { @class = "btn btn-primary btn-md", @style = "margin:0px 20px;padding:0px" })*@
-
-                    <!--End of Admin controls-->
-
-
-                </div>
-                <hr />
-            </div>
-                    }
-    </div>
+                        <td>
+                            <button dataId=@org.Id class="editModalButton btn" data-toggle="modal" data-target="#editOrganizationModal">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true" title="Edit" style="margin-right:5px"></span>Edit
+                            </button>
+                        </td>
+                    </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
 
+<script>
+
+    //changes the status of the organization from active to inactive or vice versa
+    $(".changeStatus").click(function () {
+        var id = $(this).attr("organizationId");
+       // var page = $("#PageNumber").attr("value");
+       // var query = $("#queryString").val();
+       // var choice = $("#statusChoiceSelector").val();
+        console.log(id);
+        //console.log(page);
+        //console.log(query);
+        // console.log(choice);
+
+        var data = { "id": id}
+       // var data = { "id": id, "page": page, "statusChoice": choice, "queryString": query }
+        $.ajax({
+            url: "/Admin/ChangeOrganizationStatus",
+            type: "POST",
+            data: data,
+            success: function (response) {
+                 console.log(response);
+                $("#organizationList").replaceWith(response);
+            }
+        })
+    });
+
+
+
+    //when the edit button is clicked opens a modal and fills out a partial view
+    //with relevant model data
+    $(".editModalButton").click(function () {
+        var id = $(this).attr("dataId");
+        var data = { "id": id }
+        //console.log(data);
+        $.ajax(
+            {
+                url: "/Admin/EditOrganization",
+                type: "GET",
+                data: data,
+                success: function (response) {
+                    //console.log(response);
+                    $("#editPartial").html(response);
+                }
+            });
+    })
+</script>
