@@ -449,6 +449,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult ForgotPassword()
         {
             LoginVM loginVm = new LoginVM();
+            loginVm.password = "blah";
             return View(loginVm);
         }
 
@@ -456,7 +457,7 @@ namespace HabitatForHumanity.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ForgotPassword([Bind(Include = "email")] LoginVM forgot)
+        public ActionResult ForgotPassword([Bind(Include = "email, password")] LoginVM forgot)
         {
             if (ModelState.IsValid)
             {
@@ -464,13 +465,13 @@ namespace HabitatForHumanity.Controllers
                 {
                     ReturnStatus existsResult = new ReturnStatus();
                     existsResult = Repository.EmailExists(forgot.email);
-                    if (existsResult.errorCode != 0)
+                    if (existsResult.errorCode != ReturnStatus.ALL_CLEAR)
                     {
                         ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
                         return View("Login");                      
                     }
 
-                    if ((bool)existsResult.data)
+                    if ((bool)existsResult.data == true)
                     {
                         try
                         {
@@ -502,21 +503,25 @@ namespace HabitatForHumanity.Controllers
                         catch (Exception)
                         {
                             ViewBag.Status = "Problem while sending email, Please check details.";
-                            return View("Login");
+                            return View(forgot);
                         }
-                        return View("Login");
+                        return RedirectToAction("Login", new { excMsg = "New password has been sent to " + forgot.email });
                     }
-                    ViewBag.status = "No record of provided email address.";
-                    return RedirectToAction("Login", "Volunteer");
+                    else
+                    {
+                        ViewBag.status = "No record of provided email address.";
+                        return View(forgot);
+                    }
+           
                 }
                 catch
                 {
                     ViewBag.status = "System failed to process your request, try again.";
-                    return RedirectToAction("Login", "Volunteer");
+                    return View(forgot);
                 }
             }// end modelstate.isvalid
             ViewBag.status = "Please provide a valid email address.";
-            return RedirectToAction("Login", "Volunteer");
+            return View(forgot);
         }
         #endregion
 
