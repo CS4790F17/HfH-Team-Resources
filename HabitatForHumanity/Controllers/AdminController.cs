@@ -298,7 +298,7 @@ namespace HabitatForHumanity.Controllers
                 timeSheets = (List<TimeSheet>)getTimeSheets.data;
                 List<TimeCardVM> test = new List<TimeCardVM>();
 
-                double hours = 0.0;
+                
                 foreach (TimeSheet t in timeSheets)
                 {
                     TimeCardVM temp = new TimeCardVM();
