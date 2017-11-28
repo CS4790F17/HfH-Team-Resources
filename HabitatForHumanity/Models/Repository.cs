@@ -979,10 +979,17 @@ namespace HabitatForHumanity.Models
             return User.GetDemographicsForPie(gender);
         }
 
-        public static ReturnStatus GetBadTimeSheets()
+        //public static ReturnStatus GetBadTimeSheets()
+        //{
+        //    return TimeSheet.GetBadTimeSheets();
+        //}
+
+        public static ReturnStatus GetNumBadPunches()
         {
-            return TimeSheet.GetBadTimeSheets();
+            return TimeSheet.GetNumBadPunches();
         }
+
+
 
         /// <summary>
         /// return total hours logged into given project

@@ -420,28 +420,28 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static ReturnStatus GetBadTimeSheets()
-        {
-            ReturnStatus st = new ReturnStatus();
-            st.data = new List<TimeSheet>();
-            try
-            {
-                VolunteerDbContext db = new VolunteerDbContext();
-                var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
-                    .OrderByDescending(c => c.clockInTime).
-                    ToList();
+        //public static ReturnStatus GetBadTimeSheets()
+        //{
+        //    ReturnStatus st = new ReturnStatus();
+        //    st.data = new List<TimeSheet>();
+        //    try
+        //    {
+        //        VolunteerDbContext db = new VolunteerDbContext();
+        //        var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
+        //            .OrderByDescending(c => c.clockInTime).
+        //            ToList();
 
-                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
-                st.data = sheets;
-                return st;
-            }
-            catch (Exception e)
-            {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
-                return st;
-            }
-        }
+        //        st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+        //        st.data = sheets;
+        //        return st;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+        //        st.errorMessage = e.ToString();
+        //        return st;
+        //    }
+        //}
 
         /// <summary>
         /// Used in Admin/Volunteers
@@ -489,6 +489,33 @@ namespace HabitatForHumanity.Models
             return rs;
         }
 
+        public static ReturnStatus GetNumBadPunches()
+        {
+ 
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                DateTime today = DateTime.Today;
+                DateTime aMonthAgo = DateTime.Today.AddDays(-30);
+                VolunteerDbContext db = new VolunteerDbContext();
+                var numsheets = db.timeSheets.Where(
+                    t => t.clockInTime < today
+                    && t.clockInTime > aMonthAgo
+                    && t.clockOutTime.Hour == 0 
+                    && t.clockOutTime.Minute == 0).Count();
+
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.data = numsheets;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        
+        }
 
     }
 }

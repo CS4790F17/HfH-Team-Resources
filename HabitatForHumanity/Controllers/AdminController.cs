@@ -382,56 +382,10 @@ namespace HabitatForHumanity.Controllers
         }
 
         public ActionResult GetBadPunches()
-        {
-            ReturnStatus badTimeSheets = Repository.GetBadTimeSheets();
-            // List<TimeSheet> ts = Repository.GetBadTimeSheets();
-            List<BadPunchVM> bp = new List<BadPunchVM>();
-
-            if (badTimeSheets.errorCode != 0)
-            {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
-                return null;
-            }
-            ReturnStatus timesheetReturn = new ReturnStatus();
-            timesheetReturn.data = new List<TimeSheet>();
-
-            List<TimeSheet> ts = (List<TimeSheet>)timesheetReturn.data;
-            foreach (TimeSheet t in ts)
-            {
-                try
-                {
-                    User user = (User)Repository.GetUser(t.user_Id).data;
-                    string volName = "";
-
-                    if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
-                    {
-                        volName = user.emailAddress;
-                    }
-                    else if (string.IsNullOrEmpty(user.firstName))
-                    {
-                        volName += user.emailAddress + " ";
-                    }
-                    else if (string.IsNullOrEmpty(user.lastName))
-                    {
-                        volName += user.emailAddress;
-                    }
-                    else
-                    {
-                        volName += user.firstName + " " + user.lastName;
-                    }
-
-                    bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
-                }
-                catch
-                {
-                    return null;
-                }
-
-
-            }
-
-
-            return PartialView("_BadPunches", bp);
+        {   
+            ReturnStatus rs = Repository.GetNumBadPunches();
+            int numBadPunches = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
+            return PartialView("_BadPunches", numBadPunches);
         }
 
         #region Manage Organization
