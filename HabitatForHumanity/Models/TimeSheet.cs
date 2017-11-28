@@ -517,5 +517,96 @@ namespace HabitatForHumanity.Models
         
         }
 
+        /// <summary>
+        /// Gets data for Hours volunteered Bar Chart Admin/Dashboard
+        /// </summary>
+        /// <param name="restoreId"></param>
+        /// <param name="awbkId"></param>
+        /// <returns>An array of 9 lists of timecards, 3 years worth of timesheets for the 3 categories, restore, awbk, and everything else</returns>
+        public static ReturnStatus Get3YearsTimeSheetsByCategory(int restoreId, int awbkId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                int thisYear = DateTime.Today.Year;
+                List<TimeSheet>[] timesheetInception = new List<TimeSheet>[9];
+                int j = 2, k = 2, l = 2;
+                for(int i = 0; i < 9; i++)
+                {
+                    if (i < 3)
+                    {
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == restoreId) && ( t.clockInTime.Year == thisYear - j))).ToList();
+                        j--;
+                    }
+                    else if (i < 6)
+                    {
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == awbkId) && (t.clockInTime.Year == thisYear - k)).ToList());
+                        k--;
+                    }
+                    else
+                    {
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id != awbkId) && (t.project_Id != restoreId) && (t.clockInTime.Year == thisYear - l)).ToList());
+                        l--;
+                    }                  
+                }
+
+                rs.data = timesheetInception;
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
+
+        public static ReturnStatus Get12MonthsTimeSheetsByCategory(int restoreId, int awbkId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                DateTime startRange;
+                DateTime endRange;
+                DateTime today = DateTime.Today;
+                int thisYear = DateTime.Today.Year;
+                int thisMonth = DateTime.Today.Month;
+                List<TimeSheet>[] timesheetInception = new List<TimeSheet>[36];
+                int j = 11, k = 11, l = 11;
+                for (int i = 0; i < 36; i++)
+                {
+                    if (i < 12)
+                    {
+                        startRange = today.AddMonths(-1 * j);
+                        endRange = today.AddMonths(-1 * (j - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == restoreId) && (t.clockInTime >= startRange) &&(t.clockInTime < endRange))).ToList();
+                        j--;
+                    }
+                    else if (i < 24)
+                    {
+                        startRange = today.AddMonths(-1 * k);
+                        endRange = today.AddMonths(-1 * (k - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == awbkId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        k--;
+                    }
+                    else
+                    {
+                        startRange = today.AddMonths(-1 * l);
+                        endRange = today.AddMonths(-1 * (l - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id != awbkId) && (t.project_Id != restoreId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        l--;
+                    }
+                }
+
+                rs.data = timesheetInception;
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
     }
 }

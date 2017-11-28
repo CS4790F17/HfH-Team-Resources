@@ -62,6 +62,23 @@ namespace HabitatForHumanity.Models
             return st;
         }
 
+        public static ReturnStatus GetProjectIdByName(string name)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var pId = db.projects.Where(p => p.name.Contains(name)).FirstOrDefault().Id;
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = pId;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }   
+            return rs;
+        }
+
 
         public static ReturnStatus GetProjectById(int id)
         {

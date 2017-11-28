@@ -118,8 +118,28 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult GetHoursChartBy(string period)
         {
+            if(period == null)
+            {
+                period = "Month";
+            }
             #region Build Month Chart
-            ChartVM chartVM = new ChartVM();
+            ReturnStatus chartRS = new ReturnStatus();
+   
+            if (period.Equals("Year"))
+            {
+                chartRS = Repository.GetHoursChartVMByYear();
+            }
+            else if (period.Equals("Week"))
+            {
+                chartRS = Repository.GetHoursChartVMByYear();
+            }        
+            else
+            {
+                // monthly
+                chartRS = Repository.GetHoursChartVMByMonth();
+            }
+            
+            ChartVM chartVM = (ChartVM)chartRS.data;
             Highcharts columnChart = new Highcharts("columnchart");
 
             columnChart.InitChart(new Chart()
@@ -139,11 +159,11 @@ namespace HabitatForHumanity.Controllers
                 Text = chartVM._title
             });
 
-            columnChart.SetSubtitle(new Subtitle()
-            {
-                //Text = "Subtitle here"
-                Text = chartVM._subtitle
-            });
+            //columnChart.SetSubtitle(new Subtitle()
+            //{
+            //    //Text = "Subtitle here"
+            //    Text = chartVM._subtitle
+            //});
 
             columnChart.SetXAxis(new XAxis()
             {
@@ -373,7 +393,7 @@ namespace HabitatForHumanity.Controllers
                     if (us.errorCode != 0)
                     {
                         ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
-                        return View("EditVolunteer");
+                        return View(usersVM);
                     }
                 }
                 return RedirectToAction("Volunteers");
