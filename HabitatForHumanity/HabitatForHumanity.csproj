@@ -320,6 +320,7 @@
     <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
+    <Content Include="Views\Admin\EditVolunteer.cshtml" />
     <Content Include="Views\User\UserProfile.cshtml" />
     <Content Include="Views\User\_EditProfile.cshtml" />
     <Content Include="Views\User\_ViewProfile.cshtml" />
