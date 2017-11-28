@@ -14,34 +14,34 @@ namespace HabitatForHumanity.ViewModels
     public class SignWaiverVM
     {
         public string userEmail { get; set; }
-        [Required(ErrorMessage = "Enter your signature")]
-        [Display(Name = "Signature*")]
-        public string signature { get; set; }
-        [Required(ErrorMessage = "Enter Emergency First Name")]
-        [Display(Name = "Emergency First Name*")]
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Must agree to terms and conditions to continue.")]
+        [Display(Name = "I have read and agree to the terms above.")]
+        public bool signature { get; set; }
+        [Required(ErrorMessage = "Enter Contact's First Name")]
+        [Display(Name = "Contact's First Name*")]
         public string emergencyFirstName { get; set; }
-        [Required(ErrorMessage = "Enter Emergency Last Name")]
-        [Display(Name = "Emergency Last Name*")]
+        [Required(ErrorMessage = "Enter Contact's Last Name")]
+        [Display(Name = "Contact's Last Name*")]
         public string emergencyLastName { get; set; }
-        [Required(ErrorMessage = "Enter Emergency Relation")]
-        [Display(Name = "Emergency Relation*")]
+        [Required(ErrorMessage = "Enter Contact's Relation")]
+        [Display(Name = "Contact's Relation*")]
         public string relation { get; set; }
-        [Required(ErrorMessage = "Enter Emergency Home Phone")]
-        [Display(Name = "Emergency Home Phone*")]
+        [Required(ErrorMessage = "Enter Contact's Home Phone")]
+        [Display(Name = "Contact's Home Phone*")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
-        [Required(ErrorMessage = "Enter Emergency Work Phone")]
-        [Display(Name = "Emergency Work Phone*")]
+        [Required(ErrorMessage = "Enter Contact's Work Phone")]
+        [Display(Name = "Contact's Work Phone*")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
-        [Required(ErrorMessage = "Enter Emergency Street Address")]
-        [Display(Name = "Emergency Street Address*")]
+        [Required(ErrorMessage = "Enter Contact's Street Address")]
+        [Display(Name = "Contact's Street Address*")]
         public string emergencyStreetAddress { get; set; }
-        [Required(ErrorMessage = "Enter Emergency City")]
-        [Display(Name = "Emergency City*")]
+        [Required(ErrorMessage = "Enter Contact's City")]
+        [Display(Name = "Contact's City*")]
         public string emergencyCity { get; set; }
-        [Required(ErrorMessage = "Enter Emergency Zipcode")]
-        [Display(Name = "Emergency Zipcode*")]
+        [Required(ErrorMessage = "Enter Contact's Zipcode")]
+        [Display(Name = "Contact's Zipcode*")]
         [RegularExpression(@"^(^\d{5}$)|(^\d{5}-\d{4}$)$", ErrorMessage = "Please Enter a Valid Zip")]
         public string emergencyZip { get; set; }
     }

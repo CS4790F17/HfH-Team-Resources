@@ -72,6 +72,11 @@ namespace HabitatForHumanity.Controllers
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
             ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
+            if(rs.errorCode != 0)
+            {
+                ViewBag.status = "Sorry, something went wrong while retrieving information.System is down.If problem persists, contact Support.";
+                return View(tsm);
+            }
             var pageIndex = tsm.Page ?? 1;
             List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
             tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
@@ -298,7 +303,7 @@ namespace HabitatForHumanity.Controllers
                 timeSheets = (List<TimeSheet>)getTimeSheets.data;
                 List<TimeCardVM> test = new List<TimeCardVM>();
 
-                double hours = 0.0;
+                
                 foreach (TimeSheet t in timeSheets)
                 {
                     TimeCardVM temp = new TimeCardVM();

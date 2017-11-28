@@ -1,4 +1,4 @@
-﻿@model HabitatForHumanity.Models.User
+﻿@model HabitatForHumanity.ViewModels.VolunteerSignupVM
 
 @{
     ViewBag.Title = "VolunteerSignup";
@@ -101,6 +101,14 @@
             <div class="col-md-10">
                 @Html.PasswordFor(model => model.password, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.confirmPassword, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.PasswordFor(model => model.confirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.confirmPassword, "", new { @class = "text-danger" })
             </div>
         </div>
 
