@@ -71,7 +71,7 @@ namespace HabitatForHumanity.Models
                         {
                             userNumber = u.Id,
                             // force alll name to not be null for simple comparison incontroller
-                            volunteerName = u.firstName ?? "NoName" + " " + u.lastName ?? "NoName",
+                            volunteerName = u.firstName + " " + u.lastName,
                             email = u.emailAddress,
                             hoursToDate = 99.9
                         });
@@ -100,7 +100,7 @@ namespace HabitatForHumanity.Models
                     {
                         userNumber = u.Id,
                         // force alll name to not be null for simple comparison incontroller
-                        volunteerName = u.firstName ?? "NoName" + " " + u.lastName ?? "NoName",
+                        volunteerName = u.firstName + " " + u.lastName,
                         email = u.emailAddress,
                         hoursToDate = 99.9
                     });
