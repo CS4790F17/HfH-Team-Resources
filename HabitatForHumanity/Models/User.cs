@@ -26,7 +26,7 @@ namespace HabitatForHumanity.Models
         public string lastName { get; set; }
         [Required]//(ErrorMessage = "Enter Home Phone")]
         [Display(Name = "Home Phone*")]
-        //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
+        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string homePhoneNumber { get; set; }
         [Required(ErrorMessage = "Enter Work Phone")]
         [Display(Name = "Work Phone*")]
