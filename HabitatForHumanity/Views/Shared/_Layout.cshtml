@@ -86,9 +86,7 @@
     <script src="~/Scripts/Highcharts-4.0.1/js/highcharts.js"></script>
     @RenderSection("scripts", required: false)
     <script>
-        // close the div in 5 secs
-        window.setTimeout("closeDiv();", 1500);
-
+        window.setTimeout("closeDiv();", 2000);
 
         function closeDiv() {
             $("#alerts").fadeOut("slow", null);
