@@ -246,7 +246,14 @@ namespace HabitatForHumanity.Controllers
             if (Session["UserName"] != null)
             {
                 SignWaiverVM signWaiver = new SignWaiverVM();
-                signWaiver.signature = "";
+                signWaiver.signature = false;
+                signWaiver.emergencyCity = null;
+                signWaiver.emergencyFirstName = null;
+                signWaiver.emergencyHomePhone = null;
+                signWaiver.emergencyLastName = null;
+                signWaiver.emergencyStreetAddress = null;
+                signWaiver.emergencyWorkPhone = null;
+                signWaiver.emergencyZip = null;
                 signWaiver.userEmail = Session["UserName"].ToString();
                 return View(signWaiver);
             }
@@ -268,10 +275,6 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (signWaiverVM.signature == null)
-                {
-                    return View(signWaiverVM);
-                }
 
                 ReturnStatus rs = Repository.GetUserByEmail(signWaiverVM.userEmail);
                 if (rs.errorCode != 0)
@@ -293,6 +296,7 @@ namespace HabitatForHumanity.Controllers
                     return RedirectToAction("VolunteerPortal");
                  }
             }
+            ViewBag.status = "An error has occured below.";
             return View(signWaiverVM);
         }
 
@@ -302,20 +306,32 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult VolunteerSignup([Bind(
-            Include = "Id,firstName,gender, isAdmin,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate")] User user)
+            Include = "firstName,gender,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate, confirmPassword")] VolunteerSignupVM volunteerSignupVM)
         {
             if (ModelState.IsValid)
             {
 
-                ReturnStatus st = Repository.EmailExists(user.emailAddress);
+                ReturnStatus st = Repository.EmailExists(volunteerSignupVM.emailAddress);
                 if(st.errorCode != 0)
                 {
                     ViewBag.status = "Sorry, the system is currently down. Please try signing up later.";
-                    return View(user);
+                    return View(volunteerSignupVM);
                 }
 
                 if ((bool)st.data == false)
                 {
+                    User user = new User();
+                    user.birthDate = volunteerSignupVM.birthDate;
+                    user.city = volunteerSignupVM.city;
+                    user.emailAddress = volunteerSignupVM.emailAddress;
+                    user.firstName = volunteerSignupVM.firstName;
+                    user.gender = volunteerSignupVM.gender;
+                    user.homePhoneNumber = volunteerSignupVM.homePhoneNumber;
+                    user.lastName = volunteerSignupVM.lastName;
+                    user.password = volunteerSignupVM.password;
+                    user.streetAddress = volunteerSignupVM.streetAddress;
+                    user.workPhoneNumber = volunteerSignupVM.workPhoneNumber;
+                    user.zip = volunteerSignupVM.zip;
                     user.isAdmin = 0;
                     user.waiverSignDate = DateTime.Now.AddYears(-2);
                     ReturnStatus createResult = Repository.CreateVolunteer(user);
@@ -350,7 +366,7 @@ namespace HabitatForHumanity.Controllers
                     return RedirectToAction("Login", new {excMsg = "That email already exists in our system. Please login below." });
                 }
             }
-            return View(user);
+            return View(volunteerSignupVM);
         }
         #endregion
 

@@ -4,7 +4,7 @@
     ViewBag.Title = "Waiver";
 }
 
-<h2>Waiver</h2>
+<h2>Waiver</h2><hr/>
 
 <h3>The Volunteer desires to work as a related to being a volunteer. The Volunteer understands volunteer for Habitat and engage in the activities that the activities may include constructing and rehabilitating residential buildings, working in the Habitat offices, and living in housing provided for volunteers of Habitat.</h3>
 
@@ -33,19 +33,18 @@
 <h5>5. Photographic Release. Volunteer does hereby grant and convey unto Habitat all right, title, and interest in any and all photographic images and video or audio recordings made by Habitat during the Volunteer's work for Habitat, including, but not limited to, any royalties, proceeds, or other benefits derived from such photographs or recordings.</h5>
 <h5>6. Other. Volunteer expressly agrees that this Release is intended to be as broad and inclusive as permitted by the laws of the State of Utah, and that this Release shall be governed by and interpreted in accordance with the laws of the State of Utah. Volunteer agrees that in the event that any clause or provision of this Release shall be held to be invalid by any court of competent jurisdiction, the invalidity of such clause or provision shall not otherwise affect the remaining provisions of this Release which shall continue to be enforceable.</h5>
 <br/>
+
+<h2>In Case of an Emergency</h2>
+<h5>Please fill in your emergency contact's information.</h5>
+<hr/>
+
 @using (Html.BeginForm())
 {
     @Html.HiddenFor(model => model.userEmail)
     @Html.AntiForgeryToken()
     <div class="form-horizontal">
-        <div class="form-group">
-            @Html.LabelFor(model => model.signature, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.signature, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.signature, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
             @Html.LabelFor(model => model.emergencyFirstName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -109,10 +108,22 @@
                 @Html.ValidationMessageFor(model => model.emergencyZip, "", new { @class = "text-danger" })
             </div>
         </div>
+        <hr/>
+        <div class="form-group">
+            @Html.LabelFor(model => model.signature, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.CheckBoxFor(model => model.signature, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.signature, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Sign" class="btn btn-default" />
+                <input type="submit" value="Agree & Sign" class="btn btn-default" />
             </div>
         </div>
     </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
 }
