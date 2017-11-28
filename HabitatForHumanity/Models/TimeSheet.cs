@@ -327,10 +327,9 @@ namespace HabitatForHumanity.Models
             }
             catch
             {
-                cardsReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                cardsReturn.errorCode = -1;
                 return cardsReturn;
             }
- 
         }
 
         /// <summary>

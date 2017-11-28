@@ -12,8 +12,7 @@ namespace HabitatForHumanity.ViewModels
     {
         public int userNumber { get; set; }
 
-        [Required(ErrorMessage = "Enter Volunteer Name")]
-        [Display(Name ="Name")]
+        [Required(ErrorMessage = "Enter Volunteer Name"), Display(Name = "Name")]
         public string volunteerName { get; set; }
 
         [Required(ErrorMessage = "Enter valid email")]

@@ -177,6 +177,7 @@
     <Compile Include="ViewModels\UsersVM.cs" />
     <Compile Include="ViewModels\VolunteerSearchModel.cs" />
     <Compile Include="ViewModels\UserProfileVM.cs" />
+    <Compile Include="ViewModels\VolunteerSignupVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Volunteer.mdf" />
