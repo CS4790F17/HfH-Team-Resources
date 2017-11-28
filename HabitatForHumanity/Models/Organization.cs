@@ -60,6 +60,10 @@ namespace HabitatForHumanity.Models
         {
             ReturnStatus st = new ReturnStatus();
             st.data = new Organization();
+            if (id < 1)
+            {
+                return new ReturnStatus() { errorCode = -1, data = null };
+            }
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
