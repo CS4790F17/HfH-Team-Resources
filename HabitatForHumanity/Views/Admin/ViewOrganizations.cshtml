@@ -1,0 +1,197 @@
+﻿@model HabitatForHumanity.ViewModels.OrganizationSearchModel
+@using PagedList.Mvc;
+@using HabitatForHumanity.ViewModels;
+
+@{
+    ViewBag.Title = "Manage Organizations";
+    var editHtml = "<span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span>";
+    var createHtml = "<span class=\"glyphicon glyphicon-plus\" style=\"color:white\" title=\"Activate\"></span>   Add new Organization";
+}
+
+@Html.HiddenFor(x => x.Page)
+@Html.HiddenFor(x => x.statusChoice)
+
+<style>
+    .editButton {
+        background: none
+    }
+
+    .createButton{
+        background-color:forestgreen;
+        color:white
+    }
+</style>
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<script src="~/Scripts/jquery-3.2.1.js"></script>
+
+<h2 style="margin-bottom:100px">Manage Organizations</h2>
+
+
+@ToolKitVM.Modal("Edit Organization", "editModal", "editPartial")
+@ToolKitVM.Modal("Create Organization", "createModal", "createPartial")
+
+
+
+
+<div id="divEmp"></div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-7">
+            @ToolKitVM.ModalButton("createButton", "createModal", createHtml, "")
+          @*  <button class="btn btn-success" id="createOrganization" data-target="#adminModal" data-toggle="modal"><span class="glyphicon glyphicon-plus" style=""></span>   Add new Organization</button>*@
+        </div>
+
+
+        <!--Search filter options-->
+        @using (Html.BeginForm())
+            {
+            <div class="col-xs-5" style="margin-bottom:30px">
+                @Html.DropDownListFor(x => x.statusChoice, Model.statusDropDown, htmlAttributes: new { @class = "form-control", @id = "statusChoiceSelector", @style = "width:auto;float:left;margin-right:10px" })
+
+                <div class="input-group" style="width:100px">
+                    @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Find Organization", @class = "form-control", @style = "width:auto" } })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+
+            </div>
+        <!--End of Search Filter-->
+        }
+    </div>
+</div>
+
+
+@*<div id="editOrg"></div>*@
+
+<div class="container" style="width:auto">
+    <div class="row">
+        <div class="col-xs-3">Organization Name</div>
+        <div class="col-xs-3">Status</div>
+        <div class="col-xs-6"><!--Admin stuff goes here--></div>
+    </div>
+
+    <hr style="border:0.1px solid" />
+
+    <!--List of organizations-->
+    <div id="editOrg" style="overflow-y:scroll;overflow-x:hidden;height:300px;width:auto">
+
+        @foreach (var item in Model.SearchResults)
+            {
+            <div class="row">
+                @{ var orgId = "org" + item.Id;}
+                <div id="@orgId" class="col-xs-3">@item.name</div>
+
+                @switch (item.status)
+                {
+                    case 0:
+                        <div class="col-xs-3">Inactive</div>
+                        break;
+                    case 1:
+                        <div class="col-xs-3">Active</div>
+                        break;
+
+                }
+
+
+                <!--Admin based controls-->
+                <div class="col-xs-6">
+                    @switch (item.status)
+                    {
+                        case 0:
+                        <!--Activate-->
+                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusActivate" })
+                            break;
+                        case 1:
+                        <!--Deactivate-->
+                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusDeactivate"})
+                            break;
+                    }
+                    <!--Edit Organization-->
+                    @ToolKitVM.ModalButton("editButton", "editModal", editHtml, item.Id.ToString())
+                    @* @Ajax.ActionLink(" ", "EditOrganization", new { id = item.Id }, new AjaxOptions { HttpMethod = "GET", UpdateTargetId = orgId }, htmlAttributes: new { @class = "editLink" })*@
+
+
+
+                    @Html.ActionLink("Associated Projects", "Index", "Home", null, htmlAttributes: new { @class = "btn btn-primary btn-md", @style = "margin:0px 20px;padding:0px" })
+                    @Html.ActionLink("Run Report", "Index", "Home", null, htmlAttributes: new { @class = "btn btn-primary btn-md", @style = "margin:0px 20px;padding:0px" })
+
+                    <!--End of Admin controls-->
+
+
+                </div>
+                <hr />
+            </div>
+                    }
+    </div>
+</div>
+
+
+
+
+@Html.PagedListPager(Model.SearchResults,
+              page => Url.Action("ViewOrganizations", new RouteValueDictionary()
+                {
+                    { "Page", page },
+                  {"queryString",Model.queryString },
+                  { "statusChoice", Model.statusChoice }
+                }),
+              PagedListRenderOptions.PageNumbersOnly)
+
+
+
+@* glyphicon glyphicon-ok *@
+@* glyphicon glyphicon-ban-circle *@
+
+
+
+<script>
+    //does magic! sets the html of the editing ajax links to by a glyph icon
+    $("document").ready(function () {
+        $(".editLink").html("<span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span >");
+        $(".statusActivate").html("<span class=\"glyphicon glyphicon-ok\" aria-hidden=\"true\" style=\"color:green\" title=\"Activate\"></span>");
+        $(".statusDeactivate").html("<span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\" style=\"color:red\"></span>");
+    });
+
+    $(".createButton").click(function () {
+        $.ajax(
+            {
+                url: '/Admin/AddOrganization',
+                type: 'GET',
+                success: function (data) {
+                    $("#createPartial").html(data);
+                }
+            })
+    })
+
+
+
+    $(".editButton").click(function () {
+        // console.log('clicked');
+        var id = $(this).attr("dataId");
+        console.log(id);
+        inputData = { 'id': id }
+
+        $.ajax(
+            {
+                url: '/Admin/EditOrganization',
+                type: 'GET',
+                data: inputData,
+                success: function (response) {
+                    $("#editPartial").html(response);
+                }
+            }
+        );
+
+    })
+
+
+
+    function refresh() {
+        location.reload();
+    }
+</script>

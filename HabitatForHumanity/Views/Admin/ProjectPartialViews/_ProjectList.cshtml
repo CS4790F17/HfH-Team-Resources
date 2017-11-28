@@ -1,0 +1,145 @@
+﻿@using PagedList.Mvc;
+@using HabitatForHumanity.ViewModels;
+@model PagedList.StaticPagedList<HabitatForHumanity.Models.Project>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+
+
+@Html.HiddenFor(x => x.PageNumber)
+@ToolKitVM.Modal("Edit Project", "editProjectModal", "editPartialTarget")
+
+<div id="projectList" class="well well-lg" style="min-width:500px">
+    <table class="table" style="width:auto">
+        <!--Title bar-->
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).name)</th>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).description)</th>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).beginDate)</th>
+                <th>@Html.DisplayNameFor(model => model.ElementAt(0).status)</th>
+            </tr>
+        </thead>
+        <!--End of Title bar-->
+        <!--List of Projects-->
+        <tbody>
+            @foreach (var project in Model)
+            {
+                <tr>
+                    <td>@project.name</td>
+                    <td>@project.description</td>
+                    <td>@project.beginDate</td>
+
+
+                    @switch (project.status)
+                {
+                    case 0:
+                            <td>Inactive</td>
+                            break;
+                        case 1:
+                            <td>Active</td>
+                            break;
+                    }
+
+
+                    @switch (project.status)
+                {
+                    case 0:
+                                <!--Activate-->
+                            <td>
+                                <button class="changeStatus" projectId="@project.Id" style="background:none;border:none">
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:green" title="Activate"></span>
+                                </button>
+                            </td>
+                            break;
+                        case 1:
+                                <!--Deactivate-->
+                            <td>
+                                <button class="changeStatus" projectId="@project.Id" style="background:none;border:none">
+                                    <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red" title="Activate"></span>
+                                </button>
+                            </td>
+                            break;
+                    }
+
+
+                    <td>
+                        <button dataId=@project.Id class="editModalButton" data-toggle="modal" data-target="#editProjectModal" style="background:none;border:none">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <!--End of List of Projects-->
+    @Html.PagedListPager(Model, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
+
+
+</div>
+<script type="text/javascript">
+
+
+    //changes the status of the project from active to inactive or vice versa
+    $(".changeStatus").click(function () {
+        var id = $(this).attr("projectId");
+        var page = $("#PageNumber").attr("value");
+        var query = $("#queryString").val();
+        var choice = $("#statusChoiceSelector").val();
+        //console.log(id);
+        //console.log(page);
+        //console.log(query);
+       // console.log(choice);
+        
+        var data = { "id": id, "page": page, "statusChoice": choice, "queryString": query }
+        $.ajax({
+            url: "/Admin/ChangeProjectStatus",
+            data: data,
+            success: function (response) {
+                // console.log(response);
+                $("#projectList").replaceWith(response);
+            }
+        })
+    });
+
+    //when the edit button is clicked opens a modal and fills out a partial view
+    //with relevant model data
+    $(".editModalButton").click(function () {
+        var id = $(this).attr("dataId");
+        var data = { "id": id }
+        // console.log(data);
+        $.ajax(
+            {
+                url: "/Admin/EditProject",
+                type: "GET",
+                data: data,
+                success: function (response) {
+                    console.log(response);
+                    $("#editPartialTarget").html(response);
+                }
+            });
+    })
+
+
+    //https://stackoverflow.com/questions/31053460/how-to-make-a-net-mvc-form-inside-a-modal-using-jquery-with-validation
+    //prevents the modal from automatically redirecting when the submit button is clicked
+    //instead we send our post method our form data to do a validation check server side
+    //and return a marked up view to the modal if it's an invalid form
+    $("#editProjectModal").on('submit', function (e) {
+        e.preventDefault();
+        //console.log("prevented from submitting");
+        var form = $("#editProjectForm");
+        $.ajax({
+            url: '/Admin/EditProject',
+            type: 'POST',
+            data: form.serialize(),
+            success: function (partialResult) {
+              //  console.log(partialResult);
+                $("#editPartialTarget").html(partialResult);
+            }
+        })
+    });
+
+
+
+</script>

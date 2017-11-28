@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using HabitatForHumanity.ViewModels;
+using System.Data.SqlClient;
 
 namespace HabitatForHumanity.Models
 {
@@ -219,6 +220,59 @@ namespace HabitatForHumanity.Models
                 st.errorMessage = e.ToString();
                 return st;
             }
+        }
+
+        public static ReturnStatus GetOrganizationByNameSQL(string name)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            ReturnStatus st = new ReturnStatus();
+
+            var orgName = new SqlParameter("@Name", "%" + name + "%");
+
+            var orgs = db.organizations.SqlQuery("SELECT * FROM Organization WHERE Organization.name LIKE @Name", orgName).ToList<Organization>();
+
+
+            if(orgs.Count < 1)
+            {
+                List<Organization> orgList = new List<Organization>();
+                st.data = orgList;
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return st;
+            }
+
+            st.errorCode = ReturnStatus.ALL_CLEAR;
+            st.data = orgs;
+            return st;
+        }
+
+        public static ReturnStatus GetOrganizationSQL(string queryFilter, int status)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            ReturnStatus st = new ReturnStatus();
+
+            
+            var orgStatus = new SqlParameter("@Status", status);
+            var orgName = new SqlParameter("@Name", "%" + queryFilter + "%");
+            
+
+            var orgs = db.organizations.SqlQuery(
+                "SELECT * FROM Organization " +
+                "WHERE Organization.status = @Status " +
+                "AND Organization.name in " +
+                "(SELECT Organization.name FROM Organization WHERE Organization.name LIKE @Name)", orgStatus, orgName).ToList<Organization>();
+
+
+            if(orgs.Count < 1)
+            {
+                List<Organization> orgList = new List<Organization>();
+                st.data = orgList;
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return st;
+            }
+
+            st.errorCode = ReturnStatus.ALL_CLEAR;
+            st.data = orgs;
+            return st;
         }
         #endregion
     }

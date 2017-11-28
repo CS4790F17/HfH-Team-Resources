@@ -161,8 +161,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\BadPunchVM.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
+    <Compile Include="ViewModels\IsEditingVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\OrganizationSearchModel.cs" />
     <Compile Include="ViewModels\OrganizationVM.cs" />
+    <Compile Include="ViewModels\ProjectSearchModel.cs" />
+    <Compile Include="ViewModels\ProjectIndexVM.cs" />
     <Compile Include="ViewModels\ProjectVM.cs" />
     <Compile Include="ViewModels\PortalVM.cs" />
     <Compile Include="ViewModels\PunchVM.cs" />
@@ -172,6 +176,7 @@
     <Compile Include="ViewModels\ToolKitVM.cs" />
     <Compile Include="ViewModels\UsersVM.cs" />
     <Compile Include="ViewModels\VolunteerSearchModel.cs" />
+    <Compile Include="ViewModels\UserProfileVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Volunteer.mdf" />
@@ -181,7 +186,6 @@
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
     <Content Include="DBscripts\ageBracketsByGender.txt" />
@@ -207,6 +211,7 @@
     <Content Include="Images\Habitat For Humanity logo.jpg" />
     <Content Include="Images\hfhwd logo %281%29.jpg" />
     <Content Include="OurScripts\Charts.js" />
+    <Content Include="OurScripts\timeCards.js" />
     <Content Include="OurScripts\timePunch.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -272,7 +277,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_LayoutOld.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -316,6 +321,21 @@
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
     <Content Include="Views\Admin\EditVolunteer.cshtml" />
+    <Content Include="Views\User\UserProfile.cshtml" />
+    <Content Include="Views\User\_EditProfile.cshtml" />
+    <Content Include="Views\User\_ViewProfile.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Admin\ViewOrganizations.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_EditOrganization.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_AddOrganization.cshtml" />
+    <Content Include="Views\Admin\_EditTimeCard.cshtml" />
+    <Content Include="Views\User\_ErrorPunchOut.cshtml" />
+    <Content Include="Views\User\_ErrorPunchIn.cshtml" />
+    <Content Include="Views\Admin\ManageProjects.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_ProjectList.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_CreateProject.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_ProjectCreateSuccess.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_EditProject.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -1,0 +1,49 @@
+﻿@model HabitatForHumanity.ViewModels.IsEditingVM
+
+@{
+    ViewBag.Title = "UserProfile";
+}
+
+@*@{
+        if (Model.isEditing == true)
+        {
+            <div>@Html.Action("_EditProfile", new { })</div>
+        }
+        else
+        {
+            <div>@Html.Action("_ViewProfile", new { })</div>
+            using (Html.BeginForm("UserProfile", "User"))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.isEditing)
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Edit Information" class="btn btn-default" />
+                    </div>
+                </div>
+            }
+        }
+    }*@
+
+<div id="profile"></div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        _ViewProfile();
+    });
+    function _ViewProfile() {
+        var path = "/User/_ViewProfile/"
+        $.ajax({
+            url: path,
+            success: function (response) {
+                $("#profile").html(response);
+            }
+        });
+    }
+
+
+
+</script>

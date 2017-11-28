@@ -15,6 +15,16 @@ namespace HabitatForHumanity.Controllers
     {
         private VolunteerDbContext db = new VolunteerDbContext();
 
+
+
+        public ActionResult GetOrganizations()
+        {
+            return View();
+        }
+
+
+
+
         // GET: Organization
         public ActionResult Index()
         {
@@ -92,8 +102,13 @@ namespace HabitatForHumanity.Controllers
             Organization organization = new Organization();
             OrganizationVM organizationVM = new OrganizationVM();
 
-            //TODO: add error checking
-            organization = (Organization)Repository.GetOrganizationById(orgId).data;
+            ReturnStatus rs = Repository.GetOrganizationById(orgId);
+            if(rs.errorCode != 0)
+            {
+                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                return View();
+            }
+            organization = (Organization)rs.data;
 
             organizationVM._Id = organization.Id;
             organizationVM._name = organization.name;

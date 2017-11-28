@@ -11,6 +11,9 @@
     
 </head>
 <body>
+    @*<header>
+        <img src="~/Images/HFHLogo.jpg" class="BannerLogo" style="width:30%; margin-top:15px"/>
+    </header>*@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -21,37 +24,23 @@
                 </button>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-
-                    <li>
-                        <div>
-                            <a href='https://habitatwd.org/' data-toggle="tooltip" title="HFH main page">
-                                <span>
-                                    <img src='~/Images/HFHLogo.jpg' style="width:150px;height:70px;"/>
-                                </span>
-                            </a>
-                        </div>
-                    </li>
+                <ul class="nav navbar-nav navbar-right">
     @{
         if (Session["Username"] != null && Session["isAdmin"] != null && Session["isAdmin"].Equals("isAdmin"))
         {
-
-            <li>@Html.ActionLink("Dashboard", "Dashboard", "Admin")</li>
             <li>@Html.ActionLink("Volunteers", "Volunteers", "Admin")</li>
             <li>@Html.ActionLink("Time Cards", "TimeCards", "Admin")</li>
             <li>@Html.ActionLink("Projects", "Projects", "Admin")</li>
             <li>@Html.ActionLink("Organizations", "Organizations", "Admin")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
-        }
-        else if (Session["Username"] != null)
-        {
-
-            <li>@Html.ActionLink("My Account", "VolunteerPortal", "User")</li>
+            }
+            else if (Session["Username"] != null)
+            {
+            <li>@Html.ActionLink("My Account", "UserProfile", "User")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
-        }
-        else
-        {
- 
+            }
+            else
+            {
             <li>@Html.ActionLink("Create Account", "VolunteerSignup", "User")</li>
             <li>@Html.ActionLink("Log In", "Login", "User")</li>
             }
@@ -61,37 +50,31 @@
             </div>
         </div>
     </div>
-
-    <div class="container body-content" >
+   
+    <div class="container body-content">
         @{
             if (ViewBag.status != null)
             {
-                <div class="alert alert-danger text-center" role="alert" style="margin-top: 15px" id="alerts">
+                <div class="alert alert-danger text-center" role="alert" style="margin-top: 15px">
                     <h3>@ViewBag.status</h3>
                 </div>
             }
         }
+        <div class="row">
+            <div class="col-md-3 col-md-offset-4"><img src="~/Images/HFHLogo.jpg" style="margin-top:15px" /></div>
+        </div>
 
         @RenderBody()
         <hr />
-
-        <footer class="HFHFooter">
+        
+        <footer>
             <p>&copy; @DateTime.Now.Year - Habitat for Humanity of Davis and Weber Counties</p>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    <script src="~/Scripts/Highcharts-4.0.1/js/highcharts.js"></script>
+    <script src="~/Scripts/Highcharts-4.0.1/js/highcharts.js"></script>  
     @RenderSection("scripts", required: false)
-    <script>
-        // close the div in 5 secs
-        window.setTimeout("closeDiv();", 1500);
-
-
-        function closeDiv() {
-            $("#alerts").fadeOut("slow", null);
-        }
-    </script>
 </body>
 </html>
