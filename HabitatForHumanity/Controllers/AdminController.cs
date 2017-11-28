@@ -12,12 +12,14 @@ using HabitatForHumanity.ViewModels;
 using HabitatForHumanity.Models;
 using static HabitatForHumanity.Models.User;
 using PagedList;
+using System.Data.Entity;
 using HabitatForHumanity.Controllers;
 
 namespace HabitatForHumanity.Controllers
 {
     public class AdminController : Controller
     {
+        private VolunteerDbContext db = new VolunteerDbContext();
 
         const int RecordsPerPage = 25;
         // GET: Admin dashboard
@@ -253,6 +255,125 @@ namespace HabitatForHumanity.Controllers
 
             #endregion
 
+        }
+
+        // GET: Admin/EditVolunteer
+        public ActionResult EditVolunteer(int id)
+        {
+            ReturnStatus getUser = Repository.GetUser(id);
+            ReturnStatus getTimeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
+
+            if (getUser.errorCode != 0)
+            {
+                ViewBag.status = "There was a problem getting that user. Please try again later";
+                return RedirectToAction("Volunteers", "Admin");
+            }
+            else if (getTimeSheets.errorCode != 0)
+            {
+                ViewBag.status = "There was a problem getting that user's time sheets. Please try again later";
+                return RedirectToAction("Volunteers", "Admin");
+            }
+            else
+            {
+                User user = new User();
+                user = (User)getUser.data;
+
+                UsersVM volunteer = new UsersVM();
+                volunteer.userNumber = user.Id;
+                // force all name to not be null for simple comparison in controller
+                volunteer.volunteerName = user.firstName + " " + user.lastName;
+                volunteer.email = user.emailAddress;
+                volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
+                if (volunteer.waiverExpiration > DateTime.Now)
+                {
+                    volunteer.waiverStatus = true;
+                }
+                else
+                {
+                    volunteer.waiverStatus = false;
+                }
+                volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+
+                List<TimeSheet> timeSheets = new List<TimeSheet>();
+                timeSheets = (List<TimeSheet>)getTimeSheets.data;
+                List<TimeCardVM> test = new List<TimeCardVM>();
+
+                double hours = 0.0;
+                foreach (TimeSheet t in timeSheets)
+                {
+                    TimeCardVM temp = new TimeCardVM();
+                    temp.timeId = t.Id;
+                    temp.volName = volunteer.volunteerName;
+                    ReturnStatus orgRS = Repository.GetOrganizationById(t.org_Id);
+                    if (orgRS.errorCode == 0)
+                    {
+                        temp.orgName = ((Organization)orgRS.data).name;
+                    }
+                    else
+                    {
+                        ViewBag.status = "There was a problem getting the organization. Please try again later";
+                        return RedirectToAction("Volunteers", "Admin");
+                    }
+                    ReturnStatus projRS = Repository.GetProjectById(t.project_Id);
+                    if (projRS.errorCode == 0)
+                    {
+                        temp.projName = ((Project)projRS.data).name;
+                    }
+                    else
+                    {
+                        ViewBag.status = "There was a problem getting the project. Please try again later";
+                        return RedirectToAction("Volunteers", "Admin");
+                    }
+                    temp.inTime = t.clockInTime;
+                    temp.outTime = t.clockOutTime;
+
+                    test.Add(temp);
+                }
+                volunteer.timeCardVM = test;
+                return View(volunteer);
+            }
+        }
+
+        // POST: Admin/EditVolunteer
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email")] UsersVM usersVM)
+        {
+            if (ModelState.IsValid)
+            {
+                ReturnStatus rs = Repository.GetUser(usersVM.userNumber);
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                    return View("EditVolunteer");
+                }
+                else
+                {
+                    User user = (User)rs.data;
+                    user.Id = usersVM.userNumber;
+                    String[] tempName = usersVM.volunteerName.Split(' ');
+                    user.firstName = tempName[0];
+                    if (tempName.Length > 1)
+                    {
+                        if (tempName[1] != null)
+                        {
+                            user.lastName = tempName[1];
+                        }
+                    }
+                    
+                    user.emailAddress = usersVM.email;
+
+                    ReturnStatus us = new ReturnStatus();
+                    us = Repository.EditUser(user);
+                    if (us.errorCode != 0)
+                    {
+                        ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                        return View("EditVolunteer");
+                    }
+                }
+                return RedirectToAction("Volunteers");
+            }
+            return View(usersVM);
         }
 
         public ActionResult GetBadPunches()
