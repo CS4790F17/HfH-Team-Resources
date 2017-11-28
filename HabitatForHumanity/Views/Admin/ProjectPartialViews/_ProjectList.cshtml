@@ -9,8 +9,8 @@
 @Html.HiddenFor(x => x.PageNumber)
 @ToolKitVM.Modal("Edit Project", "editProjectModal", "editPartialTarget")
 
-<div id="projectList" class="well well-lg" style="min-width:500px">
-    <table class="table" style="width:auto">
+<div id="projectList"  class="" style="min-width:500px">
+    <table class="table table-striped" style="width:auto;">
         <!--Title bar-->
         <thead>
             <tr>
@@ -28,44 +28,45 @@
                 <tr>
                     <td>@project.name</td>
                     <td>@project.description</td>
-                    <td>@project.beginDate</td>
+                    <td>@project.beginDate.ToString("dd-MM-yyyy")</td>
 
 
-                    @switch (project.status)
-                {
-                    case 0:
-                            <td>Inactive</td>
+                    @*@switch (project.status)
+                    {
+                        case 0:
+                            <td>
+                                <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:green"></span>
+                            </td>
                             break;
                         case 1:
-                            <td>Active</td>
+                            <td>
+                                <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red" title="Deactivate"></span>
+                            </td>
                             break;
-                    }
+                    }*@
+
 
 
                     @switch (project.status)
-                {
-                    case 0:
+                    {
+                        case 0:
                                 <!--Activate-->
                             <td>
-                                <button class="changeStatus" projectId="@project.Id" style="background:none;border:none">
-                                    <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:green" title="Activate"></span>
-                                </button>
+                                <button type="button" class="changeStatus btn greenbtn" projectId="@project.Id" title="Activate">Enable</button>
                             </td>
                             break;
                         case 1:
                                 <!--Deactivate-->
                             <td>
-                                <button class="changeStatus" projectId="@project.Id" style="background:none;border:none">
-                                    <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red" title="Activate"></span>
-                                </button>
+                                <button class="changeStatus btn redbtn" projectId="@project.Id" title="Deactivate">Disable</button>
                             </td>
                             break;
                     }
 
 
                     <td>
-                        <button dataId=@project.Id class="editModalButton" data-toggle="modal" data-target="#editProjectModal" style="background:none;border:none">
-                            <span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit"></span>
+                        <button dataId=@project.Id class="editModalButton btn" data-toggle="modal" data-target="#editProjectModal" >
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true" title="Edit" style="margin-right:5px"></span>Edit
                         </button>
                     </td>
                 </tr>
@@ -89,8 +90,8 @@
         //console.log(id);
         //console.log(page);
         //console.log(query);
-       // console.log(choice);
-        
+        // console.log(choice);
+
         var data = { "id": id, "page": page, "statusChoice": choice, "queryString": query }
         $.ajax({
             url: "/Admin/ChangeProjectStatus",
@@ -134,7 +135,7 @@
             type: 'POST',
             data: form.serialize(),
             success: function (partialResult) {
-              //  console.log(partialResult);
+                //  console.log(partialResult);
                 $("#editPartialTarget").html(partialResult);
             }
         })

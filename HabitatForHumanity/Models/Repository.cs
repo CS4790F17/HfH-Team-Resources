@@ -18,6 +18,33 @@ namespace HabitatForHumanity.Models
         #region User functions
 
         /// <summary>
+        /// Returns whether a user waiver is outdated
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static ReturnStatus waiverNotSigned (int userId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+
+            try
+            {
+                rs = User.waiverNotSigned(userId);
+                if (rs.errorCode != 0)
+                {
+                    rs.errorCode = -1;
+                    rs.data = false;
+                    return rs;
+                }
+                return rs;
+            }
+            catch
+            {
+                rs.errorCode = 1;
+                return rs;
+            }
+        }
+
+        /// <summary>
         /// Checks whether the user entered a bad password for that log in email.
         /// </summary>
         /// <param name="loginVm">The viewmodel containing the users email and password.</param>
@@ -27,6 +54,7 @@ namespace HabitatForHumanity.Models
             ReturnStatus userReturn = new ReturnStatus();
             userReturn.data = new User();
             ReturnStatus retValue = new ReturnStatus();
+            retValue.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
 
             try
             {
@@ -67,17 +95,23 @@ namespace HabitatForHumanity.Models
                     List<UsersVM> volunteers = new List<UsersVM>();
                     foreach (User u in users)
                     {
+                        double volHours = 0.0;
+                        ReturnStatus hoursRS = getTotalHoursWorkedByVolunteer(u.Id);
+                        if(hoursRS.errorCode == ReturnStatus.ALL_CLEAR)
+                        {
+                            volHours = (double)hoursRS.data;
+                        }
                         volunteers.Add(new UsersVM()
                         {
                             userNumber = u.Id,
                             // force alll name to not be null for simple comparison incontroller
                             volunteerName = u.firstName + " " + u.lastName,
                             email = u.emailAddress,
-                            hoursToDate = 99.9
+                            hoursToDate = volHours
                         });
                     }
                     rs.data = volunteers;
-                    rs.errorCode = 0;
+                    rs.errorCode = ReturnStatus.ALL_CLEAR;
                 }
                 else
                 {
@@ -96,13 +130,19 @@ namespace HabitatForHumanity.Models
                 List<UsersVM> volunteers = new List<UsersVM>();
                 foreach (User u in users)
                 {
+                    double volHours = 0.0;
+                    ReturnStatus hoursRS = getTotalHoursWorkedByVolunteer(u.Id);
+                    if (hoursRS.errorCode == ReturnStatus.ALL_CLEAR)
+                    {
+                        volHours = (double)hoursRS.data;
+                    }
                     volunteers.Add(new UsersVM()
                     {
                         userNumber = u.Id,
                         // force alll name to not be null for simple comparison incontroller
                         volunteerName = u.firstName + " " + u.lastName,
                         email = u.emailAddress,
-                        hoursToDate = 99.9
+                        hoursToDate = volHours
                     });
                 }
                 rs.data = volunteers;

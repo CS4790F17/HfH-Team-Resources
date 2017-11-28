@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
 
 namespace HabitatForHumanity.Models
 {
@@ -23,18 +24,21 @@ namespace HabitatForHumanity.Models
         [Required(ErrorMessage = "Enter Last Name")]
         [Display(Name = "Last Name*")]
         public string lastName { get; set; }
-        [Required(ErrorMessage = "Enter Home Phone")]
+        [Required]//(ErrorMessage = "Enter Home Phone")]
         [Display(Name = "Home Phone*")]
-        [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
+        //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string homePhoneNumber { get; set; }
         [Required(ErrorMessage = "Enter Work Phone")]
         [Display(Name = "Work Phone*")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string workPhoneNumber { get; set; }
+
+        //[Required, StringLength(40), EmailAddress, DisplayName("Email Address")]
         [Required(ErrorMessage = "Enter Email")]
         [Display(Name = "Email*")]
         [RegularExpression(@"^(([^<>()\[\]\\.,;:\s@']+(\.[^<>()\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Please Enter a Valid Email Address")]
         public string emailAddress { get; set; }
+
         [Required(ErrorMessage = "Enter Address")]
         [Display(Name = "Address*")]
         public string streetAddress { get; set; }
@@ -131,6 +135,37 @@ namespace HabitatForHumanity.Models
 
         #region Database Access Methods
 
+        /// <summary>
+        /// Returns whether or not a user's waiver is outdated
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static ReturnStatus waiverNotSigned(int userId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                User user = db.users.Find(userId);
+                if ((DateTime.Now.AddYears(-1) - user.waiverSignDate).TotalDays < (DateTime.Now - DateTime.Now.AddYears(-1)).TotalDays)
+                {
+                    rs.data = false;
+                }
+                else
+                {
+                    rs.data = true;
+                }
+                rs.errorCode = 0;
+                return rs;
+            }
+            catch
+            {
+                rs.errorCode = -1;
+                rs.data = new List<User>();
+                return rs;
+            }
+        }
 
         /// <summary>
         /// Gets all the users that contain any characters in firstName or lastName.
