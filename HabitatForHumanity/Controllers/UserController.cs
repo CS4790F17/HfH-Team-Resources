@@ -346,9 +346,7 @@ namespace HabitatForHumanity.Controllers
                 }
                 else
                 {
-                    // this needs some kind of notification
-                    ViewBag.status = "That email already exists in our system. Please login below.";
-                    return RedirectToAction("Login", "User");
+                    return RedirectToAction("Login", new {excMsg = "That email already exists in our system. Please login below." });
                 }
             }
             return View(user);
