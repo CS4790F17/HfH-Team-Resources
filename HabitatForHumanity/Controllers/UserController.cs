@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using HabitatForHumanity.Models;
 using HabitatForHumanity.ViewModels;
 using System.Web.Helpers;
+using System.Net.Mail;
+
 
 namespace HabitatForHumanity.Controllers
 {
@@ -41,19 +43,34 @@ namespace HabitatForHumanity.Controllers
 
         #region VolunteerPortal
         
-        public ActionResult VolunteerPortal(int? id)
+        public ActionResult VolunteerPortal()
         {
 
-            if (id == null)
+            ReturnStatus us = Repository.GetUserByEmail(Session["UserName"].ToString());
+            if (us.errorCode != 0)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
             }
+            User user = (User)us.data;
 
-            ReturnStatus rs = Repository.GetPortalVM(id.Value);
+            ReturnStatus rs = Repository.GetPortalVM(user.Id);
 
             if (rs.errorCode != 0)
             {
                 return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+            }
+
+            ReturnStatus waiverSigned = Repository.waiverNotSigned(((PortalVM)rs.data).userId);
+
+            if ( waiverSigned.errorCode != 0)
+            {
+                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+            }
+
+            if ((bool)waiverSigned.data)
+            {
+                ViewBag.status = "Your Waiver is outdated, please sign below.";
+                return RedirectToAction("SignWaiver", "User");
             }
             
             return View((PortalVM)rs.data);
@@ -195,10 +212,13 @@ namespace HabitatForHumanity.Controllers
                 user.streetAddress = userProfile.streetAddress;
                 user.city = userProfile.city;
                 user.zip = userProfile.zip;
-                //shouldn't this vv be done from the repository??//////////////////////////////////////////////////////////////////////////
-                db.Entry(user).State = EntityState.Modified; 
-                db.SaveChanges();
-                //move ^^to repository?? //////////////////////////////////////////////////////////////////////////////////////////////////
+                ReturnStatus us = new ReturnStatus();
+                us = Repository.EditUser(user);
+                if (us.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                    return View(userProfile);
+                }
                 return RedirectToAction("UserProfile", "User");
             }
             ViewBag.status = "An Error Has Occured";
@@ -269,7 +289,7 @@ namespace HabitatForHumanity.Controllers
                         ViewBag.status = "Sorry, our system is down. Please try again later.";
                         return View(signWaiverVM);
                     }
-                    return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                    return RedirectToAction("VolunteerPortal");
                  }
             }
             return View(signWaiverVM);
@@ -305,6 +325,23 @@ namespace HabitatForHumanity.Controllers
                     }
                     Session["isAdmin"] = user.isAdmin;
                     Session["UserName"] = user.emailAddress;
+
+                    //gmail smtp server  
+                    WebMail.SmtpServer = "smtp.gmail.com";
+                    //gmail port to send emails  
+                    WebMail.SmtpPort = 587;
+                    WebMail.SmtpUseDefaultCredentials = true;
+                    //sending emails with secure protocol  
+                    WebMail.EnableSsl = true;
+                    //EmailId used to send emails from application  
+                    WebMail.UserName = "hfhdwvolunteer@gmail.com";
+                    WebMail.Password = "3BlindMice";
+                    //Sender email address.  
+                    WebMail.From = "hfhdwvolunteer@gmail.com";
+                    //Send email  
+                    string body = "New user created at email: " + user.emailAddress;
+                    WebMail.Send(to: "trevororgill@weber.edu", subject: "New Volunteer", body: body, isBodyHtml: false);
+
                     return RedirectToAction("SignWaiver", "User");
                 }
                 else
@@ -375,7 +412,7 @@ namespace HabitatForHumanity.Controllers
                             return RedirectToAction("Dashboard","Admin");
                         }
                                                
-                        return RedirectToAction("VolunteerPortal", new { id = user.Id });
+                        return RedirectToAction("VolunteerPortal");
                     }
                     else
                     {
@@ -412,6 +449,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult ForgotPassword()
         {
             LoginVM loginVm = new LoginVM();
+            loginVm.password = "blah";
             return View(loginVm);
         }
 
@@ -419,7 +457,7 @@ namespace HabitatForHumanity.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ForgotPassword([Bind(Include = "email")] LoginVM forgot)
+        public ActionResult ForgotPassword([Bind(Include = "email, password")] LoginVM forgot)
         {
             if (ModelState.IsValid)
             {
@@ -427,13 +465,13 @@ namespace HabitatForHumanity.Controllers
                 {
                     ReturnStatus existsResult = new ReturnStatus();
                     existsResult = Repository.EmailExists(forgot.email);
-                    if (existsResult.errorCode != 0)
+                    if (existsResult.errorCode != ReturnStatus.ALL_CLEAR)
                     {
                         ViewBag.status = "Sorry, the system is temporarily down, please try again later.";
                         return View("Login");                      
                     }
 
-                    if ((bool)existsResult.data)
+                    if ((bool)existsResult.data == true)
                     {
                         try
                         {
@@ -465,21 +503,25 @@ namespace HabitatForHumanity.Controllers
                         catch (Exception)
                         {
                             ViewBag.Status = "Problem while sending email, Please check details.";
-                            return View("Login");
+                            return View(forgot);
                         }
-                        return View("Login");
+                        return RedirectToAction("Login", new { excMsg = "New password has been sent to " + forgot.email });
                     }
-                    ViewBag.status = "No record of provided email address.";
-                    return RedirectToAction("Login", "Volunteer");
+                    else
+                    {
+                        ViewBag.status = "No record of provided email address.";
+                        return View(forgot);
+                    }
+           
                 }
                 catch
                 {
                     ViewBag.status = "System failed to process your request, try again.";
-                    return RedirectToAction("Login", "Volunteer");
+                    return View(forgot);
                 }
             }// end modelstate.isvalid
             ViewBag.status = "Please provide a valid email address.";
-            return RedirectToAction("Login", "Volunteer");
+            return View(forgot);
         }
         #endregion
 
