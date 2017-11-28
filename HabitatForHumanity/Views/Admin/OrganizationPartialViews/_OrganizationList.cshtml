@@ -1,0 +1,74 @@
+﻿@using PagedList.Mvc;
+@using HabitatForHumanity.Models
+@using HabitatForHumanity.ViewModels
+@model PagedList.PagedList<Organization>
+
+
+
+@ToolKitVM.Modal("Edit Organization", "editModal", "editPartial")
+
+
+
+<div class="container" style="width:auto">
+    <div class="row">
+        <div class="col-xs-3">Organization Name</div>
+        <div class="col-xs-3">Status</div>
+        <div class="col-xs-6"><!--Admin stuff goes here--></div>
+    </div>
+
+    <hr style="border:0.1px solid" />
+
+    <!--List of organizations-->
+    <div id="editOrg" style="overflow-y:scroll;overflow-x:hidden;height:300px;width:auto">
+
+        @foreach (var item in Model)
+            {
+            <div class="row">
+                @{ var orgId = "org" + item.Id;}
+                <div id="@orgId" class="col-xs-3">@item.name</div>
+
+                @switch (item.status)
+                {
+                    case 0:
+                        <div class="col-xs-3">Inactive</div>
+                        break;
+                    case 1:
+                        <div class="col-xs-3">Active</div>
+                        break;
+
+                }
+
+
+                <!--Admin based controls-->
+                <div class="col-xs-6">
+                    @switch (item.status)
+                    {
+                        case 0:
+                        <!--Activate-->
+                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusActivate" })
+                            break;
+                        case 1:
+                        <!--Deactivate-->
+                            @Ajax.ActionLink("test", "ChangeOrganizationStatus", new { id = item.Id }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }, htmlAttributes: new { @class = "statusDeactivate" })
+                            break;
+                    }
+                    <!--Edit Organization-->
+                    @*@ToolKitVM.ModalButton("editButton", "editModal", editHtml, item.Id.ToString())*@
+                    @* @Ajax.ActionLink(" ", "EditOrganization", new { id = item.Id }, new AjaxOptions { HttpMethod = "GET", UpdateTargetId = orgId }, htmlAttributes: new { @class = "editLink" })*@
+
+
+
+                    @*@Html.ActionLink("Associated Projects", "Index", "Home", null, htmlAttributes: new { @class = "btn btn-primary btn-md", @style = "margin:0px 20px;padding:0px" })
+                    @Html.ActionLink("Run Report", "Index", "Home", null, htmlAttributes: new { @class = "btn btn-primary btn-md", @style = "margin:0px 20px;padding:0px" })*@
+
+                    <!--End of Admin controls-->
+
+
+                </div>
+                <hr />
+            </div>
+                    }
+    </div>
+</div>
+
+
