@@ -30,15 +30,23 @@
 
         <div class="form-group">
             @Html.LabelFor(model => model.gender, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 select-box">
-                <select asp-for="gender" name="Gender">
-                    <option value="">Prefer Not to Answer</option>
-                    <option value="m">Male</option>
-                    <option value="f">Female</option>
-                    <option value="o">Other</option>
-                </select>
+            @*@Html.DropDownListFor(model => model.gender, Model.statusDropDown, htmlAttributes: new { @class = "form-control", @style = "width:auto" })*@
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.gender, new SelectListItem[]{
+                new SelectListItem() {Text = "Prefer Not to Answer", Value=""},
+                new SelectListItem() {Text = "Male", Value="M"},
+                new SelectListItem() {Text = "Female", Value="F"},
+                new SelectListItem() {Text = "Other", Value="O"}}, htmlAttributes: new { @class = "form-control" })
             </div>
-        </div>
+                @*<div class="col-md-10 select-box">
+                    <select asp-for="gender" name="Gender">
+                        <option value="">Prefer Not to Answer</option>
+                        <option value="m">Male</option>
+                        <option value="f">Female</option>
+                        <option value="o">Other</option>
+                    </select>
+                </div>*@
+            </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.homePhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -99,7 +107,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.password, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.PasswordFor(model => model.password, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.PasswordFor(model => model.password,  new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -107,7 +115,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.confirmPassword, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.PasswordFor(model => model.confirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.PasswordFor(model => model.confirmPassword,  new { @class = "form-control"  })
                 @Html.ValidationMessageFor(model => model.confirmPassword, "", new { @class = "text-danger" })
             </div>
         </div>
