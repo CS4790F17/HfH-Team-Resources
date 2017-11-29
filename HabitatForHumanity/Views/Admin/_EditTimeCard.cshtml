@@ -20,8 +20,7 @@
             Time in:
         </div>
         <div class="col-md-3">
-            @Html.EditorFor(model => model.inTime, new { htmlAttributes = new { @class = "form-control", @style = "width:auto", @type = "datetime-local" } })
-
+            @Html.EditorFor(model => model.inTime, new { htmlAttributes = new { @type = "datetime", @Value = Model.inTime.ToString("MM/dd/yyyy h:mm tt"), @class = "form-control", @style = "width:auto" } })
             @Html.ValidationMessageFor(x => x.inTime, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -31,8 +30,7 @@
             Time out:
         </div>
         <div class="col-md-3">
-            @Html.EditorFor(model => model.outTime, new { htmlAttributes = new { @class = "form-control", @style = "width:auto", @type = "datetime-local" } })
-
+            @Html.EditorFor(model => model.outTime, new { htmlAttributes = new { @type = "datetime", @Value = Model.outTime.ToString("MM/dd/yyyy h:mm tt"), @class = "form-control", @style = "width:auto" } })
             @Html.ValidationMessageFor(x => x.outTime, "", new { @class = "text-danger" })
         </div>
     </div>
