@@ -2,7 +2,7 @@
 @using HabitatForHumanity.ViewModels;
 @{
     ViewBag.Title = "VolunteerPortal";
-    ViewBag.timeDelay = 5000;
+    ViewBag.timeDelay = 0;
 }
 @{
     if (Session["Username"] != null)
@@ -19,19 +19,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Thanks for your service!</h4>
+                <h4 class="modal-title">Thank you for your service!</h4>
             </div>
             <div class="modal-body">
               <div id="timer_div"></div> @*<p>Thanks for your service!</p>*@
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="logout()">Logout Now</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Need more time?</button>
-            </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="logout()">Logout Now</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Need more time?</button>
+                </div>
         </div>
-
     </div>
 </div>
+
 
 <h2>Volunteer Portal</h2>
 <h3>Welcome @Model.fullName!</h3>
@@ -40,36 +40,45 @@
 @{
     if (Model.isPunchedIn == false)
     {
-        ViewBag.timeDelay = 6000; 
+        ViewBag.timeDelay = 16000; 
         <div>@Html.Action("_PunchIn", new { id = Model.userId })</div>
     }
     else
     {
-        ViewBag.timeDelay = 3000; 
+        ViewBag.timeDelay = 13000; 
         @*<div>@{Html.RenderPartial("_PunchOut", Model.punchOutVM);}</div>*@
         <div>@Html.Action("_PunchOut", new { id = Model.userId })</div>
     }
 }
 
-@*<script>
-   setTimeout(function () {
-            $('#myModal').modal();
-        }, @(ViewBag.timeDelay));
+<script>
+        $(function () {
+            $('#myModal').on('show.bs.modal', function () {
+                var myModal = $(this);
+                clearTimeout(myModal.data('hideInterval'));
+                myModal.data('hideInterval', setTimeout(function () {
+                    myModal.modal('hide');
+                }, 3000));
+            });
+        });
+      @* setTimeout(function () {
+                $('#myModal').modal();
+            }, @(ViewBag.timeDelay));
 
-    function logout(){
-        window.location.href = '/User/Logout/?excMsg=Thanks. Have a Great Day';
-    }
-
-    var seconds_left = 10;
-    var interval = setInterval(function() {
-        document.getElementById('timer_div').innerHTML = 
-            'You will be automatically logged out in ' + --seconds_left;
-
-        if (seconds_left <= 0)
-        {
-            clearInterval(interval);
-            window.location.href = '/User/Logout/?excMsg=Time exceeded. You have been automatically logged out.';
+        function logout(){
+            window.location.href = '/User/Logout/?excMsg=Thanks. Have a Great Day';
         }
-    }, 1000);
 
-</script>*@
+        var seconds_left = 10;
+        var interval = setInterval(function() {
+            document.getElementById('timer_div').innerHTML =
+                'You will be automatically logged out in ' + --seconds_left;
+
+            if (seconds_left <= 0)
+            {
+                clearInterval(interval);
+                window.location.href = '/User/Logout/?excMsg=Time exceeded. You have been automatically logged out.';
+            }
+        }, 1000);*@
+
+    </script>

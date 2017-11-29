@@ -61,10 +61,10 @@ namespace HabitatForHumanity.Controllers
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
                 }
-                return RedirectToAction("VolunteerPortal", "User");
+            //    return RedirectToAction("VolunteerPortal", "User");
             }
 
-            return RedirectToAction("VolunteerPortal", "User");
+            return RedirectToAction("ThankYouModal", "User");
 
         }
         #endregion

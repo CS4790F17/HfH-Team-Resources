@@ -81,6 +81,11 @@ namespace HabitatForHumanity.Controllers
             return View((PortalVM)rs.data);
         }
 
+        public ActionResult ThankYouModal()
+        {
+            return View();
+        }
+
         [AuthorizationFilter]
         public ActionResult _PunchOut(int id)
         {

@@ -40,14 +40,14 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" id="ClockInBtn" value="Clock In" class="btn btn-default" />
+                <input type="submit" id="ClockInBtn" value="Clock In" class="btn btn-default" data-toggle="modal" data-target="#myModal"/>
             </div>
         </div>
-        @*<div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="button" onclick="location.href=''@Url.Action("PunchIn","TimeSheet",   )" value="Clock In" class="btn btn-default" />
-                </div>
-            </div>*@
+        @*<div class="form-group">                                                                      data-toggle="modal" data-target="#myModal"
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" onclick="location.href=''@Url.Action("PunchIn","TimeSheet",   )" value="Clock In" class="btn btn-default" />
+        </div>
+    </div>*@
     </div>
 }
 
@@ -74,5 +74,10 @@
             $("#projectValid").text("");
         }
     }
+
+    @*document.getElementById('ClockInBtn').onclick = function () {
+        alert("This is working")
+
+    }*@
 </script>
 
