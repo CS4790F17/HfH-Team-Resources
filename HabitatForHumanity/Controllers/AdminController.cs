@@ -131,14 +131,17 @@ namespace HabitatForHumanity.Controllers
             }
             else if (period.Equals("Week"))
             {
-                chartRS = Repository.GetHoursChartVMByYear();
+                chartRS = Repository.GetHoursChartVMByWeek();
             }        
             else
             {
                 // monthly
                 chartRS = Repository.GetHoursChartVMByMonth();
             }
-            
+            if(chartRS.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                return null;
+            }
             ChartVM chartVM = (ChartVM)chartRS.data;
             Highcharts columnChart = new Highcharts("columnchart");
 
@@ -168,7 +171,7 @@ namespace HabitatForHumanity.Controllers
             columnChart.SetXAxis(new XAxis()
             {
                 Type = AxisTypes.Category,
-                Title = new XAxisTitle() { Text = "X axis stuff", Style = "fontWeight: 'bold', fontSize: '17px'" },
+                //Title = new XAxisTitle() { Text = "X axis stuff", Style = "fontWeight: 'bold', fontSize: '17px'" },
                 Categories = chartVM._categories
             });
 

@@ -608,5 +608,53 @@ namespace HabitatForHumanity.Models
             }
             return rs;
         }
+
+        public static ReturnStatus Get12WeeksTimeSheetsByCategory(int restoreId, int awbkId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                DateTime startRange;
+                DateTime endRange;
+                DateTime today = DateTime.Today;
+                int thisYear = DateTime.Today.Year;
+                int thisMonth = DateTime.Today.Month;
+                List<TimeSheet>[] timesheetInception = new List<TimeSheet>[36];
+                int j = 11, k = 11, l = 11;
+                for (int i = 0; i < 36; i++)
+                {
+                    if (i < 12)
+                    {
+                        startRange = today.AddDays(-7 * j);
+                        endRange = today.AddDays(-7 * (j - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == restoreId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        j--;
+                    }
+                    else if (i < 24)
+                    {
+                        startRange = today.AddDays(-7 * k);
+                        endRange = today.AddDays(-7 * (k - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == awbkId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        k--;
+                    }
+                    else
+                    {
+                        startRange = today.AddDays(-7 * l);
+                        endRange = today.AddDays(-7 * (l - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id != awbkId) && (t.project_Id != restoreId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        l--;
+                    }
+                }
+
+                rs.data = timesheetInception;
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
     }
 }

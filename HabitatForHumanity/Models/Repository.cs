@@ -997,6 +997,62 @@ namespace HabitatForHumanity.Models
 
         }
 
+        public static ReturnStatus GetHoursChartVMByWeek()
+        {
+            ReturnStatus chartReturn = new ReturnStatus();
+            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
+            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
+            ReturnStatus tsArrayRS = TimeSheet.Get12WeeksTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
+            // this is an array[36] that holds lists of timesheets
+            // the first 12 are restore(11 weeks ago, 10... )
+            // next 12 are awbk
+            // last 12 are homebuilds( whatever isn't restore or awbk)
+            if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
+                DateTime today = DateTime.Today;
+                string[] cats = new string[12];
+                int w = 11;
+                for (int i = 0; i < 12; i++)
+                {
+                    DateTime myDate = today.AddDays(-w * 7);
+                    cats[i] = myDate.Month.ToString() + "/" + myDate.Day.ToString();
+                    w--;
+                }
+                int[] restoreHrs = new int[12];
+                int[] awbkHrs = new int[12];
+                int[] homesHrs = new int[12];
+                int j = 0, k = 0;
+                for (int i = 0; i < 36; i++)
+                {
+                    TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
+                    if (i < 12)
+                    {
+                        restoreHrs[i] = (int)ts.TotalHours;
+                    }
+                    else if (i < 24)
+                    {
+                        awbkHrs[j] = (int)ts.TotalHours;
+                        j++;
+                    }
+                    else
+                    {
+                        homesHrs[k] = (int)ts.TotalHours;
+                        k++;
+                    }
+                }
+                ChartVM chartVM = new ChartVM("Volunteer Hours by Week", cats, restoreHrs, awbkHrs, homesHrs);
+                chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                chartReturn.data = chartVM;
+                return chartReturn;
+            }
+            else
+            {
+                return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
+            }
+
+        }
+
 
         public static ReturnStatus getTotalHoursWorkedByVolunteer(int volunteerId)
         {
