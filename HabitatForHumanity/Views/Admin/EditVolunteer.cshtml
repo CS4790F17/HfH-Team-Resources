@@ -142,7 +142,7 @@
     $(".editButton").click(function () {
         // console.log('clicked');
         var id = $(this).attr("dataId");
-        console.log(id);
+        //console.log(id);
         inputData = { 'id': id }
 
         $.ajax(
@@ -158,7 +158,24 @@
 
     })
 
-
+    //https://stackoverflow.com/questions/31053460/how-to-make-a-net-mvc-form-inside-a-modal-using-jquery-with-validation
+    //prevents the modal from automatically redirecting when the submit button is clicked
+    //instead we send our post method our form data to do a validation check server side
+    //and return a marked up view to the modal if it's an invalid form
+    $("#editModal").on('submit', function (e) {
+        e.preventDefault();
+        // console.log("prevented from submitting");
+        var form = $("#editTimeCardForm");
+        $.ajax({
+            url: '/Admin/EditTimeCard',
+            type: 'POST',
+            data: form.serialize(),
+            success: function (partialResult) {
+                //  console.log(partialResult);
+                $("#editPartial").html(partialResult);
+            }
+        })
+    });
 
 
     function refresh() {

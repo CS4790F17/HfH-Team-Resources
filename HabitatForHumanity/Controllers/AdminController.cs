@@ -118,7 +118,8 @@ namespace HabitatForHumanity.Controllers
                 ViewBag.status = "Failed to update time card, please try again later.";
                 return PartialView("_EditTimeCard", card);
             }
-            return RedirectToAction("Timecards");
+            //return RedirectToAction("Timecards");
+            return PartialView("_EditTimeCardSuccess");
         }
         #endregion
 
