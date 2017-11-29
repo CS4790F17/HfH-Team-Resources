@@ -321,6 +321,15 @@ namespace HabitatForHumanity.Controllers
                 {
                     volunteer.waiverStatus = false;
                 }
+
+                if (user.isAdmin == 1)
+                {
+                    volunteer.isAdmin = true;
+                }
+                else
+                {
+                    volunteer.isAdmin = false;
+                }
                 volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
 
                 List<TimeSheet> timeSheets = new List<TimeSheet>();
@@ -366,7 +375,7 @@ namespace HabitatForHumanity.Controllers
         // POST: Admin/EditVolunteer
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email")] UsersVM usersVM)
+        public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email, isAdmin")] UsersVM usersVM)
         {
             if (ModelState.IsValid)
             {
@@ -391,6 +400,14 @@ namespace HabitatForHumanity.Controllers
                     }
 
                     user.emailAddress = usersVM.email;
+
+                    if (usersVM.isAdmin == true) {
+                        user.isAdmin = 1;
+                    }
+                    else
+                    {
+                        user.isAdmin = 0;
+                    }
 
                     ReturnStatus us = new ReturnStatus();
                     us = Repository.EditUser(user);

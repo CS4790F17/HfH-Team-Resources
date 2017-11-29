@@ -27,7 +27,10 @@ namespace HabitatForHumanity.ViewModels
 
         [Display(Name = "Waiver Expiration")]
         public DateTime waiverExpiration { get; set; }
-        
+
+        [Display(Name = "Admin?")]
+        public bool isAdmin { get; set; }
+
         public List<TimeCardVM> timeCardVM { get; set; }
     }
 }
