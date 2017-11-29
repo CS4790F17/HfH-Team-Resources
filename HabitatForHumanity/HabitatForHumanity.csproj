@@ -338,6 +338,7 @@
     <Content Include="Views\Admin\ProjectPartialViews\_ProjectCreateSuccess.cshtml" />
     <Content Include="Views\Admin\ProjectPartialViews\_EditProject.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_OrganizationList.cshtml" />
+    <Content Include="Views\Admin\_EditTimeCardSuccess.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
