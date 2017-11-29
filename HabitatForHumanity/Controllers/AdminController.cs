@@ -508,20 +508,20 @@ namespace HabitatForHumanity.Controllers
         [HttpGet]
         public ActionResult AddOrganization()
         {
-            return PartialView("OrganizationPartialViews/_AddOrganization");
+            Organization org = new Organization();
+            return PartialView("OrganizationPartialViews/_AddOrganization", org);
         }
 
         [HttpPost]
-        public ActionResult AddOrganization(String name)
+        public ActionResult AddOrganization([Bind(Include="name")]Organization org)
         {
-            Organization org = new Organization()
+            if (ModelState.IsValid)
             {
-                name = name,
-                status = 1 //active by default
-            };
-
-            Repository.AddOrganization(org);
-            return RedirectToAction("ViewOrganizations");
+                org.status = 0; //inactive by default
+                Repository.AddOrganization(org);
+                return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+            }
+            return PartialView("OrganizationPartialViews/_AddOrganization", org);
         }
         #endregion
 

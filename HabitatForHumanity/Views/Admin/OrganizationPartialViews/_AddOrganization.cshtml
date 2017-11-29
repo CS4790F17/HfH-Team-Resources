@@ -1,8 +1,12 @@
-﻿@using (Html.BeginForm())
+﻿@model HabitatForHumanity.Models.Organization
+@using (Html.BeginForm("addOrganization", "Admin", FormMethod.Post, new { id = "addOrganizationForm" }))
 {
     <div class="row">
         <div class="col-xs-4 col-xs-offset-3">
-            @Html.Editor("name", new { htmlAttributes = new { placeholder = "Organization Name" } })
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.status)
+            @Html.EditorFor(x => x.name, new { htmlAttributes = new { placeholder = "Organization Name" } })
+            @Html.ValidationMessageFor(x => x.name)
         </div>
 
         <div class="col-xs-2">
