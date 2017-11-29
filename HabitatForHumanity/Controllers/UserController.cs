@@ -20,30 +20,34 @@ namespace HabitatForHumanity.Controllers
         private const string awwSnapMsg = "We're experiencing technical difficulties, try again later";
 
         #region Index
-        public ActionResult Index()
-        {
-            return View(db.users.ToList());
-        }
+        //[AdminFilter]
+        //[AuthorizationFilter]
+        //public ActionResult Index()
+        //{
+        //    return View(db.users.ToList());
+        //}
         #endregion
 
         #region Details
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = db.users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
+        //[AdminFilter]
+        //[AuthorizationFilter]
+        //public ActionResult Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    User user = db.users.Find(id);
+        //    if (user == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(user);
+        //}
         #endregion
 
         #region VolunteerPortal
-        
+        [AuthorizationFilter]
         public ActionResult VolunteerPortal()
         {
 
@@ -77,7 +81,7 @@ namespace HabitatForHumanity.Controllers
             return View((PortalVM)rs.data);
         }
 
-
+        [AuthorizationFilter]
         public ActionResult _PunchOut(int id)
         {
             ReturnStatus rs = Repository.GetClockedInUserTimeSheet(id);
@@ -91,6 +95,7 @@ namespace HabitatForHumanity.Controllers
             return PartialView("_PunchOut", punchOutVM);
         }
 
+        [AuthorizationFilter]
         public ActionResult _PunchIn(int id)
         {
             ReturnStatus rs = Repository.GetPunchInVM(id);
@@ -104,6 +109,7 @@ namespace HabitatForHumanity.Controllers
             return PartialView("_PunchIn", punchInVM);
         }
 
+        [AuthorizationFilter]
         public ActionResult UserProfile()
         {
             if (Session["UserName"] != null)
@@ -118,6 +124,7 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
+        [AuthorizationFilter]
         public ActionResult _ViewProfile()
         {
             if (Session["UserName"] != null)
@@ -151,155 +158,19 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
-        [HttpGet]
-        public ActionResult _EditProfile()
-        {
-            if (Session["UserName"] != null)
-            {
-                UserProfileVM userProfile = new UserProfileVM();
-                ReturnStatus rs = Repository.GetUserByEmail(Session["UserName"].ToString());
-                if(rs.errorCode != 0)
-                {
-                    return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
-                }
-                User user = (User)rs.data;
-                if (user == null)
-                {
-                    return RedirectToAction("Login", "User");
-                }
-                userProfile.firstName = user.firstName;
-                userProfile.lastName = user.lastName;
-                userProfile.homePhone = user.homePhoneNumber;
-                userProfile.workPhone = user.workPhoneNumber;
-                userProfile.userEmail = Session["UserName"].ToString();
-                userProfile.streetAddress = user.streetAddress;
-                userProfile.city = user.city;
-                userProfile.zip = user.zip;
-                userProfile.newPassword = "";
-                userProfile.confirmPassword = "";
-                return PartialView(userProfile);
-            }
-            else
-            {
-                return RedirectToAction("Login", "User", new { excMsg = "Something went wrong. Please try logging in again." });
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult _EditProfile([Bind(Include = "firstName,lastName,homePhone,workPhone,userEmail,streetAddress,city,zip,newPassword,confirmPassword")] UserProfileVM userProfile)
-        {
-            if (Session["UserName"] == null)
-            {
-                return RedirectToAction("Login", "User");
-            }
-            if (ModelState.IsValid)
-            {
-                ReturnStatus rs = Repository.GetUserByEmail(Session["UserName"].ToString());
-                if(rs.errorCode != 0)
-                {
-                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
-                    return View(userProfile);
-                }
-                User user = (User)rs.data;
-                if (userProfile.newPassword != null)
-                {
-                    user.password = Crypto.HashPassword(user.password);
-                }
-                user.firstName = userProfile.firstName;
-                user.lastName = userProfile.lastName;
-                user.homePhoneNumber = userProfile.homePhone;
-                user.workPhoneNumber = userProfile.workPhone;
-                user.streetAddress = userProfile.streetAddress;
-                user.city = userProfile.city;
-                user.zip = userProfile.zip;
-                ReturnStatus us = new ReturnStatus();
-                us = Repository.EditUser(user);
-                if (us.errorCode != 0)
-                {
-                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
-                    return View(userProfile);
-                }
-                return RedirectToAction("UserProfile", "User");
-            }
-            ViewBag.status = "An Error Has Occured";
-            return View(userProfile);
-        }
-
         #endregion
 
         #region Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
 
         // GET: User/VolunteerSignup
         public ActionResult VolunteerSignup()
         {
             return View();
         }
-
-        // GET: User/SignWaiver
-        public ActionResult SignWaiver()
-        {
-            if (Session["UserName"] != null)
-            {
-                SignWaiverVM signWaiver = new SignWaiverVM();
-                signWaiver.signature = false;
-                signWaiver.emergencyCity = null;
-                signWaiver.emergencyFirstName = null;
-                signWaiver.emergencyHomePhone = null;
-                signWaiver.emergencyLastName = null;
-                signWaiver.emergencyStreetAddress = null;
-                signWaiver.emergencyWorkPhone = null;
-                signWaiver.emergencyZip = null;
-                signWaiver.userEmail = Session["UserName"].ToString();
-                return View(signWaiver);
-            }
-            else
-            {
-                return RedirectToAction("Login", "User");
-            }
-        }
-
-
-        //TODO: test 
-        // POST: User/SignWaiver
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult SignWaiver([Bind(
-            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature")] SignWaiverVM signWaiverVM)
-        {
-            if (ModelState.IsValid)
-            {
-
-                ReturnStatus rs = Repository.GetUserByEmail(signWaiverVM.userEmail);
-                if (rs.errorCode != 0)
-                {
-                    ViewBag.status = "Sorry, our system is down. Please try again later.";
-                    return View(signWaiverVM);
-                }
-             
-                User user = (User)rs.data;
-                if (user.Id > 0)
-                {
-                    user.AddWaiverToUser(signWaiverVM);
-                    ReturnStatus saveResult = Repository.EditUser(user);
-                    if (saveResult.errorCode != 0)
-                    {
-                        ViewBag.status = "Sorry, our system is down. Please try again later.";
-                        return View(signWaiverVM);
-                    }
-                    return RedirectToAction("VolunteerPortal");
-                 }
-            }
-            ViewBag.status = "An error has occured below.";
-            return View(signWaiverVM);
-        }
-
         // POST: User/VolunteerSignup
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -312,7 +183,7 @@ namespace HabitatForHumanity.Controllers
             {
 
                 ReturnStatus st = Repository.EmailExists(volunteerSignupVM.emailAddress);
-                if(st.errorCode != 0)
+                if (st.errorCode != 0)
                 {
                     ViewBag.status = "Sorry, the system is currently down. Please try signing up later.";
                     return View(volunteerSignupVM);
@@ -363,14 +234,76 @@ namespace HabitatForHumanity.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Login", new {excMsg = "That email already exists in our system. Please login below." });
+                    return RedirectToAction("Login", new { excMsg = "That email already exists in our system. Please login below." });
                 }
             }
             return View(volunteerSignupVM);
         }
-        #endregion
 
-       
+        // GET: User/SignWaiver
+        [AuthorizationFilter]
+        public ActionResult SignWaiver()
+        {
+            if (Session["UserName"] != null)
+            {
+                SignWaiverVM signWaiver = new SignWaiverVM();
+                signWaiver.signature = false;
+                signWaiver.emergencyCity = null;
+                signWaiver.emergencyFirstName = null;
+                signWaiver.emergencyHomePhone = null;
+                signWaiver.emergencyLastName = null;
+                signWaiver.emergencyStreetAddress = null;
+                signWaiver.emergencyWorkPhone = null;
+                signWaiver.emergencyZip = null;
+                signWaiver.userEmail = Session["UserName"].ToString();
+                return View(signWaiver);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+
+        //TODO: test 
+        // POST: User/SignWaiver
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [AuthorizationFilter]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignWaiver([Bind(
+            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature")] SignWaiverVM signWaiverVM)
+        {
+            if (ModelState.IsValid)
+            {
+
+                ReturnStatus rs = Repository.GetUserByEmail(signWaiverVM.userEmail);
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, our system is down. Please try again later.";
+                    return View(signWaiverVM);
+                }
+             
+                User user = (User)rs.data;
+                if (user.Id > 0)
+                {
+                    user.AddWaiverToUser(signWaiverVM);
+                    ReturnStatus saveResult = Repository.EditUser(user);
+                    if (saveResult.errorCode != 0)
+                    {
+                        ViewBag.status = "Sorry, our system is down. Please try again later.";
+                        return View(signWaiverVM);
+                    }
+                    return RedirectToAction("VolunteerPortal");
+                 }
+            }
+            ViewBag.status = "An error has occured below.";
+            return View(signWaiverVM);
+        }
+
+        
+        #endregion
 
         #region Login
         public ActionResult Login(string excMsg)
@@ -540,41 +473,116 @@ namespace HabitatForHumanity.Controllers
         }
         #endregion
 
-        //public ActionResult HandleErrors(string excMsg)
-        //{
-        //    return RedirectToAction("Login", "User", new { excMsg = excMsg });
-        //}
-
         #region Edit
-        public ActionResult Edit(int? id)
+
+        [AuthorizationFilter]
+        [HttpGet]
+        public ActionResult _EditProfile()
         {
-            if (id == null)
+            if (Session["UserName"] != null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                UserProfileVM userProfile = new UserProfileVM();
+                ReturnStatus rs = Repository.GetUserByEmail(Session["UserName"].ToString());
+                if (rs.errorCode != 0)
+                {
+                    return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+                }
+                User user = (User)rs.data;
+                if (user == null)
+                {
+                    return RedirectToAction("Login", "User");
+                }
+                userProfile.firstName = user.firstName;
+                userProfile.lastName = user.lastName;
+                userProfile.homePhone = user.homePhoneNumber;
+                userProfile.workPhone = user.workPhoneNumber;
+                userProfile.userEmail = Session["UserName"].ToString();
+                userProfile.streetAddress = user.streetAddress;
+                userProfile.city = user.city;
+                userProfile.zip = user.zip;
+                userProfile.newPassword = "";
+                userProfile.confirmPassword = "";
+                return PartialView(userProfile);
             }
-            User user = db.users.Find(id);
-            if (user == null)
+            else
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "User", new { excMsg = "Something went wrong. Please try logging in again." });
             }
-            return View(user);
         }
 
+        [AuthorizationFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,firstName,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate,emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
+        public ActionResult _EditProfile([Bind(Include = "firstName,lastName,homePhone,workPhone,userEmail,streetAddress,city,zip,newPassword,confirmPassword")] UserProfileVM userProfile)
         {
+            if (Session["UserName"] == null)
+            {
+                return RedirectToAction("Login", "User");
+            }
             if (ModelState.IsValid)
             {
-                db.Entry(user).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ReturnStatus rs = Repository.GetUserByEmail(Session["UserName"].ToString());
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                    return View(userProfile);
+                }
+                User user = (User)rs.data;
+                if (userProfile.newPassword != null)
+                {
+                    user.password = Crypto.HashPassword(user.password);
+                }
+                user.firstName = userProfile.firstName;
+                user.lastName = userProfile.lastName;
+                user.homePhoneNumber = userProfile.homePhone;
+                user.workPhoneNumber = userProfile.workPhone;
+                user.streetAddress = userProfile.streetAddress;
+                user.city = userProfile.city;
+                user.zip = userProfile.zip;
+                ReturnStatus us = new ReturnStatus();
+                us = Repository.EditUser(user);
+                if (us.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                    return View(userProfile);
+                }
+                return RedirectToAction("UserProfile", "User");
             }
-            return View(user);
+            ViewBag.status = "An Error Has Occured";
+            return View(userProfile);
         }
+
+        //public ActionResult Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    User user = db.users.Find(id);
+        //    if (user == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(user);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit([Bind(Include = "Id,firstName,lastName,homePhoneNumber,workPhoneNumber,emailAddress,streetAddress,city,zip,password,birthDate,waiverSignDate,emergencyFirstName,emergencyLastName,relation,emergencyHomePhone,emergencyWorkPhone,emergencyStreetAddress,emergencyCity,emergencyZip")] User user)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.Entry(user).State = EntityState.Modified;
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View(user);
+        //}
         #endregion
 
         #region Delete
+        [AdminFilter]
+        [AuthorizationFilter]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -590,6 +598,8 @@ namespace HabitatForHumanity.Controllers
         }
 
         // POST: User/Delete/5
+        [AdminFilter]
+        [AuthorizationFilter]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -601,12 +611,14 @@ namespace HabitatForHumanity.Controllers
         }
         #endregion
 
-        #region Search
+        #region Search, Is this being used?
         public ActionResult VolunteerSearch()
         {
             return View();
         }
 
+        [AdminFilter]
+        [AuthorizationFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult VolunteerSearch([Bind(Include = "firstName,lastName")] User user)
@@ -627,6 +639,9 @@ namespace HabitatForHumanity.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        ///         
+        [AdminFilter]
+        [AuthorizationFilter]
         public ActionResult UserTimeDetails(int? id)
         {
             if (id == null)

@@ -12,6 +12,8 @@ using System.Text.RegularExpressions;
 
 namespace HabitatForHumanity.Controllers
 {
+    [AdminFilter]
+    [AuthorizationFilter]
     public class ProjectController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();

@@ -17,9 +17,12 @@ using HabitatForHumanity.Controllers;
 
 namespace HabitatForHumanity.Controllers
 {
+    [AdminFilter]
+    [AuthorizationFilter]
     public class AdminController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
+        private const string awwSnapMsg = "We're experiencing technical difficulties, try again later";
 
         const int RecordsPerPage = 10;
         // GET: Admin dashboard
@@ -28,6 +31,7 @@ namespace HabitatForHumanity.Controllers
             return View();
         }
 
+        #region Volunteers
         public ActionResult Volunteers(VolunteerSearchModel vsm)
         {
             if (vsm.projects == null)
@@ -39,7 +43,7 @@ namespace HabitatForHumanity.Controllers
 
             if (rs.errorCode != 0)
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                ViewBag.status = awwSnapMsg;
                 return View(vsm);
             }
 
@@ -68,13 +72,15 @@ namespace HabitatForHumanity.Controllers
             }
             return View(vsm);
         }
+        #endregion
 
+        #region Timecards
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
             ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
             if(rs.errorCode != 0)
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information.System is down.If problem persists, contact Support.";
+                ViewBag.status = awwSnapMsg;
                 return View(tsm);
             }
             var pageIndex = tsm.Page ?? 1;
@@ -114,15 +120,16 @@ namespace HabitatForHumanity.Controllers
             }
             return RedirectToAction("Timecards");
         }
+        #endregion
 
-
+        #region Get and Build Hours Bar Chart
         public ActionResult GetHoursChartBy(string period)
         {
             if(period == null)
             {
                 period = "Month";
             }
-            #region Build Month Chart
+         
             ReturnStatus chartRS = new ReturnStatus();
    
             if (period.Equals("Year"))
@@ -219,17 +226,14 @@ namespace HabitatForHumanity.Controllers
                 }
             }
             );
-
-
-            #endregion
-
             return PartialView("_HoursMonthChart", columnChart);
-
         }
+        #endregion
 
+        #region Get and Build Demographics Pie
         public ActionResult GetHoursDemogPieBy(string gender)
         {
-            #region Build Demographics Pie
+           
             /* gender options from javascript radios       
             All, M, F, O */
             ReturnStatus st = new ReturnStatus();
@@ -268,7 +272,7 @@ namespace HabitatForHumanity.Controllers
                          new Series
                          {
                              Type = ChartTypes.Pie,
-                             Name = "Male",
+                             Name = "xyz",
                              Data = new Data(outer)
                          }
                    );
@@ -276,14 +280,11 @@ namespace HabitatForHumanity.Controllers
             }
             catch
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                ViewBag.status = awwSnapMsg;
                 return null;
             }
-
-
-            #endregion
-
         }
+        #endregion
 
         // GET: Admin/EditVolunteer
         public ActionResult EditVolunteer(int id)
