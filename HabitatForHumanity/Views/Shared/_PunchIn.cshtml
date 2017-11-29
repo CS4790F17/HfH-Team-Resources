@@ -15,13 +15,7 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.userId)
 
-        @*<div class="form-group">
-                @Html.LabelFor(model => model.userName, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.userName, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                    @Html.ValidationMessageFor(model => model.userName, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
+      
         <div class="form-group">
             @*@Html.LabelFor(model => model.orgId, htmlAttributes: new { @class = "control-label col-md-2" })*@
             <div class="col-md-10">
@@ -40,7 +34,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" id="ClockInBtn" value="Clock In" class="btn btn-default" />
+                <input type="submit" id="ClockInBtn" value="Clock In" class="btn btn-primary" />
             </div>
         </div>
         @*<div class="form-group">
