@@ -348,6 +348,7 @@
     <Content Include="Views\Admin\ProjectPartialViews\_EditProject.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_OrganizationList.cshtml" />
     <Content Include="Views\User\_Gauge.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_OrganizationSuccess.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
