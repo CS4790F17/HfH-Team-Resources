@@ -22,46 +22,111 @@
         </div>
 
         <div class="form-group">
-           @Html.LabelFor(model => model.volunteerName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+           @Html.LabelFor(model => model.volunteerName, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;" style="padding-top:7px; line-height:45px;">
                 @Html.EditorFor(model => model.volunteerName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.volunteerName, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            @Html.LabelFor(model => model.email, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
                 @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.isAdmin, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            @Html.LabelFor(model => model.isAdmin, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
                 @Html.CheckBoxFor(model => model.isAdmin, new { htmlAttributes = new { @class = "form-control" } })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.hoursToDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            @Html.LabelFor(model => model.waiverSignDate, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
+                @Html.EditorFor(model => model.waiverSignDate, new { htmlAttributes = new { @class = "form-control", @style = "width:auto", @type = "datetime-local" } })
+                @Html.ValidationMessageFor(model => model.waiverSignDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.hoursToDate, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
                 @Html.DisplayFor(model => model.hoursToDate, new { htmlAttributes = new { @class = "form-control" } }) Hours
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.waiverStatus, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            @Html.LabelFor(model => model.waiverStatus, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
                 @Html.CheckBoxFor(model => model.waiverStatus, new { htmlAttributes = new { @class = "form-control" }, disabled = "disabled" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.waiverExpiration, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            @Html.LabelFor(model => model.waiverExpiration, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
                 @Html.DisplayFor(model => model.waiverExpiration, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.emergencyFirstName, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
+                @Html.DisplayFor(model => model.emergencyFirstName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.emergencyLastName, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
+                @Html.DisplayFor(model => model.emergencyLastName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.relation, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
+                @Html.DisplayFor(model => model.relation, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.emergencyHomePhone, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
+                @Html.DisplayFor(model => model.emergencyHomePhone, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.emergencyWorkPhone, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
+                @Html.DisplayFor(model => model.emergencyWorkPhone, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.emergencyStreetAddress, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
+                @Html.DisplayFor(model => model.emergencyStreetAddress, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.emergencyCity, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
+                @Html.DisplayFor(model => model.emergencyCity, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.emergencyZip, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9" style="padding-top:7px; line-height:45px;">
+                @Html.DisplayFor(model => model.emergencyZip, new { htmlAttributes = new { @class = "form-control" } })
             </div>
         </div>
 

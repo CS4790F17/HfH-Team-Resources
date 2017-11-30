@@ -78,7 +78,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
             ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
-            if(rs.errorCode != 0)
+            if (rs.errorCode != 0)
             {
                 ViewBag.status = awwSnapMsg;
                 return View(tsm);
@@ -125,13 +125,13 @@ namespace HabitatForHumanity.Controllers
         #region Get and Build Hours Bar Chart
         public ActionResult GetHoursChartBy(string period)
         {
-            if(period == null)
+            if (period == null)
             {
                 period = "Month";
             }
-         
+
             ReturnStatus chartRS = new ReturnStatus();
-   
+
             if (period.Equals("Year"))
             {
                 chartRS = Repository.GetHoursChartVMByYear();
@@ -139,13 +139,13 @@ namespace HabitatForHumanity.Controllers
             else if (period.Equals("Week"))
             {
                 chartRS = Repository.GetHoursChartVMByWeek();
-            }        
+            }
             else
             {
                 // monthly
                 chartRS = Repository.GetHoursChartVMByMonth();
             }
-            if(chartRS.errorCode != ReturnStatus.ALL_CLEAR)
+            if (chartRS.errorCode != ReturnStatus.ALL_CLEAR)
             {
                 return null;
             }
@@ -233,7 +233,7 @@ namespace HabitatForHumanity.Controllers
         #region Get and Build Demographics Pie
         public ActionResult GetHoursDemogPieBy(string gender)
         {
-           
+
             /* gender options from javascript radios       
             All, M, F, O */
             ReturnStatus st = new ReturnStatus();
@@ -312,6 +312,7 @@ namespace HabitatForHumanity.Controllers
                 // force all name to not be null for simple comparison in controller
                 volunteer.volunteerName = user.firstName + " " + user.lastName;
                 volunteer.email = user.emailAddress;
+                volunteer.waiverSignDate = user.waiverSignDate;
                 volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
                 if (volunteer.waiverExpiration > DateTime.Now)
                 {
@@ -332,11 +333,20 @@ namespace HabitatForHumanity.Controllers
                 }
                 volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
 
+                volunteer.emergencyFirstName = user.emergencyFirstName;
+                volunteer.emergencyLastName = user.emergencyLastName;
+                volunteer.relation = user.relation;
+                volunteer.emergencyHomePhone = user.emergencyHomePhone;
+                volunteer.emergencyWorkPhone = user.emergencyWorkPhone;
+                volunteer.emergencyStreetAddress = user.emergencyStreetAddress;
+                volunteer.emergencyCity = user.emergencyCity;
+                volunteer.emergencyZip = user.emergencyZip;
+
                 List<TimeSheet> timeSheets = new List<TimeSheet>();
                 timeSheets = (List<TimeSheet>)getTimeSheets.data;
                 List<TimeCardVM> test = new List<TimeCardVM>();
 
-                
+
                 foreach (TimeSheet t in timeSheets)
                 {
                     TimeCardVM temp = new TimeCardVM();
@@ -375,7 +385,7 @@ namespace HabitatForHumanity.Controllers
         // POST: Admin/EditVolunteer
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email, isAdmin")] UsersVM usersVM)
+        public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email, isAdmin, waiverSignDate")] UsersVM usersVM)
         {
             if (ModelState.IsValid)
             {
@@ -401,13 +411,16 @@ namespace HabitatForHumanity.Controllers
 
                     user.emailAddress = usersVM.email;
 
-                    if (usersVM.isAdmin == true) {
+                    if (usersVM.isAdmin == true)
+                    {
                         user.isAdmin = 1;
                     }
                     else
                     {
                         user.isAdmin = 0;
                     }
+
+                    user.waiverSignDate = usersVM.waiverSignDate;
 
                     ReturnStatus us = new ReturnStatus();
                     us = Repository.EditUser(user);
@@ -423,7 +436,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         public ActionResult GetBadPunches()
-        {   
+        {
             ReturnStatus rs = Repository.GetNumBadPunches();
             int numBadPunches = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
             return PartialView("_BadPunches", numBadPunches);
