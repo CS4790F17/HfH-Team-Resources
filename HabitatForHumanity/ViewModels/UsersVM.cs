@@ -54,7 +54,7 @@ namespace HabitatForHumanity.ViewModels
         [Display(Name = "Emergency Contact Address")]
         public string emergencyStreetAddress { get; set; }
         
-        [Display(Name = "Emergency Contact City*")]
+        [Display(Name = "Emergency Contact City")]
         public string emergencyCity { get; set; }
         
         [Display(Name = "Emergency Contact Zipcode")]
