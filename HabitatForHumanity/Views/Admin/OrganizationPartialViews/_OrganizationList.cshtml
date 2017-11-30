@@ -14,7 +14,7 @@
         <div class="col-xs-4">Status</div>
     </div>
 
-    <div style="overflow-y:scroll;overflow-x:hidden;max-height:350px">
+    <div>
         @foreach (var org in Model)
         {
             var opac = 1.0;
@@ -181,5 +181,25 @@
                     $("#editPartial").html(response);
                 }
             });
-    })
+    });
+
+
+    //https://stackoverflow.com/questions/31053460/how-to-make-a-net-mvc-form-inside-a-modal-using-jquery-with-validation
+    //prevents the modal from automatically redirecting when the submit button is clicked
+    //instead we send our post method our form data to do a validation check server side
+    //and return a marked up view to the modal if it's an invalid form
+    $("#editOrganizationModal").on('submit', function (e) {
+        e.preventDefault();
+        // console.log("prevented from submitting");
+        var form = $("#editOrganizationForm");
+        $.ajax({
+            url: '/Admin/EditOrganization',
+            type: 'POST',
+            data: form.serialize(),
+            success: function (partialResult) {
+                //  console.log(partialResult);
+                $("#editPartial").html(partialResult);
+            }
+        })
+    });
 </script>
