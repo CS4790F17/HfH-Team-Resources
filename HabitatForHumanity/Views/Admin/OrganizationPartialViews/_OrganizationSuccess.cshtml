@@ -1,7 +1,4 @@
-﻿you win!<button id="modalCloseButton" data-dismiss="modal">Close</button></div>
-<script type="text/javascript">
-    $("#modalCloseButton").click(function ()
-    {
-        location.reload();
-    })
-</script>
+﻿@using HabitatForHumanity.ViewModels
+<h2>Successfully managed organization.</h2>
+
+@ToolKitVM.HideModalButtonOnSuccess()

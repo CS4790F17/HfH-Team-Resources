@@ -4,22 +4,11 @@
 
 @{
     ViewBag.Title = "Manage Organizations";
-    var createHtml = "<span class=\"glyphicon glyphicon-plus\" style=\"color:white\" title=\"Activate\"></span>   Add new Organization";
 }
 
 @Html.HiddenFor(x => x.Page)
 @Html.HiddenFor(x => x.statusChoice)
 
-@*<style>
-        .editButton {
-            background: none
-        }
-
-        .createButton{
-            background-color:forestgreen;
-            color:white
-        }
-    </style>*@
 
 <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script src="~/Scripts/jquery-3.2.1.js"></script>
@@ -28,15 +17,13 @@
 
 
 
-@ToolKitVM.Modal("Create Organization", "createModal", "createPartial")
-
+@ToolKitVM.ModalPreventDefault("createOrganizationModal", "Create an Organization", "createOrgPartialDiv", "addOrganizationForm")
 
 
 <div class="container">
     <div class="row">
         <div class="col-xs-7">
-            @ToolKitVM.ModalButton("createButton", "createModal", createHtml, "")
-            @*  <button class="btn btn-success" id="createOrganization" data-target="#adminModal" data-toggle="modal"><span class="glyphicon glyphicon-plus" style=""></span>   Add new Organization</button>*@
+            @ToolKitVM.GenericModalOpenButton("createOrgButton", "createOrganizationModal", "", "Create an Organization", "glyphicon-plus", false)
         </div>
 
 
@@ -77,47 +64,5 @@
 
 
 
-@* glyphicon glyphicon-ok *@
-@* glyphicon glyphicon-ban-circle *@
+@ToolKitVM.ButtonScript("createOrgButton", "AddOrganization", "Admin", "createOrgPartialDiv")
 
-
-
-<script>
-
-    $(".createButton").click(function () {
-        $.ajax(
-            {
-                url: '/Admin/AddOrganization',
-                type: 'GET',
-                success: function (data) {
-                    $("#createPartial").html(data);
-                }
-            });
-    });
-
-
-
-    //https://stackoverflow.com/questions/31053460/how-to-make-a-net-mvc-form-inside-a-modal-using-jquery-with-validation
-    //prevents the modal from automatically redirecting when the submit button is clicked
-    //instead we send our post method our form data to do a validation check server side
-    //and return a marked up view to the modal if it's an invalid form
-    $("#createModal").on('submit', function (e) {
-        e.preventDefault();
-        // console.log("prevented from submitting");
-        var form = $("#addOrganizationForm");
-        $.ajax({
-            url: '/Admin/AddOrganization',
-            type: 'POST',
-            data: form.serialize(),
-            success: function (partialResult) {
-                //  console.log(partialResult);
-                $("#createPartial").html(partialResult);
-            }
-        })
-    });
-
-
-    function refresh() {
-        location.reload();
-    }
-</script>

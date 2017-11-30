@@ -18,6 +18,7 @@ namespace HabitatForHumanity.Models
         [Required]
         public string name { get; set; }
         public int status { get; set; }
+        public string comments { get; set; }
 
         public Organization()
         {
