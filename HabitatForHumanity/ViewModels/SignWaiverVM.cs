@@ -17,30 +17,30 @@ namespace HabitatForHumanity.ViewModels
         [Range(typeof(bool), "true", "true", ErrorMessage = "Must agree to terms and conditions to continue.")]
         [Display(Name = "I have read and agree to the terms above.")]
         public bool signature { get; set; }
-        [Required(ErrorMessage = "Enter Contact's First Name")]
-        [Display(Name = "Contact's First Name*")]
+        [Required(ErrorMessage = "Enter Emergency Contact's First Name")]
+        [Display(Name = "First Name*")]
         public string emergencyFirstName { get; set; }
-        [Required(ErrorMessage = "Enter Contact's Last Name")]
-        [Display(Name = "Contact's Last Name*")]
+        [Required(ErrorMessage = "Enter Emergency Contact's Last Name")]
+        [Display(Name = "Last Name*")]
         public string emergencyLastName { get; set; }
-        [Required(ErrorMessage = "Enter Contact's Relation")]
-        [Display(Name = "Contact's Relation*")]
+        [Required(ErrorMessage = "Enter Emergency Contact's Relation")]
+        [Display(Name = "Relation to you*")]
         public string relation { get; set; }
-        [Required(ErrorMessage = "Enter Contact's Primary Phone")]
-        [Display(Name = "Contact's Primary Phone*")]
+        [Required(ErrorMessage = "Enter Emergency Contact's Primary Phone")]
+        [Display(Name = "Primary Phone*")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
-        [Display(Name = "Contact's Work Phone")]
+        [Display(Name = "Alternate Phone")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
-        [Required(ErrorMessage = "Enter Contact's Street Address")]
-        [Display(Name = "Contact's Street Address*")]
+        [Required(ErrorMessage = "Enter Emergency Contact's Street Address")]
+        [Display(Name = "Street Address*")]
         public string emergencyStreetAddress { get; set; }
-        [Required(ErrorMessage = "Enter Contact's City")]
-        [Display(Name = "Contact's City*")]
+        [Required(ErrorMessage = "Enter Emergency Contact's City")]
+        [Display(Name = "City*")]
         public string emergencyCity { get; set; }
-        [Required(ErrorMessage = "Enter Contact's Zipcode")]
-        [Display(Name = "Contact's Zipcode*")]
+        [Required(ErrorMessage = "Enter Emergency Contact's Zipcode")]
+        [Display(Name = "Zipcode*")]
         [RegularExpression(@"^(^\d{5}$)|(^\d{5}-\d{4}$)$", ErrorMessage = "Please Enter a Valid Zip")]
         public string emergencyZip { get; set; }
     }
