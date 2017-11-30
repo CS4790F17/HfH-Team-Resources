@@ -633,9 +633,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult ManageProjectCategory(CategorySearchModel cm)
         {
             var page = cm.Page ?? 1;
-            int totalCount = 0;
-            var cats = ProjectCategory.GetAllCategoriesByPageSize(page, RecordsPerPage, ref totalCount);
-
+            cm.SearchResults = Repository.GetAllCategoriesByPageSize(page, RecordsPerPage);
             return View(cm);
         }
 

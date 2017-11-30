@@ -8,7 +8,13 @@
 <h2>Manage Categories</h2>
 
 
-
+@foreach(var cat in Model.SearchResults)
+{
+    <div class="row">
+        <div>@cat.categoryType</div>
+    </div>
+   
+}
 
 
 @Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjectCategory", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)

@@ -10,7 +10,7 @@ namespace HabitatForHumanity.ViewModels
     public class CategorySearchModel
     {
         public int? Page { get; set; }
-        public IPagedList<Project> SearchResults { get; set; }
+        public IPagedList<ProjectCategory> SearchResults { get; set; }
 
     }
 }
