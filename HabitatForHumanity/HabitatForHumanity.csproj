@@ -344,7 +344,7 @@
     <Content Include="Views\Admin\ManageProjects.cshtml" />
     <Content Include="Views\Admin\ProjectPartialViews\_ProjectList.cshtml" />
     <Content Include="Views\Admin\ProjectPartialViews\_CreateProject.cshtml" />
-    <Content Include="Views\Admin\ProjectPartialViews\_ProjectCreateSuccess.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_ProjectSuccess.cshtml" />
     <Content Include="Views\Admin\ProjectPartialViews\_EditProject.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_OrganizationList.cshtml" />
     <Content Include="Views\User\_Gauge.cshtml" />

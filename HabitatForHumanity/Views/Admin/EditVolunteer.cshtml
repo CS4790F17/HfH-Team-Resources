@@ -1,11 +1,10 @@
 ﻿@model HabitatForHumanity.ViewModels.UsersVM
 @using HabitatForHumanity.ViewModels;
 
-@ToolKitVM.Modal("Edit Time Card", "editModal", "editPartial")
+@ToolKitVM.ModalPreventDefault("editTimeCardModal", "Edit Time Card", "editPartial", "editTimeCardForm")
 
 @{
     ViewBag.Title = "Edit Volunteer";
-    var editHtml = "<span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span>";
 }
 
 
@@ -122,7 +121,8 @@
                         <div class="col-md-1 text-center"> @string.Format("{0:N2}", hours) </div>
                     </td>
                     <td>
-                        @ToolKitVM.ModalButton("editButton", "editModal", editHtml, item.timeId.ToString())
+                        @*@ToolKitVM.ModalButton("editButton", "editModal", editHtml, item.timeId.ToString())*@
+                        @ToolKitVM.ModalEditButtonGlyph("editButton", "editTimeCardModal", item.timeId.ToString(), "Edit")
                     </td>
                 </tr>
             }
@@ -133,35 +133,6 @@
     @Html.ActionLink("Back to List", "volunteers")
 </div>
 
-<script>
-    //does magic! sets the html of the editing ajax links to by a glyph icon
-    $("document").ready(function () {
-        $(".editLink").html("<span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span >");
-    });
 
-    $(".editButton").click(function () {
-        // console.log('clicked');
-        var id = $(this).attr("dataId");
-        console.log(id);
-        inputData = { 'id': id }
+@ToolKitVM.ButtonScript("editButton", "EditTimeCard", "Admin", "editPartial")
 
-        $.ajax(
-            {
-                url: '/Admin/EditTimeCard',
-                type: 'GET',
-                data: inputData,
-                success: function (response) {
-                    $("#editPartial").html(response);
-                }
-            }
-        );
-
-    })
-
-
-
-
-    function refresh() {
-        location.reload();
-    }
-</script>

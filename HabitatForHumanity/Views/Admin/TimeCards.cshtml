@@ -98,7 +98,7 @@
                  }
                 <div class="col-md-1 text-center"> @string.Format("{0:N2}", hours) </div>
                 @*@ToolKitVM.ModalButton("editButton", "editModal", editHtml, card.timeId.ToString())*@
-                @ToolKitVM.ModalButtonGlyph("editButton", "editTimeCardModal", card.timeId.ToString(), "Edit")
+                @ToolKitVM.ModalEditButtonGlyph("editButton", "editTimeCardModal", card.timeId.ToString(), "Edit")
             </div>
                     }
 

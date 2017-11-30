@@ -558,7 +558,7 @@ namespace HabitatForHumanity.Controllers
             }
             proj.status = 0;
             Repository.AddProject(proj);
-            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+            return PartialView("ProjectPartialViews/_ProjectSuccess");
         }
 
         [HttpPost]
@@ -611,7 +611,7 @@ namespace HabitatForHumanity.Controllers
                 return PartialView("ProjectPartialViews/_EditProject", proj);
             }
             Repository.EditProject(proj);
-            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+            return PartialView("ProjectPartialViews/_ProjectSuccess");
         }
 
         [HttpPost]
