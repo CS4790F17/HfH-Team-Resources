@@ -17,9 +17,8 @@ using HabitatForHumanity.Controllers;
 
 namespace HabitatForHumanity.Controllers
 {
-    //TODO: uncomment before commit
-    //[AdminFilter]
-    //[AuthorizationFilter]
+    [AdminFilter]
+    [AuthorizationFilter]
     public class AdminController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
