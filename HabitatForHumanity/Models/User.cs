@@ -25,15 +25,13 @@ namespace HabitatForHumanity.Models
         [Display(Name = "Last Name*")]
         public string lastName { get; set; }
         [Required]//(ErrorMessage = "Enter Home Phone")]
-        [Display(Name = "Home Phone*")]
+        [Display(Name = "Primary Phone*")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string homePhoneNumber { get; set; }
-        [Required(ErrorMessage = "Enter Work Phone")]
-        [Display(Name = "Work Phone*")]
+        [Display(Name = "Alternate Phone")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string workPhoneNumber { get; set; }
 
-        //[Required, StringLength(40), EmailAddress, DisplayName("Email Address")]
         [Required(ErrorMessage = "Enter Email")]
         [Display(Name = "Email*")]
         [RegularExpression(@"^(([^<>()\[\]\\.,;:\s@']+(\.[^<>()\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Please Enter a Valid Email Address")]
@@ -66,6 +64,9 @@ namespace HabitatForHumanity.Models
         public DateTime waiverSignDate { get; set; }
         //[Required(ErrorMessage = "Enter Emergency First Name")]
         [Display(Name = "Emergency First Name*")]
+
+
+
         public string emergencyFirstName { get; set; }
         //[Required(ErrorMessage = "Enter Emergency Last Name")]
         [Display(Name = "Emergency Last Name*")]
@@ -73,15 +74,12 @@ namespace HabitatForHumanity.Models
         //[Required(ErrorMessage = "Enter Emergency Relation")]
         [Display(Name = "Relation*")]
         public string relation { get; set; }
-
-
-
         //[Required(ErrorMessage = "Enter Emergency Home Phone")]
-        [Display(Name = "Emergency Home Phone*")]
+        [Display(Name = "Emergency Primary Phone*")]
         //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
         //[Required(ErrorMessage = "Enter Emergency Work Phone")]
-        [Display(Name = "Emergency Work Phone*")]
+        [Display(Name = "Emergency Alternate Phone")]
         //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
         //[Required(ErrorMessage = "Enter Emergency Address")]
@@ -106,7 +104,7 @@ namespace HabitatForHumanity.Models
             city = "";
             zip = "";
             password = "";
-            birthDate = DateTime.Now; //the year 0001 is out of range for a datetime object which is the defaul null value
+            birthDate = DateTime.Now; //the year 0001 is out of range for a datetime object which is the default null value
             gender = "";
             isAdmin = 0;
             waiverSignDate = DateTime.Now.AddYears(-2);
