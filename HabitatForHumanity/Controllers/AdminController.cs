@@ -78,7 +78,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
             ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
-            if(rs.errorCode != 0)
+            if (rs.errorCode != 0)
             {
                 ViewBag.status = awwSnapMsg;
                 return View(tsm);
@@ -125,13 +125,13 @@ namespace HabitatForHumanity.Controllers
         #region Get and Build Hours Bar Chart
         public ActionResult GetHoursChartBy(string period)
         {
-            if(period == null)
+            if (period == null)
             {
                 period = "Month";
             }
-         
+
             ReturnStatus chartRS = new ReturnStatus();
-   
+
             if (period.Equals("Year"))
             {
                 chartRS = Repository.GetHoursChartVMByYear();
@@ -139,13 +139,13 @@ namespace HabitatForHumanity.Controllers
             else if (period.Equals("Week"))
             {
                 chartRS = Repository.GetHoursChartVMByWeek();
-            }        
+            }
             else
             {
                 // monthly
                 chartRS = Repository.GetHoursChartVMByMonth();
             }
-            if(chartRS.errorCode != ReturnStatus.ALL_CLEAR)
+            if (chartRS.errorCode != ReturnStatus.ALL_CLEAR)
             {
                 return null;
             }
@@ -233,7 +233,7 @@ namespace HabitatForHumanity.Controllers
         #region Get and Build Demographics Pie
         public ActionResult GetHoursDemogPieBy(string gender)
         {
-           
+
             /* gender options from javascript radios       
             All, M, F, O */
             ReturnStatus st = new ReturnStatus();
@@ -336,7 +336,7 @@ namespace HabitatForHumanity.Controllers
                 timeSheets = (List<TimeSheet>)getTimeSheets.data;
                 List<TimeCardVM> test = new List<TimeCardVM>();
 
-                
+
                 foreach (TimeSheet t in timeSheets)
                 {
                     TimeCardVM temp = new TimeCardVM();
@@ -401,7 +401,8 @@ namespace HabitatForHumanity.Controllers
 
                     user.emailAddress = usersVM.email;
 
-                    if (usersVM.isAdmin == true) {
+                    if (usersVM.isAdmin == true)
+                    {
                         user.isAdmin = 1;
                     }
                     else
@@ -423,7 +424,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         public ActionResult GetBadPunches()
-        {   
+        {
             ReturnStatus rs = Repository.GetNumBadPunches();
             int numBadPunches = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
             return PartialView("_BadPunches", numBadPunches);
@@ -476,11 +477,16 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public JsonResult EditOrganization(Organization org)
+        public ActionResult EditOrganization(Organization org)
         {
-            //save org
-            Repository.EditOrganization(org);
-            return Json(new { name = org.name, status = org.status, id = org.Id }, JsonRequestBehavior.AllowGet);
+            if (ModelState.IsValid)
+            {
+                //save org
+                Repository.EditOrganization(org);
+                return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+            }
+            return PartialView("OrganizationPartialViews/_EditOrganization", org);
+
         }
 
         [HttpPost]
@@ -502,20 +508,20 @@ namespace HabitatForHumanity.Controllers
         [HttpGet]
         public ActionResult AddOrganization()
         {
-            return PartialView("OrganizationPartialViews/_AddOrganization");
+            Organization org = new Organization();
+            return PartialView("OrganizationPartialViews/_AddOrganization", org);
         }
 
         [HttpPost]
-        public ActionResult AddOrganization(String name)
+        public ActionResult AddOrganization([Bind(Include="name")]Organization org)
         {
-            Organization org = new Organization()
+            if (ModelState.IsValid)
             {
-                name = name,
-                status = 1 //active by default
-            };
-
-            Repository.AddOrganization(org);
-            return RedirectToAction("ViewOrganizations");
+                org.status = 0; //inactive by default
+                Repository.AddOrganization(org);
+                return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+            }
+            return PartialView("OrganizationPartialViews/_AddOrganization", org);
         }
         #endregion
 

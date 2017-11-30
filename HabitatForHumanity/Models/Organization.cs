@@ -15,6 +15,7 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string name { get; set; }
         public int status { get; set; }
 
