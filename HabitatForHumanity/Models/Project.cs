@@ -14,7 +14,8 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
-        [Display(Name = "Project Name")]
+        [Required(ErrorMessage = "Enter Project Name")]
+        [Display(Name = "Project Name*")]
         public string name { get; set; }
         [Display(Name = "Description")]
         public string description { get; set; }
