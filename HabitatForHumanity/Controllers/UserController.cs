@@ -28,7 +28,7 @@ namespace HabitatForHumanity.Controllers
     public class UserController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
-        private const string awwSnapMsg = "We're experiencing technical difficulties, try again later";
+        private const string awwSnapMsg = "Sorry, We're experiencing technical difficulties, please try again later";
 
         #region Index
         //[AdminFilter]
