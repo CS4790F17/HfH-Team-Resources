@@ -4,24 +4,19 @@
 
 @{
     ViewBag.Title = "Time Sheets";
-    var editHtml = "<span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span>";
 }
 
 @Html.HiddenFor(x => x.Page)
 
-<style>
-    .editButton {
-        background: none;
-    }
-</style>
 
 <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script src="~/Scripts/jquery-3.2.1.js"></script>
 <script src="~/OurScripts/timeCards.js"></script>
 
-@ToolKitVM.Modal("Edit Time Card", "editModal", "editPartial")
+@*@ToolKitVM.Modal("Edit Time Card", "editModal", "editPartial")*@
+@ToolKitVM.ModalPreventDefault("editTimeCardModal", "Edit Time Card", "editPartialDiv", "editTimeCardForm")
 
-<div id="divEmp"></div>   @*what is this for ?*@
+
 
 @using (Html.BeginForm("TimeCards", "Admin", FormMethod.Get))
 {
@@ -102,7 +97,8 @@
                     double hours = span.Hours + span.Minutes / 60.0;
                  }
                 <div class="col-md-1 text-center"> @string.Format("{0:N2}", hours) </div>
-                @ToolKitVM.ModalButton("editButton", "editModal", editHtml, card.timeId.ToString())
+                @*@ToolKitVM.ModalButton("editButton", "editModal", editHtml, card.timeId.ToString())*@
+                @ToolKitVM.ModalButtonGlyph("editButton", "editTimeCardModal", card.timeId.ToString(), "Edit")
             </div>
                     }
 
@@ -125,37 +121,7 @@
         <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
         <script src="~/OurScripts/timeCards.js"></script>
     }*@
-<script>
-    //does magic! sets the html of the editing ajax links to by a glyph icon
-    $("document").ready(function () {
-        $(".editLink").html("<span class=\"glyphicon glyphicon-pencil\" aria- hidden=\"true\" title=\"Edit\"></span >");
-    });
 
-    $(".editButton").click(function () {
-        // console.log('clicked');
-        var id = $(this).attr("dataId");
-        console.log(id);
-        inputData = { 'id': id }
-
-        $.ajax(
-            {
-                url: '/Admin/EditTimeCard',
-                type: 'GET',
-                data: inputData,
-                success: function (response) {
-                    $("#editPartial").html(response);
-                }
-            }
-        );
-
-    })
-
-   
-
-
-    function refresh() {
-        location.reload();
-    }
-</script>
+@ToolKitVM.ButtonScript("editButton", "EditTimeCard", "Admin", "editPartialDiv")
 
 

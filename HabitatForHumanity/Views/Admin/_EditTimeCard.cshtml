@@ -1,6 +1,6 @@
 ﻿@model HabitatForHumanity.ViewModels.TimeCardVM
 
-@using (Ajax.BeginForm("EditTimeCard", new AjaxOptions { HttpMethod = "POST", OnSuccess = "refresh()" }))
+@using (Html.BeginForm("EditTimeCard", "Admin", FormMethod.Post, new { id = "editTimeCardForm" }))
 {
     @Html.AntiForgeryToken()
 
@@ -35,10 +35,6 @@
         </div>
     </div>
     
-
-
-    <input type="submit" value="Save" class="btn btn-default" />
-
 }
 
 

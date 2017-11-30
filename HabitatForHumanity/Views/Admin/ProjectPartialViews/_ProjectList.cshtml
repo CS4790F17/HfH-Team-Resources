@@ -7,7 +7,7 @@
 
 
 @Html.HiddenFor(x => x.PageNumber)
-@ToolKitVM.Modal("Edit Project", "editProjectModal", "editPartialTarget")
+@ToolKitVM.ModalPreventDefault("editProjectModal", "Edit Project", "editPartialDiv", "editProjectForm")
 
 
 <div id="" class="container" style="margin-top:25px">
@@ -59,10 +59,8 @@
 
 
 
-  
-                    <button dataId=@project.Id class="editModalButton btn" data-toggle="modal" data-target="#editProjectModal" style="float:right">
-                        <span class="glyphicon glyphicon-edit" aria-hidden="true" title="Edit" style="margin-right:5px"></span>Edit
-                    </button>
+                    @ToolKitVM.ModalButtonGlyph("editProjectButton", "editProjectModal", project.Id.ToString(), "Edit")
+ 
                 </div>
             </div>
         }
@@ -71,64 +69,7 @@
 
 </div>
 
-@*Same page using tables instead of divs for data layout. DO NOT REMOVE*@
-@*<div id="projectList" class="" style="min-width:500px">
-        <table class="table table-striped" style="width:auto;">
-            <!--Title bar-->
-            <thead>
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).name)</th>
-                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).description)</th>
-                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).beginDate)</th>
-                    <th>@Html.DisplayNameFor(model => model.ElementAt(0).status)</th>
-                </tr>
-            </thead>
-            <!--End of Title bar-->
-            <!--List of Projects-->
-            <tbody>
-                @foreach (var project in Model)
-                        {
-                    <tr>
-                        <td>@project.name</td>
-                        <td>@project.description</td>
-                        <td>@project.beginDate.ToString("dd-MM-yyyy")</td>
-
-
-
-                        @switch (project.status)
-                        {
-                            case 0:
-                                    <!--Activate-->
-                                <td>
-                                    <button type="button" class="changeStatus btn greenbtn" projectId="@project.Id" title="Activate">Enable</button>
-                                </td>
-                                break;
-                            case 1:
-                                    <!--Deactivate-->
-                                <td>
-                                    <button class="changeStatus btn redbtn" projectId="@project.Id" title="Deactivate">Disable</button>
-                                </td>
-                                break;
-                        }
-
-
-                        <td>
-                            <button dataId=@project.Id class="editModalButton btn" data-toggle="modal" data-target="#editProjectModal">
-                                <span class="glyphicon glyphicon-edit" aria-hidden="true" title="Edit" style="margin-right:5px"></span>Edit
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <!--End of List of Projects-->
-    </div>*@
-
-@*@Html.PagedListPager(Model, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)*@
-
-
-
-
+@ToolKitVM.ButtonScript("editProjectButton", "EditProject", "Admin", "editPartialDiv")
 
 <script type="text/javascript">
 
@@ -191,45 +132,5 @@
             }
         })
     });
-
-    //when the edit button is clicked opens a modal and fills out a partial view
-    //with relevant model data
-    $(".editModalButton").click(function () {
-        var id = $(this).attr("dataId");
-        var data = { "id": id }
-        // console.log(data);
-        $.ajax(
-            {
-                url: "/Admin/EditProject",
-                type: "GET",
-                data: data,
-                success: function (response) {
-                    console.log(response);
-                    $("#editPartialTarget").html(response);
-                }
-            });
-    })
-
-
-    //https://stackoverflow.com/questions/31053460/how-to-make-a-net-mvc-form-inside-a-modal-using-jquery-with-validation
-    //prevents the modal from automatically redirecting when the submit button is clicked
-    //instead we send our post method our form data to do a validation check server side
-    //and return a marked up view to the modal if it's an invalid form
-    $("#editProjectModal").on('submit', function (e) {
-        e.preventDefault();
-        //console.log("prevented from submitting");
-        var form = $("#editProjectForm");
-        $.ajax({
-            url: '/Admin/EditProject',
-            type: 'POST',
-            data: form.serialize(),
-            success: function (partialResult) {
-                //  console.log(partialResult);
-                $("#editPartialTarget").html(partialResult);
-            }
-        })
-    });
-
-
 
 </script>

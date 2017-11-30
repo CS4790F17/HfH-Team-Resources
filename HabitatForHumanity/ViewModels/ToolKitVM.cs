@@ -168,7 +168,7 @@ namespace HabitatForHumanity.ViewModels
         /// <param name="dataId">The id of the object this button should edit.</param>
         /// <param name="optionalText">Optional text to render beside the glyphicon.</param>
         /// <returns>An html string of the button.</returns>
-        public static IHtmlString ModalEditButtonGlyph(string buttonClass, string targetModal, string dataId, string optionalText)
+        public static IHtmlString ModalButtonGlyph(string buttonClass, string targetModal, string dataId, string optionalText)
         {
             string glyph = "";
 
@@ -207,7 +207,7 @@ namespace HabitatForHumanity.ViewModels
 
             if (textFirst)
             {
-                glyphSpan = "<span class='glyphicon {0}' style='margin-left:5px></span>";
+                glyphSpan = "<span class='glyphicon {0}' style='margin-left:5px'></span>";
                 glyphSpan = String.Format(glyphSpan, glyphIcon);
                 button = String.Format(button, optionalText, glyphSpan, buttonClass, targetModal);
             }
