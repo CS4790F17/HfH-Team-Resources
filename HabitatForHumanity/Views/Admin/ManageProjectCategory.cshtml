@@ -1,0 +1,14 @@
+﻿@model HabitatForHumanity.ViewModels.CategorySearchModel
+@using PagedList.Mvc;
+@using HabitatForHumanity.ViewModels;
+@{
+    ViewBag.Title = "ManageProjectCategory";
+}
+
+<h2>Manage Categories</h2>
+
+
+
+
+
+@Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjectCategory", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)

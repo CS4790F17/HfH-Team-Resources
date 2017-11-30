@@ -17,8 +17,8 @@ using HabitatForHumanity.Controllers;
 
 namespace HabitatForHumanity.Controllers
 {
-    [AdminFilter]
-    [AuthorizationFilter]
+    // [AdminFilter]
+    // [AuthorizationFilter]
     public class AdminController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
@@ -517,7 +517,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddOrganization([Bind(Include="name")]Organization org)
+        public ActionResult AddOrganization([Bind(Include = "name")]Organization org)
         {
             if (ModelState.IsValid)
             {
@@ -625,7 +625,19 @@ namespace HabitatForHumanity.Controllers
             // return PartialView("ProjectPartialViews/_ProjectList", Repository.GetProjectPageWithFilter(Page, statusChoice, queryString));
         }
 
+        #endregion
 
+        #region Manage Project Categories
+
+
+        public ActionResult ManageProjectCategory(CategorySearchModel cm)
+        {
+            var page = cm.Page ?? 1;
+            int totalCount = 0;
+            var cats = ProjectCategory.GetAllCategoriesByPageSize(page, RecordsPerPage, ref totalCount);
+
+            return View(cm);
+        }
 
 
         #endregion
