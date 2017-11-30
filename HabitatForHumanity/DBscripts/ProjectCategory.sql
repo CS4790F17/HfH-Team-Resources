@@ -8,6 +8,6 @@ GO
 
 CREATE TABLE [dbo].[ProjectCategory]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [categoryType] VARCHAR(MAX) NOT NULL
 )
