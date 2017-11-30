@@ -28,7 +28,7 @@ namespace HabitatForHumanity.Models
         [Display(Name = "Primary Phone*")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string homePhoneNumber { get; set; }
-        [Display(Name = "Alternate Phone")]
+        [Display(Name = "Alternate Phone*")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string workPhoneNumber { get; set; }
 
