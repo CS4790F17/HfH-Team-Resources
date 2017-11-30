@@ -26,12 +26,11 @@ namespace HabitatForHumanity.ViewModels
         [Required(ErrorMessage = "Enter Contact's Relation")]
         [Display(Name = "Contact's Relation*")]
         public string relation { get; set; }
-        [Required(ErrorMessage = "Enter Contact's Home Phone")]
-        [Display(Name = "Contact's Home Phone*")]
+        [Required(ErrorMessage = "Enter Contact's Primary Phone")]
+        [Display(Name = "Contact's Primary Phone*")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
-        [Required(ErrorMessage = "Enter Contact's Work Phone")]
-        [Display(Name = "Contact's Work Phone*")]
+        [Display(Name = "Contact's Work Phone")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
         [Required(ErrorMessage = "Enter Contact's Street Address")]
