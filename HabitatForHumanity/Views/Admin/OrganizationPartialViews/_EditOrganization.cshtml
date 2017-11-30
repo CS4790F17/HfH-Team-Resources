@@ -9,7 +9,7 @@
                 @Html.HiddenFor(x => x.status)
                 <div class="col-xs-1 col-xs-offset-1">@Html.DisplayNameFor(x => x.name):</div>
                 <div class="col-xs-2">@Html.EditorFor(x => x.name)</div>
-                @Html.ValidationMessageFor(x => x.name)
+                <div class="col-xs-1">@Html.ValidationMessageFor(x => x.name)</div>
             </div>
         </div>
     </div>
