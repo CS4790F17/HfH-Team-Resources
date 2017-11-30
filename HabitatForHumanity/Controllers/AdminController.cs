@@ -96,6 +96,7 @@ namespace HabitatForHumanity.Controllers
             if (rs.errorCode != ReturnStatus.ALL_CLEAR)
             {
                 ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                //TODO: change this to return some sort of error partial or the modal will blow up
                 return View();
             }
 
@@ -108,7 +109,7 @@ namespace HabitatForHumanity.Controllers
             TimeSpan span = card.outTime.Subtract(card.inTime);
             if (span.Hours > 24 || span.Minutes < 0)
             {
-                // this doesn't work
+                // this doesn't work -- hah, does now -blake
                 ViewBag.status = "Time can't be more than 24 hours or less than zero.";
                 return PartialView("_EditTimeCard", card);
             }
@@ -118,7 +119,10 @@ namespace HabitatForHumanity.Controllers
                 ViewBag.status = "Failed to update time card, please try again later.";
                 return PartialView("_EditTimeCard", card);
             }
-            return RedirectToAction("Timecards");
+            //return RedirectToAction("Timecards");
+            //return succes partial view instead of redirect that way the redirect doesn't populate the modal
+            //also gives the user some feedback
+            return PartialView("TimeCardPartialViews/_TimeCardSuccess");
         }
         #endregion
 
@@ -489,11 +493,16 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public JsonResult EditOrganization(Organization org)
+        public ActionResult EditOrganization(Organization org)
         {
-            //save org
-            Repository.EditOrganization(org);
-            return Json(new { name = org.name, status = org.status, id = org.Id }, JsonRequestBehavior.AllowGet);
+            if (ModelState.IsValid)
+            {
+                //save org
+                Repository.EditOrganization(org);
+                return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+            }
+            return PartialView("OrganizationPartialViews/_EditOrganization", org);
+
         }
 
         [HttpPost]
@@ -515,20 +524,20 @@ namespace HabitatForHumanity.Controllers
         [HttpGet]
         public ActionResult AddOrganization()
         {
-            return PartialView("OrganizationPartialViews/_AddOrganization");
+            Organization org = new Organization();
+            return PartialView("OrganizationPartialViews/_AddOrganization", org);
         }
 
         [HttpPost]
-        public ActionResult AddOrganization(String name)
+        public ActionResult AddOrganization([Bind(Include="name")]Organization org)
         {
-            Organization org = new Organization()
+            if (ModelState.IsValid)
             {
-                name = name,
-                status = 1 //active by default
-            };
-
-            Repository.AddOrganization(org);
-            return RedirectToAction("ViewOrganizations");
+                org.status = 0; //inactive by default
+                Repository.AddOrganization(org);
+                return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+            }
+            return PartialView("OrganizationPartialViews/_AddOrganization", org);
         }
         #endregion
 
@@ -560,7 +569,7 @@ namespace HabitatForHumanity.Controllers
             }
             proj.status = 0;
             Repository.AddProject(proj);
-            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+            return PartialView("ProjectPartialViews/_ProjectSuccess");
         }
 
         [HttpPost]
@@ -613,7 +622,7 @@ namespace HabitatForHumanity.Controllers
                 return PartialView("ProjectPartialViews/_EditProject", proj);
             }
             Repository.EditProject(proj);
-            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+            return PartialView("ProjectPartialViews/_ProjectSuccess");
         }
 
         [HttpPost]

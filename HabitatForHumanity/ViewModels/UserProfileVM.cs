@@ -23,12 +23,11 @@ namespace HabitatForHumanity.ViewModels
         [Required(ErrorMessage = "Enter Last Name")]
         [Display(Name = "Last Name")]
         public string lastName { get; set; }
-        [Required(ErrorMessage = "Enter Home Phone")]
-        [Display(Name = "Home Phone")]
+        [Required(ErrorMessage = "Enter Primary Phone")]
+        [Display(Name = "Primary Phone")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string homePhone { get; set; }
-        [Required(ErrorMessage = "Enter Work Phone")]
-        [Display(Name = "Work Phone")]
+        [Display(Name = "Alternate Phone")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string workPhone { get; set; }
         [Required(ErrorMessage = "Enter Street Address")]

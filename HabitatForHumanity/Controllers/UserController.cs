@@ -10,14 +10,25 @@ using HabitatForHumanity.Models;
 using HabitatForHumanity.ViewModels;
 using System.Web.Helpers;
 using System.Net.Mail;
+using DotNet.Highcharts;
+using DotNet.Highcharts.Options;
+using System.Drawing;
+using DotNet.Highcharts.Enums;
+using DotNet.Highcharts.Helpers;
 
+using System.Globalization;
+
+
+
+
+using Point = DotNet.Highcharts.Options.Point;
 
 namespace HabitatForHumanity.Controllers
 {
     public class UserController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
-        private const string awwSnapMsg = "We're experiencing technical difficulties, try again later";
+        private const string awwSnapMsg = "Sorry, We're experiencing technical difficulties, please try again later";
 
         #region Index
         //[AdminFilter]
@@ -201,7 +212,14 @@ namespace HabitatForHumanity.Controllers
                     user.lastName = volunteerSignupVM.lastName;
                     user.password = volunteerSignupVM.password;
                     user.streetAddress = volunteerSignupVM.streetAddress;
-                    user.workPhoneNumber = volunteerSignupVM.workPhoneNumber;
+                    if (volunteerSignupVM.workPhoneNumber != null) //not sure this is the best solution
+                    {
+                        user.workPhoneNumber = volunteerSignupVM.workPhoneNumber;
+                    }
+                    else
+                    {
+                        user.workPhoneNumber = volunteerSignupVM.homePhoneNumber;
+                    }
                     user.zip = volunteerSignupVM.zip;
                     user.isAdmin = 0;
                     user.waiverSignDate = DateTime.Now.AddYears(-2);
@@ -228,8 +246,15 @@ namespace HabitatForHumanity.Controllers
                     WebMail.From = "hfhdwvolunteer@gmail.com";
                     //Send email  
                     string body = "New user created at email: " + user.emailAddress;
-                    WebMail.Send(to: "trevororgill@weber.edu", subject: "New Volunteer", body: body, isBodyHtml: false);
-
+                    try
+                    {
+                        WebMail.Send(to: "trevororgill@weber.edu", subject: "New Volunteer", body: body, isBodyHtml: false);
+                    }
+                    catch
+                    {
+                        //not sure what to do here
+                        //ViewBag.status = "Email not sent.";
+                    }
                     return RedirectToAction("SignWaiver", "User");
                 }
                 else

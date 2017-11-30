@@ -4,12 +4,6 @@
     ViewBag.Title = "VolunteerPortal";
     ViewBag.timeDelay = 5000;
 }
-@{
-    if (Session["Username"] != null)
-    {
-        @*<h1>@Session["Username"]</h1>*@
-    }
-}
 
   <!-- Modal -->
 <div class="modal fade" id="myModal" role="dialog">
@@ -33,22 +27,35 @@
     </div>
 </div>
 
-<h2>Volunteer Portal</h2>
-<h3>Welcome @Model.fullName!</h3>
-<h3>You have logged @Model.cumulativeHours hours to date.</h3>
+<div class="row">
+    <div class="col-md-4 col-md-offset-4 text-center well">
+        <h3>@Model.fullName</h3>
+        <h4>- Volunteer Portal -</h4>
+        
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">@Html.Partial("_Gauge", @Model.cumulativeHours)</div>
+    @{
+        if (Model.isPunchedIn == false)
+        {
+            ViewBag.timeDelay = 6000;
+            <div class="col-md-6">@Html.Action("_PunchIn", new { id = Model.userId })</div>
+        }
+        else
+        {
+            ViewBag.timeDelay = 3000;
+            @*<div>@{Html.RenderPartial("_PunchOut", Model.punchOutVM);}</div>*@
+            <div class="col-md-6">@Html.Action("_PunchOut", new { id = Model.userId })</div>
+        }
+    }
+</div>
 
-@{
-    if (Model.isPunchedIn == false)
-    {
-        ViewBag.timeDelay = 6000; 
-        <div>@Html.Action("_PunchIn", new { id = Model.userId })</div>
-    }
-    else
-    {
-        ViewBag.timeDelay = 3000; 
-        @*<div>@{Html.RenderPartial("_PunchOut", Model.punchOutVM);}</div>*@
-        <div>@Html.Action("_PunchOut", new { id = Model.userId })</div>
-    }
+
+
+@section Scripts {
+    <script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/OurScripts/user.js"></script>
 }
 
 @*<script>
@@ -73,3 +80,4 @@
     }, 1000);
 
 </script>*@
+
