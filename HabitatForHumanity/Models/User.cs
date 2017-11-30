@@ -79,7 +79,7 @@ namespace HabitatForHumanity.Models
         //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
         //[Required(ErrorMessage = "Enter Emergency Work Phone")]
-        [Display(Name = "Emergency Work Phone")]
+        [Display(Name = "Emergency Alternate Phone")]
         //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
         //[Required(ErrorMessage = "Enter Emergency Address")]
