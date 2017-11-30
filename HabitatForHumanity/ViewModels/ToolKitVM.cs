@@ -230,7 +230,7 @@ namespace HabitatForHumanity.ViewModels
         /// <param name="controller">The controller where the action is located.</param>
         /// <param name="buttonClass">An extra defined class given to the button for jquery targetting.</param>
         /// <param name="partialTarget">The partial div in the modal where the returned html is supposed to go.</param>
-        public static IHtmlString ButtonScript(string buttonClass, string action, string controller, string partialTarget)
+        public static IHtmlString GetPartialViewButtonScript(string buttonClass, string action, string controller, string partialTarget)
         {
 
             string url = String.Format("'/{0}/{1}'", controller, action);
