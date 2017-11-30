@@ -145,19 +145,19 @@ namespace HabitatForHumanity.ViewModels
 
         }
 
-        /// <summary>
-        /// Creates a generic edit button. The button only contains the text 'Edit'.
-        /// </summary>
-        /// <param name="buttonClass">An extra defined class given to the button for jquery targetting.</param>
-        /// <param name="targetModal">The modal that should open when the button is clicked.</param>
-        /// <param name="dataId">The id of the object this button should edit.</param>
-        /// <returns>An html string of the button.</returns>
-        public static IHtmlString ModalEditButton(string buttonClass, string targetModal, string dataId)
-        {
-            string editButton = "<button type='button' dataId='{2}' class='btn btn-primary {0}' data-toggle='modal' data-target='#{1}'>Edit</button>";
-            editButton = String.Format(editButton, buttonClass, targetModal, dataId);
-            return new HtmlString(editButton);
-        }
+        ///// <summary>
+        ///// Creates a generic edit button. The button only contains the text 'Edit'.
+        ///// </summary>
+        ///// <param name="buttonClass">An extra defined class given to the button for jquery targetting.</param>
+        ///// <param name="targetModal">The modal that should open when the button is clicked.</param>
+        ///// <param name="dataId">The id of the object this button should edit.</param>
+        ///// <returns>An html string of the button.</returns>
+        //public static IHtmlString ModalEditButton(string buttonClass, string targetModal, string dataId)
+        //{
+        //    string editButton = "<button type='button' dataId='{2}' class='btn btn-primary {0}' data-toggle='modal' data-target='#{1}'>Edit</button>";
+        //    editButton = String.Format(editButton, buttonClass, targetModal, dataId);
+        //    return new HtmlString(editButton);
+        //}
 
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace HabitatForHumanity.ViewModels
         /// <param name="dataId">The id of the object this button should edit.</param>
         /// <param name="optionalText">Optional text to render beside the glyphicon.</param>
         /// <returns>An html string of the button.</returns>
-        public static IHtmlString ModalButtonGlyph(string buttonClass, string targetModal, string dataId, string optionalText)
+        public static IHtmlString ModalEditButtonGlyph(string buttonClass, string targetModal, string dataId, string optionalText)
         {
             string glyph = "";
 
