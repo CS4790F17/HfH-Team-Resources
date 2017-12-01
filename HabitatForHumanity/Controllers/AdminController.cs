@@ -78,16 +78,22 @@ namespace HabitatForHumanity.Controllers
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
             ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
-            if (rs.errorCode != 0)
+            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                ViewBag.status = awwSnapMsg;
+                var pageIndex = tsm.Page ?? 1;
+                List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
+                tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
+                tsm.Page = tsm.SearchResults.PageNumber;
                 return View(tsm);
             }
-            var pageIndex = tsm.Page ?? 1;
-            List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
-            tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
-            tsm.Page = tsm.SearchResults.PageNumber;
+            //else if(rs.errorCode == ReturnStatus.ERROR_WHILE_ACCESSING_DATA)
+            //{
+            //    ViewBag.status = "debug, trouble in data layer -  ";
+            //    return View(tsm);
+            //}
+            ViewBag.status = "No results for that time period";// awwSnapMsg;
             return View(tsm);
+
         }
 
         public ActionResult EditTimeCard(int id)
