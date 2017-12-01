@@ -91,7 +91,7 @@ namespace HabitatForHumanity.Controllers
                 //TODO: add handling to ensure timesheet was properly updated
                 Repository.UpdateTimeSheet(timeSheet);
 
-                return RedirectToAction("VolunteerPortal", "User");
+                return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1});
             }
             return View(punchOutVM);
         }
