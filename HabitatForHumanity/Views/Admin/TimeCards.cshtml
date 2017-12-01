@@ -15,7 +15,7 @@
 
 @*@ToolKitVM.Modal("Edit Time Card", "editModal", "editPartial")*@
 @ToolKitVM.ModalPreventDefault("editTimeCardModal", "Edit Time Card", "editPartialDiv", "editTimeCardForm")
-
+@ToolKitVM.ModalPreventDefault("deleteTimeCardModal", "Delete Time Card", "deletePartialDiv", "deleteTimeCardForm")
 
 
 @using (Html.BeginForm("TimeCards", "Admin", FormMethod.Get))
@@ -99,6 +99,7 @@
                 <div class="col-md-1 text-center"> @string.Format("{0:N2}", hours) </div>
                 @*@ToolKitVM.ModalButton("editButton", "editModal", editHtml, card.timeId.ToString())*@
                 @ToolKitVM.ModalEditButtonGlyph("editButton", "editTimeCardModal", card.timeId.ToString(), "Edit")
+                @ToolKitVM.ModalEditButtonGlyph("deleteButton", "deleteTimeCardModal", card.timeId.ToString(), "Delete")
             </div>
                     }
 
@@ -123,5 +124,6 @@
     }*@
 
 @ToolKitVM.GetPartialViewButtonScript("editButton", "EditTimeCard", "Admin", "editPartialDiv")
+@ToolKitVM.GetPartialViewButtonScript("deleteButton", "DeleteTimeCard", "Admin", "deletePartialDiv")
 
 

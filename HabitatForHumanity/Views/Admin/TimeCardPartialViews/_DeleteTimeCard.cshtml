@@ -1,0 +1,38 @@
+﻿@model HabitatForHumanity.ViewModels.TimeCardVM
+
+@using (Html.BeginForm("DeleteTimeCard", "Admin", FormMethod.Post, new { id = "deleteTimeCardForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(x => x.timeId)
+    @Html.HiddenFor(x => x.userId)
+    @Html.HiddenFor(x => x.projId)
+    @Html.HiddenFor(x => x.orgId)
+    @Html.HiddenFor(x => x.orgName)
+    @Html.HiddenFor(x => x.projName)
+    @Html.HiddenFor(x => x.volName)
+    <div>
+        <p>@Model.volName  -  @Model.orgName  -  @Model.projName</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">
+            Time in:
+        </div>
+        <div class="col-md-3">
+            @Html.EditorFor(model => model.inTime, new { htmlAttributes = new { @type = "datetime", @Value = Model.inTime.ToString("MM/dd/yyyy h:mm tt"), @class = "form-control", @style = "width:auto" , disabled="disabled"} })
+            @Html.ValidationMessageFor(x => x.inTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">
+            Time out:
+        </div>
+        <div class="col-md-3">
+            @Html.EditorFor(model => model.outTime, new { htmlAttributes = new { @type = "datetime", @Value = Model.outTime.ToString("MM/dd/yyyy h:mm tt"), @class = "form-control", @style = "width:auto", disabled="disabled" } })
+            @Html.ValidationMessageFor(x => x.outTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+}

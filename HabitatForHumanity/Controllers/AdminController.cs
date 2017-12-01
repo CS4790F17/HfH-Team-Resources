@@ -14,6 +14,7 @@ using static HabitatForHumanity.Models.User;
 using PagedList;
 using System.Data.Entity;
 using HabitatForHumanity.Controllers;
+using System.Net;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -445,6 +446,47 @@ namespace HabitatForHumanity.Controllers
             return View(usersVM);
         }
 
+        #region Delete Timecard
+        // GET: TimeSheet/Delete/5
+        [AdminFilter]
+        [AuthorizationFilter]
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            //TimeSheet timeSheet = db.timeSheets.Find(id);
+            //if (timeSheet == null)
+            //{
+            //    return HttpNotFound();
+            //}
+            //return View(timeSheet);
+
+            ReturnStatus rs = Repository.GetTimeCardVM((int)id);
+            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                ViewBag.status = "Sorry, something went wrong while retrieving information.";
+                //TODO: change this to return some sort of error partial or the modal will blow up
+                return View();
+            }
+
+            return PartialView("_DeleteTimeCard", (TimeCardVM)rs.data);
+        }
+
+        // POST: TimeSheet/Delete/5
+        [AdminFilter]
+        [AuthorizationFilter]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            TimeSheet timeSheet = db.timeSheets.Find(id);
+            db.timeSheets.Remove(timeSheet);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        #endregion
         public ActionResult GetBadPunches()
         {
             ReturnStatus rs = Repository.GetNumBadPunches();

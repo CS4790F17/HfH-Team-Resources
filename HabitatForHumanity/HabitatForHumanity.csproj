@@ -350,6 +350,7 @@
     <Content Include="Views\User\_Gauge.cshtml" />
     <Content Include="Views\Admin\OrganizationPartialViews\_OrganizationSuccess.cshtml" />
     <Content Include="Views\Admin\TimeCardPartialViews\_TimeCardSuccess.cshtml" />
+    <Content Include="Views\Admin\TimeCardPartialViews\_DeleteTimeCard.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
