@@ -11,6 +11,8 @@ using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Controllers
 {
+    [AdminFilter]
+    [AuthorizationFilter]
     public class OrganizationController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();

@@ -16,28 +16,30 @@ namespace HabitatForHumanity.Controllers
         private VolunteerDbContext db = new VolunteerDbContext();
 
         // GET: TimeSheet
-        public ActionResult Index()
-        {
-            return View(db.timeSheets.ToList());
-        }
+        //public ActionResult Index()
+        //{
+        //    return View(db.timeSheets.ToList());
+        //}
 
         // GET: TimeSheet/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            TimeSheet timeSheet = db.timeSheets.Find(id);
-            if (timeSheet == null)
-            {
-                return HttpNotFound();
-            }
-            return View(timeSheet);
-        }
+        //public ActionResult Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    TimeSheet timeSheet = db.timeSheets.Find(id);
+        //    if (timeSheet == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(timeSheet);
+        //}
 
 
         #region PunchIn
+
+        [AuthorizationFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         // public ActionResult PunchIn([Bind(Include = "userId,projectId,orgId")] PunchInVM punchInVM)
@@ -59,15 +61,18 @@ namespace HabitatForHumanity.Controllers
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
                 }
-                return RedirectToAction("VolunteerPortal", "User");
+            //    return RedirectToAction("VolunteerPortal", "User");
             }
 
-            return RedirectToAction("VolunteerPortal", "User");
+            
+            return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1 });
 
         }
         #endregion
 
         #region PunchOut
+
+        [AuthorizationFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
         //public ActionResult PunchOut([Bind(Include = "Id,user_Id,project_Id,org_id,clockInTime,clockOutTime")] TimeSheet timeSheet)
@@ -86,7 +91,7 @@ namespace HabitatForHumanity.Controllers
                 //TODO: add handling to ensure timesheet was properly updated
                 Repository.UpdateTimeSheet(timeSheet);
 
-                return RedirectToAction("VolunteerPortal", "User");
+                return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1});
             }
             return View(punchOutVM);
         }
@@ -94,62 +99,64 @@ namespace HabitatForHumanity.Controllers
 
         #region Create
         // GET: TimeSheet/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
 
 
-        // POST: TimeSheet/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,user_Id,project_Id,clockInTime,clockOutTime")] TimeSheet timeSheet)
-        {
-            if (ModelState.IsValid)
-            {
-                db.timeSheets.Add(timeSheet);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+        //// POST: TimeSheet/Create
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Create([Bind(Include = "Id,user_Id,project_Id,clockInTime,clockOutTime")] TimeSheet timeSheet)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.timeSheets.Add(timeSheet);
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
 
-            return View(timeSheet);
-        }
+        //    return View(timeSheet);
+        //}
         #endregion
 
         #region Edit
         // GET: TimeSheet/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            TimeSheet timeSheet = db.timeSheets.Find(id);
-            if (timeSheet == null)
-            {
-                return HttpNotFound();
-            }
-            return View(timeSheet);
-        }
+        //public ActionResult Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    TimeSheet timeSheet = db.timeSheets.Find(id);
+        //    if (timeSheet == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(timeSheet);
+        //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,user_Id,project_Id,clockInTime,clockOutTime")] TimeSheet timeSheet)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(timeSheet).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(timeSheet);
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit([Bind(Include = "Id,user_Id,project_Id,clockInTime,clockOutTime")] TimeSheet timeSheet)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.Entry(timeSheet).State = EntityState.Modified;
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View(timeSheet);
+        //}
         #endregion
 
         #region Delete
         // GET: TimeSheet/Delete/5
+        [AdminFilter]
+        [AuthorizationFilter]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -165,6 +172,8 @@ namespace HabitatForHumanity.Controllers
         }
 
         // POST: TimeSheet/Delete/5
+        [AdminFilter]
+        [AuthorizationFilter]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

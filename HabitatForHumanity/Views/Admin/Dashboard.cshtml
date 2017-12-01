@@ -1,18 +1,22 @@
 ﻿<div class="container">
     <ul class="nav nav-tabs">
-        <li><a onclick="getHoursChart('Month')">Hours by Month</a></li>
-        <li><a onclick="getHoursChart('Week')">Hours by Week</a></li>
-        <li><a onclick="getHoursChart('Year')">Hours by Year</a></li>
+        <li><a data-toggle="tab" onclick="getHoursChart('Month')" id="Month">Hours by Month</a></li>
+        <li><a data-toggle="tab" onclick="getHoursChart('Week')" id="Week">Hours by Week</a></li>
+        <li><a data-toggle="tab" onclick="getHoursChart('Year')" id="Year">Hours by Year</a></li>
     </ul>
     <div id="divHoursChart"></div>
 
-    <div><h2>Demographics</h2></div>
+
     <div class="row">
-        <div id="divHoursDemog" class="col-md-4"></div>
-        <div class="col-md-2">
+        <div class="col-md-6">
+            <div id="divHoursDemog"></div>
+        </div>
+
+        <div class="col-md-2 text-center" style="margin-top:80px; margin-left:-25px; margin-right: 10px;">
+            <h3>Demographics</h3>
             <div class="form-check form-check-inline">
                 <label class="form-check-label">
-                    <input class="form-check-input" checked="" type="radio" name="optionsRadios" id="optionsRadios1" onclick="getDemographicsPie('All')"> All
+                    <input class="form-check-input" checked="checked" type="radio" name="optionsRadios" id="optionsRadios1" onclick="getDemographicsPie('All')"> All
                 </label>
             </div>
             <div class="form-check form-check-inline">
@@ -25,19 +29,24 @@
                     <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios3" onclick="getDemographicsPie('F')"> Female
                 </label>
             </div>
-            <div class="form-check form-check-inline disabled">
+            <div class="form-check form-check-inline">
                 <label class="form-check-label">
                     <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios4" onclick="getDemographicsPie('O')"> Other
                 </label>
+
             </div>
+           
         </div>
-        @* maybe run this off a model with a list of bad punches and only load this partial if badPunchList.length > 0,
-            then pass that list to partial??
-            list of all the bad punches ??? pagination ??*@
+        <div class="col-md-1">
+   
 
-        <div id="badPunches" class="col-md-3"></div>
+        </div>
 
+        <div class="text-center col-md-3">
+            <h3>No Punch Outs</h3>
+            <div id="badPunches" class=""></div>
 
+        </div>
     </div>
 
 

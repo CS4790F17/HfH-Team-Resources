@@ -17,17 +17,21 @@ using HabitatForHumanity.Controllers;
 
 namespace HabitatForHumanity.Controllers
 {
+    [AdminFilter]
+    [AuthorizationFilter]
     public class AdminController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
+        private const string awwSnapMsg = "We're experiencing technical difficulties, try again later";
 
-        const int RecordsPerPage = 25;
+        const int RecordsPerPage = 10;
         // GET: Admin dashboard
         public ActionResult Dashboard()
         {
             return View();
         }
 
+        #region Volunteers
         public ActionResult Volunteers(VolunteerSearchModel vsm)
         {
             if (vsm.projects == null)
@@ -39,10 +43,10 @@ namespace HabitatForHumanity.Controllers
 
             if (rs.errorCode != 0)
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                ViewBag.status = awwSnapMsg;
                 return View(vsm);
             }
-            
+
             List<UsersVM> allVols = (List<UsersVM>)rs.data;
             List<UsersVM> filteredVols = new List<UsersVM>();
 
@@ -62,16 +66,23 @@ namespace HabitatForHumanity.Controllers
                 vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
             }
             else
-            {                 
+            {
                 var pageIndex = vsm.Page ?? 1;
                 vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
-            }           
+            }
             return View(vsm);
         }
+        #endregion
 
+        #region Timecards
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
             ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
+            if (rs.errorCode != 0)
+            {
+                ViewBag.status = awwSnapMsg;
+                return View(tsm);
+            }
             var pageIndex = tsm.Page ?? 1;
             List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
             tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
@@ -85,9 +96,10 @@ namespace HabitatForHumanity.Controllers
             if (rs.errorCode != ReturnStatus.ALL_CLEAR)
             {
                 ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                //TODO: change this to return some sort of error partial or the modal will blow up
                 return View();
-            }           
-            
+            }
+
             return PartialView("_EditTimeCard", (TimeCardVM)rs.data);
         }
 
@@ -95,9 +107,9 @@ namespace HabitatForHumanity.Controllers
         public ActionResult EditTimeCard(TimeCardVM card)
         {
             TimeSpan span = card.outTime.Subtract(card.inTime);
-            if(span.Hours > 24 || span.Minutes < 0)
+            if (span.Hours > 24 || span.Minutes < 0)
             {
-                // this doesn't work
+                // this doesn't work -- hah, does now -blake
                 ViewBag.status = "Time can't be more than 24 hours or less than zero.";
                 return PartialView("_EditTimeCard", card);
             }
@@ -107,14 +119,41 @@ namespace HabitatForHumanity.Controllers
                 ViewBag.status = "Failed to update time card, please try again later.";
                 return PartialView("_EditTimeCard", card);
             }
-            return RedirectToAction("Timecards");
+            //return RedirectToAction("Timecards");
+            //return succes partial view instead of redirect that way the redirect doesn't populate the modal
+            //also gives the user some feedback
+            return PartialView("TimeCardPartialViews/_TimeCardSuccess");
         }
+        #endregion
 
-
+        #region Get and Build Hours Bar Chart
         public ActionResult GetHoursChartBy(string period)
         {
-            #region Build Month Chart
-            ChartVM chartVM = new ChartVM();
+            if (period == null)
+            {
+                period = "Month";
+            }
+
+            ReturnStatus chartRS = new ReturnStatus();
+
+            if (period.Equals("Year"))
+            {
+                chartRS = Repository.GetHoursChartVMByYear();
+            }
+            else if (period.Equals("Week"))
+            {
+                chartRS = Repository.GetHoursChartVMByWeek();
+            }
+            else
+            {
+                // monthly
+                chartRS = Repository.GetHoursChartVMByMonth();
+            }
+            if (chartRS.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                return null;
+            }
+            ChartVM chartVM = (ChartVM)chartRS.data;
             Highcharts columnChart = new Highcharts("columnchart");
 
             columnChart.InitChart(new Chart()
@@ -134,16 +173,16 @@ namespace HabitatForHumanity.Controllers
                 Text = chartVM._title
             });
 
-            columnChart.SetSubtitle(new Subtitle()
-            {
-                //Text = "Subtitle here"
-                Text = chartVM._subtitle
-            });
+            //columnChart.SetSubtitle(new Subtitle()
+            //{
+            //    //Text = "Subtitle here"
+            //    Text = chartVM._subtitle
+            //});
 
             columnChart.SetXAxis(new XAxis()
             {
                 Type = AxisTypes.Category,
-                Title = new XAxisTitle() { Text = "X axis stuff", Style = "fontWeight: 'bold', fontSize: '17px'" },
+                //Title = new XAxisTitle() { Text = "X axis stuff", Style = "fontWeight: 'bold', fontSize: '17px'" },
                 Categories = chartVM._categories
             });
 
@@ -191,17 +230,14 @@ namespace HabitatForHumanity.Controllers
                 }
             }
             );
-
-
-            #endregion
-
             return PartialView("_HoursMonthChart", columnChart);
-
         }
+        #endregion
 
+        #region Get and Build Demographics Pie
         public ActionResult GetHoursDemogPieBy(string gender)
         {
-            #region Build Demographics Pie
+
             /* gender options from javascript radios       
             All, M, F, O */
             ReturnStatus st = new ReturnStatus();
@@ -240,7 +276,7 @@ namespace HabitatForHumanity.Controllers
                          new Series
                          {
                              Type = ChartTypes.Pie,
-                             Name = "Male",
+                             Name = "xyz",
                              Data = new Data(outer)
                          }
                    );
@@ -248,14 +284,11 @@ namespace HabitatForHumanity.Controllers
             }
             catch
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                ViewBag.status = awwSnapMsg;
                 return null;
             }
-
-
-            #endregion
-
         }
+        #endregion
 
         // GET: Admin/EditVolunteer
         public ActionResult EditVolunteer(int id)
@@ -283,6 +316,7 @@ namespace HabitatForHumanity.Controllers
                 // force all name to not be null for simple comparison in controller
                 volunteer.volunteerName = user.firstName + " " + user.lastName;
                 volunteer.email = user.emailAddress;
+                volunteer.waiverSignDate = user.waiverSignDate;
                 volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
                 if (volunteer.waiverExpiration > DateTime.Now)
                 {
@@ -292,13 +326,31 @@ namespace HabitatForHumanity.Controllers
                 {
                     volunteer.waiverStatus = false;
                 }
+
+                if (user.isAdmin == 1)
+                {
+                    volunteer.isAdmin = true;
+                }
+                else
+                {
+                    volunteer.isAdmin = false;
+                }
                 volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+
+                volunteer.emergencyFirstName = user.emergencyFirstName;
+                volunteer.emergencyLastName = user.emergencyLastName;
+                volunteer.relation = user.relation;
+                volunteer.emergencyHomePhone = user.emergencyHomePhone;
+                volunteer.emergencyWorkPhone = user.emergencyWorkPhone;
+                volunteer.emergencyStreetAddress = user.emergencyStreetAddress;
+                volunteer.emergencyCity = user.emergencyCity;
+                volunteer.emergencyZip = user.emergencyZip;
 
                 List<TimeSheet> timeSheets = new List<TimeSheet>();
                 timeSheets = (List<TimeSheet>)getTimeSheets.data;
                 List<TimeCardVM> test = new List<TimeCardVM>();
 
-                double hours = 0.0;
+
                 foreach (TimeSheet t in timeSheets)
                 {
                     TimeCardVM temp = new TimeCardVM();
@@ -326,9 +378,6 @@ namespace HabitatForHumanity.Controllers
                     }
                     temp.inTime = t.clockInTime;
                     temp.outTime = t.clockOutTime;
-                    TimeSpan elapsedHrs = t.clockOutTime.Subtract(t.clockInTime);
-                    hours = Math.Round(elapsedHrs.TotalHours, 2, MidpointRounding.AwayFromZero);
-                    temp.elapsedHrs = hours;
 
                     test.Add(temp);
                 }
@@ -340,7 +389,7 @@ namespace HabitatForHumanity.Controllers
         // POST: Admin/EditVolunteer
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email")] UsersVM usersVM)
+        public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email, isAdmin, waiverSignDate")] UsersVM usersVM)
         {
             if (ModelState.IsValid)
             {
@@ -363,15 +412,26 @@ namespace HabitatForHumanity.Controllers
                             user.lastName = tempName[1];
                         }
                     }
-                    
+
                     user.emailAddress = usersVM.email;
+
+                    if (usersVM.isAdmin == true)
+                    {
+                        user.isAdmin = 1;
+                    }
+                    else
+                    {
+                        user.isAdmin = 0;
+                    }
+
+                    user.waiverSignDate = usersVM.waiverSignDate;
 
                     ReturnStatus us = new ReturnStatus();
                     us = Repository.EditUser(user);
                     if (us.errorCode != 0)
                     {
                         ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
-                        return View("EditVolunteer");
+                        return View(usersVM);
                     }
                 }
                 return RedirectToAction("Volunteers");
@@ -381,55 +441,9 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult GetBadPunches()
         {
-            ReturnStatus badTimeSheets = Repository.GetBadTimeSheets();
-            // List<TimeSheet> ts = Repository.GetBadTimeSheets();
-            List<BadPunchVM> bp = new List<BadPunchVM>();
-
-            if (badTimeSheets.errorCode != 0)
-            {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
-                return null;
-            }
-            ReturnStatus timesheetReturn = new ReturnStatus();
-            timesheetReturn.data = new List<TimeSheet>();
-          
-            List<TimeSheet> ts = (List<TimeSheet>)timesheetReturn.data;
-            foreach (TimeSheet t in ts)
-            {
-                try
-                {
-                    User user = (User)Repository.GetUser(t.user_Id).data;
-                    string volName = "";
-
-                    if (string.IsNullOrEmpty(user.firstName) && string.IsNullOrEmpty(user.lastName))
-                    {
-                        volName = user.emailAddress;
-                    }
-                    else if (string.IsNullOrEmpty(user.firstName))
-                    {
-                        volName += user.emailAddress + " ";
-                    }
-                    else if (string.IsNullOrEmpty(user.lastName))
-                    {
-                        volName += user.emailAddress;
-                    }
-                    else
-                    {
-                        volName += user.firstName + " " + user.lastName;
-                    }
-
-                    bp.Add(new BadPunchVM() { name = volName, strPunchDate = t.clockInTime.ToShortDateString() });
-                }
-                catch
-                {
-                    return null;
-                }
-
-
-            }
-
-
-            return PartialView("_BadPunches", bp);
+            ReturnStatus rs = Repository.GetNumBadPunches();
+            int numBadPunches = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
+            return PartialView("_BadPunches", numBadPunches);
         }
 
         #region Manage Organization
@@ -457,11 +471,12 @@ namespace HabitatForHumanity.Controllers
                 //fill search results with empty list                              
                 model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
             }
+            else
+            {
+                orgs = (List<Organization>)st.data;
+                model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
+            }
 
-            orgs = (List<Organization>)st.data;               
-            model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
-            
-            //tsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
             return View(model);
         }
 
@@ -469,7 +484,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult EditOrganization(int id)
         {
             ReturnStatus rs = Repository.GetOrganizationById(id);
-            if(rs.errorCode != 0)
+            if (rs.errorCode != 0)
             {
                 ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
                 return View();
@@ -478,45 +493,51 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public JsonResult EditOrganization(Organization org)
+        public ActionResult EditOrganization(Organization org)
         {
-            //save org
-            Repository.EditOrganization(org);
-            return Json(new { name = org.name, status = org.status, id = org.Id }, JsonRequestBehavior.AllowGet);
+            if (ModelState.IsValid)
+            {
+                //save org
+                Repository.EditOrganization(org);
+                return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+            }
+            return PartialView("OrganizationPartialViews/_EditOrganization", org);
+
         }
 
         [HttpPost]
-        public void ChangeOrganizationStatus(int id)
+        public void ChangeOrganizationStatus(int id, int status)
         {
             ReturnStatus st = Repository.GetOrganizationById(id);
-            if (st.errorCode != 0)
+
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                ((Organization)st.data).status = status;
+                Repository.EditOrganization((Organization)st.data);
             }
             else
             {
-                ((Organization)st.data).status = 1 - ((Organization)st.data).status;
-                Repository.EditOrganization((Organization)st.data);
+                ViewBag.status = "Error while attempting to change organization status.";
             }
         }
 
         [HttpGet]
         public ActionResult AddOrganization()
         {
-            return PartialView("OrganizationPartialViews/_AddOrganization");
+            Organization org = new Organization();
+            return PartialView("OrganizationPartialViews/_AddOrganization", org);
         }
 
         [HttpPost]
-        public ActionResult AddOrganization(String name)
+        public ActionResult AddOrganization([Bind(Include="name")]Organization org)
         {
-            Organization org = new Organization()
+            if (ModelState.IsValid)
             {
-                name = name,
-                status = 1 //active by default
-            };
-
-            Repository.AddOrganization(org);
-            return RedirectToAction("ViewOrganizations");
+                org.status = 0; //inactive by default
+                Repository.AddOrganization(org);
+                return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+            }
+            return PartialView("OrganizationPartialViews/_AddOrganization", org);
         }
         #endregion
 
@@ -548,25 +569,37 @@ namespace HabitatForHumanity.Controllers
             }
             proj.status = 0;
             Repository.AddProject(proj);
-            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+            return PartialView("ProjectPartialViews/_ProjectSuccess");
         }
 
-
-        public ActionResult ChangeProjectStatus(int id, int page, int statusChoice, string queryString)
+        [HttpPost]
+        public void ChangeProjectStatus(int id, int status)
         {
             ReturnStatus st = Repository.GetProjectById(id);
             if (st.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                ((Project)st.data).status = 1 - ((Project)st.data).status;
+                ((Project)st.data).status = status;
                 Repository.EditProject((Project)st.data);
             }
-            //once the status has been changed return a project list with filters
-            //grabs the filters even though they hadn't been submitted
-            StaticPagedList<Project> SearchResults = Repository.GetProjectPageWithFilter(page, statusChoice, queryString);
-            //StaticPagedList<Project> SearchResults = GetProjectPage(page, "");
-            return PartialView("ProjectPartialViews/_ProjectList", SearchResults);
-
         }
+
+
+
+        //public ActionResult ChangeProjectStatus(int id, int page, int statusChoice, string queryString)
+        //{
+        //    ReturnStatus st = Repository.GetProjectById(id);
+        //    if (st.errorCode == ReturnStatus.ALL_CLEAR)
+        //    {
+        //        ((Project)st.data).status = 1 - ((Project)st.data).status;
+        //        Repository.EditProject((Project)st.data);
+        //    }
+        //    //once the status has been changed return a project list with filters
+        //    //grabs the filters even though they hadn't been submitted
+        //    StaticPagedList<Project> SearchResults = Repository.GetProjectPageWithFilter(page, statusChoice, queryString);
+        //    //StaticPagedList<Project> SearchResults = GetProjectPage(page, "");
+        //    return PartialView("ProjectPartialViews/_ProjectList", SearchResults);
+
+        //}
 
         [HttpGet]
         public ActionResult EditProject(int id)
@@ -589,21 +622,22 @@ namespace HabitatForHumanity.Controllers
                 return PartialView("ProjectPartialViews/_EditProject", proj);
             }
             Repository.EditProject(proj);
-            return PartialView("ProjectPartialViews/_ProjectCreateSuccess");
+            return PartialView("ProjectPartialViews/_ProjectSuccess");
         }
 
         [HttpPost]
         public ActionResult ProjectSearch(int? Page, int statusChoice, string queryString)
         {
             ProjectSearchModel model = new ProjectSearchModel();
-            model.Page = Page;
+            //model.Page = Page;
+            model.Page = 1;//return to first page
             model.statusChoice = statusChoice;
             model.queryString = queryString;
             return RedirectToAction("ManageProjects", model);
-           // return PartialView("ProjectPartialViews/_ProjectList", Repository.GetProjectPageWithFilter(Page, statusChoice, queryString));
+            // return PartialView("ProjectPartialViews/_ProjectList", Repository.GetProjectPageWithFilter(Page, statusChoice, queryString));
         }
 
- 
+
 
 
         #endregion

@@ -327,10 +327,9 @@ namespace HabitatForHumanity.Models
             }
             catch
             {
-                cardsReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                cardsReturn.errorCode = -1;
                 return cardsReturn;
             }
- 
         }
 
         /// <summary>
@@ -421,28 +420,28 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static ReturnStatus GetBadTimeSheets()
-        {
-            ReturnStatus st = new ReturnStatus();
-            st.data = new List<TimeSheet>();
-            try
-            {
-                VolunteerDbContext db = new VolunteerDbContext();
-                var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
-                    .OrderByDescending(c => c.clockInTime).
-                    ToList();
+        //public static ReturnStatus GetBadTimeSheets()
+        //{
+        //    ReturnStatus st = new ReturnStatus();
+        //    st.data = new List<TimeSheet>();
+        //    try
+        //    {
+        //        VolunteerDbContext db = new VolunteerDbContext();
+        //        var sheets = db.timeSheets.Where(t => t.clockInTime < DateTime.Today && t.clockOutTime.Hour == 0)
+        //            .OrderByDescending(c => c.clockInTime).
+        //            ToList();
 
-                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
-                st.data = sheets;
-                return st;
-            }
-            catch (Exception e)
-            {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
-                return st;
-            }
-        }
+        //        st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+        //        st.data = sheets;
+        //        return st;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+        //        st.errorMessage = e.ToString();
+        //        return st;
+        //    }
+        //}
 
         /// <summary>
         /// Used in Admin/Volunteers
@@ -490,6 +489,172 @@ namespace HabitatForHumanity.Models
             return rs;
         }
 
+        public static ReturnStatus GetNumBadPunches()
+        {
+ 
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                DateTime today = DateTime.Today;
+                DateTime aMonthAgo = DateTime.Today.AddDays(-30);
+                VolunteerDbContext db = new VolunteerDbContext();
+                var numsheets = db.timeSheets.Where(
+                    t => t.clockInTime < today
+                    && t.clockInTime > aMonthAgo
+                    && t.clockOutTime.Hour == 0 
+                    && t.clockOutTime.Minute == 0).Count();
 
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.data = numsheets;
+                return st;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        
+        }
+
+        /// <summary>
+        /// Gets data for Hours volunteered Bar Chart Admin/Dashboard
+        /// </summary>
+        /// <param name="restoreId"></param>
+        /// <param name="awbkId"></param>
+        /// <returns>An array of 9 lists of timecards, 3 years worth of timesheets for the 3 categories, restore, awbk, and everything else</returns>
+        public static ReturnStatus Get3YearsTimeSheetsByCategory(int restoreId, int awbkId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                int thisYear = DateTime.Today.Year;
+                List<TimeSheet>[] timesheetInception = new List<TimeSheet>[9];
+                int j = 2, k = 2, l = 2;
+                for(int i = 0; i < 9; i++)
+                {
+                    if (i < 3)
+                    {
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == restoreId) && ( t.clockInTime.Year == thisYear - j))).ToList();
+                        j--;
+                    }
+                    else if (i < 6)
+                    {
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == awbkId) && (t.clockInTime.Year == thisYear - k)).ToList());
+                        k--;
+                    }
+                    else
+                    {
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id != awbkId) && (t.project_Id != restoreId) && (t.clockInTime.Year == thisYear - l)).ToList());
+                        l--;
+                    }                  
+                }
+
+                rs.data = timesheetInception;
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
+
+        public static ReturnStatus Get12MonthsTimeSheetsByCategory(int restoreId, int awbkId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                DateTime startRange;
+                DateTime endRange;
+                DateTime today = DateTime.Today;
+                int thisYear = DateTime.Today.Year;
+                int thisMonth = DateTime.Today.Month;
+                List<TimeSheet>[] timesheetInception = new List<TimeSheet>[36];
+                int j = 11, k = 11, l = 11;
+                for (int i = 0; i < 36; i++)
+                {
+                    if (i < 12)
+                    {
+                        startRange = today.AddMonths(-1 * j);
+                        endRange = today.AddMonths(-1 * (j - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == restoreId) && (t.clockInTime >= startRange) &&(t.clockInTime < endRange))).ToList();
+                        j--;
+                    }
+                    else if (i < 24)
+                    {
+                        startRange = today.AddMonths(-1 * k);
+                        endRange = today.AddMonths(-1 * (k - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == awbkId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        k--;
+                    }
+                    else
+                    {
+                        startRange = today.AddMonths(-1 * l);
+                        endRange = today.AddMonths(-1 * (l - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id != awbkId) && (t.project_Id != restoreId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        l--;
+                    }
+                }
+
+                rs.data = timesheetInception;
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
+
+        public static ReturnStatus Get12WeeksTimeSheetsByCategory(int restoreId, int awbkId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                DateTime startRange;
+                DateTime endRange;
+                DateTime today = DateTime.Today;
+                int thisYear = DateTime.Today.Year;
+                int thisMonth = DateTime.Today.Month;
+                List<TimeSheet>[] timesheetInception = new List<TimeSheet>[36];
+                int j = 11, k = 11, l = 11;
+                for (int i = 0; i < 36; i++)
+                {
+                    if (i < 12)
+                    {
+                        startRange = today.AddDays(-7 * j);
+                        endRange = today.AddDays(-7 * (j - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == restoreId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        j--;
+                    }
+                    else if (i < 24)
+                    {
+                        startRange = today.AddDays(-7 * k);
+                        endRange = today.AddDays(-7 * (k - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == awbkId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        k--;
+                    }
+                    else
+                    {
+                        startRange = today.AddDays(-7 * l);
+                        endRange = today.AddDays(-7 * (l - 1));
+                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id != awbkId) && (t.project_Id != restoreId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        l--;
+                    }
+                }
+
+                rs.data = timesheetInception;
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
     }
 }

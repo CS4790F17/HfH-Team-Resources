@@ -14,7 +14,8 @@ namespace HabitatForHumanity.Models
     {
         [Key]
         public int Id { get; set; }
-        [Display(Name = "Project Name")]
+        [Required(ErrorMessage = "Enter Project Name")]
+        [Display(Name = "Project Name*")]
         public string name { get; set; }
         [Display(Name = "Description")]
         public string description { get; set; }
@@ -60,6 +61,23 @@ namespace HabitatForHumanity.Models
             st.errorMessage = "";
             st.data = projects;
             return st;
+        }
+
+        public static ReturnStatus GetProjectIdByName(string name)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var pId = db.projects.Where(p => p.name.Contains(name)).FirstOrDefault().Id;
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = pId;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }   
+            return rs;
         }
 
 
@@ -201,7 +219,7 @@ namespace HabitatForHumanity.Models
 
             proj = (from p in db.projects
                     where p.name.Contains(queryString)
-                    orderby p.Id ascending
+                    orderby p.status descending
                     select p)
                     .Skip(itemsPerPage * page)
                     .Take(itemsPerPage).ToList();
@@ -216,7 +234,7 @@ namespace HabitatForHumanity.Models
 
             proj = (from p in db.projects
                     where p.status.Equals(statusChoice) && p.name.Contains(queryString)
-                    orderby p.Id ascending
+                    orderby p.status descending
                     select p)
                     .Skip(itemsPerPage * page)
                     .Take(itemsPerPage).ToList();

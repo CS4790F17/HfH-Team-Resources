@@ -54,11 +54,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -177,6 +177,7 @@
     <Compile Include="ViewModels\UsersVM.cs" />
     <Compile Include="ViewModels\VolunteerSearchModel.cs" />
     <Compile Include="ViewModels\UserProfileVM.cs" />
+    <Compile Include="ViewModels\VolunteerSignupVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Volunteer.mdf" />
@@ -186,6 +187,8 @@
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
     <Content Include="DBscripts\ageBracketsByGender.txt" />
@@ -193,6 +196,7 @@
     <Content Include="Docs\adminFlow.png" />
     <Content Include="Docs\adminFlow.xml" />
     <Content Include="favicon.ico" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -207,12 +211,18 @@
     <Content Include="Images\HFHLogo.jpg" />
     <Content Include="Docs\Volunteer Waiver - adult.docx" />
     <Content Include="CustomScripts" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Images\Habitat For Humanity logo.jpg" />
     <Content Include="Images\hfhwd logo %281%29.jpg" />
     <Content Include="OurScripts\Charts.js" />
     <Content Include="OurScripts\timeCards.js" />
     <Content Include="OurScripts\timePunch.js" />
+    <Content Include="OurScripts\user.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\Highcharts-4.0.1\js\adapters\standalone-framework.js" />
@@ -334,8 +344,12 @@
     <Content Include="Views\Admin\ManageProjects.cshtml" />
     <Content Include="Views\Admin\ProjectPartialViews\_ProjectList.cshtml" />
     <Content Include="Views\Admin\ProjectPartialViews\_CreateProject.cshtml" />
-    <Content Include="Views\Admin\ProjectPartialViews\_ProjectCreateSuccess.cshtml" />
+    <Content Include="Views\Admin\ProjectPartialViews\_ProjectSuccess.cshtml" />
     <Content Include="Views\Admin\ProjectPartialViews\_EditProject.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_OrganizationList.cshtml" />
+    <Content Include="Views\User\_Gauge.cshtml" />
+    <Content Include="Views\Admin\OrganizationPartialViews\_OrganizationSuccess.cshtml" />
+    <Content Include="Views\Admin\TimeCardPartialViews\_TimeCardSuccess.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

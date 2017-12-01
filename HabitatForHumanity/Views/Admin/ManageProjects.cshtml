@@ -3,21 +3,18 @@
 @using HabitatForHumanity.ViewModels;
 @{
     ViewBag.Title = "ManageProjects";
-    var createButton = "<span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"> Create New Project</span>";
 }
 @Scripts.Render("~/bundles/jquery")
 <h2>Manage Projects</h2>
 
-@ToolKitVM.Modal("Create Project", "createProjectModal", "createPartialTarget")
-
+@ToolKitVM.ModalPreventDefault("createProjectModal", "Create a Project", "createPartialTarget", "createProjectForm")
 
 <!--Filter bar-->
 <div class="row">
     <!--Create button-->
     <div class="col-md-4">
         <div id="createProjectButton">
-            @* <button class="btn btn-success"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Create New Project</span></button>*@
-            @ToolKitVM.ModalButton("createButton", "createProjectModal", createButton, "")
+            @ToolKitVM.GenericModalOpenButton("createProjectButton", "createProjectModal", "", "Create a new Project", "glyphicon-plus", false)
         </div>
     </div>
 
@@ -25,14 +22,14 @@
     @using (Html.BeginForm("ProjectSearch", "Admin", FormMethod.Post, new { @class = "form-inline", id="searchForm" }))
     {
         <div class="form-group">@Html.HiddenFor(x => x.Page)</div>
-        <div class="form-group">
+        <div class="form-group col-xs-1 col-xs-offset-4" style="margin-right:10px">
             <!--Filter Dropdowns-->
-            @Html.DropDownListFor(x => x.statusChoice, Model.statusDropDown, htmlAttributes: new { @class = "form-control", @id = "statusChoiceSelector", @style = "width:auto" })
+            @Html.DropDownListFor(x => x.statusChoice, Model.statusDropDown, htmlAttributes: new { @class = "form-control", @id = "statusChoiceSelector", @style = "width:auto", onchange = @"form.submit()" })
         </div>
         <!--Search Bar-->
-        <div class="form-group">
+        <div class="form-group col-xs-1">
             <div class="input-group">
-                @Html.EditorFor(x => x.queryString, new { htmlAttributes = new { placeholder = "Find Project", @class = "form-control", @style = "width:auto" } })
+                @Html.EditorFor(x => x.queryString, new { htmlAttributes = new { placeholder = "Find Project", @class = "form-control", @style = "width:auto", onchange = @"form.submit()" } })
                 <span class="input-group-btn">
                     <button class="btn" type="submit">
                         <span class="glyphicon glyphicon-search"></span>
@@ -54,58 +51,8 @@
 
 
 
-@*@Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "queryString", Model.queryString  },{ "statusChoice", Model.statusChoice},  { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)*@
+@Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "queryString", Model.queryString  },{ "statusChoice", Model.statusChoice},  { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
 
 
-<script type="text/javascript">
+@ToolKitVM.GetPartialViewButtonScript("createProjectButton", "CreateProject", "Admin", "createPartialTarget")
 
-    //action listener for creating projects
-    $(".createButton").click(function () {
-        $.ajax({
-            url: '/Admin/CreateProject',
-            type: 'GET',
-            success: function (data) {
-                $("#createPartialTarget").html(data);
-            }
-        });
-    });
-
-    //https://stackoverflow.com/questions/31053460/how-to-make-a-net-mvc-form-inside-a-modal-using-jquery-with-validation
-    //prevents the modal from automatically redirecting when the submit button is clicked
-    //instead we send our post method our form data to do a validation check server side
-    //and return a marked up view to the modal if it's an invalid form
-    $("#createProjectModal").on('submit', function (e) {
-        e.preventDefault();
-        // console.log("prevented from submitting");
-        var form = $("#createProjectForm");
-        $.ajax({
-            url: '/Admin/CreateProject',
-            type: 'POST',
-            data: form.serialize(),
-            success: function (partialResult) {
-                //  console.log(partialResult);
-                $("#createPartialTarget").html(partialResult);
-            }
-        })
-    });
-
-    //action listener for the filter options
-    //uncomment to activate ajax behavior. comes with logic errors and page inconsistencies
-    //$("#searchForm").on('submit', function (e) {
-    //    e.preventDefault(); 
-    //    console.log("stopping");
-    //    var form = $(this).serialize();
-    //    console.log(form);
-    //    $.ajax({
-    //        url: "/Admin/ProjectSearch",
-    //        type: "POST",
-    //        data: form,
-    //        success: function (response)
-    //        {
-    //            $("#mainPageProjectList").html(response);
-    //        }
-    //    })
-    //});
-
-
-</script>

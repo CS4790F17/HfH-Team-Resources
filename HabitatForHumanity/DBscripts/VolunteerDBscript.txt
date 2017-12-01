@@ -51,7 +51,10 @@ GO
 
 CREATE TABLE [dbo].[Organization] (
     [Id]   INT           IDENTITY (1, 1) NOT NULL,
-    [name] VARCHAR (100) NULL UNIQUE
+    [name] VARCHAR (100) NULL UNIQUE,
+	[status] INT         DEFAULT ((1)) NULL,
+	[comments] VARCHAR(MAX) NULL,
+	UNIQUE NONCLUSTERED ([name]) ASC
 );
  GO
 

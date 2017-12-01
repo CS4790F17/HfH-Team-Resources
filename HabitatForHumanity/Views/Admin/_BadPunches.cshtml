@@ -1,29 +1,16 @@
-﻿@model IEnumerable<HabitatForHumanity.ViewModels.BadPunchVM>
+﻿@model Int32
 
-<div class="well">
-    <input type="button" onclick="@("location.href='"+ Url.Action("Index","TimeSheet")+ "'")" value="Edit Bad Punches" class="btn btn-warning" />
-    <table class="table">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.strPunchDate)
-            </th>
-        </tr>
+@{
+    if (Model > 0)
+    {
+        <div class="well text-center">
+            <h3>
+                @Model
+            </h3>
+            <p>timecards didn't get punched out over the last month</p>
+            <input type="button" onclick="@("location.href='"+ Url.Action("TimeCards")+ "'")" value="Edit Timecards" class="btn btn-warning" />
+        </div>
+    }
+}
 
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.strPunchDate)
-                </td>
-            </tr>
-        }
-
-    </table>
-</div>
 

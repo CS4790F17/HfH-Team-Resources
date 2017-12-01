@@ -11,10 +11,7 @@ namespace HabitatForHumanity.Models
 {
     public class Repository
     {
-        //used for building paginated lists
-        private const int RecordsPerPage = 10;
-
-
+      
         #region User functions
 
         /// <summary>
@@ -60,7 +57,7 @@ namespace HabitatForHumanity.Models
             {
                 userReturn = User.GetUserByEmail(loginVm.email);
 
-                if (userReturn.errorCode != 0)
+                if (userReturn.errorCode != ReturnStatus.ALL_CLEAR)
                 {
                     retValue.errorCode = -1;
                     retValue.data = false;
@@ -71,6 +68,11 @@ namespace HabitatForHumanity.Models
                 {
                     retValue.errorCode = 0;
                     retValue.data = true;
+                }
+                else
+                {
+                    retValue.errorCode = 0;
+                    retValue.data = false;
                 }
                 return retValue;
             }
@@ -398,7 +400,7 @@ namespace HabitatForHumanity.Models
         /// <returns></returns>
         public static StaticPagedList<Project> GetProjectPageWithFilter(int? Page, int statusChoice, string queryString)
         {
-
+            int RecordsPerPage = 10;
             //page can't be 0 or below
             if (Page == null || Page < 1 )
             {
@@ -436,7 +438,7 @@ namespace HabitatForHumanity.Models
         /// <returns></returns>
         public static StaticPagedList<Project> GetProjectPage(int? Page, string queryString)
         {
-
+            int RecordsPerPage = 10;
             //page can't be 0 or below
             if (Page < 1 || Page == null)
             {
@@ -574,6 +576,10 @@ namespace HabitatForHumanity.Models
        /// <returns>List of timecard viewmodels</returns>
         public static ReturnStatus GetTimeCardPageWithFilter(int? Page, int orgId,int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
         {
+
+            int RecordsPerPage = 10;
+
+
             //page can't be 0 or below
             if (Page == null || Page < 1)
             {
@@ -887,6 +893,166 @@ namespace HabitatForHumanity.Models
 
         #region Report functions
 
+        public static ReturnStatus GetHoursChartVMByYear()
+        {
+            ReturnStatus chartReturn = new ReturnStatus();
+            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
+            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
+            ReturnStatus tsArrayRS = TimeSheet.Get3YearsTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
+            // this is an array[9] that holds lists of timesheets
+            // the first 3 are restore(2yrs ago, last year, now )
+            // next 3 are awbk
+            // last 3 are homebuilds( whatever isn't restore or awbk)
+            if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
+                int year = DateTime.Today.Year;
+                string[] cats = new string[] { (year - 2).ToString(), (year - 1).ToString(), year.ToString()  };
+                int[] restoreHrs = new int[3];
+                int[] awbkHrs = new int[3];
+                int[] homesHrs = new int[3];
+                int j = 0, k = 0;
+                for (int i = 0; i < 9; i++)
+                {
+                    TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
+                    if (i < 3)
+                    {
+                        restoreHrs[i] = (int)ts.TotalHours;
+                    }
+                    else if (i < 6)
+                    {
+                        awbkHrs[j] = (int)ts.TotalHours;
+                        j++;
+                    }
+                    else
+                    {
+                        homesHrs[k] = (int)ts.TotalHours;
+                        k++;
+                    }
+                }
+                ChartVM chartVM = new ChartVM("Volunteer Hours by Year", cats, restoreHrs, awbkHrs, homesHrs);
+                chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                chartReturn.data = chartVM;
+                return chartReturn;
+            }
+            else
+            {
+                return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null};
+            }
+            
+        }
+
+        public static ReturnStatus GetHoursChartVMByMonth()
+        {
+            ReturnStatus chartReturn = new ReturnStatus();
+            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
+            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
+            ReturnStatus tsArrayRS = TimeSheet.Get12MonthsTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
+            // this is an array[36] that holds lists of timesheets
+            // the first 12 are restore(11 months ago, 10... )
+            // next 12 are awbk
+            // last 12 are homebuilds( whatever isn't restore or awbk)
+            if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
+                DateTime today = DateTime.Today;
+                string[] cats = new string[12];// { (year - 2).ToString(), (year - 1).ToString(), year.ToString() };
+                int m = 11;
+                for (int i = 0; i < 12; i++)
+                {
+                    cats[i] = today.AddMonths(-m).ToString("MMMM");
+                    m--;
+                }
+                int[] restoreHrs = new int[12];
+                int[] awbkHrs = new int[12];
+                int[] homesHrs = new int[12];
+                int j = 0, k = 0;
+                for (int i = 0; i < 36; i++)
+                {
+                    TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
+                    if (i < 12)
+                    {
+                        restoreHrs[i] = (int)ts.TotalHours;
+                    }
+                    else if (i < 24)
+                    {
+                        awbkHrs[j] = (int)ts.TotalHours;
+                        j++;
+                    }
+                    else
+                    {
+                        homesHrs[k] = (int)ts.TotalHours;
+                        k++;
+                    }
+                }
+                ChartVM chartVM = new ChartVM("Volunteer Hours by Month", cats, restoreHrs, awbkHrs, homesHrs);
+                chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                chartReturn.data = chartVM;
+                return chartReturn;
+            }
+            else
+            {
+                return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
+            }
+
+        }
+
+        public static ReturnStatus GetHoursChartVMByWeek()
+        {
+            ReturnStatus chartReturn = new ReturnStatus();
+            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
+            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
+            ReturnStatus tsArrayRS = TimeSheet.Get12WeeksTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
+            // this is an array[36] that holds lists of timesheets
+            // the first 12 are restore(11 weeks ago, 10... )
+            // next 12 are awbk
+            // last 12 are homebuilds( whatever isn't restore or awbk)
+            if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
+                DateTime today = DateTime.Today;
+                string[] cats = new string[12];
+                int w = 11;
+                for (int i = 0; i < 12; i++)
+                {
+                    DateTime myDate = today.AddDays(-w * 7);
+                    cats[i] = myDate.Month.ToString() + "/" + myDate.Day.ToString();
+                    w--;
+                }
+                int[] restoreHrs = new int[12];
+                int[] awbkHrs = new int[12];
+                int[] homesHrs = new int[12];
+                int j = 0, k = 0;
+                for (int i = 0; i < 36; i++)
+                {
+                    TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
+                    if (i < 12)
+                    {
+                        restoreHrs[i] = (int)ts.TotalHours;
+                    }
+                    else if (i < 24)
+                    {
+                        awbkHrs[j] = (int)ts.TotalHours;
+                        j++;
+                    }
+                    else
+                    {
+                        homesHrs[k] = (int)ts.TotalHours;
+                        k++;
+                    }
+                }
+                ChartVM chartVM = new ChartVM("Volunteer Hours by Week", cats, restoreHrs, awbkHrs, homesHrs);
+                chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                chartReturn.data = chartVM;
+                return chartReturn;
+            }
+            else
+            {
+                return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
+            }
+
+        }
+
 
         public static ReturnStatus getTotalHoursWorkedByVolunteer(int volunteerId)
         {
@@ -973,10 +1139,17 @@ namespace HabitatForHumanity.Models
             return User.GetDemographicsForPie(gender);
         }
 
-        public static ReturnStatus GetBadTimeSheets()
+        //public static ReturnStatus GetBadTimeSheets()
+        //{
+        //    return TimeSheet.GetBadTimeSheets();
+        //}
+
+        public static ReturnStatus GetNumBadPunches()
         {
-            return TimeSheet.GetBadTimeSheets();
+            return TimeSheet.GetNumBadPunches();
         }
+
+
 
         /// <summary>
         /// return total hours logged into given project

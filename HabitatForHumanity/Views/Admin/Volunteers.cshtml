@@ -14,7 +14,7 @@
         <div class="col-md-3" style="margin-top:10px">
             <div class="input-group">
                 <div>
-                    @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Name or email", @class = "form-control" } })
+                    @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Name or email", @class = "form-control", onchange = @"form.submit()" } })
                 </div>
                 <span class="input-group-btn">
                     <button class="btn btn-default">
@@ -57,12 +57,13 @@
                { "Page", page },
               {"queryString",Model.queryString },
               {"projectId", Model.projectId }
-                       }),
-                       PagedListRenderOptions.PageNumbersOnly)
+                       })
+                       //,PagedListRenderOptions.PageNumbersOnly
+                       )
                     </div>
 
                 }
             }
         </div>
     </div>
-}
+                }

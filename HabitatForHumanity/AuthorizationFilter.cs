@@ -22,7 +22,7 @@ namespace HabitatForHumanity
             if (HttpContext.Current.Session["UserName"] == null)
             {
                 //filterContext.Result = filterContext.Result = new HttpUnauthorizedResult();
-                filterContext.Result = new RedirectResult("~/Home/Index");
+                filterContext.Result = new RedirectResult("~/User/Login");
             }
         }
     }
