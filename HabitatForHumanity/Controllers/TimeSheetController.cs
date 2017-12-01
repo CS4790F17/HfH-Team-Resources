@@ -64,7 +64,8 @@ namespace HabitatForHumanity.Controllers
             //    return RedirectToAction("VolunteerPortal", "User");
             }
 
-            return RedirectToAction("ThankYouModal", "User");
+            
+            return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1 });
 
         }
         #endregion

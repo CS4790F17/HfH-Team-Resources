@@ -59,7 +59,7 @@ namespace HabitatForHumanity.Controllers
 
         #region VolunteerPortal
         [AuthorizationFilter]
-        public ActionResult VolunteerPortal()
+        public ActionResult VolunteerPortal(int? justPunched)
         {
 
             ReturnStatus us = Repository.GetUserByEmail(Session["UserName"].ToString());
@@ -88,7 +88,7 @@ namespace HabitatForHumanity.Controllers
                 ViewBag.status = "Your Waiver is outdated, please sign below.";
                 return RedirectToAction("SignWaiver", "User");
             }
-            
+            ViewBag.justPunched = justPunched;
             return View((PortalVM)rs.data);
         }
 
