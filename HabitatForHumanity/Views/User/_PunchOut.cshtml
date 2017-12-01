@@ -1,4 +1,7 @@
 ﻿@model HabitatForHumanity.ViewModels.PunchOutVM
+@{
+    string time = Model.inTime.ToString("t");
+}
 
 @using (Html.BeginForm("PunchOut","TimeSheet"))
 {
@@ -11,19 +14,40 @@
         @Html.HiddenFor(model => model.projectNumber)
         @Html.HiddenFor(model => model.orgNumber)
         @Html.HiddenFor(model => model.inTime)
-        
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Clock Out" class="btn btn-default" />
+        <div class="row well">
+            <div class="text-center"><h4>You are currently clocked in</h4></div>
+            <hr />
+            <hr/>
+            <div class="col-md-5 well text-center" style="margin-left:25px;"><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i><h4>Time In: @time</h4></div>
+            <div class="form-group col-md-5">
+                <div>
+                    @*<input type="submit" value="Clock Out" class="btn btn-default" /><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i>*@
+                    <button type="submit" style="margin:25px;margin-left:120px"class="btn btn-primary btn-lg" style="font-size: 18px;"> Clock Out  <i class="fa fa-clock-o fa-2x" aria-hidden="true"></i></button>
+                </div>
             </div>
+            <hr />
         </div>
+        
+       
     </div>
 }
-@{ 
-    string time = Model.inTime.ToString("t");
-}
-<div>@time</div>
+
+<script>
+    $("#refresh").click(function () {
+        var spinner = document.getElementById("refresh");
+        spinner.classList.remove('fa-save');
+        spinner.classList.add('fa-refresh');
+        spinner.classList.add('fa-spin');
+        setTimeout(function () {
+            spinner.classList.remove('fa-spin');
+            spinner.classList.remove('fa-refresh');
+            spinner.classList.add('fa-save');
+        }, 2500);
+    });
+</script>
+
+
+
 
 
 

@@ -10,7 +10,18 @@ using HabitatForHumanity.Models;
 using HabitatForHumanity.ViewModels;
 using System.Web.Helpers;
 using System.Net.Mail;
+using DotNet.Highcharts;
+using DotNet.Highcharts.Options;
+using System.Drawing;
+using DotNet.Highcharts.Enums;
+using DotNet.Highcharts.Helpers;
 
+using System.Globalization;
+
+
+
+
+using Point = DotNet.Highcharts.Options.Point;
 
 namespace HabitatForHumanity.Controllers
 {
