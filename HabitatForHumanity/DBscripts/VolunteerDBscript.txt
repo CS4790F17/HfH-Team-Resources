@@ -57,4 +57,29 @@ CREATE TABLE [dbo].[Organization] (
 	UNIQUE NONCLUSTERED ([name]) ASC
 );
  GO
+CREATE TABLE [dbo].[WaiverHistory] (
+	[Id]                     INT           IDENTITY (1, 1) NOT NULL,
+	[user_Id]				 INT	       NOT NULL,
+	[firstName]              VARCHAR (50)  NOT NULL,
+	[lastName]               VARCHAR (50)  NOT NULL,
+	[homePhoneNumber]        VARCHAR (10)  NOT NULL,
+	[workPhoneNumber]        VARCHAR (10)  NOT NULL,
+	[emailAddress]           VARCHAR (50)  NOT NULL,
+	[streetAddress]          VARCHAR (50)  NOT NULL,
+	[city]                   VARCHAR (50)  NOT NULL,
+	[zip]                    VARCHAR (50)  NOT NULL,
+	[birthDate]              DATETIME      NOT NULL,
+	[gender]                 VARCHAR (1)   NOT NULL,
+	[waiverSignDate]         DATETIME      NOT NULL,
+	[emergencyFirstName]     VARCHAR (50)  NOT NULL,
+	[emergencyLastName]      VARCHAR (50)  NOT NULL,
+	[relation]               VARCHAR (50)  NOT NULL,
+	[emergencyHomePhone]     VARCHAR (10)  NOT NULL,
+	[emergencyWorkPhone]     VARCHAR (10)  NOT NULL,
+	[emergencyStreetAddress] VARCHAR (50)  NOT NULL,
+	[emergencyCity]          VARCHAR (50)  NOT NULL,
+	[emergencyZip]           VARCHAR (50)  NOT NULL,
+	[signature]		 VARCHAR (50)  NOT NULL
+);
+GO
 
