@@ -114,7 +114,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult EditTimeCard(TimeCardVM card)
         {
             TimeSpan span = card.outTime.Subtract(card.inTime);
-            if (span.Hours > 24 || span.Minutes < 0)
+            if (span.TotalHours > 24 || span.TotalMinutes < 0)
             {
                 // this doesn't work -- hah, does now -blake
                 ViewBag.status = "Time can't be more than 24 hours or less than zero.";

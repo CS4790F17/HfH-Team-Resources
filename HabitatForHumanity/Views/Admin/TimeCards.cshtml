@@ -96,7 +96,7 @@
                 <div class="col-md-1">@card.outTime.ToShortTimeString()   </div>
                 @{
                     TimeSpan span = card.outTime.Subtract(card.inTime);
-                    double hours = span.Hours + span.Minutes / 60.0;
+                    double hours = span.TotalMinutes / 60.0;
                  }
                 <div class="col-md-1 text-center"> @string.Format("{0:N2}", hours) </div>
                 @*@ToolKitVM.ModalButton("editButton", "editModal", editHtml, card.timeId.ToString())*@

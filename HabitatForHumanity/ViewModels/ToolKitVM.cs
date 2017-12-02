@@ -232,6 +232,8 @@ namespace HabitatForHumanity.ViewModels
         }
     }
     #endregion
+
+    #region Drop Downs
     public class ProjectDropDownList
     {
         public int ProjectId { get; set; }
@@ -292,7 +294,7 @@ namespace HabitatForHumanity.ViewModels
             SelectList.Add(new SelectListItem
             {
                 Value = "-1",
-                Text = "Select an Organization"
+                Text = "None/Individual"
             });
 
             foreach (Organization item in items)
@@ -305,6 +307,10 @@ namespace HabitatForHumanity.ViewModels
             }
             Organizations = SelectList;
         }
+
+        #endregion
     }
+
+
 
 }
