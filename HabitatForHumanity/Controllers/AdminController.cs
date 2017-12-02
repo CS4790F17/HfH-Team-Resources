@@ -482,16 +482,22 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteTimeCard(TimeCardVM model)
         {
-            TimeSheet timeSheet = db.timeSheets.Find(model.timeId);
-            db.timeSheets.Remove(timeSheet);
-            db.SaveChanges();
-            return PartialView("TimeCardPartialViews/_TimeCardSuccess");
+            ReturnStatus rs = Repository.AdminDeleteTimeCard(model);
+            if(rs.errorCode != 0)
+            {
+                return PartialView("_Error");
+            }
+            return PartialView("TimeCardPartialViews/_DeleteTimeCardSuccess");
         }
         #endregion
         public ActionResult GetBadPunches()
         {
             ReturnStatus rs = Repository.GetNumBadPunches();
-            int numBadPunches = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
+            if(rs.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                return PartialView("_Error");
+            }
+            int numBadPunches = (int)rs.data;
             return PartialView("_BadPunches", numBadPunches);
         }
 
