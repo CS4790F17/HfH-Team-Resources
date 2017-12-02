@@ -705,9 +705,22 @@ namespace HabitatForHumanity.Controllers
             }
             return View(userTimeDetails);
         }
-        #endregion 
+        #endregion
 
-
+        #region Demographics Survey
+        [AuthorizationFilter]
+        public ActionResult DemographicsSurvey()
+        {
+            string email = Session["UserName"].ToString();
+            ReturnStatus rs = Repository.GetDemographicsSurveyVM(email);
+            DemographicsVM demographicsVM = new DemographicsVM();
+            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                demographicsVM = (DemographicsVM)rs.data;
+            }
+            return View(demographicsVM);
+        }
+        #endregion Demographics survey
         protected override void Dispose(bool disposing)
         {
             if (disposing)
