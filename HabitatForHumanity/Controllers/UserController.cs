@@ -302,7 +302,7 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SignWaiver([Bind(
-            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature, signatureNmae")] SignWaiverVM signWaiverVM)
+            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature, signatureName")] SignWaiverVM signWaiverVM)
         {
             if (ModelState.IsValid)
             {
@@ -324,21 +324,21 @@ namespace HabitatForHumanity.Controllers
                         ViewBag.status = "Sorry, our system is down. Please try again later.";
                         return View(signWaiverVM);
                     }
-                    return RedirectToAction("VolunteerPortal");
                  }
 
                 //Saves a snapshot of the waiver infomation at time of signing.
-                //rs = Repository.GetUserByEmail(signWaiverVM.userEmail);//rs = newly saved user information 
-                //user = (User)rs.data;//user is assinged to the newly saved data
-                //if (rs.errorCode != 0)
-                //{
-                //    ViewBag.status = "Sorry, our system is down. Please try again later.";
-                //    return View(signWaiverVM);
-                //}
-                //if(user.Id > 0)
-                //{
-                    
-                //}
+                rs = Repository.GetUserByEmail(signWaiverVM.userEmail);//rs = newly saved user information 
+                user = (User)rs.data;//user is assinged to the newly saved data
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, our system is down. Please try again later.";
+                    return View(signWaiverVM);
+                }
+                if (user.Id > 0)
+                {
+                    Repository.saveWaiverSnapshot(user, signWaiverVM.signatureName);
+                }
+                return RedirectToAction("VolunteerPortal");
 
             }
             ViewBag.status = "An error has occured below.";

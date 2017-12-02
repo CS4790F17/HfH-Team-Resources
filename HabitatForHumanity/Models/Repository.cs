@@ -323,6 +323,35 @@ namespace HabitatForHumanity.Models
             return vmToReturn;
         }
 
+        public static void saveWaiverSnapshot(User user, String signatureName)
+        {
+            //Wasnt sure where to use the ReturnStaus from here
+            WaiverHistory snapshot = new WaiverHistory();
+            snapshot.user_Id = user.Id;
+            snapshot.firstName = user.firstName;
+            snapshot.lastName = user.lastName;
+            snapshot.homePhoneNumber = user.homePhoneNumber;
+            snapshot.workPhoneNumber = user.workPhoneNumber;
+            snapshot.emailAddress = user.emailAddress;
+            snapshot.streetAddress = user.streetAddress;
+            snapshot.city = user.city;
+            snapshot.zip = user.zip;
+            snapshot.birthDate = user.birthDate;
+            snapshot.gender = user.gender;
+            snapshot.waiverSignDate = user.waiverSignDate;
+            snapshot.emergencyFirstName = user.emergencyFirstName;
+            snapshot.emergencyLastName = user.emergencyLastName;
+            snapshot.relation = user.relation;
+            snapshot.emergencyHomePhone = user.emergencyHomePhone;
+            snapshot.workPhoneNumber = user.workPhoneNumber;
+            snapshot.emergencyStreetAddress = user.emergencyStreetAddress;
+            snapshot.emergencyCity = user.emergencyCity;
+            snapshot.emergencyZip = user.emergencyZip;
+            snapshot.signatureName = signatureName;
+
+            WaiverHistory.saveWaiverSnapshot(snapshot);
+        }
+
 
         #endregion User
 

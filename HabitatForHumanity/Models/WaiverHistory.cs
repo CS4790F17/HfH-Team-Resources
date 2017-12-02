@@ -9,6 +9,7 @@ using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using HabitatForHumanity.ViewModels;
+using HabitatForHumanity.Models;
 
 
 namespace HabitatForHumanity.Models
@@ -39,5 +40,26 @@ namespace HabitatForHumanity.Models
         public String emergencyCity { get; set; }
         public String emergencyZip { get; set; }
         public String signatureName { get; set; }
+
+
+        public static ReturnStatus saveWaiverSnapshot(WaiverHistory snapshot)
+        {
+            ReturnStatus st = new ReturnStatus();
+            st.data = null;
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.waiverHistory.Add(snapshot);
+                db.SaveChanges();
+                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+                return st;
+            }
+            catch(Exception e)
+            {
+                st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                return st;
+            }
+        }
     }
 }
