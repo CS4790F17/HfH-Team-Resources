@@ -6,6 +6,7 @@ using System.Web.Helpers;
 using HabitatForHumanity.ViewModels;
 using HabitatForHumanity.Models;
 using PagedList;
+using static HabitatForHumanity.ViewModels.DemographicsDropDowns;
 
 namespace HabitatForHumanity.Models
 {
@@ -304,9 +305,20 @@ namespace HabitatForHumanity.Models
             return User.DeleteUserById(id);
         }
 
+        public static ReturnStatus GetDemographicsSurveyVM(string email)
+        {
+            ReturnStatus vmToReturn = new ReturnStatus();
+            ReturnStatus userIdRS = Repository.GetUserByEmail(email);
+            if(user)
+            GenericDropDownList ethnicityDD = new GenericDropDownList(ethnicityTiers);
+            
+            rs.errorCode = ReturnStatus.ALL_CLEAR;
+            rs.data = ethnicityDD;
+            return rs;
+        }
 
 
-        #endregion
+        #endregion User
 
         #region Project functions
 

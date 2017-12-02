@@ -9,16 +9,27 @@ namespace HabitatForHumanity.ViewModels
 {
     public class DemographicsDropDowns
     {
-        public class IncomeDropDownList
+        public static string[] incomeTiers = new string[] {
+            "Under $24,999", "$25,000 to $49,999", "$50,000 to $74,999", "$75,000 to $99,999", "Over $100,000" };
+        public static string[] ethnicityTiers = new string[] {
+                    "Native Amerian or American Indian",
+                    "Asian",
+                    "Black or African American",
+                    "Hispanic or Latino or Spanish Origin",
+                    "Native Hawaiian or other Pacific Islander",
+                    "White",
+                    "Two or more",
+                    "Rather not say"};
+        public class GenericDropDownList
         {
-            public int incomeTierId { get; set; }
-            public string tierName { get; set; }
+            public int dropdownId { get; set; }
+            public string demographic { get; set; }
             public List<SelectListItem> Tiers { get; set; }
 
-            public IncomeDropDownList()
+            public GenericDropDownList(string[] tiers)
             {
                 var SelectList = new List<SelectListItem>();
-                string[] tiers = new string[] { "Under $24,999", "$25,000 to $49,999", "$50,000 to $74,999", "$75,000 to $99,999", "Over $100,000" };
+                
                 for (int i = 1; i <= tiers.Length; i++)
                 {
                     SelectList.Add(new SelectListItem
@@ -30,6 +41,7 @@ namespace HabitatForHumanity.ViewModels
                 Tiers = SelectList;
             }
 
-        }// end household income
+        }
+
     }
 }
