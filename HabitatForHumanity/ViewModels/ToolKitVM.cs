@@ -190,9 +190,10 @@ namespace HabitatForHumanity.ViewModels
 
 
         /// <summary>
-        /// Builds a script for handling GET requests that load partial views into a modal.
+        /// Builds a script for handling GET requests that load partial views into a modal. This script is intended to load partial views into a modal. No matter what it receives it will attempt to place it
+        ///  into the modal. For instance, if you have a redirect in your action method this script will take the html page generated for the redirect and stick it into the modal. It will not redirect. 
         /// </summary>
-        /// <param name="action">The action method to invoke.</param>
+        /// <param name="action">The GET action method that retrieves the initial partial view. This action needs to return PartialView.</param>
         /// <param name="controller">The controller where the action is located.</param>
         /// <param name="buttonClass">An extra defined class given to the button for jquery targetting.</param>
         /// <param name="partialTarget">The partial div in the modal where the returned html is supposed to go.</param>

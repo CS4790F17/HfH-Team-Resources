@@ -18,8 +18,8 @@ using System.Net;
 
 namespace HabitatForHumanity.Controllers
 {
-    [AdminFilter]
-    [AuthorizationFilter]
+    // [AdminFilter]
+    // [AuthorizationFilter]
     public class AdminController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
@@ -448,9 +448,10 @@ namespace HabitatForHumanity.Controllers
 
         #region Delete Timecard
         // GET: TimeSheet/Delete/5
-        [AdminFilter]
-        [AuthorizationFilter]
-        public ActionResult Delete(int? id)
+        //  [AdminFilter]
+        //   [AuthorizationFilter]
+        [HttpGet]
+        public ActionResult DeleteTimeCard(int? id)
         {
             if (id == null)
             {
@@ -471,20 +472,20 @@ namespace HabitatForHumanity.Controllers
                 return View();
             }
 
-            return PartialView("_DeleteTimeCard", (TimeCardVM)rs.data);
+            return PartialView("TimeCardPartialViews/_DeleteTimeCard", (TimeCardVM)rs.data);
         }
 
         // POST: TimeSheet/Delete/5
-        [AdminFilter]
-        [AuthorizationFilter]
-        [HttpPost, ActionName("Delete")]
+        //[AdminFilter]
+        //  [AuthorizationFilter]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteTimeCard(TimeCardVM model)
         {
-            TimeSheet timeSheet = db.timeSheets.Find(id);
+            TimeSheet timeSheet = db.timeSheets.Find(model.timeId);
             db.timeSheets.Remove(timeSheet);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return PartialView("TimeCardPartialViews/_TimeCardSuccess");
         }
         #endregion
         public ActionResult GetBadPunches()
@@ -577,7 +578,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddOrganization([Bind(Include="name")]Organization org)
+        public ActionResult AddOrganization([Bind(Include = "name")]Organization org)
         {
             if (ModelState.IsValid)
             {
