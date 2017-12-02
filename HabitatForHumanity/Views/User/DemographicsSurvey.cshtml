@@ -6,31 +6,60 @@
 <h2>DemographicsSurvey</h2>
 <p>Please tell us more about yourself. This section is optional. You can decline to answer any or all of these. Any information you provide will be used anonymously to help us better understand our volunteers. Occasionally, the information is also requested for grants and research opportunities. In this case, no personal identifying details are provided with the information below. </p>
 
-@using (Html.BeginForm("Volunteers", "Admin", FormMethod.Get))
-{
-    @Html.ValidationSummary(false)
-    <div style="border-bottom:1px solid #bbb"><h2>Search Volunteers</h2></div>
 
-    <div class="row">
-        <div class="col-md-3" style="margin-top:10px">
-            <div class="input-group">
-                <div>
-                    @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Name or email", @class = "form-control", onchange = @"form.submit()" } })
-                </div>
-                <span class="input-group-btn">
-                    <button class="btn btn-default">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-                </span>
+@*<div>
+    @Html.DropDownListFor(model => model.projectId, Model.projects.Projects, new { @class = "form-control", onchange = @"form.submit()" })
+</div>*@
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
+        @Html.HiddenFor(model => model.volunteerId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.incomeId, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.incomeId, Model.incomeDD.Tiers, new { @class = "form-control" })
             </div>
-            <!--Search filter options-->
-            <div>
-                @Html.DropDownListFor(model => model.projectId, Model.projects.Projects, new { @class = "form-control", onchange = @"form.submit()" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ethnicityId, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.ethnicityId, Model.ethnicityDD.Tiers, new { @class = "form-control" })
             </div>
-            <div>
-                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, new { @class = "form-control", onchange = @"form.submit()" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.collegeStatus, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.collegeStatus, Model.collegeDD.Tiers, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.veteranStatus, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.veteranStatus, Model.veteranDD.Tiers, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.disabledStatus, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.disabledStatus, Model.disabledDD.Tiers, new { @class = "form-control" })
             </div>
         </div>
 
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
     </div>
 }
+
+<div>
+    @Html.ActionLink("Back to MyPortal", "VolunteerPortal")
+</div>
