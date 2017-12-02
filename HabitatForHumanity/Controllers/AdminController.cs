@@ -637,6 +637,26 @@ namespace HabitatForHumanity.Controllers
             return View(cm);
         }
 
+        [HttpGet]
+        public ActionResult AddCategory()
+        {
+            return View("ProjectCategoryPartialViews/AddCategory");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddCategory(ProjectCategory pc)
+        {
+            if(ModelState.IsValid)
+            {
+                Repository.CreateProjectCategory(pc);
+            }
+            else
+            {
+                return View(pc);
+            }
+            return RedirectToAction("ManageProjectCategory");
+        }
 
         #endregion
 

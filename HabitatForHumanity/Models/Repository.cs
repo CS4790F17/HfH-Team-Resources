@@ -1207,6 +1207,11 @@ namespace HabitatForHumanity.Models
             return SearchResults;
         }
 
+        public static void CreateProjectCategory(ProjectCategory pc)
+        {
+            ProjectCategory.CreateProjectCategory(pc);
+        }
+
 
         #endregion
     }
