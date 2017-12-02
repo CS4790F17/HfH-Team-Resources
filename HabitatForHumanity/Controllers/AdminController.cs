@@ -14,11 +14,12 @@ using static HabitatForHumanity.Models.User;
 using PagedList;
 using System.Data.Entity;
 using HabitatForHumanity.Controllers;
+using System.Net;
 
 namespace HabitatForHumanity.Controllers
 {
-    [AdminFilter]
-    [AuthorizationFilter]
+     [AdminFilter]
+     [AuthorizationFilter]
     public class AdminController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
@@ -78,16 +79,22 @@ namespace HabitatForHumanity.Controllers
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
             ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
-            if (rs.errorCode != 0)
+            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                ViewBag.status = awwSnapMsg;
+                var pageIndex = tsm.Page ?? 1;
+                List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
+                tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
+                tsm.Page = tsm.SearchResults.PageNumber;
                 return View(tsm);
             }
-            var pageIndex = tsm.Page ?? 1;
-            List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
-            tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
-            tsm.Page = tsm.SearchResults.PageNumber;
+            //else if(rs.errorCode == ReturnStatus.ERROR_WHILE_ACCESSING_DATA)
+            //{
+            //    ViewBag.status = "debug, trouble in data layer -  ";
+            //    return View(tsm);
+            //}
+            ViewBag.status = "No results for that time period";// awwSnapMsg;
             return View(tsm);
+
         }
 
         public ActionResult EditTimeCard(int id)
@@ -439,10 +446,58 @@ namespace HabitatForHumanity.Controllers
             return View(usersVM);
         }
 
+        #region Delete Timecard
+        // GET: TimeSheet/Delete/5
+        //  [AdminFilter]
+        //   [AuthorizationFilter]
+        [HttpGet]
+        public ActionResult DeleteTimeCard(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            //TimeSheet timeSheet = db.timeSheets.Find(id);
+            //if (timeSheet == null)
+            //{
+            //    return HttpNotFound();
+            //}
+            //return View(timeSheet);
+
+            ReturnStatus rs = Repository.GetTimeCardVM((int)id);
+            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                ViewBag.status = "Sorry, something went wrong while retrieving information.";
+                //TODO: change this to return some sort of error partial or the modal will blow up
+                return View();
+            }
+
+            return PartialView("TimeCardPartialViews/_DeleteTimeCard", (TimeCardVM)rs.data);
+        }
+
+        // POST: TimeSheet/Delete/5
+        //[AdminFilter]
+        //  [AuthorizationFilter]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteTimeCard(TimeCardVM model)
+        {
+            ReturnStatus rs = Repository.AdminDeleteTimeCard(model);
+            if(rs.errorCode != 0)
+            {
+                return PartialView("_Error");
+            }
+            return PartialView("TimeCardPartialViews/_DeleteTimeCardSuccess");
+        }
+        #endregion
         public ActionResult GetBadPunches()
         {
             ReturnStatus rs = Repository.GetNumBadPunches();
-            int numBadPunches = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
+            if(rs.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                return PartialView("_Error");
+            }
+            int numBadPunches = (int)rs.data;
             return PartialView("_BadPunches", numBadPunches);
         }
 

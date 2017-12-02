@@ -888,6 +888,30 @@ namespace HabitatForHumanity.Models
             return TimeSheet.InsertTimeSheet(ts);
         }
 
+
+        /// <summary>
+        /// when admin wants to delete time card(on HttpPost)
+        /// </summary>
+        /// <returns></returns>
+        public static ReturnStatus AdminDeleteTimeCard(TimeCardVM Model)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {               
+                TimeSheet timeSheet = db.timeSheets.Find(Model.timeId);
+                db.timeSheets.Remove(timeSheet);
+                db.SaveChanges();
+                rs.errorCode = 0;
+                return rs;
+            }
+            catch
+            {
+                rs.errorCode = -1;
+                return rs;
+            }
+        }
+
         #endregion
 
 
