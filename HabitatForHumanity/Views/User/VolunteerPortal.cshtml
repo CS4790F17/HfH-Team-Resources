@@ -79,7 +79,19 @@
             <div class="col-md-6">@Html.Action("_PunchOut", new { id = Model.userId })</div>
         }
     }
+
 </div>
+<div class="row">
+    <div class="text-center">
+        <div>
+            <a href="@Url.Action("DemographicsSurvey")" class="btn btn-warning">
+                Help us obtain funding by filling out a short survey!
+                <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+            </a>
+        </div>
+    </div>
+</div>
+
 
 @section Scripts {
     <script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
