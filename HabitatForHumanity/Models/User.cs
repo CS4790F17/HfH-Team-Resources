@@ -106,6 +106,13 @@ namespace HabitatForHumanity.Models
         [Display(Name = "Emergency Zipcode*")]
         public string emergencyZip { get; set; }
 
+        // stuff for demographics forms, see Demographics vm for categories
+        public int incomeId { get; set; }
+        public int ethnicityId { get; set; }
+        public int collegeStatus { get; set; }
+        public int veteranStatus { get; set; }
+        public int disabledStatus { get; set; }
+
         public User()
         {
             Id = -1;
@@ -130,7 +137,12 @@ namespace HabitatForHumanity.Models
             emergencyZip = "";
             emergencyCity = "";
             emergencyHomePhone = "";
-        }
+            incomeId        = 1;
+            ethnicityId     = 1;
+            collegeStatus   = 1;
+            veteranStatus   = 1;
+            disabledStatus  = 1;
+    }
 
         public void AddWaiverToUser(SignWaiverVM waiver)
         {
