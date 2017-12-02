@@ -29,8 +29,11 @@
             <div id="@orgId" class="row well well-sm" style="margin:1px;opacity:@opac">
                 <div class="col-xs-3 text-center">@org.name</div>
 
+                <div class="col-xs-3">@org.comments</div>
+                <div class="col-xs-3">
+                    @ToolKitVM.ModalEditButtonGlyph("editModalButton", "editOrganizationModal", org.Id.ToString(), "Edit")
 
-
+                </div>
 
                 @switch (org.status)
                 {
@@ -64,10 +67,7 @@
                     </div>*@
 
 
-                <div class="col-xs-3">
-                    @ToolKitVM.ModalEditButtonGlyph("editModalButton", "editOrganizationModal", org.Id.ToString(), "Edit")
- 
-                </div>
+
             </div>
 
         }
