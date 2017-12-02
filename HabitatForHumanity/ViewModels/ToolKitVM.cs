@@ -294,7 +294,7 @@ namespace HabitatForHumanity.ViewModels
             SelectList.Add(new SelectListItem
             {
                 Value = "-1",
-                Text = "None/Individual"
+                Text = "No Organization"
             });
 
             foreach (Organization item in items)
