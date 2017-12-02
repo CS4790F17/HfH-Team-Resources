@@ -369,6 +369,22 @@ namespace HabitatForHumanity.Models
         }
 
 
+        public static void SaveDemographicsSurvey(DemographicsVM dvm)
+        {
+            ReturnStatus userRS = GetUser(dvm.volunteerId);
+            if(userRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                User user = (User)userRS.data;
+                user.incomeId = dvm.incomeId;
+                user.ethnicityId = dvm.ethnicityId;
+                user.collegeStatus = dvm.collegeStatus;
+                user.veteranStatus = dvm.veteranStatus;
+                user.disabledStatus = dvm.disabledStatus;
+                ReturnStatus updatedUserRS = EditUser(user);
+            }
+        }
+
+
         #endregion User
 
         #region Project functions
