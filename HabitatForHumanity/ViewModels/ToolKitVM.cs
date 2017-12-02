@@ -168,20 +168,20 @@ namespace HabitatForHumanity.ViewModels
         /// <returns></returns>
         public static IHtmlString GenericModalOpenButton(string buttonClass, string targetModal, string dataId, string optionalText, string glyphIcon, bool textFirst)
         {
-            string button = "<button class='btn btn-primary {2}' data-target='#{3}' data-toggle='modal'>{0}{1}</button>";
+            string button = "<button class='btn btn-primary {2}' dataId='{4}' data-target='#{3}' data-toggle='modal'>{0}{1}</button>";
             string glyphSpan = "";
 
             if (textFirst)
             {
                 glyphSpan = "<span class='glyphicon {0}' style='margin-left:5px'></span>";
                 glyphSpan = String.Format(glyphSpan, glyphIcon);
-                button = String.Format(button, optionalText, glyphSpan, buttonClass, targetModal);
+                button = String.Format(button, optionalText, glyphSpan, buttonClass, targetModal, dataId);
             }
             else
             {
                 glyphSpan = "<span class='glyphicon {0}' style='margin-right:5px'></span>";
                 glyphSpan = String.Format(glyphSpan, glyphIcon);
-                button = String.Format(button, glyphSpan, optionalText, buttonClass, targetModal);
+                button = String.Format(button, glyphSpan, optionalText, buttonClass, targetModal, dataId);
             }
 
             return new HtmlString(button);
