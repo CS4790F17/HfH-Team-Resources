@@ -584,7 +584,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddOrganization([Bind(Include = "name")]Organization org)
+        public ActionResult AddOrganization([Bind(Include="name, comments")]Organization org)
         {
             if (ModelState.IsValid)
             {
