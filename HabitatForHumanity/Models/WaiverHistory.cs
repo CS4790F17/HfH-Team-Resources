@@ -38,6 +38,6 @@ namespace HabitatForHumanity.Models
         public String emergencyStreetAddress { get; set; }
         public String emergencyCity { get; set; }
         public String emergencyZip { get; set; }
-        public String signature { get; set; }
+        public String signatureName { get; set; }
     }
 }

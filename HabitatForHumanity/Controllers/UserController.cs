@@ -278,6 +278,7 @@ namespace HabitatForHumanity.Controllers
             {
                 SignWaiverVM signWaiver = new SignWaiverVM();
                 signWaiver.signature = false;
+                signWaiver.signatureName = null;
                 signWaiver.emergencyCity = null;
                 signWaiver.emergencyFirstName = null;
                 signWaiver.emergencyHomePhone = null;
@@ -301,7 +302,7 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SignWaiver([Bind(
-            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature")] SignWaiverVM signWaiverVM)
+            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature, signatureNmae")] SignWaiverVM signWaiverVM)
         {
             if (ModelState.IsValid)
             {
@@ -312,7 +313,7 @@ namespace HabitatForHumanity.Controllers
                     ViewBag.status = "Sorry, our system is down. Please try again later.";
                     return View(signWaiverVM);
                 }
-             
+                //Saves the Emergency Contact info to the user profile
                 User user = (User)rs.data;
                 if (user.Id > 0)
                 {
@@ -325,6 +326,20 @@ namespace HabitatForHumanity.Controllers
                     }
                     return RedirectToAction("VolunteerPortal");
                  }
+
+                //Saves a snapshot of the waiver infomation at time of signing.
+                //rs = Repository.GetUserByEmail(signWaiverVM.userEmail);//rs = newly saved user information 
+                //user = (User)rs.data;//user is assinged to the newly saved data
+                //if (rs.errorCode != 0)
+                //{
+                //    ViewBag.status = "Sorry, our system is down. Please try again later.";
+                //    return View(signWaiverVM);
+                //}
+                //if(user.Id > 0)
+                //{
+                    
+                //}
+
             }
             ViewBag.status = "An error has occured below.";
             return View(signWaiverVM);
