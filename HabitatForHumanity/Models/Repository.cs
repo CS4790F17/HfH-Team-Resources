@@ -6,7 +6,6 @@ using System.Web.Helpers;
 using HabitatForHumanity.ViewModels;
 using HabitatForHumanity.Models;
 using PagedList;
-using static HabitatForHumanity.ViewModels.DemographicsDropDowns;
 
 namespace HabitatForHumanity.Models
 {
@@ -309,17 +308,19 @@ namespace HabitatForHumanity.Models
         {
             ReturnStatus vmToReturn = new ReturnStatus();
             
-            ReturnStatus userIdRS = Repository.GetUserByEmail(email);
-            if (userIdRS.errorCode != ReturnStatus.ALL_CLEAR)
+            ReturnStatus userRS = Repository.GetUserByEmail(email);
+            if (userRS.errorCode != ReturnStatus.ALL_CLEAR)
             {
                 vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 return vmToReturn;
             }
-            GenericDropDownList ethnicityDD = new GenericDropDownList(ethnicityTiers);
-            GenericDropDownList incomeDD = new GenericDropDownList(incomeTiers);
-            rs.errorCode = ReturnStatus.ALL_CLEAR;
-            rs.data = ethnicityDD;
-            return rs;
+            User user = (User)userRS.data;
+            DemographicsVM demographicsVM = new DemographicsVM();
+            demographicsVM.volunteerId = (int)user.Id;
+
+            vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+            vmToReturn.data = demographicsVM;
+            return vmToReturn;
         }
 
 
