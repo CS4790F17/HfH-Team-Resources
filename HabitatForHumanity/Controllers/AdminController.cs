@@ -18,8 +18,8 @@ using System.Net;
 
 namespace HabitatForHumanity.Controllers
 {
-    // [AdminFilter]
-    // [AuthorizationFilter]
+     [AdminFilter]
+     [AuthorizationFilter]
     public class AdminController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
