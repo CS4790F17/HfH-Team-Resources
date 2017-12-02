@@ -20,6 +20,7 @@ namespace HabitatForHumanity.ViewModels
                     "White",
                     "Two or more",
                     "Rather not say"};
+        public static string[] yesNoTiers = new string[] { "No", "Yes" };
         public class GenericDropDownList
         {
             public int dropdownId { get; set; }

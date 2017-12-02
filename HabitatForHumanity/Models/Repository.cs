@@ -308,10 +308,15 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetDemographicsSurveyVM(string email)
         {
             ReturnStatus vmToReturn = new ReturnStatus();
-            ReturnStatus userIdRS = Repository.GetUserByEmail(email);
-            if(user)
-            GenericDropDownList ethnicityDD = new GenericDropDownList(ethnicityTiers);
             
+            ReturnStatus userIdRS = Repository.GetUserByEmail(email);
+            if (userIdRS.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return vmToReturn;
+            }
+            GenericDropDownList ethnicityDD = new GenericDropDownList(ethnicityTiers);
+            GenericDropDownList incomeDD = new GenericDropDownList(incomeTiers);
             rs.errorCode = ReturnStatus.ALL_CLEAR;
             rs.data = ethnicityDD;
             return rs;
