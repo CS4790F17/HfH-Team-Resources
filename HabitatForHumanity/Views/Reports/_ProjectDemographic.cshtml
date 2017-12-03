@@ -69,7 +69,8 @@
                 @Html.DisplayFor(modelItem => item.numHours)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.numStudents)
+                @(string.Format("{0:P0}", item.numStudents / (double)item.numVolunteers))
+                @*@Html.DisplayFor(modelItem => item.numStudents)*@
             </td>
             <td>
                 @(string.Format("{0:P0}", item.numVeterans / (double)item.numVolunteers))
