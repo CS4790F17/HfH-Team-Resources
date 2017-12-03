@@ -48,17 +48,18 @@ namespace HabitatForHumanity.Models
         public static int MONTH = 1;
         public static int QUARTER = 3;
         public static int YEARLY = 12;
-        public static ReturnStatus GetProjectDemographicsReport(int period)
+        public static ReturnStatus GetProjectDemographicsReport(int monthsAgo)
         {
             ReturnStatus reportReturn = new ReturnStatus();
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
                 DateTime today = DateTime.Today;
-                DateTime periodStart = today.AddMonths(-period);
-                string strFirstOfThisMonth = today.Year.ToString() + today.Month.ToString() + "01";
-                string strPeriodStart = periodStart.Year.ToString() + periodStart.Month.ToString() + "01";
-                string q = " SELECT " +
+                DateTime firstThisMonth = new DateTime(today.Year, today.Month, 1);
+                DateTime periodEnd = firstThisMonth.AddMonths(-monthsAgo);
+                DateTime periodStart = periodEnd.AddMonths(-1);
+
+                string q = " SELECT MAX(T.CLOCKINTIME) AS monthName, " +
                         " PC.CATEGORYTYPE AS category, " +
                     " COUNT(U.ID) AS numVolunteers, " +
                     " CONVERT(INT,SUM(DATEDIFF(HH,T.CLOCKINTIME,T.CLOCKOUTTIME))) AS numHours, " +
@@ -79,7 +80,7 @@ namespace HabitatForHumanity.Models
                     " LEFT JOIN PROJECT P ON T.PROJECT_ID = P.Id " +
                     " LEFT JOIN PROJECTCATEGORY PC ON P.CATEGORYID = PC.ID " +
                     " LEFT JOIN dbo.[User] U ON T.[USER_ID] = U.ID " +
-                    " WHERE T.CLOCKINTIME BETWEEN '" + strPeriodStart + "' AND '" + strFirstOfThisMonth + "' " +
+                    " WHERE T.CLOCKINTIME BETWEEN '" + periodStart.ToString() + "' AND '" + periodEnd.ToString() + "' " +
                     " GROUP BY " +
                     " PC.CATEGORYTYPE ";
                 var projectDemographics = db.Database.SqlQuery<ProjDemogReportVM>(q

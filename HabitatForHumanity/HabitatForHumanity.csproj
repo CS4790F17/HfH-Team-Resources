@@ -145,6 +145,7 @@
     <Compile Include="AuthorizationFilter.cs" />
     <Compile Include="Controllers\OrganizationController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\TimeSheetController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -358,7 +359,8 @@
     <Content Include="Views\User\DemographicsSurvey.cshtml" />
     <Content Include="Views\Admin\ManageProjectCategory.cshtml" />
     <Content Include="Views\Admin\ProjectCategoryPartialViews\AddCategory.cshtml" />
-    <Content Include="Views\Project\ProjectDemographics.cshtml" />
+    <Content Include="Views\Reports\ProjectDemographics.cshtml" />
+    <Content Include="Views\Reports\_ProjectDemographic.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

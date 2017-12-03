@@ -979,6 +979,8 @@ namespace HabitatForHumanity.Models
 
         #region Report functions
 
+        #region Dashboard Barchart
+
         public static ReturnStatus GetHoursChartVMByYear()
         {
             ReturnStatus chartReturn = new ReturnStatus();
@@ -1138,7 +1140,32 @@ namespace HabitatForHumanity.Models
             }
 
         }
+        #endregion Dashboard Barchart
 
+        #region Project Reports
+        public static ReturnStatus GetProjectDemographicsReport(int period)
+        {
+            ReturnStatus listOfListsRS = new ReturnStatus();
+            List<List<ProjDemogReportVM>> reports = new List<List<ProjDemogReportVM>>();
+            for (int i = 0; i < period; i++)
+            {
+                ReturnStatus aListRS = Project.GetProjectDemographicsReport(i);
+                if(aListRS.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    listOfListsRS.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                    return listOfListsRS;
+                }
+                reports.Add((List<ProjDemogReportVM>)aListRS.data);
+            }
+            listOfListsRS.errorCode = ReturnStatus.ALL_CLEAR;
+            listOfListsRS.data = reports;
+            return listOfListsRS;
+            
+
+            //return Project.GetProjectDemographicsReport(period);
+        }
+
+        #endregion Project Reports
 
         public static ReturnStatus getTotalHoursWorkedByVolunteer(int volunteerId)
         {
@@ -1212,9 +1239,9 @@ namespace HabitatForHumanity.Models
             try
             {
                 st = User.GetDemographicsForPie(gender);
-                if (st.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                if (st.errorCode != ReturnStatus.ALL_CLEAR)
                 {
-                    st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                    st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                     return st;
                 }
             }
@@ -1224,11 +1251,6 @@ namespace HabitatForHumanity.Models
             }
             return User.GetDemographicsForPie(gender);
         }
-
-        //public static ReturnStatus GetBadTimeSheets()
-        //{
-        //    return TimeSheet.GetBadTimeSheets();
-        //}
 
         public static ReturnStatus GetNumBadPunches()
         {
@@ -1277,13 +1299,7 @@ namespace HabitatForHumanity.Models
 
         #endregion
 
-        #region Project Reports
-        public static ReturnStatus GetProjectDemographicsReport(int period)
-        {
-            return Project.GetProjectDemographicsReport(period);
-        }
 
-        #endregion Project Reports
 
         #region Project Category
 
