@@ -1263,6 +1263,11 @@ namespace HabitatForHumanity.Models
 
         #region Project Category
 
+        public static ReturnStatus GetAllCategories()
+        {
+            return ProjectCategory.GetAllProjectCategories();
+        }
+
         public static StaticPagedList<ProjectCategory> GetAllCategoriesByPageSize(int? page, int recordsPerPage)
         {
             if (page < 1 || page == null)

@@ -616,7 +616,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        public ActionResult CreateProject([Bind(Include = "Id,name,description,beginDate,categoryId")] Project proj)
         {
             if (!ModelState.IsValid)
             {
@@ -669,7 +669,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate,categoryId")] Project proj)
         {
             //if model state isn't valid
             if (!ModelState.IsValid)

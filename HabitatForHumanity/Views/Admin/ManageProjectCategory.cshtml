@@ -19,3 +19,5 @@
 
 
 @Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjectCategory", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
+
+@Html.ActionLink("Back to Projects", "ManageProjects")

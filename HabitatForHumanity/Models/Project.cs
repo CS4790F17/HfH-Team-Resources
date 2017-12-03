@@ -265,6 +265,26 @@ namespace HabitatForHumanity.Models
             categoryType = "";
         }
 
+        public static ReturnStatus GetAllProjectCategories()
+        {
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.projectCategories.ToList();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+
+            }
+            catch (Exception e)
+            {
+                st.data = new List<ProjectCategory>();
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorMessage = e.ToString();
+            }
+
+            return st;
+        }
+
         public static ReturnStatus GetAllCategoriesByPageSize(int page, int recordsPerPage, ref int totalCount)
         {
             ReturnStatus st = new ReturnStatus();
