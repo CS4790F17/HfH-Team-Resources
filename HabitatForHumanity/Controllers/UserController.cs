@@ -59,8 +59,9 @@ namespace HabitatForHumanity.Controllers
 
         #region VolunteerPortal
         [AuthorizationFilter]
-        public ActionResult VolunteerPortal(int? justPunched)
+        public ActionResult VolunteerPortal(int? justPunched, string excMsg)
         {
+            ViewBag.status = (!string.IsNullOrEmpty(excMsg)) ? excMsg : null;
 
             ReturnStatus us = Repository.GetUserByEmail(Session["UserName"].ToString());
             if (us.errorCode != 0)
@@ -733,6 +734,17 @@ namespace HabitatForHumanity.Controllers
             }
             return View(demographicsVM);
         }
+
+        [AuthorizationFilter]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DemographicsSurvey(DemographicsVM dvm)
+        {
+            Repository.SaveDemographicsSurvey(dvm);
+            return RedirectToAction("VolunteerPortal", new { excMsg = "Thanks for your input!." });
+        }
+
+
         #endregion Demographics survey
         protected override void Dispose(bool disposing)
         {
