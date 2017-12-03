@@ -214,33 +214,66 @@ namespace HabitatForHumanity.Models
         }
 
 
-        public static ReturnStatus GetProjectPage(int page, int itemsPerPage, ref int totalProjects, string queryString)
+        public static ReturnStatus GetProjectPage(int page, int itemsPerPage, ref int totalProjects, string queryString, int categorySelection)
         {
             VolunteerDbContext db = new VolunteerDbContext();
             List<Project> proj = new List<Project>();
 
-            proj = (from p in db.projects
-                    where p.name.Contains(queryString)
-                    orderby p.status descending
-                    select p)
-                    .Skip(itemsPerPage * page)
-                    .Take(itemsPerPage).ToList();
-            totalProjects = db.projects.Count();
+            //if statement is terrible bandaid fix 
+            //TODO: redo logic
+            if (categorySelection > 0)
+            {
+                proj = (from p in db.projects
+                        where p.name.Contains(queryString) && p.categoryId == categorySelection
+                        orderby p.status descending
+                        select p)
+                        .Skip(itemsPerPage * page)
+                        .Take(itemsPerPage).ToList();
+                totalProjects = db.projects.Count();
+            }
+            else
+            {
+                proj = (from p in db.projects
+                        where p.name.Contains(queryString)
+                        orderby p.status descending
+                        select p)
+                        .Skip(itemsPerPage * page)
+                        .Take(itemsPerPage).ToList();
+                totalProjects = db.projects.Count();
+            }
             return new ReturnStatus { errorCode = ReturnStatus.ALL_CLEAR, data = proj };
         }
 
-        public static ReturnStatus GetProjectPageWithFilter(int page, int itemsPerPage, ref int totalProjects, int statusChoice, string queryString)
+        public static ReturnStatus GetProjectPageWithFilter(int page, int itemsPerPage, ref int totalProjects, int statusChoice, string queryString, int categorySelection)
         {
             VolunteerDbContext db = new VolunteerDbContext();
             List<Project> proj = new List<Project>();
 
+            //if statement is terrible bandaid fix 
+            //TODO: redo logic
+            if(categorySelection > 0)
+            { 
             proj = (from p in db.projects
-                    where p.status.Equals(statusChoice) && p.name.Contains(queryString)
+                    where p.status.Equals(statusChoice) &&
+                    p.name.Contains(queryString) &&
+                    p.categoryId == categorySelection
                     orderby p.status descending
                     select p)
                     .Skip(itemsPerPage * page)
                     .Take(itemsPerPage).ToList();
             totalProjects = db.projects.Count(x => x.status.Equals(statusChoice) && x.name.Contains(queryString));
+            }
+            else
+            {
+                proj = (from p in db.projects
+                        where p.status.Equals(statusChoice) &&
+                        p.name.Contains(queryString)
+                        orderby p.status descending
+                        select p)
+        .Skip(itemsPerPage * page)
+        .Take(itemsPerPage).ToList();
+                totalProjects = db.projects.Count(x => x.status.Equals(statusChoice) && x.name.Contains(queryString));
+            }
             return new ReturnStatus { errorCode = ReturnStatus.ALL_CLEAR, data = proj };
         }
 

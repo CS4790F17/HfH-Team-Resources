@@ -321,10 +321,15 @@ namespace HabitatForHumanity.ViewModels
             ReturnStatus st = ProjectCategory.GetAllProjectCategories();
             List<ProjectCategory> cat = (List<ProjectCategory>)st.data;
             var SelectList = new List<SelectListItem>();
-
+             SelectList.Add(new SelectListItem
+                {
+                    Value = "0",
+                    Text = "All"
+                });
 
             foreach (ProjectCategory item in cat)
             {
+   
                 SelectList.Add(new SelectListItem
                 {
                     Value = item.Id.ToString(),

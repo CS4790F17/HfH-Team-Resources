@@ -606,7 +606,7 @@ namespace HabitatForHumanity.Controllers
                 model.queryString = ""; //keeps the paged list from being empty
 
 
-            model.SearchResults = Repository.GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString);
+            model.SearchResults = Repository.GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString, model.categorySelection);
             // model.Page = model.SearchResults.PageNumber;
             model.Page = 1;
 
