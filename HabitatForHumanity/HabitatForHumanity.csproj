@@ -192,6 +192,7 @@
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\PagedList.css" />
+    <Content Include="DBscripts\demographicsUpdateDatabase.txt" />
     <Content Include="DBscripts\ProjectCategory.sql" />
     <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
     <Content Include="DBscripts\ageBracketsByGender.txt" />
