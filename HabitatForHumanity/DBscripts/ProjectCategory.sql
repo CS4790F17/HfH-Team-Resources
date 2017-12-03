@@ -1,5 +1,5 @@
 ﻿ALTER TABLE Project
-ADD categoryId int;
+ADD categoryId int NULL;
 GO
 
 
