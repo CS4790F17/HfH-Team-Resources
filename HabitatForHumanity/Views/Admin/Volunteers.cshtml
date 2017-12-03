@@ -30,40 +30,68 @@
                 @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, new { @class = "form-control", onchange = @"form.submit()" })
             </div>
         </div>
-        <div class="col-md-9">
-            @{if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+
+    </div>
+}
+<hr />
+
+
+    @{if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+        {
+            <div class="col-md-7 col-md-offset-2">
+                <div>
+                    <div class="row hidden-xs">
+                        <div class="col-md-4">
+                            Volunteer
+                        </div>
+                        <div class="col-md-5">
+                            Email Address
+                        </div>
+                        <div class="col-md-3 text-center">
+                            Hours to Date
+                        </div>
+                    </div>
+                    @foreach (var volunteer in Model.SearchResults)
                 {
-                    <table class="table" style="width:500px;">
-                        <tr>
-                            <th>ID</th>
-                            <th>Volunteer</th>
-                            <th>Email Address</th>
-                            <th>Hours to Date</th>
-                        </tr>
-                        @foreach (var volunteer in Model.SearchResults)
+                        <a href="@Url.Action("EditVolunteer", "Admin", new { id = volunteer.userNumber })">
+                            <div class="row well well-sm divlink" style="margin:1px">
+                                <div class="col-md-4">@volunteer.volunteerName</div>
+                                <div class="col-md-5">@volunteer.email</div>
+                                <div class="col-md-3 text-center">@volunteer.hoursToDate</div>
+                            </div>
+                        </a>
+
+
+                        @*<div class="row well well-sm divlink" style="margin:1px">
+
+                                <div class="col-md-3">@Html.ActionLink(volunteer.volunteerName, "EditVolunteer", "Admin", new { id = volunteer.userNumber }, null)</div>
+                                <div class="col-md-3">@volunteer.email</div>
+                                <div class="col-md-3 text-center">@volunteer.hoursToDate</div>
+                            </div>*@
+
+                    }
+                </div>
+              
+     
+            </div>
+      
+            <div class="text-center">
+                @Html.PagedListPager(Model.SearchResults,
+                        page => Url.Action("Volunteers", new RouteValueDictionary()
                         {
-                            <tr>
-                                <td>@volunteer.userNumber</td>
-                                <td>@Html.ActionLink(volunteer.volunteerName, "EditVolunteer", "Admin", new { id = volunteer.userNumber }, null)</td>
-                                <td>@volunteer.email</td>
-                                <td>@volunteer.hoursToDate</td>
-                            </tr>
-                        }
-                    </table>
-                    <div class="text-center">
-                        @Html.PagedListPager(Model.SearchResults,
-                       page => Url.Action("Volunteers", new RouteValueDictionary()
-                       {
-               { "Page", page },
-              {"queryString",Model.queryString },
-              {"projectId", Model.projectId }
-                       })
+                        { "Page", page },
+                        {"queryString",Model.queryString },
+                        {"projectId", Model.projectId }
+                        })
                        //,PagedListRenderOptions.PageNumbersOnly
                        )
-                    </div>
+            </div>
+        }
 
-                }
-            }
-        </div>
-    </div>
-                }
+    }
+
+
+
+
+
+

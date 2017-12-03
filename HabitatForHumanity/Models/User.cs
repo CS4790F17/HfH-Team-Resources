@@ -24,6 +24,7 @@ namespace HabitatForHumanity.Models
         [Required(ErrorMessage = "Enter Last Name")]
         [Display(Name = "Last Name*")]
         public string lastName { get; set; }
+        [Phone]
         [Required]//(ErrorMessage = "Enter Home Phone")]
         [Display(Name = "Primary Phone*")]
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
@@ -32,6 +33,7 @@ namespace HabitatForHumanity.Models
         [RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string workPhoneNumber { get; set; }
 
+        //[Required, StringLength(40), EmailAddress, DisplayName("Email Address")]
         [Required(ErrorMessage = "Enter Email")]
         [Display(Name = "Email*")]
         [RegularExpression(@"^(([^<>()\[\]\\.,;:\s@']+(\.[^<>()\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Please Enter a Valid Email Address")]
@@ -40,54 +42,66 @@ namespace HabitatForHumanity.Models
         [Required(ErrorMessage = "Enter Address")]
         [Display(Name = "Address*")]
         public string streetAddress { get; set; }
+
         [Required(ErrorMessage = "Enter City")]
         [Display(Name = "City*")]
         public string city { get; set; }
+
         [Required(ErrorMessage = "Enter Zipcode")]
         [Display(Name = "Zipcode*")]
         [RegularExpression(@"^(^\d{5}$)|(^\d{5}-\d{4}$)$", ErrorMessage = "Please Enter a Valid Zip")]
         public string zip { get; set; }
+
         [Required(ErrorMessage = "Enter Password")]
         [Display(Name = "Password*")]
         public string password { get; set; }
+
         [Required(ErrorMessage = "Enter Birthdate")]
         [Display(Name = "Birthdate*")]
         [DataType(DataType.Date)]
         public DateTime birthDate { get; set; }
+
         [Display(Name = "Gender")]
         public string gender { get; set; }
+
         [Required(ErrorMessage = "Is Admin (0 - Volunteer, 1 - Admin)")]
         [Display(Name = "Admin*")]
         public int isAdmin { get; set; }    // 0 - volunteer, 1 - admin
+
         [Required(ErrorMessage = "Enter Waiver Sign Date")]
         [Display(Name = "Waiver Sign Date*")]
         public DateTime waiverSignDate { get; set; }
+
         //[Required(ErrorMessage = "Enter Emergency First Name")]
         [Display(Name = "Emergency First Name*")]
-
-
-
         public string emergencyFirstName { get; set; }
+
         //[Required(ErrorMessage = "Enter Emergency Last Name")]
         [Display(Name = "Emergency Last Name*")]
         public string emergencyLastName { get; set; }
+
         //[Required(ErrorMessage = "Enter Emergency Relation")]
         [Display(Name = "Relation*")]
         public string relation { get; set; }
+
         //[Required(ErrorMessage = "Enter Emergency Home Phone")]
         [Display(Name = "Emergency Primary Phone*")]
         //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
+
         //[Required(ErrorMessage = "Enter Emergency Work Phone")]
         [Display(Name = "Emergency Alternate Phone")]
         //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
+
         //[Required(ErrorMessage = "Enter Emergency Address")]
         [Display(Name = "Emergency Address*")]
         public string emergencyStreetAddress { get; set; }
+
         //[Required(ErrorMessage = "Enter Emergency City")]
         [Display(Name = "Emergency City*")]
         public string emergencyCity { get; set; }
+
         //[Required(ErrorMessage = "Enter Emergency Zipcode")]
         [Display(Name = "Emergency Zipcode*")]
         public string emergencyZip { get; set; }
@@ -104,7 +118,7 @@ namespace HabitatForHumanity.Models
             city = "";
             zip = "";
             password = "";
-            birthDate = DateTime.Now; //the year 0001 is out of range for a datetime object which is the default null value
+            birthDate = DateTime.Now; //the year 0001 is out of range for a datetime object which is the defaul null value
             gender = "";
             isAdmin = 0;
             waiverSignDate = DateTime.Now.AddYears(-2);
@@ -181,7 +195,7 @@ namespace HabitatForHumanity.Models
                 st.errorCode = 0;
                 return st;
             }
-            catch 
+            catch
             {
                 st.errorCode = -1;
                 st.data = new List<User>();
@@ -203,7 +217,7 @@ namespace HabitatForHumanity.Models
             catch
             {
                 st.errorCode = -1;
-                st.data = new List<User>();                
+                st.data = new List<User>();
                 return st;
             }
         }
@@ -223,9 +237,9 @@ namespace HabitatForHumanity.Models
                 st.data = db.users.Any(u => u.emailAddress.Equals(email));
                 return st;
             }
-            catch 
+            catch
             {
-                st.errorCode = -1; 
+                st.errorCode = -1;
                 return st;
             }
         }
@@ -250,7 +264,7 @@ namespace HabitatForHumanity.Models
 
                 return st;
             }
-            catch 
+            catch
             {
                 st.errorCode = -1;
                 return st;
@@ -270,7 +284,7 @@ namespace HabitatForHumanity.Models
             try
             {
                 VolunteerDbContext db = new VolunteerDbContext();
-                st.data = db.users.Find(id);               
+                st.data = db.users.Find(id);
                 st.errorCode = 0;
                 return st;
             }
@@ -537,10 +551,10 @@ namespace HabitatForHumanity.Models
                 DateTime present = DateTime.Now;
                 if (u.birthDate >= present.AddYears(-18))
                 {
-                    dunder18.numPeople++;            
+                    dunder18.numPeople++;
                 }
                 else if (u.birthDate > present.AddYears(-27))
-                {   
+                {
                     d18to27.numPeople++;
                 }
                 else if (u.birthDate > present.AddYears(-40))

@@ -15,8 +15,11 @@ namespace HabitatForHumanity.ViewModels
     {
         public string userEmail { get; set; }
         [Range(typeof(bool), "true", "true", ErrorMessage = "Must agree to terms and conditions to continue.")]
-        [Display(Name = "I have read and agree to the terms above.")]
+        [Display(Name = "I have read and agree to the terms above")]
         public bool signature { get; set; }
+        [Display(Name ="Type your full name to sign")]
+        [Required(ErrorMessage ="You must sign the waiver to continue.")]
+        public String signatureName { get; set; }
         [Required(ErrorMessage = "Enter Emergency Contact's First Name")]
         [Display(Name = "First Name*")]
         public string emergencyFirstName { get; set; }

@@ -15,7 +15,7 @@
 
 @*@ToolKitVM.Modal("Edit Time Card", "editModal", "editPartial")*@
 @ToolKitVM.ModalPreventDefault("editTimeCardModal", "Edit Time Card", "editPartialDiv", "editTimeCardForm")
-
+@ToolKitVM.ModalPreventDefault("deleteTimeCardModal", "Delete Time Card", "deletePartialDiv", "deleteTimeCardForm")
 
 
 @using (Html.BeginForm("TimeCards", "Admin", FormMethod.Get))
@@ -25,12 +25,14 @@
     <div class="row">
         <div class="col-md-3">
             <div class="input-group" style="width:100px">
-                From: @Html.EditorFor(model => model.rangeStart, new { htmlAttributes = new { @class = "form-control", @style = "width:auto", onchange = @"form.submit()" } })
+                @*From: @Html.EditorFor(model => model.rangeStart,  new { htmlAttributes = new { @class = "form-control datepicker", @style = "width:auto", onchange = @"form.submit()" } })*@
+                From: <input class="form-control datepicker text-box single-line" data-val="true" data-val-date="The field From must be a date." data-val-required="The From field is required." id="rangeStart" name="rangeStart" onchange="form.submit()" style="width:auto" value="@Model.rangeStart.ToString("yyyy-MM-dd")" type="date">
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-group" style="width:100px">
-                To: @Html.EditorFor(model => model.rangeEnd, new { htmlAttributes = new { @class = "form-control", @style = "width:auto", onchange = @"form.submit()" } })
+             @*   To: @Html.EditorFor(model => model.rangeEnd, new { htmlAttributes = new { @class = "form-control", @style = "width:auto", onchange = @"form.submit()" } })*@
+                To: <input class="form-control text-box single-line" data-val="true" data-val-date="The field To must be a date." data-val-required="The To field is required." id="rangeEnd" name="rangeEnd" onchange="form.submit()" style="width:auto" value="@Model.rangeEnd.ToString("yyyy-MM-dd")" type="date">
             </div>
         </div>
     </div>
@@ -94,11 +96,13 @@
                 <div class="col-md-1">@card.outTime.ToShortTimeString()   </div>
                 @{
                     TimeSpan span = card.outTime.Subtract(card.inTime);
-                    double hours = span.Hours + span.Minutes / 60.0;
+                    double hours = span.TotalHours;
                  }
                 <div class="col-md-1 text-center"> @string.Format("{0:N2}", hours) </div>
                 @*@ToolKitVM.ModalButton("editButton", "editModal", editHtml, card.timeId.ToString())*@
                 @ToolKitVM.ModalEditButtonGlyph("editButton", "editTimeCardModal", card.timeId.ToString(), "Edit")
+            @*    @ToolKitVM.ModalEditButtonGlyph("deleteButton", "deleteTimeCardModal", card.timeId.ToString(), "Delete")*@
+                @ToolKitVM.GenericModalOpenButton("deleteButton", "deleteTimeCardModal", card.timeId.ToString(), "Delete", "glyphicon-trash", false)
             </div>
                     }
 
@@ -123,5 +127,6 @@
     }*@
 
 @ToolKitVM.GetPartialViewButtonScript("editButton", "EditTimeCard", "Admin", "editPartialDiv")
+@ToolKitVM.GetPartialViewButtonScript("deleteButton", "DeleteTimeCard", "Admin", "deletePartialDiv")
 
 

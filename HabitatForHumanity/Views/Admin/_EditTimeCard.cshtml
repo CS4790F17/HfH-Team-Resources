@@ -21,7 +21,7 @@
         </div>
         <div class="col-md-3">
             @Html.EditorFor(model => model.inTime, new { htmlAttributes = new { @type = "datetime", @Value = Model.inTime.ToString("MM/dd/yyyy h:mm tt"), @class = "form-control", @style = "width:auto" } })
-            @Html.ValidationMessageFor(x => x.inTime, "", new { @class = "text-danger" })
+            @*@Html.ValidationMessageFor(x => x.inTime, "", new { @class = "text-danger" })*@
         </div>
     </div>
 
@@ -31,10 +31,17 @@
         </div>
         <div class="col-md-3">
             @Html.EditorFor(model => model.outTime, new { htmlAttributes = new { @type = "datetime", @Value = Model.outTime.ToString("MM/dd/yyyy h:mm tt"), @class = "form-control", @style = "width:auto" } })
-            @Html.ValidationMessageFor(x => x.outTime, "", new { @class = "text-danger" })
+            @*@Html.ValidationMessageFor(x => x.outTime, "", new { @class = "text-danger" })*@
         </div>
     </div>
     
+}
+@{ 
+    TimeSpan span = Model.outTime.Subtract(Model.inTime);
+    if(span.TotalHours >=24 || span.TotalHours <= 0)
+    {
+        <div class="alert"><h4 class="alert-danger">Time spans can't be negative or more than 24 hours</h4></div>
+    }
 }
 
 

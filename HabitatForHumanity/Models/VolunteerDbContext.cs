@@ -13,5 +13,6 @@ namespace HabitatForHumanity.Models
         public DbSet<TimeSheet> timeSheets { get; set; }
         public DbSet<User> users { get; set; }
         public DbSet<ProjectCategory> projectCategories { get; set; }
+        public DbSet<WaiverHistory> waiverHistory { get; set; }
     }
 }

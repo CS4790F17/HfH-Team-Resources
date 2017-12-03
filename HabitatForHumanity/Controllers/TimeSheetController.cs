@@ -48,6 +48,10 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(punchInVM.orgId < 1)
+                {
+                    punchInVM.orgId = 1; // force the -1 to be org #1, relies on orgId 1 == "Individual"
+                }
                 TimeSheet sheet = new TimeSheet();
                 sheet.user_Id = punchInVM.userId;
                 sheet.project_Id = punchInVM.projectId;
@@ -61,10 +65,11 @@ namespace HabitatForHumanity.Controllers
                 {
                     return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
                 }
-                return RedirectToAction("VolunteerPortal", "User");
+            //    return RedirectToAction("VolunteerPortal", "User");
             }
 
-            return RedirectToAction("VolunteerPortal", "User");
+            
+            return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1 });
 
         }
         #endregion
@@ -90,7 +95,7 @@ namespace HabitatForHumanity.Controllers
                 //TODO: add handling to ensure timesheet was properly updated
                 Repository.UpdateTimeSheet(timeSheet);
 
-                return RedirectToAction("VolunteerPortal", "User");
+                return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1});
             }
             return View(punchOutVM);
         }

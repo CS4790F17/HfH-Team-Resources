@@ -168,20 +168,20 @@ namespace HabitatForHumanity.ViewModels
         /// <returns></returns>
         public static IHtmlString GenericModalOpenButton(string buttonClass, string targetModal, string dataId, string optionalText, string glyphIcon, bool textFirst)
         {
-            string button = "<button class='btn btn-primary {2}' data-target='#{3}' data-toggle='modal'>{0}{1}</button>";
+            string button = "<button class='btn btn-primary {2}' dataId='{4}' data-target='#{3}' data-toggle='modal'>{0}{1}</button>";
             string glyphSpan = "";
 
             if (textFirst)
             {
                 glyphSpan = "<span class='glyphicon {0}' style='margin-left:5px'></span>";
                 glyphSpan = String.Format(glyphSpan, glyphIcon);
-                button = String.Format(button, optionalText, glyphSpan, buttonClass, targetModal);
+                button = String.Format(button, optionalText, glyphSpan, buttonClass, targetModal, dataId);
             }
             else
             {
                 glyphSpan = "<span class='glyphicon {0}' style='margin-right:5px'></span>";
                 glyphSpan = String.Format(glyphSpan, glyphIcon);
-                button = String.Format(button, glyphSpan, optionalText, buttonClass, targetModal);
+                button = String.Format(button, glyphSpan, optionalText, buttonClass, targetModal, dataId);
             }
 
             return new HtmlString(button);
@@ -190,9 +190,10 @@ namespace HabitatForHumanity.ViewModels
 
 
         /// <summary>
-        /// Builds a script for handling GET requests that load partial views into a modal.
+        /// Builds a script for handling GET requests that load partial views into a modal. This script is intended to load partial views into a modal. No matter what it receives it will attempt to place it
+        ///  into the modal. For instance, if you have a redirect in your action method this script will take the html page generated for the redirect and stick it into the modal. It will not redirect. 
         /// </summary>
-        /// <param name="action">The action method to invoke.</param>
+        /// <param name="action">The GET action method that retrieves the initial partial view. This action needs to return PartialView.</param>
         /// <param name="controller">The controller where the action is located.</param>
         /// <param name="buttonClass">An extra defined class given to the button for jquery targetting.</param>
         /// <param name="partialTarget">The partial div in the modal where the returned html is supposed to go.</param>
@@ -231,6 +232,8 @@ namespace HabitatForHumanity.ViewModels
         }
     }
     #endregion
+
+    #region Drop Downs
     public class ProjectDropDownList
     {
         public int ProjectId { get; set; }
@@ -291,7 +294,7 @@ namespace HabitatForHumanity.ViewModels
             SelectList.Add(new SelectListItem
             {
                 Value = "-1",
-                Text = "Select an Organization"
+                Text = "No Organization"
             });
 
             foreach (Organization item in items)
@@ -304,6 +307,10 @@ namespace HabitatForHumanity.ViewModels
             }
             Organizations = SelectList;
         }
+
+        #endregion
     }
+
+
 
 }

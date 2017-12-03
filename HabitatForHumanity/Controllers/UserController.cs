@@ -59,7 +59,7 @@ namespace HabitatForHumanity.Controllers
 
         #region VolunteerPortal
         [AuthorizationFilter]
-        public ActionResult VolunteerPortal()
+        public ActionResult VolunteerPortal(int? justPunched)
         {
 
             ReturnStatus us = Repository.GetUserByEmail(Session["UserName"].ToString());
@@ -88,8 +88,13 @@ namespace HabitatForHumanity.Controllers
                 ViewBag.status = "Your Waiver is outdated, please sign below.";
                 return RedirectToAction("SignWaiver", "User");
             }
-            
+            ViewBag.justPunched = justPunched;
             return View((PortalVM)rs.data);
+        }
+
+        public ActionResult ThankYouModal()
+        {
+            return View();
         }
 
         [AuthorizationFilter]
@@ -273,6 +278,7 @@ namespace HabitatForHumanity.Controllers
             {
                 SignWaiverVM signWaiver = new SignWaiverVM();
                 signWaiver.signature = false;
+                signWaiver.signatureName = null;
                 signWaiver.emergencyCity = null;
                 signWaiver.emergencyFirstName = null;
                 signWaiver.emergencyHomePhone = null;
@@ -289,8 +295,6 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
-
-        //TODO: test 
         // POST: User/SignWaiver
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -298,7 +302,7 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SignWaiver([Bind(
-            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature")] SignWaiverVM signWaiverVM)
+            Include = "userEmail, emergencyFirstName, emergencyLastName, relation, emergencyHomePhone, emergencyWorkPhone, emergencyStreetAddress, emergencyCity, emergencyZip, signature, signatureName")] SignWaiverVM signWaiverVM)
         {
             if (ModelState.IsValid)
             {
@@ -309,7 +313,7 @@ namespace HabitatForHumanity.Controllers
                     ViewBag.status = "Sorry, our system is down. Please try again later.";
                     return View(signWaiverVM);
                 }
-             
+                //Saves the Emergency Contact info to the user profile
                 User user = (User)rs.data;
                 if (user.Id > 0)
                 {
@@ -320,8 +324,22 @@ namespace HabitatForHumanity.Controllers
                         ViewBag.status = "Sorry, our system is down. Please try again later.";
                         return View(signWaiverVM);
                     }
-                    return RedirectToAction("VolunteerPortal");
                  }
+
+                //Saves a snapshot of the waiver infomation at time of signing.
+                rs = Repository.GetUserByEmail(signWaiverVM.userEmail);//rs = newly saved user information 
+                user = (User)rs.data;//user is assinged to the newly saved data
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, our system is down. Please try again later.";
+                    return View(signWaiverVM);
+                }
+                if (user.Id > 0)
+                {
+                    Repository.saveWaiverSnapshot(user, signWaiverVM.signatureName);
+                }
+                return RedirectToAction("VolunteerPortal");
+
             }
             ViewBag.status = "An error has occured below.";
             return View(signWaiverVM);
@@ -700,9 +718,22 @@ namespace HabitatForHumanity.Controllers
             }
             return View(userTimeDetails);
         }
-        #endregion 
+        #endregion
 
-
+        #region Demographics Survey
+        [AuthorizationFilter]
+        public ActionResult DemographicsSurvey()
+        {
+            string email = Session["UserName"].ToString();
+            ReturnStatus rs = Repository.GetDemographicsSurveyVM(email);
+            DemographicsVM demographicsVM = new DemographicsVM();
+            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                demographicsVM = (DemographicsVM)rs.data;
+            }
+            return View(demographicsVM);
+        }
+        #endregion Demographics survey
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -1,0 +1,36 @@
+﻿@model HabitatForHumanity.ViewModels.DemographicsVM
+@{ 
+    ViewBag.Title = "DemographicsSurvey";
+}
+
+<h2>DemographicsSurvey</h2>
+<p>Please tell us more about yourself. This section is optional. You can decline to answer any or all of these. Any information you provide will be used anonymously to help us better understand our volunteers. Occasionally, the information is also requested for grants and research opportunities. In this case, no personal identifying details are provided with the information below. </p>
+
+@using (Html.BeginForm("Volunteers", "Admin", FormMethod.Get))
+{
+    @Html.ValidationSummary(false)
+    <div style="border-bottom:1px solid #bbb"><h2>Search Volunteers</h2></div>
+
+    <div class="row">
+        <div class="col-md-3" style="margin-top:10px">
+            <div class="input-group">
+                <div>
+                    @Html.EditorFor(model => model.queryString, new { htmlAttributes = new { placeholder = "Name or email", @class = "form-control", onchange = @"form.submit()" } })
+                </div>
+                <span class="input-group-btn">
+                    <button class="btn btn-default">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+            <!--Search filter options-->
+            <div>
+                @Html.DropDownListFor(model => model.projectId, Model.projects.Projects, new { @class = "form-control", onchange = @"form.submit()" })
+            </div>
+            <div>
+                @Html.DropDownListFor(model => model.orgId, Model.orgs.Organizations, new { @class = "form-control", onchange = @"form.submit()" })
+            </div>
+        </div>
+
+    </div>
+}

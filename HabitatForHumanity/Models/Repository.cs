@@ -304,9 +304,56 @@ namespace HabitatForHumanity.Models
             return User.DeleteUserById(id);
         }
 
+        public static ReturnStatus GetDemographicsSurveyVM(string email)
+        {
+            ReturnStatus vmToReturn = new ReturnStatus();
+            
+            ReturnStatus userRS = Repository.GetUserByEmail(email);
+            if (userRS.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return vmToReturn;
+            }
+            User user = (User)userRS.data;
+            DemographicsVM demographicsVM = new DemographicsVM();
+            demographicsVM.volunteerId = (int)user.Id;
+
+            vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+            vmToReturn.data = demographicsVM;
+            return vmToReturn;
+        }
+
+        public static void saveWaiverSnapshot(User user, String signatureName)
+        {
+            //Wasnt sure where to use the ReturnStaus from here
+            WaiverHistory snapshot = new WaiverHistory();
+            snapshot.user_Id = user.Id;
+            snapshot.firstName = user.firstName;
+            snapshot.lastName = user.lastName;
+            snapshot.homePhoneNumber = user.homePhoneNumber;
+            snapshot.workPhoneNumber = user.workPhoneNumber;
+            snapshot.emailAddress = user.emailAddress;
+            snapshot.streetAddress = user.streetAddress;
+            snapshot.city = user.city;
+            snapshot.zip = user.zip;
+            snapshot.birthDate = user.birthDate;
+            snapshot.gender = user.gender;
+            snapshot.waiverSignDate = user.waiverSignDate;
+            snapshot.emergencyFirstName = user.emergencyFirstName;
+            snapshot.emergencyLastName = user.emergencyLastName;
+            snapshot.relation = user.relation;
+            snapshot.emergencyHomePhone = user.emergencyHomePhone;
+            snapshot.workPhoneNumber = user.workPhoneNumber;
+            snapshot.emergencyStreetAddress = user.emergencyStreetAddress;
+            snapshot.emergencyCity = user.emergencyCity;
+            snapshot.emergencyZip = user.emergencyZip;
+            snapshot.signatureName = signatureName;
+
+            WaiverHistory.saveWaiverSnapshot(snapshot);
+        }
 
 
-        #endregion
+        #endregion User
 
         #region Project functions
 
@@ -886,6 +933,30 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus PunchIn(TimeSheet ts)
         {
             return TimeSheet.InsertTimeSheet(ts);
+        }
+
+
+        /// <summary>
+        /// when admin wants to delete time card(on HttpPost)
+        /// </summary>
+        /// <returns></returns>
+        public static ReturnStatus AdminDeleteTimeCard(TimeCardVM Model)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {               
+                TimeSheet timeSheet = db.timeSheets.Find(Model.timeId);
+                db.timeSheets.Remove(timeSheet);
+                db.SaveChanges();
+                rs.errorCode = 0;
+                return rs;
+            }
+            catch
+            {
+                rs.errorCode = -1;
+                return rs;
+            }
         }
 
         #endregion

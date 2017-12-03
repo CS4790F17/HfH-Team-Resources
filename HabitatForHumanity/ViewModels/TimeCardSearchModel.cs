@@ -32,7 +32,7 @@ namespace HabitatForHumanity.ViewModels
 
         public TimeCardSearchModel()
         {
-            rangeStart = DateTime.Now.AddMonths(-1);
+            rangeStart = DateTime.Now.AddMonths(-2);
             rangeEnd = DateTime.Now;
             projects = new ProjectDropDownList();
             orgs = new OrganizationDropDownList();
