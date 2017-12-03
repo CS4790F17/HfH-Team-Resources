@@ -117,28 +117,6 @@
         )
     });
 
-    //changes the status of the project from active to inactive or vice versa
-    $(".changeStatus").click(function () {
-        var id = $(this).attr("projectId");
-        var page = $("#PageNumber").attr("value");
-        var query = $("#queryString").val();
-        var choice = $("#statusChoiceSelector").val();
-        //console.log(id);
-        //console.log(page);
-        //console.log(query);
-        // console.log(choice);
-
-        var data = { "id": id, "page": page, "statusChoice": choice, "queryString": query }
-        $.ajax({
-            url: "/Admin/ChangeProjectStatus",
-            data: data,
-            success: function (response) {
-                // console.log(response);
-                $("#projectList").replaceWith(response);
-            }
-        })
-    });
-
 
     $(".collapseDiv").click(function () {
 

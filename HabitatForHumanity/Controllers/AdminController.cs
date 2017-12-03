@@ -599,12 +599,16 @@ namespace HabitatForHumanity.Controllers
         #region Manage Projects
 
         //Main view
-        [HttpGet]
+        
         public ActionResult ManageProjects(ProjectSearchModel model)
         {
+            if (String.IsNullOrEmpty(model.queryString))
+                model.queryString = ""; //keeps the paged list from being empty
+
 
             model.SearchResults = Repository.GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString);
-            model.Page = model.SearchResults.PageNumber;
+            // model.Page = model.SearchResults.PageNumber;
+            model.Page = 1;
 
             return View(model);
         }
@@ -680,17 +684,6 @@ namespace HabitatForHumanity.Controllers
             return PartialView("ProjectPartialViews/_ProjectSuccess");
         }
 
-        [HttpPost]
-        public ActionResult ProjectSearch(int? Page, int statusChoice, string queryString)
-        {
-            ProjectSearchModel model = new ProjectSearchModel();
-            //model.Page = Page;
-            model.Page = 1;//return to first page
-            model.statusChoice = statusChoice;
-            model.queryString = queryString;
-            return RedirectToAction("ManageProjects", model);
-            // return PartialView("ProjectPartialViews/_ProjectList", Repository.GetProjectPageWithFilter(Page, statusChoice, queryString));
-        }
 
         #endregion
 
