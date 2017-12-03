@@ -2,9 +2,6 @@
 ADD categoryId int;
 GO
 
-ALTER TABLE Organization
-ADD comments varchar(max);
-GO
 
 CREATE TABLE [dbo].[ProjectCategory]
 (
