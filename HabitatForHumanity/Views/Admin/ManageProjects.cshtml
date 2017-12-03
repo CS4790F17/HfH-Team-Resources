@@ -8,26 +8,25 @@
 
 
 @ToolKitVM.ModalPreventDefault("createProjectModal", "Create a Project", "createPartialTarget", "createProjectForm")
-
+@ToolKitVM.ModalPreventDefault("createCategoryModal", "Create a new Category", "createCategoryTarget", "addCategoryForm")
 
 <div class="container">
 
-    <!--ghetto actionlink till I can do proper butons-->
-    @Html.ActionLink("Project Categories", "ManageProjectCategory")
 
 
     <!--Filter bar-->
     <div class="row">
         <!--Create button-->
-        <div class="col-md-2">
+        <div class=" btn-group">
             @ToolKitVM.GenericModalOpenButton("createProjectButton", "createProjectModal", "", "Create a new Project", "glyphicon-plus", false)
+            @ToolKitVM.GenericModalOpenButton("createCategoryButton", "createCategoryModal", "", "Create a new Category", "glyphicon-plus", false)
         </div>
     </div>
 
 
 
     <!--Search Form-->
-    @using (Html.BeginForm("ProjectSearch", "Admin", FormMethod.Post, new { @class="form-inline", id = "searchForm" }))
+    @using (Html.BeginForm("ProjectSearch", "Admin", FormMethod.Post, new { @class = "form-inline", id = "searchForm" }))
     {
         <div class="row">
             <div class="form-group">@Html.HiddenFor(x => x.Page)</div>
@@ -62,7 +61,7 @@
     <!--End of Search Form-->
     <!--Project List-->
     <div id="mainPageProjectList">
-         @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
+        @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
     </div>
 
 
@@ -71,4 +70,4 @@
 </div>
 
 @ToolKitVM.GetPartialViewButtonScript("createProjectButton", "CreateProject", "Admin", "createPartialTarget")
-
+@ToolKitVM.GetPartialViewButtonScript("createCategoryButton", "AddCategory", "Admin", "createCategoryTarget")

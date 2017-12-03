@@ -356,7 +356,8 @@
     <Content Include="Views\Shared\_Error.cshtml" />
     <Content Include="Views\User\DemographicsSurvey.cshtml" />
     <Content Include="Views\Admin\ManageProjectCategory.cshtml" />
-    <Content Include="Views\Admin\ProjectCategoryPartialViews\AddCategory.cshtml" />
+    <Content Include="Views\Admin\ProjectCategoryPartialViews\_AddCategory.cshtml" />
+    <Content Include="Views\Admin\ProjectCategoryPartialViews\_CategorySuccess.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -707,7 +707,7 @@ namespace HabitatForHumanity.Controllers
         [HttpGet]
         public ActionResult AddCategory()
         {
-            return View("ProjectCategoryPartialViews/AddCategory");
+            return PartialView("ProjectCategoryPartialViews/_AddCategory");
         }
 
         [HttpPost]
@@ -720,9 +720,9 @@ namespace HabitatForHumanity.Controllers
             }
             else
             {
-                return View(pc);
+                return PartialView("ProjectCategoryPartialViews/_AddCategory", pc);
             }
-            return RedirectToAction("ManageProjectCategory");
+            return PartialView("ProjectCategoryPartialViews/_CategorySuccess");
         }
 
         #endregion
