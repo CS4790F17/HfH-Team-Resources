@@ -18,6 +18,20 @@ namespace HabitatForHumanity.Controllers
     {
         private VolunteerDbContext db = new VolunteerDbContext();
 
+        public ActionResult ProjectDemographics()//int period)
+        {
+            List<ProjDemogReportVM> report = new List<ProjDemogReportVM>();
+            ReturnStatus rs = Repository.GetProjectDemographicsReport(Project.YEARLY);
+            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                report = (List<ProjDemogReportVM>)rs.data;
+            }
+            return View(report);
+        //            public static int MONTH = 1;
+        //public static int QUARTER = 3;
+        //public static int YEARLY = 12;
+        //public static ReturnStatus GetProjectDemographicsReport(int period)
+        }
         // GET: Project
         public ActionResult Index()
         {

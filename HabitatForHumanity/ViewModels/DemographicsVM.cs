@@ -62,8 +62,7 @@ namespace HabitatForHumanity.ViewModels
             "Hispanic or Latino or Spanish Origin",
             "Native Hawaiian or other Pacific Islander",
             "White",
-            "Two or more",
-            "Rather not say"};
+            "Two or more"};
         public static string[] yesNoTiers = new string[] { "Prefer not to answer", "No", "Yes" };
     }
 

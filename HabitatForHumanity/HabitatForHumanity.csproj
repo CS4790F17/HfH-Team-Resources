@@ -167,6 +167,7 @@
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\OrganizationSearchModel.cs" />
     <Compile Include="ViewModels\OrganizationVM.cs" />
+    <Compile Include="ViewModels\ProjDemogReportVM.cs" />
     <Compile Include="ViewModels\ProjectSearchModel.cs" />
     <Compile Include="ViewModels\ProjectIndexVM.cs" />
     <Compile Include="ViewModels\ProjectVM.cs" />
@@ -357,6 +358,7 @@
     <Content Include="Views\User\DemographicsSurvey.cshtml" />
     <Content Include="Views\Admin\ManageProjectCategory.cshtml" />
     <Content Include="Views\Admin\ProjectCategoryPartialViews\AddCategory.cshtml" />
+    <Content Include="Views\Project\ProjectDemographics.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

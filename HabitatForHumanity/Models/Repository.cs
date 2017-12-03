@@ -1277,6 +1277,14 @@ namespace HabitatForHumanity.Models
 
         #endregion
 
+        #region Project Reports
+        public static ReturnStatus GetProjectDemographicsReport(int period)
+        {
+            return Project.GetProjectDemographicsReport(period);
+        }
+
+        #endregion Project Reports
+
         #region Project Category
 
         public static ReturnStatus GetAllCategories()

@@ -43,6 +43,62 @@ namespace HabitatForHumanity.Models
         #region Database Access Methods
 
 
+        #region Project Demographics
+
+        public static int MONTH = 1;
+        public static int QUARTER = 3;
+        public static int YEARLY = 12;
+        public static ReturnStatus GetProjectDemographicsReport(int period)
+        {
+            ReturnStatus reportReturn = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                DateTime today = DateTime.Today;
+                DateTime periodStart = today.AddMonths(-period);
+                string strFirstOfThisMonth = today.Year.ToString() + today.Month.ToString() + "01";
+                string strPeriodStart = periodStart.Year.ToString() + periodStart.Month.ToString() + "01";
+                string q = " SELECT " +
+                        " PC.CATEGORYTYPE AS category, " +
+                    " COUNT(U.ID) AS numVolunteers, " +
+                    " CONVERT(INT,SUM(DATEDIFF(HH,T.CLOCKINTIME,T.CLOCKOUTTIME))) AS numHours, " +
+                    " SUM(CASE WHEN U.COLLEGESTATUS = 3 THEN 1 ELSE 0 END) AS numStudents, " +
+                    " SUM(CASE WHEN U.VETERANSTATUS = 3 THEN 1 ELSE 0 END) AS numVeterans, " +
+                    " SUM(CASE WHEN U.DISABLEDSTATUS = 3 THEN 1 ELSE 0 END) AS numDisabled, " +
+                    " SUM(CASE WHEN U.INCOMEID = 2 THEN 1 ELSE 0 END) AS numUnder25k, " +
+                    " SUM(CASE WHEN U.ETHNICITYID = 2 THEN 1 ELSE 0 END) AS numNative, " +
+                    " SUM(CASE WHEN U.ETHNICITYID = 3 THEN 1 ELSE 0 END) AS numAsian, " +
+                    " SUM(CASE WHEN U.ETHNICITYID = 4 THEN 1 ELSE 0 END) AS numBlack, " +
+                    " SUM(CASE WHEN U.ETHNICITYID = 5 THEN 1 ELSE 0 END) AS numHispanic, " +
+                    " SUM(CASE WHEN U.ETHNICITYID = 6 THEN 1 ELSE 0 END) AS numHawaiian, " +
+                    " SUM(CASE WHEN U.ETHNICITYID = 7 THEN 1 ELSE 0 END) AS numWhite, " +
+                    " SUM(CASE WHEN U.ETHNICITYID = 8 THEN 1 ELSE 0 END) AS numTwoEthnic, " +
+                    " SUM(CASE WHEN U.gender = 'M' THEN 1 ELSE 0 END) AS male, " +
+                    " SUM(CASE WHEN U.gender = 'F' THEN 1 ELSE 0 END) AS female" +
+                    " FROM TIMESHEET T " +
+                    " LEFT JOIN PROJECT P ON T.PROJECT_ID = P.Id " +
+                    " LEFT JOIN PROJECTCATEGORY PC ON P.CATEGORYID = PC.ID " +
+                    " LEFT JOIN dbo.[User] U ON T.[USER_ID] = U.ID " +
+                    " WHERE T.CLOCKINTIME BETWEEN '" + strPeriodStart + "' AND '" + strFirstOfThisMonth + "' " +
+                    " GROUP BY " +
+                    " PC.CATEGORYTYPE ";
+                var projectDemographics = db.Database.SqlQuery<ProjDemogReportVM>(q
+                   
+                    ).ToList();
+
+                reportReturn.errorCode = 0;
+                reportReturn.data = projectDemographics.ToList();
+                return reportReturn;
+            }
+            catch
+            {
+                reportReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return reportReturn;
+            }
+        }
+
+        #endregion Project Demographics
+
         public static ReturnStatus GetAllProjects()
         {
             ReturnStatus st = new ReturnStatus();
