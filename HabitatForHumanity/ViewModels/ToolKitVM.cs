@@ -308,9 +308,32 @@ namespace HabitatForHumanity.ViewModels
             Organizations = SelectList;
         }
 
+      
         #endregion
     }
 
+    public class ProjectCategoryDropDownList
+    {
+        public List<SelectListItem> cates { get; set; }
 
+        public ProjectCategoryDropDownList()
+        {
+            ReturnStatus st = ProjectCategory.GetAllProjectCategories();
+            List<ProjectCategory> cat = (List<ProjectCategory>)st.data;
+            var SelectList = new List<SelectListItem>();
+
+
+            foreach (ProjectCategory item in cat)
+            {
+                SelectList.Add(new SelectListItem
+                {
+                    Value = item.Id.ToString(),
+                    Text = item.categoryType
+                });
+            }
+            cates = SelectList;
+
+        }
+    }
 
 }

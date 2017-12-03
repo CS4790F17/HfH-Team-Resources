@@ -1,6 +1,9 @@
-﻿@model HabitatForHumanity.Models.Project
+﻿@using HabitatForHumanity.ViewModels
+@model HabitatForHumanity.Models.Project
 @Scripts.Render("~/bundles/jquery")
-
+@{
+    ProjectCategoryDropDownList list = new ProjectCategoryDropDownList();
+}
 
 @using (Html.BeginForm("CreateProject", "Admin", FormMethod.Post, new { id = "createProjectForm" }))
 {
@@ -32,6 +35,13 @@
                 @Html.ValidationMessageFor(model => model.beginDate, "", new { @class = "text-danger" })
             </div>
         </div>
+
+        <div class="form-group">
+            <div class="col-md-8">
+                @Html.DropDownListFor(model => model.categoryId, list.cates)
+            </div>
+        </div>
+
 
     </div>
 }

@@ -11,7 +11,7 @@ namespace HabitatForHumanity.Models
 {
     public class Repository
     {
-      
+
         #region User functions
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace HabitatForHumanity.Models
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public static ReturnStatus waiverNotSigned (int userId)
+        public static ReturnStatus waiverNotSigned(int userId)
         {
             ReturnStatus rs = new ReturnStatus();
 
@@ -76,7 +76,7 @@ namespace HabitatForHumanity.Models
                 }
                 return retValue;
             }
-            catch 
+            catch
             {
                 retValue.errorCode = 1;
                 return retValue;
@@ -99,7 +99,7 @@ namespace HabitatForHumanity.Models
                     {
                         double volHours = 0.0;
                         ReturnStatus hoursRS = getTotalHoursWorkedByVolunteer(u.Id);
-                        if(hoursRS.errorCode == ReturnStatus.ALL_CLEAR)
+                        if (hoursRS.errorCode == ReturnStatus.ALL_CLEAR)
                         {
                             volHours = (double)hoursRS.data;
                         }
@@ -465,7 +465,7 @@ namespace HabitatForHumanity.Models
         {
             int RecordsPerPage = 10;
             //page can't be 0 or below
-            if (Page == null || Page < 1 )
+            if (Page == null || Page < 1)
             {
                 Page = 1;
             }
@@ -627,17 +627,17 @@ namespace HabitatForHumanity.Models
         #region TimeSheet functions
 
         #region TimeCard VMs by filters
-       /// <summary>
-       /// Gets list of timecard vms with the following optional filters
-       /// </summary>
-       /// <param name="Page"></param>
-       /// <param name="orgId"></param>
-       /// <param name="projId"></param>
-       /// <param name="rangeStart"></param>
-       /// <param name="rangeEnd"></param>
-       /// <param name="queryString"></param>
-       /// <returns>List of timecard viewmodels</returns>
-        public static ReturnStatus GetTimeCardPageWithFilter(int? Page, int orgId,int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
+        /// <summary>
+        /// Gets list of timecard vms with the following optional filters
+        /// </summary>
+        /// <param name="Page"></param>
+        /// <param name="orgId"></param>
+        /// <param name="projId"></param>
+        /// <param name="rangeStart"></param>
+        /// <param name="rangeEnd"></param>
+        /// <param name="queryString"></param>
+        /// <returns>List of timecard viewmodels</returns>
+        public static ReturnStatus GetTimeCardPageWithFilter(int? Page, int orgId, int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
         {
 
             int RecordsPerPage = 10;
@@ -661,7 +661,7 @@ namespace HabitatForHumanity.Models
         {
             ReturnStatus cardReturn = new ReturnStatus();
             ReturnStatus timesheetRS = GetTimeSheetById(id);
-  
+
             if (timesheetRS.errorCode == ReturnStatus.ALL_CLEAR)
             {
                 TimeSheet ts = (TimeSheet)timesheetRS.data;
@@ -688,7 +688,7 @@ namespace HabitatForHumanity.Models
                 }
 
                 ReturnStatus userRS = GetUser(ts.user_Id);
-                if(userRS.errorCode == ReturnStatus.ALL_CLEAR)
+                if (userRS.errorCode == ReturnStatus.ALL_CLEAR)
                 {
                     User user = (User)userRS.data;
                     card.volName = (user.firstName != null) ? user.firstName : user.emailAddress;
@@ -710,7 +710,7 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus EditTimeCard(TimeCardVM card)
         {
             ReturnStatus rs = GetTimeSheetById(card.timeId);
-            if(rs.errorCode != ReturnStatus.ALL_CLEAR)
+            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
             {
                 rs.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 return rs;
@@ -831,13 +831,13 @@ namespace HabitatForHumanity.Models
         {
             //get user's timesheet
             ReturnStatus rs = TimeSheet.GetClockedInUserTimeSheet(userId);
-            if(rs.errorCode != 0)
+            if (rs.errorCode != 0)
             {
                 return rs;
             }
 
             TimeSheet userTimeSheet = (TimeSheet)rs.data;
-            
+
             //if only a default timesheet was found then the user isn't "clocked in"
             if (userTimeSheet.Id < 0)
             {
@@ -853,7 +853,7 @@ namespace HabitatForHumanity.Models
 
 
         public static ReturnStatus GetClockedInUserTimeSheet(int userId)
-        {          
+        {
             return TimeSheet.GetClockedInUserTimeSheet(userId);
         }
 
@@ -909,10 +909,10 @@ namespace HabitatForHumanity.Models
                 return returnable;
             }
         }
-        
+
 
         public static ReturnStatus GetPunchInVM(int userId)
-        {         
+        {
             PunchInVM punch = new PunchInVM();
             ReturnStatus st = new ReturnStatus();
             try
@@ -935,7 +935,7 @@ namespace HabitatForHumanity.Models
             {
                 st.errorCode = -1;
                 return st;
-            }   
+            }
         }
 
 
@@ -977,7 +977,6 @@ namespace HabitatForHumanity.Models
 
         #endregion
 
-
         #region Report functions
 
         public static ReturnStatus GetHoursChartVMByYear()
@@ -994,7 +993,7 @@ namespace HabitatForHumanity.Models
             {
                 List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
                 int year = DateTime.Today.Year;
-                string[] cats = new string[] { (year - 2).ToString(), (year - 1).ToString(), year.ToString()  };
+                string[] cats = new string[] { (year - 2).ToString(), (year - 1).ToString(), year.ToString() };
                 int[] restoreHrs = new int[3];
                 int[] awbkHrs = new int[3];
                 int[] homesHrs = new int[3];
@@ -1024,9 +1023,9 @@ namespace HabitatForHumanity.Models
             }
             else
             {
-                return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null};
+                return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
             }
-            
+
         }
 
         public static ReturnStatus GetHoursChartVMByMonth()
@@ -1143,7 +1142,7 @@ namespace HabitatForHumanity.Models
 
         public static ReturnStatus getTotalHoursWorkedByVolunteer(int volunteerId)
         {
-           
+
             ReturnStatus hoursWorked = new ReturnStatus();
             hoursWorked.data = 0.0;
 
@@ -1157,7 +1156,7 @@ namespace HabitatForHumanity.Models
                 {
                     return st;
                 }
-            
+
                 DateTime userClockedIn = DateTime.Today.AddDays(1);
                 List<TimeSheet> temp = new List<TimeSheet>();
                 List<TimeSheet> volunteerTimes = new List<TimeSheet>();
@@ -1175,13 +1174,13 @@ namespace HabitatForHumanity.Models
                 }
                 return hoursWorked;
             }
-                          
+
             catch
             {
                 hoursWorked.errorCode = -1;
                 return hoursWorked;
             }
-            
+
         }
 
 
@@ -1275,6 +1274,36 @@ namespace HabitatForHumanity.Models
 
             return hoursLogged;
         }
+
+        #endregion
+
+        #region Project Category
+
+        public static ReturnStatus GetAllCategories()
+        {
+            return ProjectCategory.GetAllProjectCategories();
+        }
+
+        public static StaticPagedList<ProjectCategory> GetAllCategoriesByPageSize(int? page, int recordsPerPage)
+        {
+            if (page < 1 || page == null)
+            {
+                page = 1;
+            }
+
+            int totalCount = 0;
+            ReturnStatus st = ProjectCategory.GetAllCategoriesByPageSize((page.Value) - 1, recordsPerPage, ref totalCount);
+
+            StaticPagedList<ProjectCategory> SearchResults = new StaticPagedList<ProjectCategory>(((List<ProjectCategory>)st.data), page.Value, recordsPerPage, totalCount);
+
+            return SearchResults;
+        }
+
+        public static void CreateProjectCategory(ProjectCategory pc)
+        {
+            ProjectCategory.CreateProjectCategory(pc);
+        }
+
 
         #endregion
     }

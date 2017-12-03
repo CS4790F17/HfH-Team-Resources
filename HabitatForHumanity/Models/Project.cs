@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using HabitatForHumanity.ViewModels;
+using System.ComponentModel;
 
 namespace HabitatForHumanity.Models
 {
@@ -22,6 +23,7 @@ namespace HabitatForHumanity.Models
         [Display(Name = "Begin Date")]
         public DateTime beginDate { get; set; }
         public int status { get; set; }
+        public int? categoryId { get; set; }
         //[Display(Name = "Total Hours Logged ")]
         //public double hoursLogged { get; set; }
         //[Display(Name = "Total Volunteers")]
@@ -52,12 +54,12 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
-                    st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                    st.errorMessage = e.ToString();
-                    st.data = "Could not connect to database. Try again later.";
-                    return st;
-                }
-                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = "Could not connect to database. Try again later.";
+                return st;
+            }
+            st.errorCode = ReturnStatus.ALL_CLEAR;
             st.errorMessage = "";
             st.data = projects;
             return st;
@@ -76,7 +78,7 @@ namespace HabitatForHumanity.Models
             catch
             {
                 rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-            }   
+            }
             return rs;
         }
 
@@ -238,11 +240,100 @@ namespace HabitatForHumanity.Models
                     select p)
                     .Skip(itemsPerPage * page)
                     .Take(itemsPerPage).ToList();
-            totalProjects = db.projects.Count(x =>x.status.Equals(statusChoice) && x.name.Contains(queryString));
+            totalProjects = db.projects.Count(x => x.status.Equals(statusChoice) && x.name.Contains(queryString));
             return new ReturnStatus { errorCode = ReturnStatus.ALL_CLEAR, data = proj };
         }
 
         #endregion
     }
+
+
+    [Table("ProjectCategory")]
+    public class ProjectCategory
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        [DisplayName("Category")]
+        public string categoryType { get; set; }
+
+
+        public ProjectCategory()
+        {
+            Id = -1;
+            categoryType = "";
+        }
+
+        public static ReturnStatus GetAllProjectCategories()
+        {
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.projectCategories.ToList();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+
+            }
+            catch (Exception e)
+            {
+                st.data = new List<ProjectCategory>();
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorMessage = e.ToString();
+            }
+
+            return st;
+        }
+
+        public static ReturnStatus GetAllCategoriesByPageSize(int page, int recordsPerPage, ref int totalCount)
+        {
+            ReturnStatus st = new ReturnStatus();
+
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+
+                var categories = (from cat in db.projectCategories
+                                  orderby cat.categoryType ascending
+                                  select cat)
+                                  .Skip(page * recordsPerPage)
+                                  .Take(recordsPerPage).ToList();
+
+
+                totalCount = db.projectCategories.Count();
+
+                st.data = categories;
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorMessage = e.ToString();
+                st.data = new List<ProjectCategory>();
+            }
+            return st;
+        }
+
+        public static ReturnStatus CreateProjectCategory(ProjectCategory pc)
+        {
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.projectCategories.Add(pc);
+                db.SaveChanges();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+                st.data = pc;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
+                st.errorMessage = e.ToString();
+                st.data = pc;
+            }
+            return st;
+        }
+    }
+
 
 }

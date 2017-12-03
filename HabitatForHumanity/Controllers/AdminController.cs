@@ -616,7 +616,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        public ActionResult CreateProject([Bind(Include = "Id,name,description,beginDate,categoryId")] Project proj)
         {
             if (!ModelState.IsValid)
             {
@@ -669,7 +669,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate,categoryId")] Project proj)
         {
             //if model state isn't valid
             if (!ModelState.IsValid)
@@ -692,8 +692,38 @@ namespace HabitatForHumanity.Controllers
             // return PartialView("ProjectPartialViews/_ProjectList", Repository.GetProjectPageWithFilter(Page, statusChoice, queryString));
         }
 
+        #endregion
+
+        #region Manage Project Categories
 
 
+        public ActionResult ManageProjectCategory(CategorySearchModel cm)
+        {
+            var page = cm.Page ?? 1;
+            cm.SearchResults = Repository.GetAllCategoriesByPageSize(page, RecordsPerPage);
+            return View(cm);
+        }
+
+        [HttpGet]
+        public ActionResult AddCategory()
+        {
+            return View("ProjectCategoryPartialViews/AddCategory");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddCategory(ProjectCategory pc)
+        {
+            if(ModelState.IsValid)
+            {
+                Repository.CreateProjectCategory(pc);
+            }
+            else
+            {
+                return View(pc);
+            }
+            return RedirectToAction("ManageProjectCategory");
+        }
 
         #endregion
 
