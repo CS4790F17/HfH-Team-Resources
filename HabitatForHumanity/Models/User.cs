@@ -73,11 +73,11 @@ namespace HabitatForHumanity.Models
         public DateTime waiverSignDate { get; set; }
 
         //[Required(ErrorMessage = "Enter Emergency First Name")]
-        [Display(Name = "Emergency First Name*")]
+        [Display(Name = "Contact First Name*")]
         public string emergencyFirstName { get; set; }
 
         //[Required(ErrorMessage = "Enter Emergency Last Name")]
-        [Display(Name = "Emergency Last Name*")]
+        [Display(Name = "Contact Last Name*")]
         public string emergencyLastName { get; set; }
 
         //[Required(ErrorMessage = "Enter Emergency Relation")]
@@ -85,25 +85,25 @@ namespace HabitatForHumanity.Models
         public string relation { get; set; }
 
         //[Required(ErrorMessage = "Enter Emergency Home Phone")]
-        [Display(Name = "Emergency Primary Phone*")]
+        [Display(Name = "Contact Primary Phone*")]
         //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyHomePhone { get; set; }
 
         //[Required(ErrorMessage = "Enter Emergency Work Phone")]
-        [Display(Name = "Emergency Alternate Phone")]
+        [Display(Name = "Contact Alternate Phone")]
         //[RegularExpression(@"^\(?(\d{3})\)?[- .]?(\d{3})[- .]?(\d{4})$", ErrorMessage = "Please Enter a Valid Phone Number")]
         public string emergencyWorkPhone { get; set; }
 
         //[Required(ErrorMessage = "Enter Emergency Address")]
-        [Display(Name = "Emergency Address*")]
+        [Display(Name = "Contact Address*")]
         public string emergencyStreetAddress { get; set; }
 
         //[Required(ErrorMessage = "Enter Emergency City")]
-        [Display(Name = "Emergency City*")]
+        [Display(Name = "Contact City*")]
         public string emergencyCity { get; set; }
 
         //[Required(ErrorMessage = "Enter Emergency Zipcode")]
-        [Display(Name = "Emergency Zipcode*")]
+        [Display(Name = "Contact Zipcode*")]
         public string emergencyZip { get; set; }
 
         // stuff for demographics forms, see Demographics vm for categories
