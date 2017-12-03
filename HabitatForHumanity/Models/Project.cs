@@ -23,6 +23,7 @@ namespace HabitatForHumanity.Models
         [Display(Name = "Begin Date")]
         public DateTime beginDate { get; set; }
         public int status { get; set; }
+        public int? categoryId { get; set; }
         //[Display(Name = "Total Hours Logged ")]
         //public double hoursLogged { get; set; }
         //[Display(Name = "Total Volunteers")]
