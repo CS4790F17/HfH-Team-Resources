@@ -28,6 +28,9 @@
                 <div class="col-md-2">
                     <a>View Details <span class="glyphicon glyphicon-chevron-down"></span></a>
                 </div>
+                <div class="col-md-2">
+                    <div><label>Category: </label>@project.categoryId</div>
+                </div>
 
             </div>
             <div class="col-md-2">
@@ -55,9 +58,15 @@
 
 
         <div id="@project.Id" class="collapse">
-            <div class="col-md-7">@project.description</div>
-            <div class="col-md-1">Begin Date: @project.beginDate.ToString("MM-dd-yyyy")</div>
-            <div> @ToolKitVM.ModalEditButtonGlyph("editProjectButton", "editProjectModal", project.Id.ToString(), "Edit")</div>
+            <div class="col-md-6">@project.description</div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Begin Date: </label>
+                    @project.beginDate.ToString("MM-dd-yyyy")
+                </div>
+                <div class="col-md-1">@ToolKitVM.ModalEditButtonGlyph("editProjectButton", "editProjectModal", project.Id.ToString(), "Edit")</div>
+            </div>
         </div>
     </div>
 }

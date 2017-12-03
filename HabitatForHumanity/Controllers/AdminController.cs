@@ -483,7 +483,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult DeleteTimeCard(TimeCardVM model)
         {
             ReturnStatus rs = Repository.AdminDeleteTimeCard(model);
-            if(rs.errorCode != 0)
+            if (rs.errorCode != 0)
             {
                 return PartialView("_Error");
             }
@@ -493,7 +493,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult GetBadPunches()
         {
             ReturnStatus rs = Repository.GetNumBadPunches();
-            if(rs.errorCode != ReturnStatus.ALL_CLEAR)
+            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
             {
                 return PartialView("_Error");
             }
@@ -584,7 +584,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddOrganization([Bind(Include="name, comments")]Organization org)
+        public ActionResult AddOrganization([Bind(Include = "name, comments")]Organization org)
         {
             if (ModelState.IsValid)
             {
@@ -669,7 +669,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate,categoryId")] Project proj)
+        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate,categoryId,status")] Project proj)
         {
             //if model state isn't valid
             if (!ModelState.IsValid)
@@ -714,7 +714,7 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AddCategory(ProjectCategory pc)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 Repository.CreateProjectCategory(pc);
             }
