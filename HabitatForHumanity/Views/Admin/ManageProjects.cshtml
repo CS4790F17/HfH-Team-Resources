@@ -5,54 +5,70 @@
     ViewBag.Title = "ManageProjects";
 }
 @Scripts.Render("~/bundles/jquery")
-<h2>Manage Projects</h2>
-@Html.ActionLink("Project Categories", "ManageProjectCategory")
+
+
 @ToolKitVM.ModalPreventDefault("createProjectModal", "Create a Project", "createPartialTarget", "createProjectForm")
 
-<!--Filter bar-->
-<div class="row">
-    <!--Create button-->
-    <div class="col-md-4">
-        <div id="createProjectButton">
+
+<div class="container">
+
+    <!--ghetto actionlink till I can do proper butons-->
+    @Html.ActionLink("Project Categories", "ManageProjectCategory")
+
+
+    <!--Filter bar-->
+    <div class="row">
+        <!--Create button-->
+        <div class="col-md-2">
             @ToolKitVM.GenericModalOpenButton("createProjectButton", "createProjectModal", "", "Create a new Project", "glyphicon-plus", false)
         </div>
     </div>
 
+
+
     <!--Search Form-->
-    @using (Html.BeginForm("ProjectSearch", "Admin", FormMethod.Post, new { @class = "form-inline", id="searchForm" }))
+    @using (Html.BeginForm("ProjectSearch", "Admin", FormMethod.Post, new { @class="form-inline", id = "searchForm" }))
     {
-        <div class="form-group">@Html.HiddenFor(x => x.Page)</div>
-        <div class="form-group col-xs-1 col-xs-offset-4" style="margin-right:10px">
-            <!--Filter Dropdowns-->
-            @Html.DropDownListFor(x => x.statusChoice, Model.statusDropDown, htmlAttributes: new { @class = "form-control", @id = "statusChoiceSelector", @style = "width:auto", onchange = @"form.submit()" })
-        </div>
-        <!--Search Bar-->
-        <div class="form-group col-xs-1">
-            <div class="input-group">
-                @Html.EditorFor(x => x.queryString, new { htmlAttributes = new { placeholder = "Find Project", @class = "form-control", @style = "width:auto", onchange = @"form.submit()" } })
-                <span class="input-group-btn">
-                    <button class="btn" type="submit">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-                </span>
-                <!--End of Search Bar-->
+        <div class="row">
+            <div class="form-group">@Html.HiddenFor(x => x.Page)</div>
+
+            <div class="form-group col-md-4 col-md-offset-5 text-right">
+                <select class="form-control">
+                    <option value="volvo">Volvo</option>
+                    <option value="saab">Saab</option>
+                    <option value="mercedes">Mercedes</option>
+                    <option value="audi">Audi</option>
+                </select>
+                <!--Filter Dropdowns-->
+                @Html.DropDownListFor(x => x.statusChoice, Model.statusDropDown, htmlAttributes: new { @class = "form-control", @id = "statusChoiceSelector", @style = "max-width:none", onchange = @"form.submit()" })
             </div>
+
+            <!--Search Bar-->
+            <div class="form-group col-md-3 text-right">
+                <div class="input-group">
+                    @Html.EditorFor(x => x.queryString, new { htmlAttributes = new { placeholder = "Find Project", @class = "form-control", style = "max-width:none", onchange = @"form.submit()" } })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+
+
+                </div>
+            </div>
+            <!--End of Search Bar-->
         </div>
     }
     <!--End of Search Form-->
+    <!--Project List-->
+    <div id="mainPageProjectList">
+         @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
+    </div>
+
+
+
+    @Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "queryString", Model.queryString }, { "statusChoice", Model.statusChoice }, { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
 </div>
-
-
-
-<!--Project List-->
-<div id="mainPageProjectList">
-    @{Html.RenderPartial("ProjectPartialViews/_ProjectList", Model.SearchResults);}
-</div>
-
-
-
-@Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "queryString", Model.queryString  },{ "statusChoice", Model.statusChoice},  { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
-
 
 @ToolKitVM.GetPartialViewButtonScript("createProjectButton", "CreateProject", "Admin", "createPartialTarget")
 
