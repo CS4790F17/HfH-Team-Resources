@@ -212,8 +212,12 @@ namespace HabitatForHumanity.Controllers
         #endregion Dashboard
 
         #region Volunteers
-        public ActionResult Volunteers(VolunteerSearchModel vsm)
+        public ActionResult Volunteers(VolunteerSearchModel vsm, string excMsg)
         {
+            if (!string.IsNullOrEmpty(excMsg))
+            {
+                ViewBag.status = excMsg;
+            }
             if (vsm.projects == null)
             {
                 vsm = new VolunteerSearchModel();
@@ -253,6 +257,16 @@ namespace HabitatForHumanity.Controllers
             return View(vsm);
         }
         #endregion
+
+        #region Manage Volunteer
+        public ActionResult ManageVolunteer(int id, string excMsg)
+        {
+            ViewBag.status = (string.IsNullOrEmpty(excMsg) ? null : excMsg);
+            ReturnStatus rs = Repository.GetAdminViewOfUser(id);
+            AdminUserVM vm = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (AdminUserVM)rs.data : new AdminUserVM();
+            return View(vm);
+        }
+        #endregion Manage Volunteer
 
         #region Timecards
         public ActionResult TimeCards(TimeCardSearchModel tsm)
@@ -319,15 +333,9 @@ namespace HabitatForHumanity.Controllers
             ReturnStatus getUser = Repository.GetUser(id);
             ReturnStatus getTimeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
 
-            if (getUser.errorCode != 0)
+            if (getUser.errorCode != 0 || getTimeSheets.errorCode != 0)
             {
-                ViewBag.status = "There was a problem getting that user. Please try again later";
-                return RedirectToAction("Volunteers", "Admin");
-            }
-            else if (getTimeSheets.errorCode != 0)
-            {
-                ViewBag.status = "There was a problem getting that user's time sheets. Please try again later";
-                return RedirectToAction("Volunteers", "Admin");
+                return RedirectToAction("Volunteers", "Admin", new { excMsg = awwSnapMsg });
             }
             else
             {
@@ -341,25 +349,16 @@ namespace HabitatForHumanity.Controllers
                 volunteer.email = user.emailAddress;
                 volunteer.waiverSignDate = user.waiverSignDate;
                 volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
-                if (volunteer.waiverExpiration > DateTime.Now)
+                volunteer.waiverStatus = (volunteer.waiverExpiration > DateTime.Now);
+                volunteer.isAdmin = (user.isAdmin == 1) ? true : false;
+                try
                 {
-                    volunteer.waiverStatus = true;
+                    volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
                 }
-                else
+                catch
                 {
-                    volunteer.waiverStatus = false;
+                    volunteer.hoursToDate = 0.0;
                 }
-
-                if (user.isAdmin == 1)
-                {
-                    volunteer.isAdmin = true;
-                }
-                else
-                {
-                    volunteer.isAdmin = false;
-                }
-                volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
-
                 volunteer.emergencyFirstName = user.emergencyFirstName;
                 volunteer.emergencyLastName = user.emergencyLastName;
                 volunteer.relation = user.relation;
@@ -373,35 +372,17 @@ namespace HabitatForHumanity.Controllers
                 timeSheets = (List<TimeSheet>)getTimeSheets.data;
                 List<TimeCardVM> test = new List<TimeCardVM>();
 
-
                 foreach (TimeSheet t in timeSheets)
                 {
                     TimeCardVM temp = new TimeCardVM();
                     temp.timeId = t.Id;
                     temp.volName = volunteer.volunteerName;
                     ReturnStatus orgRS = Repository.GetOrganizationById(t.org_Id);
-                    if (orgRS.errorCode == 0)
-                    {
-                        temp.orgName = ((Organization)orgRS.data).name;
-                    }
-                    else
-                    {
-                        ViewBag.status = "There was a problem getting the organization. Please try again later";
-                        return RedirectToAction("Volunteers", "Admin");
-                    }
+                    temp.orgName = (orgRS.errorCode == 0) ? ((Organization)orgRS.data).name : "---";
                     ReturnStatus projRS = Repository.GetProjectById(t.project_Id);
-                    if (projRS.errorCode == 0)
-                    {
-                        temp.projName = ((Project)projRS.data).name;
-                    }
-                    else
-                    {
-                        ViewBag.status = "There was a problem getting the project. Please try again later";
-                        return RedirectToAction("Volunteers", "Admin");
-                    }
+                    temp.projName = (projRS.errorCode == 0) ? ((Project)projRS.data).name : "---";
                     temp.inTime = t.clockInTime;
                     temp.outTime = t.clockOutTime;
-
                     test.Add(temp);
                 }
                 volunteer.timeCardVM = test;
@@ -427,14 +408,8 @@ namespace HabitatForHumanity.Controllers
                     User user = (User)rs.data;
                     user.Id = usersVM.userNumber;
                     String[] tempName = usersVM.volunteerName.Split(' ');
-                    user.firstName = tempName[0];
-                    if (tempName.Length > 1)
-                    {
-                        if (tempName[1] != null)
-                        {
-                            user.lastName = tempName[1];
-                        }
-                    }
+                    user.firstName = (tempName.Length > 0 && !string.IsNullOrEmpty(tempName[0])) ? tempName[0] : "";
+                    user.lastName = (tempName.Length > 1 && !string.IsNullOrEmpty(tempName[0])) ? tempName[1] : "";
 
                     user.emailAddress = usersVM.email;
 

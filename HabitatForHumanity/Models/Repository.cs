@@ -276,6 +276,7 @@ namespace HabitatForHumanity.Models
             }
         }
 
+
         /// <summary>
         /// Updates the users information based on a new model.
         /// </summary>
@@ -1299,7 +1300,76 @@ namespace HabitatForHumanity.Models
 
         #endregion
 
+        #region Admin --> User
 
+        public static ReturnStatus GetAdminViewOfUser(int id)
+        {
+            AdminUserVM vm = new AdminUserVM();
+            ReturnStatus vmToReturn = new ReturnStatus();
+            ReturnStatus userRS = GetUser(id);
+            if(userRS.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                vmToReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return vmToReturn;
+            }
+            User user = (User)userRS.data;
+
+            // set user info
+            vm.userInfo.firstName = user.firstName;
+            vm.userInfo.lastName = user.lastName;
+            vm.userInfo.homePhone = user.homePhoneNumber;
+            vm.userInfo.workPhone = user.workPhoneNumber;
+            vm.userInfo.email = user.emailAddress;
+            vm.userInfo.streetAddress = user.streetAddress;
+            vm.userInfo.city = user.city;
+            vm.userInfo.zip = user.zip;
+            vm.userInfo.birthDate = user.birthDate;
+            vm.userInfo.isAdmin = (user.isAdmin == 1) ? true : false;
+            vm.userInfo.waiverSignDate = user.waiverSignDate;
+            try
+            {
+                vm.userInfo.hoursToDate = (double)getTotalHoursWorkedByVolunteer(user.Id).data;
+            }
+            catch
+            {
+                vm.userInfo.hoursToDate = 0.0;
+            }
+            vm.userInfo.waiverExpiration = user.waiverSignDate.AddYears(1);
+            vm.userInfo.waiverStatus = (vm.userInfo.waiverExpiration > DateTime.Now);
+
+            // set emergency info
+            vm.emergInfo.emergencyFirstName = user.emergencyFirstName;
+            vm.emergInfo.emergencyLastName = user.emergencyLastName;
+            vm.emergInfo.relation = user.relation;
+            vm.emergInfo.emergencyHomePhone = user.emergencyHomePhone;
+            vm.emergInfo.emergencyWorkPhone = user.emergencyWorkPhone;
+            vm.emergInfo.emergencyStreetAddress = user.emergencyStreetAddress;
+            vm.emergInfo.emergencyCity = user.emergencyCity;
+            vm.emergInfo.emergencyZip = user.emergencyZip;
+
+            // set timecards
+            ReturnStatus timeIdsRS = TimeSheet.GetTimeSheetIdsByUserId(id);
+            List<TimeCardVM> timecardVMs = new List<TimeCardVM>();
+            if (timeIdsRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                List<int> timeids = (List<int>)timeIdsRS.data;
+                foreach(int timesheetId in timeids)
+                {
+                    ReturnStatus timeVMsRS = GetTimeCardVM(timesheetId);
+                    if(timeVMsRS.errorCode == ReturnStatus.ALL_CLEAR)
+                    {
+                        timecardVMs.Add((TimeCardVM)timeVMsRS.data);
+                    }
+                }            
+            }
+            vm.timeCardVMs = timecardVMs;
+
+            vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+            vmToReturn.data = vm;
+
+            return vmToReturn;
+        }
+        #endregion Admin --> User
 
         #region Project Category
 

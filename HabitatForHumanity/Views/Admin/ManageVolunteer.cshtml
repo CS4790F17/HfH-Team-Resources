@@ -1,0 +1,23 @@
+﻿@model HabitatForHumanity.ViewModels.AdminUserVM
+@{
+    ViewBag.Title = "Manage Volunteer";
+}
+
+<h2 class="text-center">Manage Volunteer</h2>
+<div class="row">
+    <div class="col-md-3">
+        <div class="well">
+            @Html.Partial("_AdminViewVolunteer", Model.userInfo)
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        @Html.Partial("_AdminViewUserTimecards", Model.timeCardVMs)
+    </div>
+    <div class="col-md-3">
+        <div class="well">
+            @Html.Partial("_AdminViewUserEmergency", Model.emergInfo)
+        </div>
+
+    </div>
+</div>

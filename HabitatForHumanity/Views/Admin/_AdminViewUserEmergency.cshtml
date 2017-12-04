@@ -1,0 +1,78 @@
+﻿@model HabitatForHumanity.ViewModels.EmergInfo
+
+
+<h4 class="text-center">Emergency Contact</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.emergencyFirstName)
+    </div>
+    <div class="col-md-8">
+        @Model.emergencyFirstName
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.emergencyLastName)
+    </div>
+    <div class="col-md-8">
+        @Model.emergencyLastName
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.relation)
+    </div>
+    <div class="col-md-8">
+        @Model.relation
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.emergencyHomePhone)
+    </div>
+    <div class="col-md-8">
+        @Model.emergencyHomePhone
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.emergencyWorkPhone)
+    </div>
+    <div class="col-md-8">
+        @Model.emergencyWorkPhone
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.emergencyStreetAddress)
+    </div>
+    <div class="col-md-8">
+        @Model.emergencyStreetAddress
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.emergencyCity)
+    </div>
+    <div class="col-md-8">
+        @Model.emergencyCity
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.emergencyZip)
+    </div>
+    <div class="col-md-8">
+        @Model.emergencyZip
+    </div>
+</div>
+
+
+<hr />

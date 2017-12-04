@@ -1,0 +1,70 @@
+﻿@model List<HabitatForHumanity.ViewModels.TimeCardVM>
+@using HabitatForHumanity.ViewModels;
+
+<h4 class="text-center">Time Cards</h4>
+<table class="table">
+    <tr>
+        @*<th>
+            @Html.DisplayNameFor(model => model.First().volName)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.First().projName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().orgName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().inTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().outTime)
+        </th>
+        <th>
+            Hours
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+            {
+        <tr>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.volName)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.projName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.orgName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.inTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.outTime)
+            </td>
+            <td>
+                @{
+                    TimeSpan span = item.outTime.Subtract(item.inTime);
+                    double hours = span.Hours + span.Minutes / 60.0;
+                }
+                <div class="col-md-1 text-center"> @string.Format("{0:N2}", hours) </div>
+            </td>
+            <td>
+                @*@ToolKitVM.ModalButton("editButton", "editModal", editHtml, item.timeId.ToString())*@
+                @ToolKitVM.ModalEditButtonGlyph("editButton", "editTimeCardModal", item.timeId.ToString(), "Edit")
+            </td>
+        </tr>
+                    }
+
+</table>
+
+<div>
+    @Html.ActionLink("Back to List", "Volunteers")
+</div>
+
+
+@ToolKitVM.GetPartialViewButtonScript("editButton", "EditTimeCard", "Admin", "editPartial")
+
+
+
