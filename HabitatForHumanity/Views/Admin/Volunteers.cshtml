@@ -53,7 +53,7 @@
                     </div>
                     @foreach (var volunteer in Model.SearchResults)
                 {
-                        <a href="@Url.Action("EditVolunteer", "Admin", new { id = volunteer.userNumber })">
+                        <a href="@Url.Action("ManageVolunteer", "Admin", new { id = volunteer.userNumber })">
                             <div class="row well well-sm divlink" style="margin:1px">
                                 <div class="col-md-4">@volunteer.volunteerName</div>
                                 <div class="col-md-5">@volunteer.email</div>

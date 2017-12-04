@@ -421,6 +421,25 @@ namespace HabitatForHumanity.Models
             }
         }
 
+        public static ReturnStatus GetTimeSheetIdsByUserId(int userId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var ids = (from t in db.timeSheets
+                           where t.user_Id == userId
+                           select t.Id).ToList();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = ids;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
+
         //public static ReturnStatus GetBadTimeSheets()
         //{
         //    ReturnStatus st = new ReturnStatus();

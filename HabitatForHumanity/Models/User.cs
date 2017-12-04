@@ -393,8 +393,6 @@ namespace HabitatForHumanity.Models
             st.data = null;
             try
             {
-                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
-
                 VolunteerDbContext db = new VolunteerDbContext();
                 user.homePhoneNumber = user.homePhoneNumber.Replace('(', ' ').Replace(')', ' ').Replace('.', ' ').Replace('-', ' ');
                 user.homePhoneNumber = Regex.Replace(user.homePhoneNumber, @"\s", "");
@@ -406,7 +404,7 @@ namespace HabitatForHumanity.Models
                 user.emergencyWorkPhone = Regex.Replace(user.workPhoneNumber, @"\s", "");
                 db.Entry(user).State = EntityState.Modified;
                 db.SaveChanges();
-
+                st.errorCode = ReturnStatus.ALL_CLEAR;
                 return st;
             }
             catch (Exception e)

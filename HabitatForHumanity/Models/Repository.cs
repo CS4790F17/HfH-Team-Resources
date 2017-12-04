@@ -276,6 +276,7 @@ namespace HabitatForHumanity.Models
             }
         }
 
+
         /// <summary>
         /// Updates the users information based on a new model.
         /// </summary>
@@ -979,6 +980,8 @@ namespace HabitatForHumanity.Models
 
         #region Report functions
 
+        #region Dashboard Barchart
+
         public static ReturnStatus GetHoursChartVMByYear()
         {
             ReturnStatus chartReturn = new ReturnStatus();
@@ -1138,7 +1141,32 @@ namespace HabitatForHumanity.Models
             }
 
         }
+        #endregion Dashboard Barchart
 
+        #region Project Reports
+        public static ReturnStatus GetProjectDemographicsReport(int period)
+        {
+            ReturnStatus listOfListsRS = new ReturnStatus();
+            List<List<ProjDemogReportVM>> reports = new List<List<ProjDemogReportVM>>();
+            for (int i = 0; i < period; i++)
+            {
+                ReturnStatus aListRS = Project.GetProjectDemographicsReport(i);
+                if(aListRS.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    listOfListsRS.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                    return listOfListsRS;
+                }
+                reports.Add((List<ProjDemogReportVM>)aListRS.data);
+            }
+            listOfListsRS.errorCode = ReturnStatus.ALL_CLEAR;
+            listOfListsRS.data = reports;
+            return listOfListsRS;
+            
+
+            //return Project.GetProjectDemographicsReport(period);
+        }
+
+        #endregion Project Reports
 
         public static ReturnStatus getTotalHoursWorkedByVolunteer(int volunteerId)
         {
@@ -1212,9 +1240,9 @@ namespace HabitatForHumanity.Models
             try
             {
                 st = User.GetDemographicsForPie(gender);
-                if (st.errorCode != (int)ReturnStatus.ALL_CLEAR)
+                if (st.errorCode != ReturnStatus.ALL_CLEAR)
                 {
-                    st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                    st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                     return st;
                 }
             }
@@ -1224,11 +1252,6 @@ namespace HabitatForHumanity.Models
             }
             return User.GetDemographicsForPie(gender);
         }
-
-        //public static ReturnStatus GetBadTimeSheets()
-        //{
-        //    return TimeSheet.GetBadTimeSheets();
-        //}
 
         public static ReturnStatus GetNumBadPunches()
         {
@@ -1276,6 +1299,107 @@ namespace HabitatForHumanity.Models
         }
 
         #endregion
+
+        #region Admin --> User
+
+        public static ReturnStatus GetAdminViewOfUser(int id)
+        {
+            AdminUserVM vm = new AdminUserVM();
+            ReturnStatus vmToReturn = new ReturnStatus();
+            ReturnStatus userRS = GetUser(id);
+            if(userRS.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                vmToReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return vmToReturn;
+            }
+            User user = (User)userRS.data;
+
+            // set user info
+            vm.userInfo.userInfoId = user.Id;
+            vm.userInfo.firstName = user.firstName;
+            vm.userInfo.lastName = user.lastName;
+            vm.userInfo.homePhone = user.homePhoneNumber;
+            vm.userInfo.workPhone = user.workPhoneNumber;
+            vm.userInfo.email = user.emailAddress;
+            vm.userInfo.streetAddress = user.streetAddress;
+            vm.userInfo.city = user.city;
+            vm.userInfo.zip = user.zip;
+            vm.userInfo.birthDate = user.birthDate;
+            vm.userInfo.isAdmin = (user.isAdmin == 1) ? true : false;
+            vm.userInfo.waiverSignDate = user.waiverSignDate;
+            try
+            {
+                vm.userInfo.hoursToDate = (double)getTotalHoursWorkedByVolunteer(user.Id).data;
+            }
+            catch
+            {
+                vm.userInfo.hoursToDate = 0.0;
+            }
+            vm.userInfo.waiverExpiration = user.waiverSignDate.AddYears(1);
+            vm.userInfo.waiverStatus = (vm.userInfo.waiverExpiration > DateTime.Now);
+
+            // set emergency info
+            vm.emergInfo.emergencyFirstName = user.emergencyFirstName;
+            vm.emergInfo.emergencyLastName = user.emergencyLastName;
+            vm.emergInfo.relation = user.relation;
+            vm.emergInfo.emergencyHomePhone = user.emergencyHomePhone;
+            vm.emergInfo.emergencyWorkPhone = user.emergencyWorkPhone;
+            vm.emergInfo.emergencyStreetAddress = user.emergencyStreetAddress;
+            vm.emergInfo.emergencyCity = user.emergencyCity;
+            vm.emergInfo.emergencyZip = user.emergencyZip;
+
+            // set timecards
+            ReturnStatus timeIdsRS = TimeSheet.GetTimeSheetIdsByUserId(id);
+            List<TimeCardVM> timecardVMs = new List<TimeCardVM>();
+            if (timeIdsRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                List<int> timeids = (List<int>)timeIdsRS.data;
+                foreach(int timesheetId in timeids)
+                {
+                    ReturnStatus timeVMsRS = GetTimeCardVM(timesheetId);
+                    if(timeVMsRS.errorCode == ReturnStatus.ALL_CLEAR)
+                    {
+                        timecardVMs.Add((TimeCardVM)timeVMsRS.data);
+                    }
+                }            
+            }
+            vm.timeCardVMs = timecardVMs;
+
+            vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+            vmToReturn.data = vm;
+
+            return vmToReturn;
+        }
+
+        public static ReturnStatus AdminEditUser(UserInfo u)
+        {
+            ReturnStatus result = new ReturnStatus();
+            ReturnStatus userRS = GetUser(u.userInfoId);
+            if(userRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                User user = (User)userRS.data;
+                user.firstName = u.firstName;
+                user.lastName = u.lastName;
+                user.homePhoneNumber = u.homePhone;
+                user.workPhoneNumber = u.workPhone;
+                //if ((bool)EmailExists(u.email).data)
+                //{
+                //    result.errorCode = -1;
+                //    return result;
+                //}
+                user.emailAddress = u.email;
+                user.streetAddress = u.streetAddress;
+                user.city = u.city;
+                user.zip = u.zip;
+                user.birthDate = u.birthDate;
+                user.isAdmin = (u.isAdmin) ? 1 : 0;
+                user.waiverSignDate = u.waiverSignDate;
+                return EditUser(user);
+            }
+            result.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
+            return result;
+        }
+        #endregion Admin --> User
 
         #region Project Category
 

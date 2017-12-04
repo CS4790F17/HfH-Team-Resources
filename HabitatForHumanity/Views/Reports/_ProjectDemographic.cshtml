@@ -1,0 +1,133 @@
+﻿@model IEnumerable<HabitatForHumanity.ViewModels.ProjDemogReportVM>
+<div class="row" >
+    <div class="col-md-2 text-box">
+        <h4>@Model.First().monthName.ToString("MMMM yyyy")</h4>
+    </div>
+</div>
+
+
+<table class="table table-bordered table-condensed table-striped">
+    <tr>
+        <th>
+            @*@Html.DisplayNameFor(model => model.category)*@
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numVolunteers)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numHours)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numStudents)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numVeterans)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numDisabled)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numUnder25k)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numNative)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numAsian)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numBlack)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numHispanic)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numHawaiian)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.numWhite)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.male)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.female)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.numVolunteers)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.numHours)
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.numStudents / (double)item.numVolunteers))
+                @*@Html.DisplayFor(modelItem => item.numStudents)*@
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.numVeterans / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.numVeterans)*@
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.numDisabled / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.numDisabled)*@
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.numUnder25k / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.numUnder25k)*@
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.numNative / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.numNative)*@
+            </td>
+            <td>
+               @(string.Format("{0:P0}", item.numAsian / (double)item.numVolunteers)) 
+            </td>
+
+            <td>
+                @(string.Format("{0:P0}", item.numBlack / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.numBlack)*@
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.numHispanic / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.numHispanic)*@
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.numHawaiian / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.numHawaiian)*@
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.numWhite / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.numWhite)*@
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.male / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.male)*@
+            </td>
+            <td>
+                @(string.Format("{0:P0}", item.female / (double)item.numVolunteers))
+                
+                @*@Html.DisplayFor(modelItem => item.female)*@
+            </td>
+            <td></td>
+        </tr>
+                    }
+
+</table>
