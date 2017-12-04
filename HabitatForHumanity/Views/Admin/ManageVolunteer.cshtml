@@ -9,10 +9,11 @@
     if(Model != null && Model.userInfo != null && Model.userInfo.firstName != null)
     {
         namey = Model.userInfo.firstName;
-        namey += (string.IsNullOrEmpty(Model.userInfo.lastName)) ? "" : Model.userInfo.lastName;
+        namey += (string.IsNullOrEmpty(Model.userInfo.lastName)) ? "" : " " + Model.userInfo.lastName;
     }
 }
 <h2 class="text-center">@namey</h2>
+<hr />
 <div class="row">
     <div class="col-md-3">
         <div class="well">

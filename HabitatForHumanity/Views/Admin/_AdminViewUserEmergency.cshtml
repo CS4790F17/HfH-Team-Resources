@@ -9,18 +9,18 @@
         @Html.LabelFor(model => model.emergencyFirstName)
     </div>
     <div class="col-md-8">
-        @Model.emergencyFirstName
+        @Model.emergencyFirstName @Model.emergencyLastName
     </div>
 </div>
 
-<div class="row">
+@*<div class="row">
     <div class="col-md-4">
         @Html.LabelFor(model => model.emergencyLastName)
     </div>
     <div class="col-md-8">
         @Model.emergencyLastName
     </div>
-</div>
+</div>*@
 
 <div class="row">
     <div class="col-md-4">
@@ -36,7 +36,11 @@
         @Html.LabelFor(model => model.emergencyHomePhone)
     </div>
     <div class="col-md-8">
-        @Model.emergencyHomePhone
+        @*@Model.emergencyHomePhone*@
+        @string.Format("({0}) {1}-{2}"
+            , Model.emergencyHomePhone.Substring(0, 3)
+            , Model.emergencyHomePhone.Substring(3, 3)
+            , Model.emergencyHomePhone.Substring(6, Model.emergencyHomePhone.Length - 6))
     </div>
 </div>
 <div class="row">
@@ -44,7 +48,11 @@
         @Html.LabelFor(model => model.emergencyWorkPhone)
     </div>
     <div class="col-md-8">
-        @Model.emergencyWorkPhone
+        @*@Model.emergencyWorkPhone*@
+        @string.Format("({0}) {1}-{2}"
+            , Model.emergencyWorkPhone.Substring(0, 3)
+            , Model.emergencyWorkPhone.Substring(3, 3)
+            , Model.emergencyWorkPhone.Substring(6, Model.emergencyWorkPhone.Length - 6))
     </div>
 </div>
 

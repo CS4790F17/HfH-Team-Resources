@@ -58,7 +58,7 @@ namespace HabitatForHumanity.ViewModels
 
         [DisplayFormat(DataFormatString = "{0:M/d/yy h:mm tt}", ApplyFormatInEditMode = true)]
         [DataType(DataType.DateTime)]
-        [Display(Name = "Waiver Date")]
+        [Display(Name = "Waiver")]
         public DateTime waiverSignDate { get; set; }
 
         [Display(Name = "Hours")]
@@ -73,28 +73,28 @@ namespace HabitatForHumanity.ViewModels
 
     public class EmergInfo
     {
-        [Display(Name = "Emergency Contact First Name")]
+        [Display(Name = "Name")]
         public string emergencyFirstName { get; set; }
 
-        [Display(Name = "Emergency Contact Last Name")]
+        [Display(Name = "Last Name")]
         public string emergencyLastName { get; set; }
 
         [Display(Name = "Relation")]
         public string relation { get; set; }
 
-        [Display(Name = "Emergency Contact Primary Phone")]
+        [Display(Name = "Phone")]
         public string emergencyHomePhone { get; set; }
 
-        [Display(Name = "Emergency Contact Alternate Phone")]
+        [Display(Name = "Alternate")]
         public string emergencyWorkPhone { get; set; }
 
-        [Display(Name = "Emergency Contact Address")]
+        [Display(Name = "Address")]
         public string emergencyStreetAddress { get; set; }
 
-        [Display(Name = "Emergency Contact City")]
+        [Display(Name = "City")]
         public string emergencyCity { get; set; }
 
-        [Display(Name = "Emergency Contact Zipcode")]
+        [Display(Name = "Zipcode")]
         public string emergencyZip { get; set; }
     }
 
