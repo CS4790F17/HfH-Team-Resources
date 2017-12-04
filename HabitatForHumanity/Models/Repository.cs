@@ -462,7 +462,7 @@ namespace HabitatForHumanity.Models
         /// <param name="statusChoice">The currently selected status choice. 0 - All, 1 - Active, 2 - Inactive</param>
         /// <param name="queryString">The name of the project to search for.</param>
         /// <returns></returns>
-        public static StaticPagedList<Project> GetProjectPageWithFilter(int? Page, int statusChoice, string queryString)
+        public static StaticPagedList<Project> GetProjectPageWithFilter(int? Page, int statusChoice, string queryString, int categorySelection)
         {
             int RecordsPerPage = 10;
             //page can't be 0 or below
@@ -476,15 +476,15 @@ namespace HabitatForHumanity.Models
             switch (statusChoice)
             {
                 case 0:
-                    st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString);
+                    st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString, categorySelection);
                     break;
                 case 1:
                     //search for all active projects
-                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 1, queryString);
+                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 1, queryString, categorySelection);
                     break;
                 case 2:
                     //search for all inactive projects
-                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 0, queryString);
+                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 0, queryString, categorySelection);
                     break;
 
             }
@@ -500,7 +500,7 @@ namespace HabitatForHumanity.Models
         /// <param name="Page">The current page number. Page cannot be null or less than 1.</param>
         /// <param name="queryString">The name of the project to search for.</param>
         /// <returns></returns>
-        public static StaticPagedList<Project> GetProjectPage(int? Page, string queryString)
+        public static StaticPagedList<Project> GetProjectPage(int? Page, string queryString, int categorySelection)
         {
             int RecordsPerPage = 10;
             //page can't be 0 or below
@@ -511,7 +511,7 @@ namespace HabitatForHumanity.Models
 
             //send in Page - 1 so that the index works correctly
             int totalCount = 0;
-            ReturnStatus st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString);
+            ReturnStatus st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString, categorySelection);
 
             //supposed to help reduce the load on the database by only getting what's needed
             StaticPagedList<Project> SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), Page.Value, RecordsPerPage, totalCount);

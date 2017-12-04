@@ -502,7 +502,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult DeleteTimeCard(TimeCardVM model)
         {
             ReturnStatus rs = Repository.AdminDeleteTimeCard(model);
-            if(rs.errorCode != 0)
+            if (rs.errorCode != 0)
             {
                 return PartialView("_Error");
             }
@@ -593,7 +593,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddOrganization([Bind(Include="name, comments")]Organization org)
+        public ActionResult AddOrganization([Bind(Include = "name, comments")]Organization org)
         {
             if (ModelState.IsValid)
             {
@@ -608,12 +608,16 @@ namespace HabitatForHumanity.Controllers
         #region Manage Projects
 
         //Main view
-        [HttpGet]
+        
         public ActionResult ManageProjects(ProjectSearchModel model)
         {
+            if (String.IsNullOrEmpty(model.queryString))
+                model.queryString = ""; //keeps the paged list from being empty
 
-            model.SearchResults = Repository.GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString);
-            model.Page = model.SearchResults.PageNumber;
+
+            model.SearchResults = Repository.GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString, model.categorySelection);
+            // model.Page = model.SearchResults.PageNumber;
+            model.Page = 1;
 
             return View(model);
         }
@@ -678,7 +682,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate,categoryId")] Project proj)
+        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate,categoryId,status")] Project proj)
         {
             //if model state isn't valid
             if (!ModelState.IsValid)
@@ -689,17 +693,6 @@ namespace HabitatForHumanity.Controllers
             return PartialView("ProjectPartialViews/_ProjectSuccess");
         }
 
-        [HttpPost]
-        public ActionResult ProjectSearch(int? Page, int statusChoice, string queryString)
-        {
-            ProjectSearchModel model = new ProjectSearchModel();
-            //model.Page = Page;
-            model.Page = 1;//return to first page
-            model.statusChoice = statusChoice;
-            model.queryString = queryString;
-            return RedirectToAction("ManageProjects", model);
-            // return PartialView("ProjectPartialViews/_ProjectList", Repository.GetProjectPageWithFilter(Page, statusChoice, queryString));
-        }
 
         #endregion
 
@@ -716,22 +709,22 @@ namespace HabitatForHumanity.Controllers
         [HttpGet]
         public ActionResult AddCategory()
         {
-            return View("ProjectCategoryPartialViews/AddCategory");
+            return PartialView("ProjectCategoryPartialViews/_AddCategory");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddCategory(ProjectCategory pc)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 Repository.CreateProjectCategory(pc);
             }
             else
             {
-                return View(pc);
+                return PartialView("ProjectCategoryPartialViews/_AddCategory", pc);
             }
-            return RedirectToAction("ManageProjectCategory");
+            return PartialView("ProjectCategoryPartialViews/_CategorySuccess");
         }
 
         #endregion
