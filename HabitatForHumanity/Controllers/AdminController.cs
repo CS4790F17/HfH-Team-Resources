@@ -14,117 +14,36 @@ using static HabitatForHumanity.Models.User;
 using PagedList;
 using System.Data.Entity;
 using HabitatForHumanity.Controllers;
+using System.Net;
 
 namespace HabitatForHumanity.Controllers
 {
-    [AdminFilter]
-    [AuthorizationFilter]
+     [AdminFilter]
+     [AuthorizationFilter]
     public class AdminController : Controller
     {
         private VolunteerDbContext db = new VolunteerDbContext();
         private const string awwSnapMsg = "We're experiencing technical difficulties, try again later";
 
-        const int RecordsPerPage = 10;
+        const int RecordsPerPage = 12;
+
+        #region Dashboard
         // GET: Admin dashboard
         public ActionResult Dashboard()
         {
             return View();
         }
 
-        #region Volunteers
-        public ActionResult Volunteers(VolunteerSearchModel vsm)
+        public ActionResult GetBadPunches()
         {
-            if (vsm.projects == null)
-            {
-                vsm = new VolunteerSearchModel();
-                return View(vsm);
-            }
-            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId, vsm.orgId);
-
-            if (rs.errorCode != 0)
-            {
-                ViewBag.status = awwSnapMsg;
-                return View(vsm);
-            }
-
-            List<UsersVM> allVols = (List<UsersVM>)rs.data;
-            List<UsersVM> filteredVols = new List<UsersVM>();
-
-            if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
-            {
-                foreach (UsersVM u in allVols)
-                {
-                    if (u != null && vsm.queryString != null)
-                    {
-                        if (u.email.ToLower().Contains(vsm.queryString.ToLower()) || u.volunteerName.ToLower().Contains(vsm.queryString.ToLower()))
-                        {
-                            filteredVols.Add(u);
-                        }
-                    }
-                }
-                var pageIndex = vsm.Page ?? 1;
-                vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
-            }
-            else
-            {
-                var pageIndex = vsm.Page ?? 1;
-                vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
-            }
-            return View(vsm);
-        }
-        #endregion
-
-        #region Timecards
-        public ActionResult TimeCards(TimeCardSearchModel tsm)
-        {
-            ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
-            if (rs.errorCode != 0)
-            {
-                ViewBag.status = awwSnapMsg;
-                return View(tsm);
-            }
-            var pageIndex = tsm.Page ?? 1;
-            List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
-            tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
-            tsm.Page = tsm.SearchResults.PageNumber;
-            return View(tsm);
-        }
-
-        public ActionResult EditTimeCard(int id)
-        {
-            ReturnStatus rs = Repository.GetTimeCardVM(id);
+            ReturnStatus rs = Repository.GetNumBadPunches();
             if (rs.errorCode != ReturnStatus.ALL_CLEAR)
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
-                //TODO: change this to return some sort of error partial or the modal will blow up
-                return View();
+                return PartialView("_Error");
             }
-
-            return PartialView("_EditTimeCard", (TimeCardVM)rs.data);
+            int numBadPunches = (int)rs.data;
+            return PartialView("_BadPunches", numBadPunches);
         }
-
-        [HttpPost]
-        public ActionResult EditTimeCard(TimeCardVM card)
-        {
-            TimeSpan span = card.outTime.Subtract(card.inTime);
-            if (span.Hours > 24 || span.Minutes < 0)
-            {
-                // this doesn't work -- hah, does now -blake
-                ViewBag.status = "Time can't be more than 24 hours or less than zero.";
-                return PartialView("_EditTimeCard", card);
-            }
-            ReturnStatus rs = Repository.EditTimeCard(card);
-            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
-            {
-                ViewBag.status = "Failed to update time card, please try again later.";
-                return PartialView("_EditTimeCard", card);
-            }
-            //return RedirectToAction("Timecards");
-            //return succes partial view instead of redirect that way the redirect doesn't populate the modal
-            //also gives the user some feedback
-            return PartialView("TimeCardPartialViews/_TimeCardSuccess");
-        }
-        #endregion
 
         #region Get and Build Hours Bar Chart
         public ActionResult GetHoursChartBy(string period)
@@ -290,21 +209,133 @@ namespace HabitatForHumanity.Controllers
         }
         #endregion
 
+        #endregion Dashboard
+
+        #region Volunteers
+        public ActionResult Volunteers(VolunteerSearchModel vsm, string excMsg)
+        {
+            if (!string.IsNullOrEmpty(excMsg))
+            {
+                ViewBag.status = excMsg;
+            }
+            if (vsm.projects == null)
+            {
+                vsm = new VolunteerSearchModel();
+                return View(vsm);
+            }
+            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId, vsm.orgId);
+
+            if (rs.errorCode != 0)
+            {
+                ViewBag.status = awwSnapMsg;
+                return View(vsm);
+            }
+
+            List<UsersVM> allVols = (List<UsersVM>)rs.data;
+            List<UsersVM> filteredVols = new List<UsersVM>();
+
+            if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
+            {
+                foreach (UsersVM u in allVols)
+                {
+                    if (u != null && vsm.queryString != null)
+                    {
+                        if (u.email.ToLower().Contains(vsm.queryString.ToLower()) || u.volunteerName.ToLower().Contains(vsm.queryString.ToLower()))
+                        {
+                            filteredVols.Add(u);
+                        }
+                    }
+                }
+                var pageIndex = vsm.Page ?? 1;
+                vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+            }
+            else
+            {
+                var pageIndex = vsm.Page ?? 1;
+                vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
+            }
+            return View(vsm);
+        }
+        #endregion
+
+        #region Manage Volunteer
+        public ActionResult ManageVolunteer(int id, string excMsg)
+        {
+            ViewBag.status = (string.IsNullOrEmpty(excMsg) ? null : excMsg);
+            ReturnStatus rs = Repository.GetAdminViewOfUser(id);
+            AdminUserVM vm = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (AdminUserVM)rs.data : new AdminUserVM();
+            return View(vm);
+        }
+        #endregion Manage Volunteer
+
+        #region Timecards
+        public ActionResult TimeCards(TimeCardSearchModel tsm)
+        {
+            ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
+            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                var pageIndex = tsm.Page ?? 1;
+                List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
+                tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
+                tsm.Page = tsm.SearchResults.PageNumber;
+                return View(tsm);
+            }
+            //else if(rs.errorCode == ReturnStatus.ERROR_WHILE_ACCESSING_DATA)
+            //{
+            //    ViewBag.status = "debug, trouble in data layer -  ";
+            //    return View(tsm);
+            //}
+            ViewBag.status = "No results for that time period";// awwSnapMsg;
+            return View(tsm);
+
+        }
+
+        public ActionResult EditTimeCard(int id)
+        {
+            ReturnStatus rs = Repository.GetTimeCardVM(id);
+            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                //TODO: change this to return some sort of error partial or the modal will blow up
+                return View();
+            }
+
+            return PartialView("_EditTimeCard", (TimeCardVM)rs.data);
+        }
+
+        [HttpPost]
+        public ActionResult EditTimeCard(TimeCardVM card)
+        {
+            TimeSpan span = card.outTime.Subtract(card.inTime);
+            if (span.TotalHours > 24 || span.TotalMinutes < 0)
+            {
+                // this doesn't work -- hah, does now -blake
+                ViewBag.status = "Time can't be more than 24 hours or less than zero.";
+                return PartialView("_EditTimeCard", card);
+            }
+            ReturnStatus rs = Repository.EditTimeCard(card);
+            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                ViewBag.status = "Failed to update time card, please try again later.";
+                return PartialView("_EditTimeCard", card);
+            }
+            //return RedirectToAction("Timecards");
+            //return succes partial view instead of redirect that way the redirect doesn't populate the modal
+            //also gives the user some feedback
+            return PartialView("TimeCardPartialViews/_TimeCardSuccess");
+        }
+        #endregion     
+
+        #region Edit Volunteer
         // GET: Admin/EditVolunteer
         public ActionResult EditVolunteer(int id)
         {
             ReturnStatus getUser = Repository.GetUser(id);
             ReturnStatus getTimeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
 
-            if (getUser.errorCode != 0)
+            if (getUser.errorCode != 0 || getTimeSheets.errorCode != 0)
             {
-                ViewBag.status = "There was a problem getting that user. Please try again later";
-                return RedirectToAction("Volunteers", "Admin");
-            }
-            else if (getTimeSheets.errorCode != 0)
-            {
-                ViewBag.status = "There was a problem getting that user's time sheets. Please try again later";
-                return RedirectToAction("Volunteers", "Admin");
+                return RedirectToAction("Volunteers", "Admin", new { excMsg = awwSnapMsg });
             }
             else
             {
@@ -318,25 +349,16 @@ namespace HabitatForHumanity.Controllers
                 volunteer.email = user.emailAddress;
                 volunteer.waiverSignDate = user.waiverSignDate;
                 volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
-                if (volunteer.waiverExpiration > DateTime.Now)
+                volunteer.waiverStatus = (volunteer.waiverExpiration > DateTime.Now);
+                volunteer.isAdmin = (user.isAdmin == 1) ? true : false;
+                try
                 {
-                    volunteer.waiverStatus = true;
+                    volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
                 }
-                else
+                catch
                 {
-                    volunteer.waiverStatus = false;
+                    volunteer.hoursToDate = 0.0;
                 }
-
-                if (user.isAdmin == 1)
-                {
-                    volunteer.isAdmin = true;
-                }
-                else
-                {
-                    volunteer.isAdmin = false;
-                }
-                volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
-
                 volunteer.emergencyFirstName = user.emergencyFirstName;
                 volunteer.emergencyLastName = user.emergencyLastName;
                 volunteer.relation = user.relation;
@@ -350,35 +372,17 @@ namespace HabitatForHumanity.Controllers
                 timeSheets = (List<TimeSheet>)getTimeSheets.data;
                 List<TimeCardVM> test = new List<TimeCardVM>();
 
-
                 foreach (TimeSheet t in timeSheets)
                 {
                     TimeCardVM temp = new TimeCardVM();
                     temp.timeId = t.Id;
                     temp.volName = volunteer.volunteerName;
                     ReturnStatus orgRS = Repository.GetOrganizationById(t.org_Id);
-                    if (orgRS.errorCode == 0)
-                    {
-                        temp.orgName = ((Organization)orgRS.data).name;
-                    }
-                    else
-                    {
-                        ViewBag.status = "There was a problem getting the organization. Please try again later";
-                        return RedirectToAction("Volunteers", "Admin");
-                    }
+                    temp.orgName = (orgRS.errorCode == 0) ? ((Organization)orgRS.data).name : "---";
                     ReturnStatus projRS = Repository.GetProjectById(t.project_Id);
-                    if (projRS.errorCode == 0)
-                    {
-                        temp.projName = ((Project)projRS.data).name;
-                    }
-                    else
-                    {
-                        ViewBag.status = "There was a problem getting the project. Please try again later";
-                        return RedirectToAction("Volunteers", "Admin");
-                    }
+                    temp.projName = (projRS.errorCode == 0) ? ((Project)projRS.data).name : "---";
                     temp.inTime = t.clockInTime;
                     temp.outTime = t.clockOutTime;
-
                     test.Add(temp);
                 }
                 volunteer.timeCardVM = test;
@@ -404,14 +408,8 @@ namespace HabitatForHumanity.Controllers
                     User user = (User)rs.data;
                     user.Id = usersVM.userNumber;
                     String[] tempName = usersVM.volunteerName.Split(' ');
-                    user.firstName = tempName[0];
-                    if (tempName.Length > 1)
-                    {
-                        if (tempName[1] != null)
-                        {
-                            user.lastName = tempName[1];
-                        }
-                    }
+                    user.firstName = (tempName.Length > 0 && !string.IsNullOrEmpty(tempName[0])) ? tempName[0] : "";
+                    user.lastName = (tempName.Length > 1 && !string.IsNullOrEmpty(tempName[0])) ? tempName[1] : "";
 
                     user.emailAddress = usersVM.email;
 
@@ -439,12 +437,78 @@ namespace HabitatForHumanity.Controllers
             return View(usersVM);
         }
 
-        public ActionResult GetBadPunches()
+        /*************************************/
+        public ActionResult AdminEditUser(int id)
         {
-            ReturnStatus rs = Repository.GetNumBadPunches();
-            int numBadPunches = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
-            return PartialView("_BadPunches", numBadPunches);
+            ReturnStatus rs = Repository.GetAdminViewOfUser(id);
+            UserInfo userInfo = new UserInfo();
+            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                AdminUserVM vm = (AdminUserVM)rs.data;
+                userInfo = vm.userInfo;
+            }
+
+            return PartialView("_AdminEditVolunteer", userInfo);
         }
+
+        [HttpPost]
+        public ActionResult AdminEditUser(UserInfo userInfo)
+        {
+            ReturnStatus rs = Repository.AdminEditUser(userInfo);
+            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                return PartialView("_GenericModalSuccess");
+            }
+            // uhh, idk
+            return PartialView("_GenericModalSuccess");
+        }
+        /****************************************/
+        #endregion Edit Volunteer
+
+        #region Delete Timecard
+        // GET: TimeSheet/Delete/5
+        //  [AdminFilter]
+        //   [AuthorizationFilter]
+        [HttpGet]
+        public ActionResult DeleteTimeCard(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            //TimeSheet timeSheet = db.timeSheets.Find(id);
+            //if (timeSheet == null)
+            //{
+            //    return HttpNotFound();
+            //}
+            //return View(timeSheet);
+
+            ReturnStatus rs = Repository.GetTimeCardVM((int)id);
+            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            {
+                ViewBag.status = "Sorry, something went wrong while retrieving information.";
+                //TODO: change this to return some sort of error partial or the modal will blow up
+                return View();
+            }
+
+            return PartialView("TimeCardPartialViews/_DeleteTimeCard", (TimeCardVM)rs.data);
+        }
+
+        // POST: TimeSheet/Delete/5
+        //[AdminFilter]
+        //  [AuthorizationFilter]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteTimeCard(TimeCardVM model)
+        {
+            ReturnStatus rs = Repository.AdminDeleteTimeCard(model);
+            if(rs.errorCode != 0)
+            {
+                return PartialView("_Error");
+            }
+            return PartialView("TimeCardPartialViews/_DeleteTimeCardSuccess");
+        }
+        #endregion
 
         #region Manage Organization
         public ActionResult ViewOrganizations(OrganizationSearchModel model)
@@ -529,7 +593,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddOrganization([Bind(Include="name")]Organization org)
+        public ActionResult AddOrganization([Bind(Include="name, comments")]Organization org)
         {
             if (ModelState.IsValid)
             {
@@ -561,7 +625,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        public ActionResult CreateProject([Bind(Include = "Id,name,description,beginDate,categoryId")] Project proj)
         {
             if (!ModelState.IsValid)
             {
@@ -614,7 +678,7 @@ namespace HabitatForHumanity.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate")] Project proj)
+        public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate,categoryId")] Project proj)
         {
             //if model state isn't valid
             if (!ModelState.IsValid)
@@ -637,10 +701,42 @@ namespace HabitatForHumanity.Controllers
             // return PartialView("ProjectPartialViews/_ProjectList", Repository.GetProjectPageWithFilter(Page, statusChoice, queryString));
         }
 
+        #endregion
+
+        #region Manage Project Categories
 
 
+        public ActionResult ManageProjectCategory(CategorySearchModel cm)
+        {
+            var page = cm.Page ?? 1;
+            cm.SearchResults = Repository.GetAllCategoriesByPageSize(page, RecordsPerPage);
+            return View(cm);
+        }
+
+        [HttpGet]
+        public ActionResult AddCategory()
+        {
+            return View("ProjectCategoryPartialViews/AddCategory");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddCategory(ProjectCategory pc)
+        {
+            if(ModelState.IsValid)
+            {
+                Repository.CreateProjectCategory(pc);
+            }
+            else
+            {
+                return View(pc);
+            }
+            return RedirectToAction("ManageProjectCategory");
+        }
 
         #endregion
+
+
 
     }
 }

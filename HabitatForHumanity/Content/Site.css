@@ -160,7 +160,7 @@ li{
     }
 
 input:checked + .slider {
-    background-color: #07f113;
+    background-color: #54B948
 }
 
 input:focus + .slider {

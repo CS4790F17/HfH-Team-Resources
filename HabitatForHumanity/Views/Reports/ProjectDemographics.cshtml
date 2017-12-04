@@ -1,0 +1,16 @@
+﻿@model IEnumerable<List<HabitatForHumanity.ViewModels.ProjDemogReportVM>>
+@{
+    ViewBag.Title = "Project Demographics";
+
+}
+
+<h2 class="text-center">Project Demographics</h2>
+
+
+
+@{ 
+    foreach(var monthReport in Model)
+    {
+        @Html.Partial("_ProjectDemographic", monthReport)
+    }
+}

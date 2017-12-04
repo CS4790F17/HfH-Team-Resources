@@ -1,0 +1,45 @@
+CREATE TABLE [dbo].[User] (
+    [Id]                     INT           IDENTITY (1, 1) NOT NULL,
+    [firstName]              VARCHAR (50)  NULL,
+    [lastName]               VARCHAR (50)  NULL,
+    [homePhoneNumber]        VARCHAR (10)  NULL,
+    [workPhoneNumber]        VARCHAR (10)  NULL,
+    [emailAddress]           VARCHAR (50)  NULL,
+    [streetAddress]          VARCHAR (50)  NULL,
+    [city]                   VARCHAR (50)  NULL,
+    [zip]                    VARCHAR (50)  NULL,
+    [password]               VARCHAR (MAX) NULL,
+    [birthDate]              DATETIME      NULL,
+    [gender]                 VARCHAR (1)   NULL,
+    [isAdmin]                INT           DEFAULT ((0)) NOT NULL,
+    [waiverSignDate]         DATETIME      NULL,
+    [emergencyFirstName]     VARCHAR (50)  NULL,
+    [emergencyLastName]      VARCHAR (50)  NULL,
+    [relation]               VARCHAR (50)  NULL,
+    [emergencyHomePhone]     VARCHAR (10)  NULL,
+    [emergencyWorkPhone]     VARCHAR (10)  NULL,
+    [emergencyStreetAddress] VARCHAR (50)  NULL,
+    [emergencyCity]          VARCHAR (50)  NULL,
+    [emergencyZip]           VARCHAR (50)  NULL,
+    [incomeId]               INT           DEFAULT ((1)) NULL,
+    [ethnicityId]            INT           DEFAULT ((1)) NULL,
+    [collegeStatus]          INT           DEFAULT ((1)) NULL,
+    [veteranStatus]          INT           DEFAULT ((1)) NULL,
+    [disabledStatus]         INT           DEFAULT ((1)) NULL,
+    UNIQUE NONCLUSTERED ([emailAddress] ASC)
+);
+
+
+UPDATE dbo.[User]
+SET incomeId = 1
+UPDATE dbo.[User]
+SET ethnicityId = 1
+UPDATE dbo.[User]
+SET collegeStatus = 1
+UPDATE dbo.[User]
+SET veteranStatus = 1;
+UPDATE dbo.[User]
+SET disabledStatus = 1
+
+
+

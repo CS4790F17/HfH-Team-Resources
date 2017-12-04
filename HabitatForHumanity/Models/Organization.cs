@@ -19,6 +19,7 @@ namespace HabitatForHumanity.Models
         [Display(Name = "Name*")]
         public string name { get; set; }
         public int status { get; set; }
+        [Display(Name = "Comments")]
         public string comments { get; set; }
 
         public Organization()

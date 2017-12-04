@@ -27,19 +27,28 @@
                         <div>
                             <a href='https://habitatwd.org/' data-toggle="tooltip" title="HFH main page">
                                 <span>
-                                    <img src='~/Images/HFHLogo.jpg' style="width:150px;height:70px;"/>
+                                    <img src='~/Images/HFHLogo.jpg' style="width:150px;height:70px;" />
                                 </span>
                             </a>
                         </div>
                     </li>
-    @{
-        if (Session["Username"] != null && Session["isAdmin"] != null && Session["isAdmin"].Equals("isAdmin"))
-        {
+                    @{
+                        if (Session["Username"] != null && Session["isAdmin"] != null && Session["isAdmin"].Equals("isAdmin"))
+                        {
 
-            <li>@Html.ActionLink("Dashboard", "Dashboard", "Admin")</li>
-            <li>@Html.ActionLink("Volunteers", "Volunteers", "Admin")</li>
-            <li>@Html.ActionLink("Time Cards", "TimeCards", "Admin")</li>
-            <li>@Html.ActionLink("Projects", "ManageProjects", "Admin")</li>
+                            <li>@Html.ActionLink("Dashboard", "Dashboard", "Admin")</li>
+                            <li>@Html.ActionLink("Volunteers", "Volunteers", "Admin")</li>
+                            <li>@Html.ActionLink("Time Cards", "TimeCards", "Admin")</li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Projects
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <div class="dropdown-item">@Html.ActionLink("Manage Projects", "ManageProjects", "Admin")</div>
+                                    <div class="dropdown-item">@Html.ActionLink("Projects Demographics", "ProjectDemographics", "Reports")</div>
+                                </div>
+            </li>
+           
             <li>@Html.ActionLink("Organizations", "ViewOrganizations", "Admin")</li>
             <li>@Html.ActionLink("Log Out", "Logout", "User")</li>
         }

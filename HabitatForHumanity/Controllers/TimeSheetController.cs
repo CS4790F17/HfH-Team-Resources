@@ -48,6 +48,10 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(punchInVM.orgId < 1)
+                {
+                    punchInVM.orgId = 1; // force the -1 to be org #1, relies on orgId 1 == "Individual"
+                }
                 TimeSheet sheet = new TimeSheet();
                 sheet.user_Id = punchInVM.userId;
                 sheet.project_Id = punchInVM.projectId;

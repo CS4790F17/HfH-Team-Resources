@@ -1,0 +1,35 @@
+﻿@model HabitatForHumanity.ViewModels.AdminUserVM
+@using HabitatForHumanity.ViewModels;
+@{
+    ViewBag.Title = "Manage Volunteer";
+}
+@ToolKitVM.ModalPreventDefault("adminEditUserModal", "Edit Volunteer", "adminEditVolunteerPartial", "adminEditVolunteerForm")
+@ToolKitVM.ModalPreventDefault("editTimeCardModal", "Edit Time Card", "editPartial", "editTimeCardForm")
+@{ string namey = "Volunteer";
+    if(Model != null && Model.userInfo != null && Model.userInfo.firstName != null)
+    {
+        namey = Model.userInfo.firstName;
+        namey += (string.IsNullOrEmpty(Model.userInfo.lastName)) ? "" : " " + Model.userInfo.lastName;
+    }
+}
+<h2 class="text-center">@namey</h2>
+<hr />
+<div class="row">
+    <div class="col-md-3">
+        <div class="well">
+            @Html.Partial("_AdminViewVolunteer", Model.userInfo)
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        @Html.Partial("_AdminViewUserTimecards", Model.timeCardVMs)
+    </div>
+    <div class="col-md-3">
+        <div class="well">
+            @Html.Partial("_AdminViewUserEmergency", Model.emergInfo)
+        </div>
+
+    </div>
+</div>
+@ToolKitVM.GetPartialViewButtonScript("editButton", "EditTimeCard", "Admin", "editPartial")
+@ToolKitVM.GetPartialViewButtonScript("editButton", "AdminEditUser", "Admin", "adminEditVolunteerPartial")

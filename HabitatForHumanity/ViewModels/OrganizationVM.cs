@@ -16,5 +16,7 @@ namespace HabitatForHumanity.ViewModels
         public string _name { get; set; }
         [Display(Name = "Active")]
         public bool _status { get; set; }
+        [Display(Name = "Comments")]
+        public string comments { get; set; }
     }
 }

@@ -281,6 +281,7 @@ namespace HabitatForHumanity.Models
 
         public static ReturnStatus GetTimeCardPageWithFilter(int page, int itemsPerPage, ref int totalTimeCards, int orgId, int projId,DateTime rangeStart, DateTime rangeEnd, string queryString)
         {
+
             ReturnStatus cardsReturn = new ReturnStatus();
             try
             {
@@ -301,8 +302,9 @@ namespace HabitatForHumanity.Models
                 whereClause += userIdInList;
                 whereClause += (projId > 0) ? " AND P.Id = " + projId.ToString() + " " : "";
                 whereClause += (orgId > 0) ? " AND O.Id = " + orgId.ToString() + " " : "";
-                whereClause += " AND CONVERT(DATE, T.clockInTime) >= CONVERT(DATE, '" + rangeStart.Date.ToString("d") + "' ) ";
-                whereClause += " AND CONVERT(DATE, T.clockInTime) <= CONVERT(DATE, '" + rangeEnd.Date.ToString("d") + "' ) ";
+                //whereClause += " AND CONVERT(DATE, T.clockInTime) >= CONVERT(DATE, '" + rangeStart.Date.ToString("yyyyMMdd") + "' ) ";
+                whereClause += " AND CONVERT(DATE, T.clockInTime) BETWEEN '" + rangeStart.Date.ToString("yyyyMMdd") + 
+                        "' AND CONVERT(DATE, '" + rangeEnd.Date.ToString("yyyyMMdd") + "' ) ";
 
                 var cards = db.Database.SqlQuery<TimeCardVM>(
                     " SELECT T.Id AS timeId, " +
@@ -314,20 +316,19 @@ namespace HabitatForHumanity.Models
                         " O.name AS orgName, " +
                         " P.name AS projName, " +
                         " ISNULL(U.firstName,U.emailAddress) + ' ' + ISNULL(U.lastName,U.emailAddress) AS volName " +
-
-                            " FROM dbo.TimeSheet T LEFT JOIN dbo.[User] U ON T.user_Id = U.Id " +
+                        " FROM dbo.TimeSheet T LEFT JOIN dbo.[User] U ON T.user_Id = U.Id " +
                         " LEFT JOIN Organization O ON T.org_Id = O.Id " +
                         " LEFT JOIN Project P ON P.Id = T.project_Id " +
                         whereClause +
-                            " ORDER BY T.clockInTime DESC ").ToList();
+                        " ORDER BY T.clockInTime DESC ").ToList();
 
                 cardsReturn.errorCode = 0;
-                cardsReturn.data = cards.ToList();// Skip(itemsPerPage * page).Take(itemsPerPage).ToList();
+                cardsReturn.data = cards.ToList();
                 return cardsReturn;
             }
             catch
             {
-                cardsReturn.errorCode = -1;
+                cardsReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 return cardsReturn;
             }
         }
@@ -418,6 +419,25 @@ namespace HabitatForHumanity.Models
                 st.errorMessage = e.ToString();
                 return st;
             }
+        }
+
+        public static ReturnStatus GetTimeSheetIdsByUserId(int userId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var ids = (from t in db.timeSheets
+                           where t.user_Id == userId
+                           select t.Id).ToList();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = ids;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
         }
 
         //public static ReturnStatus GetBadTimeSheets()

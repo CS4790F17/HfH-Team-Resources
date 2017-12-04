@@ -1,0 +1,159 @@
+﻿@model HabitatForHumanity.ViewModels.UserInfo
+@using HabitatForHumanity.ViewModels;
+
+@ToolKitVM.ModalPreventDefault("editAdminUserModal", "Edit Volunteer", "editPartial", "editAdminUserForm")
+
+<h4 class="text-center">Volunteer Info</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.firstName)
+    </div>
+    <div class="col-md-8">
+        @Model.firstName @Model.lastName
+    </div>
+</div>
+
+@*<div class="row">
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.lastName)
+        </div>
+        <div class="col-md-8">
+            @Model.lastName
+        </div>
+    </div>*@
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.homePhone)
+    </div>
+    <div class="col-md-8">
+        @string.Format("({0}) {1}-{2}"
+            , Model.homePhone.Substring(0, 3)
+            , Model.homePhone.Substring(3, 3)
+            , Model.homePhone.Substring(6, Model.homePhone.Length - 6))
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.workPhone)
+    </div>
+    <div class="col-md-8">
+        @string.Format("({0}) {1}-{2}"
+            , Model.workPhone.Substring(0, 3)
+            , Model.workPhone.Substring(3, 3)
+            , Model.workPhone.Substring(6, Model.workPhone.Length - 6))
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.email)
+    </div>
+    <div class="col-md-8">
+        @Model.email
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.streetAddress)
+    </div>
+    <div class="col-md-8">
+        @Model.streetAddress
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.city)
+    </div>
+    <div class="col-md-8">
+        @Model.city
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.zip)
+    </div>
+    <div class="col-md-8">
+        @Model.zip
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.birthDate)
+    </div>
+    <div class="col-md-8">
+        @Model.birthDate.ToShortDateString()
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+
+        @Html.LabelFor(model => model.isAdmin)
+    </div>
+    <div class="col-md-8">
+        @*@Model.isAdmin*@
+        @Html.DisplayFor(model => model.isAdmin, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+</div>
+
+@*<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.waiverSignDate)
+    </div>
+    <div class="col-md-8">
+        @Model.waiverSignDate.ToShortDateString()
+    </div>
+</div>*@
+@{string warnExpired = (Model.waiverStatus) ? "row alert alert-success" : "row alert alert-danger "; }
+<div class="@(warnExpired)">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.waiverSignDate)
+    </div>
+    <div class="col-md-8">
+        @Model.waiverSignDate.ToShortDateString()
+    </div>
+</div>
+
+@*<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.waiverStatus)
+    </div>
+    <div class="col-md-8">
+        @Html.DisplayFor(model => model.waiverStatus, new { htmlAttributes = new { @class = "form-control" } })
+
+    </div>
+</div>*@
+
+@*<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.waiverExpiration)
+    </div>
+    <div class="col-md-8">
+        @{string warnExpired = (Model.waiverStatus) ? "" : " alert-danger "; } 
+        <div class="@(warnExpired)">
+            @Model.waiverExpiration.ToShortDateString()
+        </div>
+    </div>
+</div>*@
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.LabelFor(model => model.hoursToDate)
+    </div>
+    <div class="col-md-8">
+        @Model.hoursToDate
+    </div>
+</div>
+<div>
+    <div class="col-md-offset-2 col-md-10">
+        @ToolKitVM.ModalEditButtonGlyph("editButton", "adminEditUserModal", Model.userInfoId.ToString(), "Edit")
+    </div>
+</div>
+<hr />
+
+
