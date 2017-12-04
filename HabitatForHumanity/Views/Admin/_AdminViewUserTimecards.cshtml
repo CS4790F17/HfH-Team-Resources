@@ -9,8 +9,8 @@
 <table class="table">
     <tr>
         @*<th>
-            @Html.DisplayNameFor(model => model.First().volName)
-        </th>*@
+                @Html.DisplayNameFor(model => model.First().volName)
+            </th>*@
         <th>
             @Html.DisplayNameFor(model => model.First().projName)
         </th>
@@ -28,13 +28,15 @@
         </th>
         <th></th>
     </tr>
-
+    
+    
     @foreach (var item in Model)
             {
-        <tr>
+        string rowWarning = (item.outTime.Hour == 0 && item.outTime.Minute == 0 && item.inTime.Date < DateTime.Now.Date) ? " #ff9999 " : "";
+        <tr bgcolor="@(rowWarning)">
             @*<td>
-                @Html.DisplayFor(modelItem => item.volName)
-            </td>*@
+                    @Html.DisplayFor(modelItem => item.volName)
+                </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.projName)
             </td>
