@@ -1,8 +1,10 @@
 ﻿@model HabitatForHumanity.ViewModels.AdminUserVM
+@using HabitatForHumanity.ViewModels;
 @{
     ViewBag.Title = "Manage Volunteer";
 }
-
+@ToolKitVM.ModalPreventDefault("adminEditUserModal", "Edit Volunteer", "adminEditVolunteerPartial", "adminEditVolunteerForm")
+@ToolKitVM.ModalPreventDefault("editTimeCardModal", "Edit Time Card", "editPartial", "editTimeCardForm")
 <h2 class="text-center">Manage Volunteer</h2>
 <div class="row">
     <div class="col-md-3">
@@ -21,3 +23,5 @@
 
     </div>
 </div>
+@ToolKitVM.GetPartialViewButtonScript("editButton", "EditTimeCard", "Admin", "editPartial")
+@ToolKitVM.GetPartialViewButtonScript("editButton", "AdminEditUser", "Admin", "adminEditVolunteerPartial")

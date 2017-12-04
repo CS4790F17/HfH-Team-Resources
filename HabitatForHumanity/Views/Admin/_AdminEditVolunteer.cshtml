@@ -1,7 +1,7 @@
 ﻿@model HabitatForHumanity.ViewModels.UserInfo
 
 
-<h4>View Volunteer</h4>
+<h4>Edit Volunteer</h4>
 <hr />
 
 <div class="form-group">
@@ -116,22 +116,11 @@
         </div>
     </div>*@
 
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
+@*<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">*@
         @*  <input id="editbutton" value="Edit" class="btn btn-default" />*@
-        <button id="editButton" class="btn btn-default">Edit</button>
+        @*<button id="editButton" class="btn btn-default">Edit</button>
     </div>
-</div>
+</div>*@
 
-<script type="text/javascript">
-    $("#editButton").click(function () {
-        var path = "/User/_EditProfile/"
-        $.ajax({
-            url: path,
-            type: 'GET',
-            success: function (response) {
-                $("#profile").html(response);
-            }
-        });
-    })
-</script>
+
