@@ -22,6 +22,7 @@ namespace HabitatForHumanity.ViewModels
 
     public class UserInfo
     {
+        public int userInfoId { get; set; }
         [Required, Display(Name = "Name")]
         public string firstName { get; set; }
 

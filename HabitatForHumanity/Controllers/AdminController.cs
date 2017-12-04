@@ -436,6 +436,43 @@ namespace HabitatForHumanity.Controllers
             }
             return View(usersVM);
         }
+
+        /*************************************/
+        public ActionResult AdminEditUser(int id)
+        {
+            ReturnStatus rs = Repository.GetAdminViewOfUser(id);
+            UserInfo userInfo = new UserInfo();
+            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                AdminUserVM vm = (AdminUserVM)rs.data;
+                userInfo = vm.userInfo;
+            }
+
+            return PartialView("_AdminEditVolunteer", userInfo);
+        }
+
+        [HttpPost]
+        public ActionResult AdminEditUser(UserInfo userInfo)
+        {
+            //TimeSpan span = card.outTime.Subtract(card.inTime);
+            //if (span.TotalHours > 24 || span.TotalMinutes < 0)
+            //{
+            //    // this doesn't work -- hah, does now -blake
+            //    ViewBag.status = "Time can't be more than 24 hours or less than zero.";
+            //    return PartialView("_EditTimeCard", card);
+            //}
+            //ReturnStatus rs = Repository.EditTimeCard(card);
+            //if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            //{
+            //    ViewBag.status = "Failed to update time card, please try again later.";
+            //    return PartialView("_EditTimeCard", card);
+            //}
+            //return RedirectToAction("Timecards");
+            //return succes partial view instead of redirect that way the redirect doesn't populate the modal
+            //also gives the user some feedback
+            return PartialView("TimeCardPartialViews/_TimeCardSuccess");
+        }
+        /****************************************/
         #endregion Edit Volunteer
 
         #region Delete Timecard

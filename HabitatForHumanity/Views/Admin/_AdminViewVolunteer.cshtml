@@ -1,5 +1,7 @@
 ﻿@model HabitatForHumanity.ViewModels.UserInfo
+@using HabitatForHumanity.ViewModels;
 
+@ToolKitVM.ModalPreventDefault("editAdminUserModal", "Edit Volunteer", "editPartial", "editAdminUserForm")
 
 <h4 class="text-center">Volunteer</h4>
 <hr />
@@ -147,24 +149,11 @@
         @Model.hoursToDate
     </div>
 </div>
-
-<div class="form-group">
+<div>
     <div class="col-md-offset-2 col-md-10">
-        @*  <input id="editbutton" value="Edit" class="btn btn-default" />*@
-        <button id="editButton" class="btn btn-default">Edit  <span class="glyphicon glyphicon-edit"></span></button>
+        @ToolKitVM.ModalEditButtonGlyph("editButton", "editAdminUserModal", Model.userInfoId.ToString(), "Edit")
     </div>
 </div>
 <hr />
 
-<script type="text/javascript">
-    $("#editButton").click(function () {
-        var path = "/User/_EditProfile/"
-        $.ajax({
-            url: path,
-            type: 'GET',
-            success: function (response) {
-                $("#profile").html(response);
-            }
-        });
-    })
-</script>
+@ToolKitVM.GetPartialViewButtonScript("editButton", "AdminEditUser", "Admin", "editPartial")

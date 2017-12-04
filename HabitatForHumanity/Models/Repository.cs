@@ -1315,6 +1315,7 @@ namespace HabitatForHumanity.Models
             User user = (User)userRS.data;
 
             // set user info
+            vm.userInfo.userInfoId = user.Id;
             vm.userInfo.firstName = user.firstName;
             vm.userInfo.lastName = user.lastName;
             vm.userInfo.homePhone = user.homePhoneNumber;
