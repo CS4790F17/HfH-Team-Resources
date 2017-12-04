@@ -367,6 +367,7 @@
     <Content Include="Views\Admin\ManageVolunteer.cshtml" />
     <Content Include="Views\Admin\_AdminViewUserTimecards.cshtml" />
     <Content Include="Views\Admin\_AdminViewUserEmergency.cshtml" />
+    <Content Include="Views\Admin\_GenericModalSuccess.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

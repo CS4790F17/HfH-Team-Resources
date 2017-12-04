@@ -1370,6 +1370,35 @@ namespace HabitatForHumanity.Models
 
             return vmToReturn;
         }
+
+        public static ReturnStatus AdminEditUser(UserInfo u)
+        {
+            ReturnStatus result = new ReturnStatus();
+            ReturnStatus userRS = GetUser(u.userInfoId);
+            if(userRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                User user = (User)userRS.data;
+                user.firstName = u.firstName;
+                user.lastName = u.lastName;
+                user.homePhoneNumber = u.homePhone;
+                user.workPhoneNumber = u.workPhone;
+                //if ((bool)EmailExists(u.email).data)
+                //{
+                //    result.errorCode = -1;
+                //    return result;
+                //}
+                user.emailAddress = u.email;
+                user.streetAddress = u.streetAddress;
+                user.city = u.city;
+                user.zip = u.zip;
+                user.birthDate = u.birthDate;
+                user.isAdmin = (u.isAdmin) ? 1 : 0;
+                user.waiverSignDate = u.waiverSignDate;
+                return EditUser(user);
+            }
+            result.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
+            return result;
+        }
         #endregion Admin --> User
 
         #region Project Category

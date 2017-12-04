@@ -5,7 +5,14 @@
 }
 @ToolKitVM.ModalPreventDefault("adminEditUserModal", "Edit Volunteer", "adminEditVolunteerPartial", "adminEditVolunteerForm")
 @ToolKitVM.ModalPreventDefault("editTimeCardModal", "Edit Time Card", "editPartial", "editTimeCardForm")
-<h2 class="text-center">Manage Volunteer</h2>
+@{ string namey = "Volunteer";
+    if(Model != null && Model.userInfo != null && Model.userInfo.firstName != null)
+    {
+        namey = Model.userInfo.firstName;
+        namey += (string.IsNullOrEmpty(Model.userInfo.lastName)) ? "" : Model.userInfo.lastName;
+    }
+}
+<h2 class="text-center">@namey</h2>
 <div class="row">
     <div class="col-md-3">
         <div class="well">
