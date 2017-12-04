@@ -23,10 +23,11 @@
     <div id="@projectId" class="row well well-sm" style="margin:5px;opacity:@opac">
         <!--Table Head-->
         <div class="row">
-            <div class="col-md-10 collapseDiv" data-toggle="collapse" data-target="#@project.Id" aria-expanded="false">
+            <div class="col-md-10 collapseDiv" data-toggle="collapse" data-target="#@project.Id" aria-expanded="false" style="cursor:pointer">
                 <div class="col-md-2"><h4>@project.name</h4></div>
-                <div class="col-md-2">
-                    <a>View Details <span class="glyphicon glyphicon-chevron-down"></span></a>
+                <div class="col-md-2" id="detailDiv">
+
+                    <a>View Details </a><span class="glyphicon glyphicon-chevron-down" data-toggle="collapse" data-target="#@project.Id"></span> 
                 </div>
                 <div class="col-md-2">
                     <div><label>Category: </label>@project.categoryId</div>
@@ -57,7 +58,7 @@
         </div>
 
 
-        <div id="@project.Id" class="collapse">
+        <div id="@project.Id" class="collapse" data-toggle="collapse" data-target="#@project.Id">
             <div class="col-md-6">@project.description</div>
 
             <div class="row">
@@ -86,7 +87,7 @@
 
 
         if ($(this).is(":checked")) {
-            console.log("checked");
+            //console.log("checked");
             //then project is now active
             var status = 1;
         } else {
@@ -121,15 +122,22 @@
     $(".collapseDiv").click(function () {
 
         var detailLink = $(this);
-        var child = $(detailLink).find("a");
+        var alink = $(detailLink).find("a");
+        var child = $(detailLink).find("span");
         //  console.log($(this).attr("data-target"))
         var isExpanded = $(detailLink).attr("aria-expanded");
 
         console.log(child);
         if (isExpanded == 'true') {
-            child.html("View Details <span class='glyphicon glyphicon-chevron-down'></span>");
+            child.removeClass("glyphicon-chevron-up");
+            child.addClass("glyphicon-chevron-down");
+            alink.html("View Details ");
+           // child.html("View Details <span class='glyphicon glyphicon-chevron-down' ></span>");
         } else {
-            child.html("Hide Details <span class='glyphicon glyphicon-chevron-up'></span>");
+            child.removeClass("glyphicon-chevron-down");
+            child.addClass("glyphicon-chevron-up");
+            alink.html("Hide Details ");
+            //child.html("Hide Details <span class='glyphicon glyphicon-chevron-up'></span>");
         }
     });
 
