@@ -519,7 +519,10 @@ namespace HabitatForHumanity.Models
         }
 
 
-
+        public static string GetProjectCategoryName(int? id)
+        {
+            return ProjectCategory.GetProjectCategoryName(id);
+        }
 
 
 
