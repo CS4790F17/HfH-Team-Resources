@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using HabitatForHumanity.ViewModels;
+using System.Data.SqlClient;
 
 namespace HabitatForHumanity.Models
 {
@@ -279,35 +280,13 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static ReturnStatus GetTimeCardPageWithFilter(int page, int itemsPerPage, ref int totalTimeCards, int orgId, int projId,DateTime rangeStart, DateTime rangeEnd, string queryString)
+        public static ReturnStatus GetTimeCardPageWithFilter(int page, int itemsPerPage, ref int totalTimeCards, int orgId, int projId, DateTime rangeStart, DateTime rangeEnd, string searchTerm)
         {
 
             ReturnStatus cardsReturn = new ReturnStatus();
             try
             {
-                VolunteerDbContext db = new VolunteerDbContext();
-                string userIdInList = "";
-                if (!string.IsNullOrEmpty(queryString))
-                {
-                    List<string> userTerms = queryString.Split(' ').ToList();
-                    var userIds = (from u in db.users
-                                   where userTerms.Any(term => u.firstName.Contains(term)) || userTerms.Any(term => u.lastName.Contains(term))
-                                   select u.Id).ToArray();
-                    userIdInList = (userIds.Length > 0) ? " AND U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
-                }
-
-           
-                string whereClause = " WHERE 1 = 1 ";
-                //whereClause += (userId > 0) ? " AND U.Id = " + userId.ToString() + " " : ""; // make whole other function for know userid
-                whereClause += userIdInList;
-                whereClause += (projId > 0) ? " AND P.Id = " + projId.ToString() + " " : "";
-                whereClause += (orgId > 0) ? " AND O.Id = " + orgId.ToString() + " " : "";
-                //whereClause += " AND CONVERT(DATE, T.clockInTime) >= CONVERT(DATE, '" + rangeStart.Date.ToString("yyyyMMdd") + "' ) ";
-                whereClause += " AND CONVERT(DATE, T.clockInTime) BETWEEN '" + rangeStart.Date.ToString("yyyyMMdd") + 
-                        "' AND CONVERT(DATE, '" + rangeEnd.Date.ToString("yyyyMMdd") + "' ) ";
-
-                var cards = db.Database.SqlQuery<TimeCardVM>(
-                    " SELECT T.Id AS timeId, " +
+                string sql = " SELECT T.Id AS timeId, " +
                         " T.user_Id AS userId, " +
                         " P.Id AS projId, " +
                         " O.Id AS orgId, " +
@@ -319,8 +298,21 @@ namespace HabitatForHumanity.Models
                         " FROM dbo.TimeSheet T LEFT JOIN dbo.[User] U ON T.user_Id = U.Id " +
                         " LEFT JOIN Organization O ON T.org_Id = O.Id " +
                         " LEFT JOIN Project P ON P.Id = T.project_Id " +
-                        whereClause +
-                        " ORDER BY T.clockInTime DESC ").ToList();
+                        " WHERE 1=1 ";
+                sql += (projId > 0) ? " AND P.Id = @projectId " : "";
+                sql += (orgId > 0) ? " AND O.Id = @orgId " : "";
+                sql += " AND CONVERT(DATE, T.clockInTime) BETWEEN '" + rangeStart.Date.ToString("yyyyMMdd") +
+                        "' AND '" + rangeEnd.Date.ToString("yyyyMMdd") + "' ";
+                sql += (!string.IsNullOrEmpty(searchTerm)) ?
+                    " AND (U.firstName LIKE '%' + @searchTerm + '%' OR U.lastName LIKE '%' + @searchTerm + '%') " : "";
+                sql += " ORDER BY T.clockInTime DESC ";
+                VolunteerDbContext db = new VolunteerDbContext();
+                List<SqlParameter> sqlParams = new List<SqlParameter>();
+                if (projId > 0) { sqlParams.Add(new SqlParameter("@projectId", projId)); }
+                if (orgId > 0) { sqlParams.Add(new SqlParameter("@orgId", orgId)); }
+                if (!string.IsNullOrEmpty(searchTerm)) { sqlParams.Add(new SqlParameter("@searchTerm", searchTerm)); }
+
+                var cards = db.Database.SqlQuery<TimeCardVM>(sql, sqlParams.ToArray()).ToList();
 
                 cardsReturn.errorCode = 0;
                 cardsReturn.data = cards.ToList();
