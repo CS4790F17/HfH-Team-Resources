@@ -360,8 +360,8 @@ namespace HabitatForHumanity.Models
             if(userRS.errorCode == ReturnStatus.ALL_CLEAR)
             {
                 User user = (User)userRS.data;
-                user.incomeId = dvm.incomeId;
-                user.ethnicityId = dvm.ethnicityId;
+                user.incomeTier = dvm.incomeTier;
+                user.ethnicity = dvm.ethnicity;
                 user.collegeStatus = dvm.collegeStatus;
                 user.veteranStatus = dvm.veteranStatus;
                 user.disabledStatus = dvm.disabledStatus;
@@ -1144,6 +1144,12 @@ namespace HabitatForHumanity.Models
         #endregion Dashboard Barchart
 
         #region Project Reports
+        /// <summary>
+        /// Gets a row of volunteer demographics data for each of the 3 project categories
+        /// for the number of months defined by @period
+        /// </summary>
+        /// <param name="period">Number of months to go back for data</param>
+        /// <returns></returns>
         public static ReturnStatus GetProjectDemographicsReport(int period)
         {
             ReturnStatus listOfListsRS = new ReturnStatus();

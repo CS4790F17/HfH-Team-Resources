@@ -229,11 +229,6 @@ namespace HabitatForHumanity.Controllers
                     user.zip = volunteerSignupVM.zip;
                     user.isAdmin = 0;
                     user.waiverSignDate = DateTime.Now.AddYears(-2);
-                    user.incomeId = 1;
-                    user.ethnicityId = 1;
-                    user.collegeStatus = 1;
-                    user.veteranStatus = 1;
-                    user.disabledStatus = 1;
                     ReturnStatus createResult = Repository.CreateVolunteer(user);
                     if (createResult.errorCode != 0)
                     {
@@ -577,9 +572,9 @@ namespace HabitatForHumanity.Controllers
                     return View(userProfile);
                 }
                 User user = (User)rs.data;
-                if (userProfile.newPassword != null)
+                if (!string.IsNullOrEmpty(userProfile.newPassword))
                 {
-                    user.password = Crypto.HashPassword(user.password);
+                    user.password = Crypto.HashPassword(userProfile.newPassword);
                 }
                 user.firstName = userProfile.firstName;
                 user.lastName = userProfile.lastName;

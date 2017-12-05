@@ -164,7 +164,11 @@ namespace HabitatForHumanity.Controllers
             try
             {
                 st = Repository.GetDemographicsForPie(gender);
-
+                // if data problem or no results
+                if(st.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    return null;
+                }
                 Demog[] demogs = ((List<Demog>)st.data).ToArray();
                 object[] outer = new object[demogs.Length];
                 for (int i = 0; i < demogs.Length; i++)

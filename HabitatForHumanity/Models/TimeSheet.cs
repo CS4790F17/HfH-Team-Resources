@@ -304,7 +304,9 @@ namespace HabitatForHumanity.Models
                 sql += " AND CONVERT(DATE, T.clockInTime) BETWEEN '" + rangeStart.Date.ToString("yyyyMMdd") +
                         "' AND '" + rangeEnd.Date.ToString("yyyyMMdd") + "' ";
                 sql += (!string.IsNullOrEmpty(searchTerm)) ?
-                    " AND (U.firstName LIKE '%' + @searchTerm + '%' OR U.lastName LIKE '%' + @searchTerm + '%') " : "";
+                          //" AND (U.firstName LIKE '%' + @searchTerm + '%' OR U.lastName LIKE '%' + @searchTerm + '%') " : "";
+                          " AND (U.firstName LIKE '%' + @searchTerm + '%' OR U.lastName LIKE '%' + @searchTerm + '%' " +
+                          " OR O.name LIKE '%' + @searchTerm + '%' OR P.name LIKE '%' + @searchTerm + '%') " : "";
                 sql += " ORDER BY T.clockInTime DESC ";
                 VolunteerDbContext db = new VolunteerDbContext();
                 List<SqlParameter> sqlParams = new List<SqlParameter>();
