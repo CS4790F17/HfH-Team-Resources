@@ -395,7 +395,7 @@ namespace HabitatForHumanity.Controllers
                                 byte[] bytes = memoryStream.ToArray();
                                 memoryStream.Close();
 
-                                MailMessage mm = new MailMessage("hfhdwvolunteer@gmail.com", "trevororgill@weber.edu");
+                                MailMessage mm = new MailMessage("hfhdwvolunteer@gmail.com", "hfhdwvolunteer@gmail.com");
                                 mm.Subject = "New Waiver Signed";
                                 string body = "New waiver signed for email: " + user.emailAddress + ". A copy of their waiver is attached.";
                                 mm.Body = body;

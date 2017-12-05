@@ -988,9 +988,15 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetHoursChartVMByYear()
         {
             ReturnStatus chartReturn = new ReturnStatus();
-            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
-            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
-            ReturnStatus tsArrayRS = TimeSheet.Get3YearsTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
+            ReturnStatus restoreProjectIdListRS = Project.GetProjectIdByCategoryName("ReStore");
+            ReturnStatus abwkProjectIdListRS = Project.GetProjectIdByCategoryName("ABWK");
+            ReturnStatus homeBuildProjectIdListRS = Project.GetProjectIdByCategoryName("Home");
+
+            List<int> restoreIds = (restoreProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)restoreProjectIdListRS.data : new List<int>();
+            List<int> abwkIds = (abwkProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)abwkProjectIdListRS.data : new List<int>();
+            List<int> homeBuildIds = (homeBuildProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)homeBuildProjectIdListRS.data : new List<int>();
+
+            ReturnStatus tsArrayRS = TimeSheet.Get3YearsTimeSheetsByCategory(restoreIds, abwkIds, homeBuildIds);
             // this is an array[9] that holds lists of timesheets
             // the first 3 are restore(2yrs ago, last year, now )
             // next 3 are awbk
@@ -1037,9 +1043,15 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetHoursChartVMByMonth()
         {
             ReturnStatus chartReturn = new ReturnStatus();
-            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
-            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
-            ReturnStatus tsArrayRS = TimeSheet.Get12MonthsTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
+            ReturnStatus restoreProjectIdListRS = Project.GetProjectIdByCategoryName("ReStore");
+            ReturnStatus abwkProjectIdListRS = Project.GetProjectIdByCategoryName("ABWK");
+            ReturnStatus homeBuildProjectIdListRS = Project.GetProjectIdByCategoryName("Home");
+
+            List<int> restoreIds = (restoreProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>) restoreProjectIdListRS.data : new List<int>();
+            List<int> abwkIds = (abwkProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)abwkProjectIdListRS.data : new List<int>();
+            List<int> homeBuildIds = (homeBuildProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)homeBuildProjectIdListRS.data : new List<int>();
+
+            ReturnStatus tsArrayRS = TimeSheet.Get12MonthsTimeSheetsByCategory(restoreIds, abwkIds, homeBuildIds);
             // this is an array[36] that holds lists of timesheets
             // the first 12 are restore(11 months ago, 10... )
             // next 12 are awbk
@@ -1092,9 +1104,15 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetHoursChartVMByWeek()
         {
             ReturnStatus chartReturn = new ReturnStatus();
-            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
-            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
-            ReturnStatus tsArrayRS = TimeSheet.Get12WeeksTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
+            ReturnStatus restoreProjectIdListRS = Project.GetProjectIdByCategoryName("ReStore");
+            ReturnStatus abwkProjectIdListRS = Project.GetProjectIdByCategoryName("ABWK");
+            ReturnStatus homeBuildProjectIdListRS = Project.GetProjectIdByCategoryName("Home");
+
+            List<int> restoreIds = (restoreProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)restoreProjectIdListRS.data : new List<int>();
+            List<int> abwkIds = (abwkProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)abwkProjectIdListRS.data : new List<int>();
+            List<int> homeBuildIds = (homeBuildProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)homeBuildProjectIdListRS.data : new List<int>();
+
+            ReturnStatus tsArrayRS = TimeSheet.Get12WeeksTimeSheetsByCategory(restoreIds, abwkIds, homeBuildIds);
             // this is an array[36] that holds lists of timesheets
             // the first 12 are restore(11 weeks ago, 10... )
             // next 12 are awbk

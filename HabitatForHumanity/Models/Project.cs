@@ -139,6 +139,27 @@ namespace HabitatForHumanity.Models
             }
             return rs;
         }
+        public static ReturnStatus GetProjectIdByCategoryName(string catName)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var categoryId = db.projectCategories.Where(pr => pr.categoryType.Contains(catName)).FirstOrDefault().Id;
+
+                var projectIdListWithThisCategoryId = (
+                    from proj in db.projects
+                    where proj.categoryId == categoryId
+                    select proj.Id).ToList();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = projectIdListWithThisCategoryId;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
 
 
         public static ReturnStatus GetProjectById(int id)
