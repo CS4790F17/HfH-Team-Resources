@@ -405,6 +405,13 @@ namespace HabitatForHumanity.Models
             return st;
         }
 
+        public static string GetProjectCategoryName(int? id)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            ProjectCategory data = db.projectCategories.Find(id);
+            return data.categoryType;
+        }
+
         public static ReturnStatus CreateProjectCategory(ProjectCategory pc)
         {
             ReturnStatus st = new ReturnStatus();
