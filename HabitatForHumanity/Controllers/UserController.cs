@@ -438,33 +438,35 @@ namespace HabitatForHumanity.Controllers
                                 sb.Append("<div><b>Emergency Zip: </b>" + user.emergencyZip + "</div>");
                                 StringReader sr = new StringReader(sb.ToString());
 
-                                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
-                                using (MemoryStream memoryStream = new MemoryStream())
-                                {
-                                    PdfWriter writer = PdfWriter.GetInstance(pdfDoc, memoryStream);
-                                    pdfDoc.Open();
-                                    XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
-                                    pdfDoc.Close();
-                                    byte[] bytes = memoryStream.ToArray();
-                                    memoryStream.Close();
 
-                                    MailMessage mm = new MailMessage("hfhdwvolunteer@gmail.com", "hfhdwvolunteer@gmail.com");
-                                    mm.Subject = "New Waiver Signed";
-                                    string body = "New waiver signed for email: " + user.emailAddress + ". A copy of their waiver is attached.";
-                                    mm.Body = body;
-                                    mm.Attachments.Add(new Attachment(new MemoryStream(bytes), "Waiver.pdf"));
-                                    mm.IsBodyHtml = true;
-                                    SmtpClient smtp = new SmtpClient();
-                                    smtp.Host = "smtp.gmail.com";
-                                    smtp.EnableSsl = true;
-                                    NetworkCredential NetworkCred = new NetworkCredential();
-                                    NetworkCred.UserName = "hfhdwvolunteer@gmail.com";
-                                    NetworkCred.Password = "3BlindMice";
-                                    smtp.UseDefaultCredentials = true;
-                                    smtp.Credentials = NetworkCred;
-                                    smtp.Port = 587;
-                                    smtp.Send(mm);
-                                }
+                                //TODO: remove comment to re-enable email sending
+                                //Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                                //using (MemoryStream memoryStream = new MemoryStream())
+                                //{
+                                //    PdfWriter writer = PdfWriter.GetInstance(pdfDoc, memoryStream);
+                                //    pdfDoc.Open();
+                                //    XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                                //    pdfDoc.Close();
+                                //    byte[] bytes = memoryStream.ToArray();
+                                //    memoryStream.Close();
+
+                                //    MailMessage mm = new MailMessage("hfhdwvolunteer@gmail.com", "hfhdwvolunteer@gmail.com");
+                                //    mm.Subject = "New Waiver Signed";
+                                //    string body = "New waiver signed for email: " + user.emailAddress + ". A copy of their waiver is attached.";
+                                //    mm.Body = body;
+                                //    mm.Attachments.Add(new Attachment(new MemoryStream(bytes), "Waiver.pdf"));
+                                //    mm.IsBodyHtml = true;
+                                //    SmtpClient smtp = new SmtpClient();
+                                //    smtp.Host = "smtp.gmail.com";
+                                //    smtp.EnableSsl = true;
+                                //    NetworkCredential NetworkCred = new NetworkCredential();
+                                //    NetworkCred.UserName = "hfhdwvolunteer@gmail.com";
+                                //    NetworkCred.Password = "3BlindMice";
+                                //    smtp.UseDefaultCredentials = true;
+                                //    smtp.Credentials = NetworkCred;
+                                //    smtp.Port = 587;
+                                //    smtp.Send(mm);
+                                //}
                             }
                         }
                     }
