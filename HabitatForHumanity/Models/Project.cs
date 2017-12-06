@@ -308,7 +308,7 @@ namespace HabitatForHumanity.Models
                         select p)
                         .Skip(itemsPerPage * page)
                         .Take(itemsPerPage).ToList();
-                totalProjects = db.projects.Count();
+                totalProjects = db.projects.Count(x => x.categoryId == categorySelection);
             }
             else
             {
