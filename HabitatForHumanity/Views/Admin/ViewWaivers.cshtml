@@ -4,11 +4,7 @@
     ViewBag.Title = "ViewWaivers";
 }
 
-<h2>
-    View Waivers For
-    @foreach (var item in Model.waiverList)
-    {@Html.DisplayFor(modelItem => item.firstName)  @Html.DisplayFor(modelItem => item.lastName)}
-</h2> 
+<h2>View Waivers</h2>
 
 @*<p>
     @Html.ActionLink("Create New", "Create")
@@ -93,10 +89,18 @@
             @Html.DisplayFor(modelItem => item.lastName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.homePhoneNumber)
+            @*@Html.DisplayFor(modelItem => item.homePhoneNumber)*@
+            @string.Format("({0}) {1}-{2}"
+            , item.homePhoneNumber.Substring(0, 3)
+            , item.homePhoneNumber.Substring(3, 3)
+            , item.homePhoneNumber.Substring(6, item.homePhoneNumber.Length - 6))
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.workPhoneNumber)
+            @*@Html.DisplayFor(modelItem => item.workPhoneNumber)*@
+            @string.Format("({0}) {1}-{2}"
+            , item.workPhoneNumber.Substring(0, 3)
+            , item.workPhoneNumber.Substring(3, 3)
+            , item.workPhoneNumber.Substring(6, item.workPhoneNumber.Length - 6))
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.emailAddress)
@@ -119,30 +123,30 @@
         <td>
             @Html.DisplayFor(modelItem => item.waiverSignDate)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.emergencyFirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.emergencyLastName)
-        </td>
         @*<td>
-            @Html.DisplayFor(modelItem => item.relation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.emergencyHomePhone)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.emergencyWorkPhone)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.emergencyStreetAddress)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.emergencyCity)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.emergencyZip)
-        </td>*@
+         @Html.DisplayFor(modelItem => item.emergencyFirstName)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyLastName)
+     </td>
+    <td>
+         @Html.DisplayFor(modelItem => item.relation)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyHomePhone)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyWorkPhone)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyStreetAddress)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyCity)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyZip)
+     </td>*@
         <td>
             @Html.DisplayFor(modelItem => item.signatureName)
         </td>

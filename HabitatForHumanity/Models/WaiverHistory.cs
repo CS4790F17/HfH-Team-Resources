@@ -38,6 +38,8 @@ namespace HabitatForHumanity.Models
         [Display(Name = "Gender")]
         public String gender { get; set; }
         [Display(Name = "Waiver Sign Date")]
+        [DisplayFormat(DataFormatString = "{0:M/d/yy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.DateTime)]
         public DateTime waiverSignDate { get; set; }
         [Display(Name = "Emergency First Name")]
         public String emergencyFirstName { get; set; }
