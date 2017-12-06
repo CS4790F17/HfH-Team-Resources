@@ -36,30 +36,30 @@
 <hr />
 
 
-    @{if (Model.SearchResults != null && Model.SearchResults.Count > 0)
-        {
-            <div class="col-md-7 col-md-offset-2">
-                <div>
-                    <div class="row hidden-xs">
-                        <div class="col-md-4">
-                            Volunteer
-                        </div>
-                        <div class="col-md-5">
-                            Email Address
-                        </div>
-                        <div class="col-md-3 text-center">
-                            Hours to Date
-                        </div>
+@{if (Model.SearchResults != null && Model.SearchResults.Count > 0)
+    {
+        <div class="col-md-7 col-md-offset-2">
+            <div>
+                <div class="row hidden-xs">
+                    <div class="col-md-4">
+                        Volunteer
                     </div>
-                    @foreach (var volunteer in Model.SearchResults)
+                    <div class="col-md-5">
+                        Email Address
+                    </div>
+                    <div class="col-md-3 text-center">
+                        Hours to Date
+                    </div>
+                </div>
+                @foreach (var volunteer in Model.SearchResults)
                 {
-                        <a href="@Url.Action("ManageVolunteer", "Admin", new { id = volunteer.userNumber })">
-                            <div class="row well well-sm divlink" style="margin:1px">
-                                <div class="col-md-4">@volunteer.volunteerName</div>
-                                <div class="col-md-5">@volunteer.email</div>
-                                <div class="col-md-3 text-center">@volunteer.hoursToDate</div>
-                            </div>
-                        </a>
+                    <a href="@Url.Action("ManageVolunteer", "Admin", new { id = volunteer.userNumber })">
+                        <div class="row well well-sm divlink" style="margin:1px">
+                            <div class="col-md-4">@volunteer.volunteerName</div>
+                            <div class="col-md-5">@volunteer.email</div>
+                            <div class="col-md-3 text-center">@volunteer.hoursToDate</div>
+                        </div>
+                    </a>
 
 
                         @*<div class="row well well-sm divlink" style="margin:1px">
@@ -69,26 +69,27 @@
                                 <div class="col-md-3 text-center">@volunteer.hoursToDate</div>
                             </div>*@
 
-                    }
-                </div>
-              
-     
+                }
             </div>
-      
+
+
+        </div>
+
             <div class="text-center">
                 @Html.PagedListPager(Model.SearchResults,
                         page => Url.Action("Volunteers", new RouteValueDictionary()
                         {
                         { "Page", page },
                         {"queryString",Model.queryString },
-                        {"projectId", Model.projectId }
+                        {"projectId", Model.projectId },
+                            {"orgId", Model.orgId }
                         })
                        //,PagedListRenderOptions.PageNumbersOnly
                        )
             </div>
-        }
-
     }
+
+}
 
 
 
