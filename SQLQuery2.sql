@@ -1,1 +1,0 @@
-﻿select * from dbo.TimeSheet t join dbo.Project p on t.project_Id = p.Id 
