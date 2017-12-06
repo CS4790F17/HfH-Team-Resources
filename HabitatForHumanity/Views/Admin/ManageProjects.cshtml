@@ -66,5 +66,6 @@
     @Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjects", new RouteValueDictionary() { { "categorySelection", Model.categorySelection }, { "queryString", Model.queryString }, { "statusChoice", Model.statusChoice }, { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
 </div>
 
-@ToolKitVM.GetPartialViewButtonScript("createProjectButton", "CreateProject", "Admin", "createPartialTarget")
-@ToolKitVM.GetPartialViewButtonScript("createCategoryButton", "AddCategory", "Admin", "createCategoryTarget")
+@Html.GetPartialViewButtonScript("createProjectButton", "CreateProject", "Admin", "createPartialTarget")
+@*@ToolKitVM.GetPartialViewButtonScript("createProjectButton", "CreateProject", "Admin", "createPartialTarget")*@
+@Html.GetPartialViewButtonScript("createCategoryButton", "AddCategory", "Admin", "createCategoryTarget")
