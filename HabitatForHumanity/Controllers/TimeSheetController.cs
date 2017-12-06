@@ -46,30 +46,37 @@ namespace HabitatForHumanity.Controllers
         public ActionResult PunchIn(PunchInVM punchInVM)
 
         {
-            if (ModelState.IsValid)
+            try
             {
-                if(punchInVM.orgId < 1)
+                if (ModelState.IsValid)
                 {
-                    punchInVM.orgId = 1; // force the -1 to be org #1, relies on orgId 1 == "Individual"
-                }
-                TimeSheet sheet = new TimeSheet();
-                sheet.user_Id = punchInVM.userId;
-                sheet.project_Id = punchInVM.projectId;
-                sheet.clockInTime = DateTime.Now;
-                sheet.clockOutTime = DateTime.Today.AddDays(1);
-                sheet.org_Id = punchInVM.orgId;
+                    if (punchInVM.orgId < 1)
+                    {
+                        punchInVM.orgId = 1; // force the -1 to be org #1, relies on orgId 1 == "Individual"
+                    }
+                    TimeSheet sheet = new TimeSheet();
+                    sheet.user_Id = punchInVM.userId;
+                    sheet.project_Id = punchInVM.projectId;
+                    sheet.clockInTime = DateTime.Now;
+                    sheet.clockOutTime = DateTime.Today.AddDays(1);
+                    sheet.org_Id = punchInVM.orgId;
 
-                //TODO: check error code?
-                ReturnStatus st = Repository.PunchIn(sheet);
-                if (st.errorCode != ReturnStatus.ALL_CLEAR)
-                {
-                    return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
+                    //TODO: check error code?
+                    ReturnStatus st = Repository.PunchIn(sheet);
+                    if (st.errorCode != ReturnStatus.ALL_CLEAR)
+                    {
+                        return RedirectToAction("HandleErrors", "User", new { excMsg = "punchin action" });
+                    }
+                    //    return RedirectToAction("VolunteerPortal", "User");
                 }
-            //    return RedirectToAction("VolunteerPortal", "User");
+
+
+                return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1 });
             }
-
-            
-            return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1 });
+            catch
+            {
+                return View("Error");
+            }
 
         }
         #endregion
@@ -82,22 +89,29 @@ namespace HabitatForHumanity.Controllers
         //public ActionResult PunchOut([Bind(Include = "Id,user_Id,project_Id,org_id,clockInTime,clockOutTime")] TimeSheet timeSheet)
         public ActionResult PunchOut(PunchOutVM punchOutVM)
         {
-            if (ModelState.IsValid)
+            try
             {
-                TimeSheet timeSheet = new TimeSheet();
-                timeSheet.Id = punchOutVM.timeSheetNumber;
-                timeSheet.user_Id = punchOutVM.userNumber;
-                timeSheet.project_Id = punchOutVM.projectNumber;
-                timeSheet.org_Id = punchOutVM.orgNumber;
-                timeSheet.clockInTime = punchOutVM.inTime;
-                timeSheet.clockOutTime = DateTime.Now;
+                if (ModelState.IsValid)
+                {
+                    TimeSheet timeSheet = new TimeSheet();
+                    timeSheet.Id = punchOutVM.timeSheetNumber;
+                    timeSheet.user_Id = punchOutVM.userNumber;
+                    timeSheet.project_Id = punchOutVM.projectNumber;
+                    timeSheet.org_Id = punchOutVM.orgNumber;
+                    timeSheet.clockInTime = punchOutVM.inTime;
+                    timeSheet.clockOutTime = DateTime.Now;
 
-                //TODO: add handling to ensure timesheet was properly updated
-                Repository.UpdateTimeSheet(timeSheet);
+                    //TODO: add handling to ensure timesheet was properly updated
+                    Repository.UpdateTimeSheet(timeSheet);
 
-                return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1});
+                    return RedirectToAction("VolunteerPortal", "User", new { justPunched = 1 });
+                }
+                return View(punchOutVM);
             }
-            return View(punchOutVM);
+            catch
+            {
+                return View("Error");
+            }
         }
         #endregion
 
@@ -163,16 +177,19 @@ namespace HabitatForHumanity.Controllers
         [AuthorizationFilter]
         public ActionResult Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                TimeSheet timeSheet = db.timeSheets.Find(id);
+                if (timeSheet == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(timeSheet);
             }
-            TimeSheet timeSheet = db.timeSheets.Find(id);
-            if (timeSheet == null)
-            {
-                return HttpNotFound();
-            }
-            return View(timeSheet);
         }
 
         // POST: TimeSheet/Delete/5
@@ -182,19 +199,33 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            TimeSheet timeSheet = db.timeSheets.Find(id);
-            db.timeSheets.Remove(timeSheet);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            try
+            {
+                TimeSheet timeSheet = db.timeSheets.Find(id);
+                db.timeSheets.Remove(timeSheet);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
         #endregion
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            try
             {
-                db.Dispose();
+                if (disposing)
+                {
+                    db.Dispose();
+                }
+                base.Dispose(disposing);
             }
-            base.Dispose(disposing);
+            catch
+            {
+                //not sure what to put here
+            }
         }
 
     }
