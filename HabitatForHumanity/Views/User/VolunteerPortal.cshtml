@@ -16,7 +16,9 @@
 
             //Logout click function used by the modal
             function logout(){
-                window.location.href = '/User/Logout/?excMsg=Thank You! Have a Great Day!';
+               // window.location.href = '/User/Logout/?excMsg=Thank You! Have a Great Day!';
+                window.location.href = '@Url.Action("Logout", "User", new {excMsg = "Thank You! Have a Great Day!" })'
+
             }
             //Stay Logged In click funtion used by the modal
             function stayLoggedIn(){
@@ -31,7 +33,9 @@
                 if (seconds_left <= 0)
                 {
                     clearInterval(interval);
-                    window.location.href = '/User/Logout/?excMsg=You have been automatically logged out.';
+                   // window.location.href = '/User/Logout/?excMsg=You have been automatically logged out.';
+                    window.location.href = '@Url.Action("Logout", "User", new {excMsg = "You have been automatically logged out." })'
+
                 }
             }, 1000);
         </script>
