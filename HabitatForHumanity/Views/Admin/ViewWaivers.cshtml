@@ -4,7 +4,11 @@
     ViewBag.Title = "ViewWaivers";
 }
 
-<h2>View Waivers For model.firstName model.lastName</h2>
+<h2>
+    View Waivers For
+    @foreach (var item in Model.waiverList)
+    {@Html.DisplayFor(modelItem => item.firstName)  @Html.DisplayFor(modelItem => item.lastName)}
+</h2> 
 
 @*<p>
     @Html.ActionLink("Create New", "Create")
