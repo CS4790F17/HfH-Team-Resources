@@ -36,6 +36,7 @@ namespace HabitatForHumanity.Controllers
     {
         private VolunteerDbContext db = new VolunteerDbContext();
         private const string awwSnapMsg = "Sorry, We're experiencing technical difficulties, please try again later";
+     
 
         #region Index
         //[AdminFilter]
@@ -68,36 +69,43 @@ namespace HabitatForHumanity.Controllers
         [AuthorizationFilter]
         public ActionResult VolunteerPortal(int? justPunched, string excMsg)
         {
-            ViewBag.status = (!string.IsNullOrEmpty(excMsg)) ? excMsg : null;
-
-            ReturnStatus us = Repository.GetUserByEmail(Session["UserName"].ToString());
-            if (us.errorCode != 0)
+            try
             {
-                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+                ViewBag.status = (!string.IsNullOrEmpty(excMsg)) ? excMsg : null;
+
+                ReturnStatus us = Repository.GetUserByEmail(Session["UserName"].ToString());
+                if (us.errorCode != 0)
+                {
+                    return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+                }
+                User user = (User)us.data;
+
+                ReturnStatus rs = Repository.GetPortalVM(user.Id);
+
+                if (rs.errorCode != 0)
+                {
+                    return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+                }
+
+                ReturnStatus waiverSigned = Repository.waiverNotSigned(((PortalVM)rs.data).userId);
+
+                if (waiverSigned.errorCode != 0)
+                {
+                    return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+                }
+
+                if ((bool)waiverSigned.data)
+                {
+                    ViewBag.status = "Your Waiver is outdated, please sign below.";
+                    return RedirectToAction("SignWaiver", "User");
+                }
+                ViewBag.justPunched = justPunched;
+                return View((PortalVM)rs.data);
             }
-            User user = (User)us.data;
-
-            ReturnStatus rs = Repository.GetPortalVM(user.Id);
-
-            if (rs.errorCode != 0)
+            catch
             {
-                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
+                return View("Error");
             }
-
-            ReturnStatus waiverSigned = Repository.waiverNotSigned(((PortalVM)rs.data).userId);
-
-            if ( waiverSigned.errorCode != 0)
-            {
-                return RedirectToAction("Login", "User", new { excMsg = "Sorry, the system is temporarily down, please try again later." });
-            }
-
-            if ((bool)waiverSigned.data)
-            {
-                ViewBag.status = "Your Waiver is outdated, please sign below.";
-                return RedirectToAction("SignWaiver", "User");
-            }
-            ViewBag.justPunched = justPunched;
-            return View((PortalVM)rs.data);
         }
 
         public ActionResult ThankYouModal()
@@ -108,29 +116,44 @@ namespace HabitatForHumanity.Controllers
         [AuthorizationFilter]
         public ActionResult _PunchOut(int id)
         {
-            ReturnStatus rs = Repository.GetClockedInUserTimeSheet(id);
-
-            if (rs.errorCode != 0)
+            try
             {
-                ViewBag.status = "Sorry, system is temporarily down.";
-                return PartialView("_ErrorPunchOut");
+                ReturnStatus rs = Repository.GetClockedInUserTimeSheet(id);
+
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, system is temporarily down.";
+                    return PartialView("_ErrorPunchOut");
+                }
+                PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rs.data);
+                return PartialView("_PunchOut", punchOutVM);
             }
-            PunchOutVM punchOutVM = new PunchOutVM((TimeSheet)rs.data);
-            return PartialView("_PunchOut", punchOutVM);
+            catch
+            {
+                return View("_Error");
+            }
         }
 
         [AuthorizationFilter]
         public ActionResult _PunchIn(int id)
         {
-            ReturnStatus rs = Repository.GetPunchInVM(id);
-
-            if (rs.errorCode != 0)
+            try
             {
-                ViewBag.status = "Sorry, system is temporarily down.";
-                return PartialView("_ErrorPunchIn");
+                ReturnStatus rs = Repository.GetPunchInVM(id);
+
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, system is temporarily down.";
+                    return PartialView("_ErrorPunchIn");
+                }
+                PunchInVM punchInVM = (PunchInVM)rs.data;
+                return PartialView("_PunchIn", punchInVM);
             }
-            PunchInVM punchInVM = (PunchInVM)rs.data;
-            return PartialView("_PunchIn", punchInVM);
+            catch
+            {
+                return View("_Error");
+            }
+
         }
 
         [AuthorizationFilter]
