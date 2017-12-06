@@ -190,6 +190,10 @@ namespace HabitatForHumanity.Controllers
                 }
                 return View(timeSheet);
             }
+            catch
+            {
+                return View("Error");
+            }
         }
 
         // POST: TimeSheet/Delete/5
