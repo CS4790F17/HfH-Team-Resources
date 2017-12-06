@@ -15,6 +15,13 @@ using DotNet.Highcharts.Options;
 using System.Drawing;
 using DotNet.Highcharts.Enums;
 using DotNet.Highcharts.Helpers;
+using System.IO;
+using System.Text;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.html.simpleparser;
+using iTextSharp.tool.xml;
+using System.Web.UI;
 
 using System.Globalization;
 
@@ -229,11 +236,6 @@ namespace HabitatForHumanity.Controllers
                     user.zip = volunteerSignupVM.zip;
                     user.isAdmin = 0;
                     user.waiverSignDate = DateTime.Now.AddYears(-2);
-                    user.incomeId = 1;
-                    user.ethnicityId = 1;
-                    user.collegeStatus = 1;
-                    user.veteranStatus = 1;
-                    user.disabledStatus = 1;
                     ReturnStatus createResult = Repository.CreateVolunteer(user);
                     if (createResult.errorCode != 0)
                     {
@@ -243,29 +245,29 @@ namespace HabitatForHumanity.Controllers
                     Session["isAdmin"] = user.isAdmin;
                     Session["UserName"] = user.emailAddress;
 
-                    //gmail smtp server  
-                    WebMail.SmtpServer = "smtp.gmail.com";
-                    //gmail port to send emails  
-                    WebMail.SmtpPort = 587;
-                    WebMail.SmtpUseDefaultCredentials = true;
-                    //sending emails with secure protocol  
-                    WebMail.EnableSsl = true;
-                    //EmailId used to send emails from application  
-                    WebMail.UserName = "hfhdwvolunteer@gmail.com";
-                    WebMail.Password = "3BlindMice";
-                    //Sender email address.  
-                    WebMail.From = "hfhdwvolunteer@gmail.com";
-                    //Send email  
-                    string body = "New user created at email: " + user.emailAddress;
-                    try
-                    {
-                        WebMail.Send(to: "trevororgill@weber.edu", subject: "New Volunteer", body: body, isBodyHtml: false);
-                    }
-                    catch
-                    {
-                        //not sure what to do here
-                        //ViewBag.status = "Email not sent.";
-                    }
+                    ////gmail smtp server  
+                    //WebMail.SmtpServer = "smtp.gmail.com";
+                    ////gmail port to send emails  
+                    //WebMail.SmtpPort = 587;
+                    //WebMail.SmtpUseDefaultCredentials = true;
+                    ////sending emails with secure protocol  
+                    //WebMail.EnableSsl = true;
+                    ////EmailId used to send emails from application  
+                    //WebMail.UserName = "hfhdwvolunteer@gmail.com";
+                    //WebMail.Password = "3BlindMice";
+                    ////Sender email address.  
+                    //WebMail.From = "hfhdwvolunteer@gmail.com";
+                    ////Send email  
+                    //string body = "New user created at email: " + user.emailAddress;
+                    //try
+                    //{
+                    //    WebMail.Send(to: "trevororgill@weber.edu", subject: "New Volunteer", body: body, isBodyHtml: false);
+                    //}
+                    //catch
+                    //{
+                    //    //not sure what to do here
+                    //    //ViewBag.status = "Email not sent.";
+                    //}
                     return RedirectToAction("SignWaiver", "User");
                 }
                 else
@@ -343,6 +345,75 @@ namespace HabitatForHumanity.Controllers
                 if (user.Id > 0)
                 {
                     Repository.saveWaiverSnapshot(user, signWaiverVM.signatureName);
+                    using (StringWriter sw = new StringWriter())
+                    {
+                        using (HtmlTextWriter hw = new HtmlTextWriter(sw))
+                        {
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append("<h2>Waiver</h2><hr/>");
+                            sb.Append("<h5>The Volunteer desires to work as a related to being a volunteer. The Volunteer understands volunteer for Habitat and engage in the activities that the activities may include constructing and rehabilitating residential buildings, working in the Habitat offices, and living in housing provided for volunteers of Habitat.</h5>");
+                            sb.Append("<h5>The Volunteer does hereby freely, voluntarily, and without duress executes this Release under the following terms:</h5>");
+                            sb.Append("<br/><h6>1. Waiver and Release. Volunteer does hereby release and forever discharge and hold harmless Habitat and its successors and assigns from any and all liability, claims and demands of whatever kind or nature, either in law or in equity, which arise or may hereafter arise from Volunteer's work for Habitat.</h6>");
+                            sb.Append("<br/><h5>Volunteer understands and acknowledges that this Release discharges Habitat from any liability or claim that the Volunteer may have against Habitat with respect to any bodily injury, personal injury, illness, death, or property damage that may result from Volunteer's work for Habitat, whether caused by the negligence of Habitat or its officers, directors, employees, or agents or otherwise. Volunteer also understands that, except as otherwise agreed to by Habitat in writing, Habitat does not assume any responsibility for or obligation to provide financial assistance or other assistance, including but not limited to medical, health, or disability insurance, in the event of injury or illness.</h5><br/>");
+                            sb.Append("<h6>2. Medical Treatment. Except as otherwise agreed to by Habitat in writing, Volunteer does hereby release and forever discharge Habitat from any claim whatsoever which arises or may hereafter arise on account of any first aid, treatment, or service rendered in connection with the Volunteer's work for Habitat.</h6>");
+                            sb.Append("<h6>3. Assumption of the Risk. The Volunteer understands that the work for Habitat may include activities that may be hazardous to the Volunteer, including, but not limited to, construction, loading and unloading, and transportation to and from the work sites. In connection thereto, Volunteer recognizes and understands that activities at Habitat may, in some situations, involve inherently dangerous activities.</h6>");
+                            sb.Append("<br/><h5>Volunteer hereby expressly and specifically assumes the risk of injury or harm in these activities and releases Habitat from all liability for injury, illness, death, or property damage resulting from the activities of the Volunteer's work for Habitat.</h5><br/>");
+                            sb.Append("<h6>4. Insurance. The Volunteer understands that, except as otherwise agreed to by Habitat in writing, Habitat does not carry or maintain health, medical, or disability insurance coverage for any Volunteer.</h6>");
+                            sb.Append("<br/><h5>Each Volunteer is expected and encouraged to obtain his or her own medical or health insurance coverage.</h5>");
+                            sb.Append("<br/><h6>5. Photographic Release. Volunteer does hereby grant and convey unto Habitat all right, title, and interest in any and all photographic images and video or audio recordings made by Habitat during the Volunteer's work for Habitat, including, but not limited to, any royalties, proceeds, or other benefits derived from such photographs or recordings.</h6>");
+                            sb.Append("<h6>6. Other. Volunteer expressly agrees that this Release is intended to be as broad and inclusive as permitted by the laws of the State of Utah, and that this Release shall be governed by and interpreted in accordance with the laws of the State of Utah. Volunteer agrees that in the event that any clause or provision of this Release shall be held to be invalid by any court of competent jurisdiction, the invalidity of such clause or provision shall not otherwise affect the remaining provisions of this Release which shall continue to be enforceable.</h6><br/>");
+                            sb.Append("<hr/><h6 style='page-break-after: always'>Signature: " + signWaiverVM.signatureName + "</h6>");
+                            sb.Append("<h2>User Information When Signed</h2><hr/>");
+                            sb.Append("<div><b>First Name: </b>" + user.firstName + "</div>");
+                            sb.Append("<div><b>Last Name: </b>" + user.lastName + "</div>");
+                            sb.Append("<div><b>Home Phone: </b>" + user.homePhoneNumber + "</div>");
+                            sb.Append("<div><b>Alternate Phone: </b>" + user.workPhoneNumber + "</div>");
+                            sb.Append("<div><b>Email: </b>" + user.emailAddress + "</div>");
+                            sb.Append("<div><b>Address: </b>" + user.streetAddress + "</div>");
+                            sb.Append("<div><b>City: </b>" + user.city + "</div>");
+                            sb.Append("<div><b>Zip: </b>" + user.zip + "</div>");
+                            sb.Append("<div><b>Birth Date: </b>" + user.birthDate + "</div>");
+                            sb.Append("<div><b>Gender: </b>" + user.gender + "</div>");
+                            sb.Append("<div><b>Waiver Sign Date: </b>" + user.waiverSignDate + "</div>");
+                            sb.Append("<div><b>Emergency First Name: </b>" + user.emergencyFirstName + "</div>");
+                            sb.Append("<div><b>Emergency Last Name: </b>" + user.emergencyLastName + "</div>");
+                            sb.Append("<div><b>Relation: </b>" + user.relation + "</div>");
+                            sb.Append("<div><b>Emergency Home Phone: </b>" + user.emergencyHomePhone + "</div>");
+                            sb.Append("<div><b>Emergency Alternate Phone: </b>" + user.emergencyWorkPhone + "</div>");
+                            sb.Append("<div><b>Emergency Address: </b>" + user.emergencyStreetAddress + "</div>");
+                            sb.Append("<div><b>Emergency City: </b>" + user.emergencyCity + "</div>");
+                            sb.Append("<div><b>Emergency Zip: </b>" + user.emergencyZip + "</div>");
+                            StringReader sr = new StringReader(sb.ToString());
+
+                            Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                            using (MemoryStream memoryStream = new MemoryStream())
+                            {
+                                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, memoryStream);
+                                pdfDoc.Open();
+                                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                                pdfDoc.Close();
+                                byte[] bytes = memoryStream.ToArray();
+                                memoryStream.Close();
+
+                                MailMessage mm = new MailMessage("hfhdwvolunteer@gmail.com", "hfhdwvolunteer@gmail.com");
+                                mm.Subject = "New Waiver Signed";
+                                string body = "New waiver signed for email: " + user.emailAddress + ". A copy of their waiver is attached.";
+                                mm.Body = body;
+                                mm.Attachments.Add(new Attachment(new MemoryStream(bytes), "Waiver.pdf"));
+                                mm.IsBodyHtml = true;
+                                SmtpClient smtp = new SmtpClient();
+                                smtp.Host = "smtp.gmail.com";
+                                smtp.EnableSsl = true;
+                                NetworkCredential NetworkCred = new NetworkCredential();
+                                NetworkCred.UserName = "hfhdwvolunteer@gmail.com";
+                                NetworkCred.Password = "3BlindMice";
+                                smtp.UseDefaultCredentials = true;
+                                smtp.Credentials = NetworkCred;
+                                smtp.Port = 587;
+                                smtp.Send(mm);
+                            }
+                        }
+                    }
                 }
                 return RedirectToAction("VolunteerPortal");
 
@@ -577,9 +648,9 @@ namespace HabitatForHumanity.Controllers
                     return View(userProfile);
                 }
                 User user = (User)rs.data;
-                if (userProfile.newPassword != null)
+                if (!string.IsNullOrEmpty(userProfile.newPassword))
                 {
-                    user.password = Crypto.HashPassword(user.password);
+                    user.password = Crypto.HashPassword(userProfile.newPassword);
                 }
                 user.firstName = userProfile.firstName;
                 user.lastName = userProfile.lastName;
@@ -759,5 +830,23 @@ namespace HabitatForHumanity.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public static string RenderViewToString(ControllerContext context, string viewName, object model)
+        {
+            if (string.IsNullOrEmpty(viewName))
+                viewName = context.RouteData.GetRequiredString("action");
+
+            var viewData = new ViewDataDictionary(model);
+
+            using (var sw = new StringWriter())
+            {
+                var viewResult = ViewEngines.Engines.FindPartialView(context, viewName);
+                var viewContext = new ViewContext(context, viewResult.View, viewData, new TempDataDictionary(), sw);
+                viewResult.View.Render(viewContext, sw);
+
+                return sw.GetStringBuilder().ToString();
+            }
+        }
+
     }
 }

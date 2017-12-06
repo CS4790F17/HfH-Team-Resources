@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using HabitatForHumanity.ViewModels;
+using System.Data.SqlClient;
 
 namespace HabitatForHumanity.Models
 {
@@ -279,35 +280,13 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static ReturnStatus GetTimeCardPageWithFilter(int page, int itemsPerPage, ref int totalTimeCards, int orgId, int projId,DateTime rangeStart, DateTime rangeEnd, string queryString)
+        public static ReturnStatus GetTimeCardPageWithFilter(int page, int itemsPerPage, ref int totalTimeCards, int orgId, int projId, DateTime rangeStart, DateTime rangeEnd, string searchTerm)
         {
 
             ReturnStatus cardsReturn = new ReturnStatus();
             try
             {
-                VolunteerDbContext db = new VolunteerDbContext();
-                string userIdInList = "";
-                if (!string.IsNullOrEmpty(queryString))
-                {
-                    List<string> userTerms = queryString.Split(' ').ToList();
-                    var userIds = (from u in db.users
-                                   where userTerms.Any(term => u.firstName.Contains(term)) || userTerms.Any(term => u.lastName.Contains(term))
-                                   select u.Id).ToArray();
-                    userIdInList = (userIds.Length > 0) ? " AND U.Id IN (" + string.Join(" , ", userIds) + " ) " : "";
-                }
-
-           
-                string whereClause = " WHERE 1 = 1 ";
-                //whereClause += (userId > 0) ? " AND U.Id = " + userId.ToString() + " " : ""; // make whole other function for know userid
-                whereClause += userIdInList;
-                whereClause += (projId > 0) ? " AND P.Id = " + projId.ToString() + " " : "";
-                whereClause += (orgId > 0) ? " AND O.Id = " + orgId.ToString() + " " : "";
-                //whereClause += " AND CONVERT(DATE, T.clockInTime) >= CONVERT(DATE, '" + rangeStart.Date.ToString("yyyyMMdd") + "' ) ";
-                whereClause += " AND CONVERT(DATE, T.clockInTime) BETWEEN '" + rangeStart.Date.ToString("yyyyMMdd") + 
-                        "' AND CONVERT(DATE, '" + rangeEnd.Date.ToString("yyyyMMdd") + "' ) ";
-
-                var cards = db.Database.SqlQuery<TimeCardVM>(
-                    " SELECT T.Id AS timeId, " +
+                string sql = " SELECT T.Id AS timeId, " +
                         " T.user_Id AS userId, " +
                         " P.Id AS projId, " +
                         " O.Id AS orgId, " +
@@ -319,8 +298,23 @@ namespace HabitatForHumanity.Models
                         " FROM dbo.TimeSheet T LEFT JOIN dbo.[User] U ON T.user_Id = U.Id " +
                         " LEFT JOIN Organization O ON T.org_Id = O.Id " +
                         " LEFT JOIN Project P ON P.Id = T.project_Id " +
-                        whereClause +
-                        " ORDER BY T.clockInTime DESC ").ToList();
+                        " WHERE 1=1 ";
+                sql += (projId > 0) ? " AND P.Id = @projectId " : "";
+                sql += (orgId > 0) ? " AND O.Id = @orgId " : "";
+                sql += " AND CONVERT(DATE, T.clockInTime) BETWEEN '" + rangeStart.Date.ToString("yyyyMMdd") +
+                        "' AND '" + rangeEnd.Date.ToString("yyyyMMdd") + "' ";
+                sql += (!string.IsNullOrEmpty(searchTerm)) ?
+                          //" AND (U.firstName LIKE '%' + @searchTerm + '%' OR U.lastName LIKE '%' + @searchTerm + '%') " : "";
+                          " AND (U.firstName LIKE '%' + @searchTerm + '%' OR U.lastName LIKE '%' + @searchTerm + '%' " +
+                          " OR O.name LIKE '%' + @searchTerm + '%' OR P.name LIKE '%' + @searchTerm + '%') " : "";
+                sql += " ORDER BY T.clockInTime DESC ";
+                VolunteerDbContext db = new VolunteerDbContext();
+                List<SqlParameter> sqlParams = new List<SqlParameter>();
+                if (projId > 0) { sqlParams.Add(new SqlParameter("@projectId", projId)); }
+                if (orgId > 0) { sqlParams.Add(new SqlParameter("@orgId", orgId)); }
+                if (!string.IsNullOrEmpty(searchTerm)) { sqlParams.Add(new SqlParameter("@searchTerm", searchTerm)); }
+
+                var cards = db.Database.SqlQuery<TimeCardVM>(sql, sqlParams.ToArray()).ToList();
 
                 cardsReturn.errorCode = 0;
                 cardsReturn.data = cards.ToList();
@@ -543,7 +537,7 @@ namespace HabitatForHumanity.Models
         /// <param name="restoreId"></param>
         /// <param name="awbkId"></param>
         /// <returns>An array of 9 lists of timecards, 3 years worth of timesheets for the 3 categories, restore, awbk, and everything else</returns>
-        public static ReturnStatus Get3YearsTimeSheetsByCategory(int restoreId, int awbkId)
+        public static ReturnStatus Get3YearsTimeSheetsByCategory(List<int> restoreIds, List<int> abwkIds, List<int> homeIds)
         {
             ReturnStatus rs = new ReturnStatus();
             try
@@ -556,17 +550,26 @@ namespace HabitatForHumanity.Models
                 {
                     if (i < 3)
                     {
-                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == restoreId) && ( t.clockInTime.Year == thisYear - j))).ToList();
-                        j--;
+                        timesheetInception[i] = (
+                            from t in db.timeSheets
+                            where restoreIds.Contains(t.project_Id) && (t.clockInTime.Year == thisYear - j)
+                            select t).ToList();
+                j--;
                     }
                     else if (i < 6)
                     {
-                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == awbkId) && (t.clockInTime.Year == thisYear - k)).ToList());
+                        timesheetInception[i] = (
+                            from t in db.timeSheets
+                            where abwkIds.Contains(t.project_Id) && (t.clockInTime.Year == thisYear - k)
+                            select t).ToList();
                         k--;
                     }
                     else
                     {
-                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id != awbkId) && (t.project_Id != restoreId) && (t.clockInTime.Year == thisYear - l)).ToList());
+                        timesheetInception[i] = (
+                            from t in db.timeSheets
+                            where restoreIds.Contains(t.project_Id) && (t.clockInTime.Year == thisYear - l)
+                            select t).ToList();
                         l--;
                     }                  
                 }
@@ -581,7 +584,7 @@ namespace HabitatForHumanity.Models
             return rs;
         }
 
-        public static ReturnStatus Get12MonthsTimeSheetsByCategory(int restoreId, int awbkId)
+        public static ReturnStatus Get12MonthsTimeSheetsByCategory(List<int> restoreIds, List<int> abwkIds, List<int> homeIds)
         {
             ReturnStatus rs = new ReturnStatus();
             try
@@ -600,21 +603,30 @@ namespace HabitatForHumanity.Models
                     {
                         startRange = today.AddMonths(-1 * j);
                         endRange = today.AddMonths(-1 * (j - 1));
-                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == restoreId) && (t.clockInTime >= startRange) &&(t.clockInTime < endRange))).ToList();
+                        timesheetInception[i] = (
+                            from t in db.timeSheets
+                            where restoreIds.Contains(t.project_Id) && (t.clockInTime >= startRange) && (t.clockInTime < endRange)
+                            select t).ToList();
                         j--;
                     }
                     else if (i < 24)
                     {
                         startRange = today.AddMonths(-1 * k);
                         endRange = today.AddMonths(-1 * (k - 1));
-                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == awbkId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        timesheetInception[i] = (
+                            from t in db.timeSheets
+                            where abwkIds.Contains(t.project_Id) && (t.clockInTime >= startRange) && (t.clockInTime < endRange)
+                            select t).ToList();
                         k--;
                     }
                     else
                     {
                         startRange = today.AddMonths(-1 * l);
                         endRange = today.AddMonths(-1 * (l - 1));
-                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id != awbkId) && (t.project_Id != restoreId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        timesheetInception[i] = (
+                            from t in db.timeSheets
+                            where abwkIds.Contains(t.project_Id) && (t.clockInTime >= startRange) && (t.clockInTime < endRange)
+                            select t).ToList();
                         l--;
                     }
                 }
@@ -629,7 +641,7 @@ namespace HabitatForHumanity.Models
             return rs;
         }
 
-        public static ReturnStatus Get12WeeksTimeSheetsByCategory(int restoreId, int awbkId)
+        public static ReturnStatus Get12WeeksTimeSheetsByCategory(List<int> restoreIds, List<int> abwkIds, List<int> homeIds)
         {
             ReturnStatus rs = new ReturnStatus();
             try
@@ -648,21 +660,30 @@ namespace HabitatForHumanity.Models
                     {
                         startRange = today.AddDays(-7 * j);
                         endRange = today.AddDays(-7 * (j - 1));
-                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == restoreId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        timesheetInception[i] = (
+                             from t in db.timeSheets
+                             where restoreIds.Contains(t.project_Id) && (t.clockInTime >= startRange) && (t.clockInTime < endRange)
+                             select t).ToList();
                         j--;
                     }
                     else if (i < 24)
                     {
                         startRange = today.AddDays(-7 * k);
                         endRange = today.AddDays(-7 * (k - 1));
-                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id == awbkId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        timesheetInception[i] = (
+                             from t in db.timeSheets
+                             where abwkIds.Contains(t.project_Id) && (t.clockInTime >= startRange) && (t.clockInTime < endRange)
+                             select t).ToList();
                         k--;
                     }
                     else
                     {
                         startRange = today.AddDays(-7 * l);
                         endRange = today.AddDays(-7 * (l - 1));
-                        timesheetInception[i] = (db.timeSheets.Where(t => (t.project_Id != awbkId) && (t.project_Id != restoreId) && (t.clockInTime >= startRange) && (t.clockInTime < endRange))).ToList();
+                        timesheetInception[i] = (
+                             from t in db.timeSheets
+                             where abwkIds.Contains(t.project_Id) && (t.clockInTime >= startRange) && (t.clockInTime < endRange)
+                             select t).ToList();
                         l--;
                     }
                 }

@@ -26,6 +26,10 @@ namespace HabitatForHumanity.Controllers
             {
                 monthsReports = (List<List<ProjDemogReportVM>>)rs.data;
             }
+            if(monthsReports == null )
+            {
+                return RedirectToAction("Dashboard", "Admin");
+            }
             return View(monthsReports);
             //            public static int MONTH = 1;
             //public static int QUARTER = 3;

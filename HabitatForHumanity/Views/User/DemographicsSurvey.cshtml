@@ -7,10 +7,6 @@
 <p>Please tell us more about yourself. This section is optional. You can decline to answer any or all of these. Any information you provide will be used anonymously to help us better understand our volunteers. Occasionally, the information is also requested for grants and research opportunities. In this case, no personal identifying details are provided with the information below. </p>
 
 
-@*<div>
-    @Html.DropDownListFor(model => model.projectId, Model.projects.Projects, new { @class = "form-control", onchange = @"form.submit()" })
-</div>*@
-
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -21,15 +17,15 @@
         @Html.HiddenFor(model => model.volunteerId)
 
         <div class="form-group">
-            @Html.LabelFor(model => model.incomeId, htmlAttributes: new { @class = "control-label col-md-3" })
+            @Html.LabelFor(model => model.incomeTier, htmlAttributes: new { @class = "control-label col-md-3" })
             <div class="col-md-9">
-                @Html.DropDownListFor(model => model.incomeId, Model.incomeDD.Tiers, new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.incomeTier, Model.incomeDD.Tiers, new { @class = "form-control" })
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.ethnicityId, htmlAttributes: new { @class = "control-label col-md-3" })
+            @Html.LabelFor(model => model.ethnicity, htmlAttributes: new { @class = "control-label col-md-3" })
             <div class="col-md-9">
-                @Html.DropDownListFor(model => model.ethnicityId, Model.ethnicityDD.Tiers, new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.ethnicity, Model.ethnicityDD.Tiers, new { @class = "form-control" })
             </div>
         </div>
         <div class="form-group">

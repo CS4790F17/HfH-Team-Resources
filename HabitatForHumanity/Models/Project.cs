@@ -59,21 +59,22 @@ namespace HabitatForHumanity.Models
                 DateTime periodEnd = firstThisMonth.AddMonths(-monthsAgo);
                 DateTime periodStart = periodEnd.AddMonths(-1);
 
-                string q = " SELECT MAX(T.CLOCKINTIME) AS monthName, " +
-                        " PC.CATEGORYTYPE AS category, " +
+                string q = 
+                    " SELECT MAX(T.CLOCKINTIME) AS monthName, " +
+                    " PC.CATEGORYTYPE AS category, " +
                     " COUNT(U.ID) AS numVolunteers, " +
                     " CONVERT(INT,SUM(DATEDIFF(HH,T.CLOCKINTIME,T.CLOCKOUTTIME))) AS numHours, " +
-                    " SUM(CASE WHEN U.COLLEGESTATUS = 3 THEN 1 ELSE 0 END) AS numStudents, " +
-                    " SUM(CASE WHEN U.VETERANSTATUS = 3 THEN 1 ELSE 0 END) AS numVeterans, " +
-                    " SUM(CASE WHEN U.DISABLEDSTATUS = 3 THEN 1 ELSE 0 END) AS numDisabled, " +
-                    " SUM(CASE WHEN U.INCOMEID = 2 THEN 1 ELSE 0 END) AS numUnder25k, " +
-                    " SUM(CASE WHEN U.ETHNICITYID = 2 THEN 1 ELSE 0 END) AS numNative, " +
-                    " SUM(CASE WHEN U.ETHNICITYID = 3 THEN 1 ELSE 0 END) AS numAsian, " +
-                    " SUM(CASE WHEN U.ETHNICITYID = 4 THEN 1 ELSE 0 END) AS numBlack, " +
-                    " SUM(CASE WHEN U.ETHNICITYID = 5 THEN 1 ELSE 0 END) AS numHispanic, " +
-                    " SUM(CASE WHEN U.ETHNICITYID = 6 THEN 1 ELSE 0 END) AS numHawaiian, " +
-                    " SUM(CASE WHEN U.ETHNICITYID = 7 THEN 1 ELSE 0 END) AS numWhite, " +
-                    " SUM(CASE WHEN U.ETHNICITYID = 8 THEN 1 ELSE 0 END) AS numTwoEthnic, " +
+                    " SUM(CASE WHEN U.COLLEGESTATUS LIKE 'Yes' THEN 1 ELSE 0 END) AS numStudents, " +
+                    " SUM(CASE WHEN U.VETERANSTATUS LIKE 'Yes' THEN 1 ELSE 0 END) AS numVeterans, " +
+                    " SUM(CASE WHEN U.DISABLEDSTATUS LIKE 'Yes' THEN 1 ELSE 0 END) AS numDisabled, " +
+                    " SUM(CASE WHEN U.incomeTier LIKE 'Under $24,999' THEN 1 ELSE 0 END) AS numUnder25k, " +
+                    " SUM(CASE WHEN U.ethnicity LIKE 'Native American%' THEN 1 ELSE 0 END) AS numNative, " +
+                    " SUM(CASE WHEN U.ethnicity LIKE 'Asian' THEN 1 ELSE 0 END) AS numAsian, " +
+                    " SUM(CASE WHEN U.ethnicity LIKE 'Black%' THEN 1 ELSE 0 END) AS numBlack, " +
+                    " SUM(CASE WHEN U.ethnicity LIKE 'Hispanic%' THEN 1 ELSE 0 END) AS numHispanic, " +
+                    " SUM(CASE WHEN U.ethnicity LIKE '%Hawaii%' THEN 1 ELSE 0 END) AS numHawaiian, " +
+                    " SUM(CASE WHEN U.ethnicity LIKE 'White' THEN 1 ELSE 0 END) AS numWhite, " +
+                    " SUM(CASE WHEN U.ethnicity LIKE 'Two or More' THEN 1 ELSE 0 END) AS numTwoEthnic, " +
                     " SUM(CASE WHEN U.gender = 'M' THEN 1 ELSE 0 END) AS male, " +
                     " SUM(CASE WHEN U.gender = 'F' THEN 1 ELSE 0 END) AS female" +
                     " FROM TIMESHEET T " +
@@ -131,6 +132,27 @@ namespace HabitatForHumanity.Models
                 var pId = db.projects.Where(p => p.name.Contains(name)).FirstOrDefault().Id;
                 rs.errorCode = ReturnStatus.ALL_CLEAR;
                 rs.data = pId;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
+        public static ReturnStatus GetProjectIdByCategoryName(string catName)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var categoryId = db.projectCategories.Where(pr => pr.categoryType.Contains(catName)).FirstOrDefault().Id;
+
+                var projectIdListWithThisCategoryId = (
+                    from proj in db.projects
+                    where proj.categoryId == categoryId
+                    select proj.Id).ToList();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = projectIdListWithThisCategoryId;
             }
             catch
             {
@@ -402,6 +424,13 @@ namespace HabitatForHumanity.Models
                 st.data = new List<ProjectCategory>();
             }
             return st;
+        }
+
+        public static string GetProjectCategoryName(int? id)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            ProjectCategory data = db.projectCategories.Find(id);
+            return data.categoryType;
         }
 
         public static ReturnStatus CreateProjectCategory(ProjectCategory pc)

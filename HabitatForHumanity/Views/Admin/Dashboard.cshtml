@@ -1,15 +1,17 @@
-﻿<div class="container">
+﻿<script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<div class="container">
     <ul class="nav nav-tabs">
         <li><a data-toggle="tab" onclick="getHoursChart('Month')" id="Month">Hours by Month</a></li>
         <li><a data-toggle="tab" onclick="getHoursChart('Week')" id="Week">Hours by Week</a></li>
         <li><a data-toggle="tab" onclick="getHoursChart('Year')" id="Year">Hours by Year</a></li>
     </ul>
     <div id="divHoursChart"></div>
-
+    <div class="col-md-12">@Html.Action("GetHoursChartBy", new { period = "Month" })</div>
 
     <div class="row">
         <div class="col-md-6">
-            <div id="divHoursDemog"></div>
+            <div id="divHoursDemog">@Html.Action("GetHoursDemogPieBy", new { gender = "All" } )</div>
         </div>
 
         <div class="col-md-2 text-center" style="margin-top:80px; margin-left:-25px; margin-right: 10px;">
@@ -43,8 +45,8 @@
         </div>
 
         <div class="text-center col-md-3">
-            <h3>No Punch Outs</h3>
-            <div id="badPunches" class=""></div>
+           
+            <div id="badPunches" class="">@Html.Action("GetBadPunches") </div>
 
         </div>
     </div>
@@ -52,8 +54,43 @@
 
 </div>
 
+@*<script>
+    $(document).ready(function () {
+        getHoursChart("Month");
+        getDemographicsPie("All");
+        getBadPunches();
+    });
 
-@section Scripts {
+    function getHoursChart(period) {
+        var path = "/Admin/GetHoursChartBy/?period=" + period;
+        $.ajax({
+            url: path,
+            success: function (result) {
+                $("#divHoursChart").html(result);
+            }
+        });
+    }
+
+    function getDemographicsPie(gender) {
+        var path = "/Admin/GetHoursDemogPieBy/?gender=" + gender
+        $.ajax({
+            url: path,
+            success: function (result) {
+                $("#divHoursDemog").html(result);
+            }
+        });
+    }
+
+    function getBadPunches() {
+        $.ajax({
+            url: "/Admin/GetBadPunches",
+            success: function (result) {
+                $("#badPunches").html(result);
+            }
+        });
+    }
+</script>*@
+@*@section Scripts {
     <script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/OurScripts/Charts.js"></script>
-}
+}*@

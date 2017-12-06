@@ -1,4 +1,5 @@
 ﻿@using PagedList.Mvc;
+@using HabitatForHumanity.Models;
 @using HabitatForHumanity.ViewModels;
 @model PagedList.StaticPagedList<HabitatForHumanity.Models.Project>
 
@@ -20,6 +21,7 @@
         opac = 0.3;
     }
     var projectId = "project" + project.Id;
+    var categoryName = Repository.GetProjectCategoryName(project.categoryId);
     <div id="@projectId" class="row well well-sm" style="margin:5px;opacity:@opac">
         <!--Table Head-->
         <div class="row">
@@ -30,7 +32,8 @@
                     <a>View Details </a><span class="glyphicon glyphicon-chevron-down" data-toggle="collapse" data-target="#@project.Id"></span> 
                 </div>
                 <div class="col-md-2">
-                    <div><label>Category: </label>@project.categoryId</div>
+                    
+                    <div><label>Category: </label> @categoryName</div>
                 </div>
 
             </div>

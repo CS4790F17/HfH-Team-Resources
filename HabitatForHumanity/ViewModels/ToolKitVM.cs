@@ -324,7 +324,7 @@ namespace HabitatForHumanity.ViewModels
              SelectList.Add(new SelectListItem
                 {
                     Value = "0",
-                    Text = "All"
+                    Text = "Project Category"
                 });
 
             foreach (ProjectCategory item in cat)
