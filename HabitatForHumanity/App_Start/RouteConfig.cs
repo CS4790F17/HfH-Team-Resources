@@ -19,6 +19,12 @@ namespace HabitatForHumanity
              defaults: new { controller = "Home", action = "Examples" }
             );
 
+            //routes.MapRoute(
+            //    name: "ManageVolunteer",
+            //    url: "Admin/ManageVolunteer/{id}",
+            //    defaults: new { controller = "Admin", action = "manageVolunteer", id = UrlParameter.Optional, name = UrlParameter.Optional, standardId = UrlParameter.Optional },
+            //    constraints: new { id = @"\d+" }
+            //);
 
             routes.MapRoute(
                 name: "Default",

@@ -1,15 +1,30 @@
-﻿<div class="container">
+﻿<script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<div class="container">
     <ul class="nav nav-tabs">
-        <li><a data-toggle="tab" onclick="getHoursChart('Month')" id="Month">Hours by Month</a></li>
-        <li><a data-toggle="tab" onclick="getHoursChart('Week')" id="Week">Hours by Week</a></li>
-        <li><a data-toggle="tab" onclick="getHoursChart('Year')" id="Year">Hours by Year</a></li>
+        <li class="active">
+            <a href="#divMonthChart" onclick="getHoursChart('Month')" data-toggle="tab">Hours by Month</a>
+        </li>
+        <li><a href="#divWeekChart" onclick="getHoursChart('Week')" data-toggle="tab">Hours by Week</a></li>
+        <li><a href="#divYearChart" onclick="getHoursChart('Year')" data-toggle="tab">Hours by Year</a></li>
     </ul>
     <div id="divHoursChart"></div>
 
 
+
+    @* tab panes dont want to cooperate with charts because inner div of chart has predefined id which 
+        results in each chart drawing over the previous till only the last chart is shown*@
+    @*<div class="tab-content">
+        <div class="tab-pane fade" id="divWeekChart"> Week</div>
+        <div class="tab-pane fade" id="divYearChart"> Year</div>
+        <div class="tab-pane fade in active" id="divMonthChart"> Month</div>
+
+    </div>*@
+    @*  <div class="col-md-12">@Html.Action("GetHoursChartBy", new { period = "Month" })</div>*@
+
     <div class="row">
         <div class="col-md-6">
-            <div id="divHoursDemog"></div>
+            <div id="divHoursDemog">@Html.Action("GetHoursDemogPieBy", new { gender = "All" })</div>
         </div>
 
         <div class="col-md-2 text-center" style="margin-top:80px; margin-left:-25px; margin-right: 10px;">
@@ -35,25 +50,81 @@
                 </label>
 
             </div>
-           
+
         </div>
         <div class="col-md-1">
-   
+            
 
         </div>
 
         <div class="text-center col-md-3">
-            <h3>No Punch Outs</h3>
-            <div id="badPunches" class=""></div>
+
+            <div id="badPunches" class="">@Html.Action("GetBadPunches") </div>
 
         </div>
     </div>
-
-
 </div>
 
+<script type="text/javascript">
 
-@section Scripts {
-    <script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="~/OurScripts/Charts.js"></script>
-}
+    $(document).ready(function () {
+        getHoursChart("Month");
+        //   getDemographicsPie("All");
+        //   getBadPunches();
+    });
+
+    function getHoursChart(period) {
+        //var path = "/Admin/GetHoursChartBy/";
+        //var path = @Url.Action("GetHoursChartBy", "Admin");
+        var data = { "period": period };
+        $.ajax({
+            url: "@Url.Action("GetHoursChartBy", "Admin")",
+            data, data,
+            success: function (result) {
+                $("#divHoursChart").html(result);
+            }
+        });
+    }
+</script>
+
+
+@*<script>
+        $(document).ready(function () {
+            getHoursChart("Month");
+            getDemographicsPie("All");
+            getBadPunches();
+        });
+
+        function getHoursChart(period) {
+            var path = "/Admin/GetHoursChartBy/?period=" + period;
+            $.ajax({
+                url: path,
+                success: function (result) {
+                    $("#divHoursChart").html(result);
+                }
+            });
+        }
+
+        function getDemographicsPie(gender) {
+            var path = "/Admin/GetHoursDemogPieBy/?gender=" + gender
+            $.ajax({
+                url: path,
+                success: function (result) {
+                    $("#divHoursDemog").html(result);
+                }
+            });
+        }
+
+        function getBadPunches() {
+            $.ajax({
+                url: "/Admin/GetBadPunches",
+                success: function (result) {
+                    $("#badPunches").html(result);
+                }
+            });
+        }
+    </script>*@
+@*@section Scripts {
+        <script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
+        <script src="~/OurScripts/Charts.js"></script>
+    }*@

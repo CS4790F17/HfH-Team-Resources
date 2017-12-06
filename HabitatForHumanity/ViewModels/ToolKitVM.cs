@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+
 namespace HabitatForHumanity.ViewModels
 {
     public static class ToolKitVM
@@ -197,11 +198,15 @@ namespace HabitatForHumanity.ViewModels
         /// <param name="controller">The controller where the action is located.</param>
         /// <param name="buttonClass">An extra defined class given to the button for jquery targetting.</param>
         /// <param name="partialTarget">The partial div in the modal where the returned html is supposed to go.</param>
-        public static IHtmlString GetPartialViewButtonScript(string buttonClass, string action, string controller, string partialTarget)
+        public static IHtmlString GetPartialViewButtonScript(this HtmlHelper helper, string buttonClass, string action, string controller, string partialTarget)
         {
+           
+            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
+            var url = urlHelper.Action(action, controller);
+            //string url = String.Format("'/{0}/{1}'", controller, action);
+           // string url = String.Format("@Url.Action(\"{0}\", \"{1}\")", action, controller);
 
-            string url = String.Format("'/{0}/{1}'", controller, action);
-            string ajaxCall = "$.ajax( {{ url: {0}, type: 'GET', data: inputData, success: function(response){{ $('#{1}').html(response); }} }});";
+            string ajaxCall = "$.ajax( {{ url: '{0}', type: 'GET', data: inputData, success: function(response){{ $('#{1}').html(response); }} }});";
 
             ajaxCall = String.Format(ajaxCall, url, partialTarget);
 
@@ -321,10 +326,15 @@ namespace HabitatForHumanity.ViewModels
             ReturnStatus st = ProjectCategory.GetAllProjectCategories();
             List<ProjectCategory> cat = (List<ProjectCategory>)st.data;
             var SelectList = new List<SelectListItem>();
-
+             SelectList.Add(new SelectListItem
+                {
+                    Value = "0",
+                    Text = "Project Category"
+                });
 
             foreach (ProjectCategory item in cat)
             {
+   
                 SelectList.Add(new SelectListItem
                 {
                     Value = item.Id.ToString(),

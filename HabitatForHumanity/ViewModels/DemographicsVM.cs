@@ -12,23 +12,23 @@ namespace HabitatForHumanity.ViewModels
         public int volunteerId { get; set; }
 
         [Display(Name = "HouseHold Income")]
-        public int incomeId { get; set; }
+        public string incomeTier { get; set; }
 
 
         [Display(Name = "Ethnic Background")]
-        public int ethnicityId { get; set; }
+        public string ethnicity { get; set; }
 
 
         [Display(Name = "College Student?")]
-        public int collegeStatus { get; set; }
+        public string collegeStatus { get; set; }
 
 
         [Display(Name = "Veteran of the Armed Forces?")]
-        public int veteranStatus { get; set; }
+        public string veteranStatus { get; set; }
 
 
         [Display(Name = "Disabled?")]
-        public int disabledStatus { get; set; }
+        public string disabledStatus { get; set; }
         public List<SelectListItem> incomeTiers { get; set; }
         public GenericDropDownList incomeDD { get; set; }
         public GenericDropDownList ethnicityDD { get; set; }
@@ -37,11 +37,11 @@ namespace HabitatForHumanity.ViewModels
         public GenericDropDownList disabledDD { get; set; }
         public DemographicsVM()
         {
-            this.incomeDD = new GenericDropDownList(DemographicsData.incomeTiers);
-            this.ethnicityDD = new GenericDropDownList(DemographicsData.ethnicityTiers);
-            this.collegeDD = new GenericDropDownList(DemographicsData.yesNoTiers);
-            this.veteranDD = new GenericDropDownList(DemographicsData.yesNoTiers);
-            this.disabledDD = new GenericDropDownList(DemographicsData.yesNoTiers);
+            incomeDD = new GenericDropDownList(DemographicsData.incomeTiers);
+            ethnicityDD = new GenericDropDownList(DemographicsData.ethnicityTiers);
+            collegeDD = new GenericDropDownList(DemographicsData.yesNoTiers);
+            veteranDD = new GenericDropDownList(DemographicsData.yesNoTiers);
+            disabledDD = new GenericDropDownList(DemographicsData.yesNoTiers);
         }
     }
 
@@ -56,7 +56,7 @@ namespace HabitatForHumanity.ViewModels
             "Over $100,000" };
         public static string[] ethnicityTiers = new string[] {
             "Prefer not to answer",
-            "Native Amerian or American Indian",
+            "Native American or American Indian",
             "Asian",
             "Black or African American",
             "Hispanic or Latino or Spanish Origin",
@@ -72,17 +72,16 @@ namespace HabitatForHumanity.ViewModels
         public string demographic { get; set; }
         public List<SelectListItem> Tiers { get; set; }
 
-        // note that indexes (ids) start at 1 to support moving to data tables later
         public GenericDropDownList(string[] tiers)
         {
             var SelectList = new List<SelectListItem>();
 
-            for (int i = 1; i <= tiers.Length; i++)
+            for (int i = 0; i < tiers.Length; i++)
             {
                 SelectList.Add(new SelectListItem
                 {
-                    Value = i.ToString(),
-                    Text = tiers[i - 1]
+                    Value = tiers[i],
+                    Text = tiers[i]
                 });
             }
             Tiers = SelectList;

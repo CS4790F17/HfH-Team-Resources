@@ -116,6 +116,7 @@
     </div>
     <div class="col-md-8">
         @Model.waiverSignDate.ToShortDateString()
+        @Html.ActionLink("  View", "WaiverHistory", new { id = Model.userInfoId })
     </div>
 </div>
 

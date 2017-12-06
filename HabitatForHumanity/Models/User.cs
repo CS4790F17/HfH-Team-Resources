@@ -107,11 +107,11 @@ namespace HabitatForHumanity.Models
         public string emergencyZip { get; set; }
 
         // stuff for demographics forms, see Demographics vm for categories
-        public int incomeId { get; set; }
-        public int ethnicityId { get; set; }
-        public int collegeStatus { get; set; }
-        public int veteranStatus { get; set; }
-        public int disabledStatus { get; set; }
+        public string incomeTier { get; set; }
+        public string ethnicity { get; set; }
+        public string collegeStatus { get; set; }
+        public string veteranStatus { get; set; }
+        public string disabledStatus { get; set; }
 
         public User()
         {
@@ -137,11 +137,6 @@ namespace HabitatForHumanity.Models
             emergencyZip = "";
             emergencyCity = "";
             emergencyHomePhone = "";
-            incomeId        = 1;
-            ethnicityId     = 1;
-            collegeStatus   = 1;
-            veteranStatus   = 1;
-            disabledStatus  = 1;
     }
 
         public void AddWaiverToUser(SignWaiverVM waiver)
@@ -588,26 +583,12 @@ namespace HabitatForHumanity.Models
             demogs.Add(d40to55);
             demogs.Add(dover55);
 
-            ret.errorCode = (int)ReturnStatus.ALL_CLEAR;
+            ret.errorCode = (demogs.Count > 0) ? ReturnStatus.ALL_CLEAR : ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
             ret.data = demogs;
             return ret;
 
         }
-        /*TimeSheet temp = new TimeSheet();
-            VolunteerDbContext db = new VolunteerDbContext();
-            var sheets = from t in db.timeSheets
-                         group t by t.user_Id into g
-                         select g.OrderByDescending(t => t.clockInTime).FirstOrDefault();
-            if (sheets.Count() > 0)
-            {
-                temp = sheets.First();
-                // only if the clockout is midnight today(tomorrow really)
-                if(temp.clockOutTime == DateTime.Today.AddDays(1))
-                {
-                    return temp;
-                }
-            }
-            return new TimeSheet();*/
+
         #endregion
     }
 }

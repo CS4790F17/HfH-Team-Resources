@@ -8,8 +8,8 @@ using System.Web.Mvc;
 
 namespace HabitatForHumanity.Controllers
 {
-    //[AdminFilter]
-    //[AuthorizationFilter]
+    [AdminFilter]
+    [AuthorizationFilter]
     public class ReportsController : Controller
     {
         // GET: Reports
@@ -20,21 +20,27 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult ProjectDemographics()//int period)
         {
-            //List<ProjDemogReportVM> report = new List<ProjDemogReportVM>();
-            List<List<ProjDemogReportVM>> monthsReports = new List<List<ProjDemogReportVM>>();
-            ReturnStatus rs = Repository.GetProjectDemographicsReport(Project.YEARLY);
-            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                monthsReports = (List<List<ProjDemogReportVM>>)rs.data;
+                List<List<ProjDemogReportVM>> monthsReports = new List<List<ProjDemogReportVM>>();
+                ReturnStatus rs = Repository.GetProjectDemographicsReport(Project.YEARLY);
+                if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    monthsReports = (List<List<ProjDemogReportVM>>)rs.data;
+                }
+                if (monthsReports == null)
+                {
+                    return RedirectToAction("Dashboard", "Admin");
+                }
+                return View(monthsReports);
+                //            public static int MONTH = 1;
+                //public static int QUARTER = 3;
+                //public static int YEARLY = 12;
             }
-            //List<List<ProjDemogReportVM>> monthsReports = new List<List<ProjDemogReportVM>>();
-            //monthsReports.Add(report);
-            //monthsReports.Add(report);
-            return View(monthsReports);
-            //            public static int MONTH = 1;
-            //public static int QUARTER = 3;
-            //public static int YEARLY = 12;
-            //public static ReturnStatus GetProjectDemographicsReport(int period)
+            catch
+            {
+                return View("Error");
+            }
         }
     }
 }

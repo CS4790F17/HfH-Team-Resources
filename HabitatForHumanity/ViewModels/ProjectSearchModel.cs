@@ -16,7 +16,9 @@ namespace HabitatForHumanity.ViewModels
         [Display(Name = "Name or email")]
         public string queryString { get; set; } = "";
         public IPagedList<Project> SearchResults { get; set; }
-        // public string SearchButton { get; set; }
+
+        public int categorySelection { get; set; }
+        public ProjectCategoryDropDownList categories = new ProjectCategoryDropDownList();
 
         public int statusChoice { get; set; }
         public List<SelectListItem> statusDropDown = new List<SelectListItem>()

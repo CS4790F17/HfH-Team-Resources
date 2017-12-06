@@ -1,75 +1,85 @@
 ﻿@using PagedList.Mvc;
+@using HabitatForHumanity.Models;
 @using HabitatForHumanity.ViewModels;
 @model PagedList.StaticPagedList<HabitatForHumanity.Models.Project>
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/bootstrap")
-
 
 
 @Html.HiddenFor(x => x.PageNumber)
 @ToolKitVM.ModalPreventDefault("editProjectModal", "Edit Project", "editPartialDiv", "editProjectForm")
 
 
-<div id="" class="container" style="margin-top:25px">
-
-    <!--Table Head-->
-    <div class="row">
-        <div class="col-xs-2">Project Name</div>
-        <div class="col-xs-5">Description</div>
-        <div class="col-xs-2">Begin Date</div>
-        <div class="col-xs-3">Status</div>
-    </div>
-
-    <!--Scrollable Div-->
-    <div>
-        <!--Table Body-->
-        @foreach (var project in Model)
-        {
-            var opac = 1.0;
-            if (project.status == 0)
-            {
-                //change for disabled orgs opacity
-                opac = 0.3;
-            }
-
-
-            var projectId = "project" + project.Id;
-            <div id="@projectId" class="row well well-sm" style="margin:5px;opacity:@opac">
-                <div class="col-xs-2">@project.name</div>
-                <div class="col-xs-5">@project.description</div>
-                <div class="col-xs-2">@project.beginDate.ToString("MM-dd-yyyy")</div>
-                <div class="col-xs-3">
-
-
-                    @switch (project.status)
-                    {
-                        case 0:
-                            <label class="switch" style="float:left">
-                                <input type="checkbox" class="statusSlider" projectId="@project.Id">
-                                <span class="slider round"></span>
-                            </label>
-                            break;
-                        case 1:
-                            <label class="switch" style="float:left">
-                                <input type="checkbox" checked="checked" class="statusSlider" projectId="@project.Id">
-                                <span class="slider round"></span>
-                            </label>
-                            break;
-                    }
 
 
 
-                    @ToolKitVM.ModalEditButtonGlyph("editProjectButton", "editProjectModal", project.Id.ToString(), "Edit")
- 
+<!--Table Body-->
+@foreach (var project in Model)
+{
+    var opac = 1.0;
+    if (project.status == 0)
+    {
+        //change for disabled orgs opacity
+        opac = 0.3;
+    }
+    var projectId = "project" + project.Id;
+    var categoryName = Repository.GetProjectCategoryName(project.categoryId);
+    <div id="@projectId" class="row well well-sm" style="margin:5px;opacity:@opac">
+        <!--Table Head-->
+        <div class="row">
+            <div class="col-md-10 collapseDiv" data-toggle="collapse" data-target="#@project.Id" aria-expanded="false" style="cursor:pointer">
+                <div class="col-md-2"><h4>@project.name</h4></div>
+                <div class="col-md-2" id="detailDiv">
+
+                    <a>View Details </a><span class="glyphicon glyphicon-chevron-down" data-toggle="collapse" data-target="#@project.Id"></span> 
                 </div>
+                <div class="col-md-2">
+                    
+                    <div><label>Category: </label> @categoryName</div>
+                </div>
+
             </div>
-        }
+            <div class="col-md-2">
 
+                <!--Status switch-->
+                @switch (project.status)
+                {
+                    case 0:
+                        <label class="switch" style="float:left">
+                            <input type="checkbox" class="statusSlider" projectId="@project.Id">
+                            <span class="slider round"></span>
+                        </label>
+                        break;
+                    case 1:
+                        <label class="switch" style="float:left">
+                            <input type="checkbox" checked="checked" class="statusSlider" projectId="@project.Id">
+                            <span class="slider round"></span>
+                        </label>
+                        break;
+                }
+
+            </div>
+
+        </div>
+
+
+        <div id="@project.Id" class="collapse" data-toggle="collapse" data-target="#@project.Id">
+            <div class="col-md-6">@project.description</div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Begin Date: </label>
+                    @project.beginDate.ToString("MM-dd-yyyy")
+                </div>
+                <div class="col-md-1">@ToolKitVM.ModalEditButtonGlyph("editProjectButton", "editProjectModal", project.Id.ToString(), "Edit")</div>
+            </div>
+        </div>
     </div>
+}
 
-</div>
 
-@ToolKitVM.GetPartialViewButtonScript("editProjectButton", "EditProject", "Admin", "editPartialDiv")
+
+
+
+@Html.GetPartialViewButtonScript("editProjectButton", "EditProject", "Admin", "editPartialDiv")
 
 <script type="text/javascript">
 
@@ -80,7 +90,7 @@
 
 
         if ($(this).is(":checked")) {
-            console.log("checked");
+            //console.log("checked");
             //then project is now active
             var status = 1;
         } else {
@@ -111,26 +121,27 @@
         )
     });
 
-    //changes the status of the project from active to inactive or vice versa
-    $(".changeStatus").click(function () {
-        var id = $(this).attr("projectId");
-        var page = $("#PageNumber").attr("value");
-        var query = $("#queryString").val();
-        var choice = $("#statusChoiceSelector").val();
-        //console.log(id);
-        //console.log(page);
-        //console.log(query);
-        // console.log(choice);
 
-        var data = { "id": id, "page": page, "statusChoice": choice, "queryString": query }
-        $.ajax({
-            url: "/Admin/ChangeProjectStatus",
-            data: data,
-            success: function (response) {
-                // console.log(response);
-                $("#projectList").replaceWith(response);
-            }
-        })
+    $(".collapseDiv").click(function () {
+
+        var detailLink = $(this);
+        var alink = $(detailLink).find("a");
+        var child = $(detailLink).find("span");
+        //  console.log($(this).attr("data-target"))
+        var isExpanded = $(detailLink).attr("aria-expanded");
+
+        console.log(child);
+        if (isExpanded == 'true') {
+            child.removeClass("glyphicon-chevron-up");
+            child.addClass("glyphicon-chevron-down");
+            alink.html("View Details ");
+           // child.html("View Details <span class='glyphicon glyphicon-chevron-down' ></span>");
+        } else {
+            child.removeClass("glyphicon-chevron-down");
+            child.addClass("glyphicon-chevron-up");
+            alink.html("Hide Details ");
+            //child.html("Hide Details <span class='glyphicon glyphicon-chevron-up'></span>");
+        }
     });
 
 </script>

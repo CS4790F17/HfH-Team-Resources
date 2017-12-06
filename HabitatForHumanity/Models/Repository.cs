@@ -86,41 +86,41 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetAllVolunteers(int projectId, int orgId)
         {
             ReturnStatus rs = new ReturnStatus();
-
-            #region if filter by project
-            if (projectId > 0 || orgId > 0)
-            {
-                ReturnStatus projectUsersReturn = TimeSheet.GetUsersbyTimeSheetFilters(projectId, orgId);
-                if (projectUsersReturn.errorCode == 0)
+            try {
+                #region if filter by project
+                if (projectId > 0 || orgId > 0)
                 {
-                    List<User> users = (List<User>)projectUsersReturn.data;
-                    List<UsersVM> volunteers = new List<UsersVM>();
-                    foreach (User u in users)
+                    ReturnStatus projectUsersReturn = TimeSheet.GetUsersbyTimeSheetFilters(projectId, orgId);
+                    if (projectUsersReturn.errorCode == 0)
                     {
-                        double volHours = 0.0;
-                        ReturnStatus hoursRS = getTotalHoursWorkedByVolunteer(u.Id);
-                        if (hoursRS.errorCode == ReturnStatus.ALL_CLEAR)
+                        List<User> users = (List<User>)projectUsersReturn.data;
+                        List<UsersVM> volunteers = new List<UsersVM>();
+                        foreach (User u in users)
                         {
-                            volHours = (double)hoursRS.data;
+                            double volHours = 0.0;
+                            ReturnStatus hoursRS = getTotalHoursWorkedByVolunteer(u.Id);
+                            if (hoursRS.errorCode == ReturnStatus.ALL_CLEAR)
+                            {
+                                volHours = (double)hoursRS.data;
+                            }
+                            volunteers.Add(new UsersVM()
+                            {
+                                userNumber = u.Id,
+                                // force alll name to not be null for simple comparison incontroller
+                                volunteerName = u.firstName + " " + u.lastName,
+                                email = u.emailAddress,
+                                hoursToDate = volHours
+                            });
                         }
-                        volunteers.Add(new UsersVM()
-                        {
-                            userNumber = u.Id,
-                            // force alll name to not be null for simple comparison incontroller
-                            volunteerName = u.firstName + " " + u.lastName,
-                            email = u.emailAddress,
-                            hoursToDate = volHours
-                        });
+                        rs.data = volunteers;
+                        rs.errorCode = ReturnStatus.ALL_CLEAR;
                     }
-                    rs.data = volunteers;
-                    rs.errorCode = ReturnStatus.ALL_CLEAR;
-                }
-                else
-                {
-                    rs.errorCode = -2;
-                }
+                    else
+                    {
+                        rs.errorCode = -2;
+                    }
 
-                return rs;
+                    return rs;
             }
             #endregion
 
@@ -156,6 +156,12 @@ namespace HabitatForHumanity.Models
             }
 
             return rs;
+            }
+            catch
+            {
+                rs.errorCode = -1;
+                return rs;
+            }
         }
 
 
@@ -246,12 +252,11 @@ namespace HabitatForHumanity.Models
         {
             ReturnStatus ret = new ReturnStatus();
             ret.data = null;
-
-            ReturnStatus st = new ReturnStatus();
-            st.data = new User();
-
             try
             {
+                ReturnStatus st = new ReturnStatus();
+                st.data = new User();
+                         
                 st = User.GetUserByEmail(email);
                 if (st.errorCode != ReturnStatus.ALL_CLEAR)
                 {
@@ -272,7 +277,7 @@ namespace HabitatForHumanity.Models
             {
                 ret.errorCode = -1;
                 ret.errorMessage = e.ToString();
-                return st;
+                return ret;
             }
         }
 
@@ -308,20 +313,27 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetDemographicsSurveyVM(string email)
         {
             ReturnStatus vmToReturn = new ReturnStatus();
-            
-            ReturnStatus userRS = Repository.GetUserByEmail(email);
-            if (userRS.errorCode != ReturnStatus.ALL_CLEAR)
+            try
             {
-                vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                ReturnStatus userRS = Repository.GetUserByEmail(email);
+                if (userRS.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                    return vmToReturn;
+                }
+                User user = (User)userRS.data;
+                DemographicsVM demographicsVM = new DemographicsVM();
+                demographicsVM.volunteerId = (int)user.Id;
+
+                vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                vmToReturn.data = demographicsVM;
                 return vmToReturn;
             }
-            User user = (User)userRS.data;
-            DemographicsVM demographicsVM = new DemographicsVM();
-            demographicsVM.volunteerId = (int)user.Id;
-
-            vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
-            vmToReturn.data = demographicsVM;
-            return vmToReturn;
+            catch
+            {
+                vmToReturn.errorCode = -1;
+                return vmToReturn;
+            }
         }
 
         public static void saveWaiverSnapshot(User user, String signatureName)
@@ -360,8 +372,8 @@ namespace HabitatForHumanity.Models
             if(userRS.errorCode == ReturnStatus.ALL_CLEAR)
             {
                 User user = (User)userRS.data;
-                user.incomeId = dvm.incomeId;
-                user.ethnicityId = dvm.ethnicityId;
+                user.incomeTier = dvm.incomeTier;
+                user.ethnicity = dvm.ethnicity;
                 user.collegeStatus = dvm.collegeStatus;
                 user.veteranStatus = dvm.veteranStatus;
                 user.disabledStatus = dvm.disabledStatus;
@@ -462,7 +474,7 @@ namespace HabitatForHumanity.Models
         /// <param name="statusChoice">The currently selected status choice. 0 - All, 1 - Active, 2 - Inactive</param>
         /// <param name="queryString">The name of the project to search for.</param>
         /// <returns></returns>
-        public static StaticPagedList<Project> GetProjectPageWithFilter(int? Page, int statusChoice, string queryString)
+        public static StaticPagedList<Project> GetProjectPageWithFilter(int? Page, int statusChoice, string queryString, int categorySelection)
         {
             int RecordsPerPage = 10;
             //page can't be 0 or below
@@ -476,15 +488,15 @@ namespace HabitatForHumanity.Models
             switch (statusChoice)
             {
                 case 0:
-                    st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString);
+                    st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString, categorySelection);
                     break;
                 case 1:
                     //search for all active projects
-                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 1, queryString);
+                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 1, queryString, categorySelection);
                     break;
                 case 2:
                     //search for all inactive projects
-                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 0, queryString);
+                    st = Project.GetProjectPageWithFilter((Page.Value) - 1, RecordsPerPage, ref totalCount, 0, queryString, categorySelection);
                     break;
 
             }
@@ -500,7 +512,7 @@ namespace HabitatForHumanity.Models
         /// <param name="Page">The current page number. Page cannot be null or less than 1.</param>
         /// <param name="queryString">The name of the project to search for.</param>
         /// <returns></returns>
-        public static StaticPagedList<Project> GetProjectPage(int? Page, string queryString)
+        public static StaticPagedList<Project> GetProjectPage(int? Page, string queryString, int categorySelection)
         {
             int RecordsPerPage = 10;
             //page can't be 0 or below
@@ -511,7 +523,7 @@ namespace HabitatForHumanity.Models
 
             //send in Page - 1 so that the index works correctly
             int totalCount = 0;
-            ReturnStatus st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString);
+            ReturnStatus st = Project.GetProjectPage((Page.Value) - 1, RecordsPerPage, ref totalCount, queryString, categorySelection);
 
             //supposed to help reduce the load on the database by only getting what's needed
             StaticPagedList<Project> SearchResults = new StaticPagedList<Project>(((List<Project>)st.data), Page.Value, RecordsPerPage, totalCount);
@@ -519,7 +531,10 @@ namespace HabitatForHumanity.Models
         }
 
 
-
+        public static string GetProjectCategoryName(int? id)
+        {
+            return ProjectCategory.GetProjectCategoryName(id);
+        }
 
 
 
@@ -640,17 +655,26 @@ namespace HabitatForHumanity.Models
         /// <returns>List of timecard viewmodels</returns>
         public static ReturnStatus GetTimeCardPageWithFilter(int? Page, int orgId, int projId, DateTime rangeStart, DateTime rangeEnd, string queryString)
         {
-
-            int RecordsPerPage = 10;
-
-
-            //page can't be 0 or below
-            if (Page == null || Page < 1)
+            ReturnStatus rs = new ReturnStatus();
+            try
             {
-                Page = 1;
+                int RecordsPerPage = 10;
+
+
+                //page can't be 0 or below
+                if (Page == null || Page < 1)
+                {
+                    Page = 1;
+                }
+                int totalCount = 0;
+                rs = TimeSheet.GetTimeCardPageWithFilter(Page.Value - 1, RecordsPerPage, ref totalCount, orgId, projId, rangeStart, rangeEnd, queryString);
+                return rs;
             }
-            int totalCount = 0;
-            return TimeSheet.GetTimeCardPageWithFilter(Page.Value - 1, RecordsPerPage, ref totalCount, orgId, projId, rangeStart, rangeEnd, queryString);
+            catch
+            {
+                rs.errorCode = -1;
+                return rs;
+            }
         }
 
         /// <summary>
@@ -661,66 +685,84 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetTimeCardVM(int id)
         {
             ReturnStatus cardReturn = new ReturnStatus();
-            ReturnStatus timesheetRS = GetTimeSheetById(id);
-
-            if (timesheetRS.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                TimeSheet ts = (TimeSheet)timesheetRS.data;
-                TimeCardVM card = new TimeCardVM();
-                card.timeId = ts.Id;
-                card.userId = ts.user_Id;
-                card.projId = ts.project_Id;
-                card.orgId = ts.org_Id;
-                card.inTime = ts.clockInTime;
-                card.outTime = ts.clockOutTime;
-
-                ReturnStatus orgRS = GetOrganizationById(ts.org_Id);
-                if (orgRS.errorCode == ReturnStatus.ALL_CLEAR)
+                ReturnStatus timesheetRS = GetTimeSheetById(id);
+            
+                if (timesheetRS.errorCode == ReturnStatus.ALL_CLEAR)
                 {
-                    Organization org = (Organization)orgRS.data;
-                    card.orgName = org.name;
-                }
+                    TimeSheet ts = (TimeSheet)timesheetRS.data;
+                    TimeCardVM card = new TimeCardVM();
+                    card.timeId = ts.Id;
+                    card.userId = ts.user_Id;
+                    card.projId = ts.project_Id;
+                    card.orgId = ts.org_Id;
+                    card.inTime = ts.clockInTime;
+                    card.outTime = ts.clockOutTime;
 
-                ReturnStatus projRS = GetProjectById(ts.project_Id);
-                if (projRS.errorCode == ReturnStatus.ALL_CLEAR)
-                {
-                    Project project = (Project)projRS.data;
-                    card.projName = project.name;
-                }
+                    ReturnStatus orgRS = GetOrganizationById(ts.org_Id);
+                    if (orgRS.errorCode == ReturnStatus.ALL_CLEAR)
+                    {
+                        Organization org = (Organization)orgRS.data;
+                        card.orgName = org.name;
+                    }
 
-                ReturnStatus userRS = GetUser(ts.user_Id);
-                if (userRS.errorCode == ReturnStatus.ALL_CLEAR)
-                {
-                    User user = (User)userRS.data;
-                    card.volName = (user.firstName != null) ? user.firstName : user.emailAddress;
-                    card.volName += " ";
-                    card.volName += (user.lastName != null) ? user.lastName : user.emailAddress;
+                    ReturnStatus projRS = GetProjectById(ts.project_Id);
+                    if (projRS.errorCode == ReturnStatus.ALL_CLEAR)
+                    {
+                        Project project = (Project)projRS.data;
+                        card.projName = project.name;
+                    }
+
+                    ReturnStatus userRS = GetUser(ts.user_Id);
+                    if (userRS.errorCode == ReturnStatus.ALL_CLEAR)
+                    {
+                        User user = (User)userRS.data;
+                        card.volName = (user.firstName != null) ? user.firstName : user.emailAddress;
+                        card.volName += " ";
+                        card.volName += (user.lastName != null) ? user.lastName : user.emailAddress;
+                    }
+                    cardReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                    cardReturn.data = card;
                 }
-                cardReturn.errorCode = ReturnStatus.ALL_CLEAR;
-                cardReturn.data = card;
+                else
+                {
+                    cardReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                }
+                return cardReturn;
             }
-            else
+            catch
             {
-                cardReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                cardReturn.errorCode = -1;
+                return cardReturn;
             }
-            return cardReturn;
         }
 
         #endregion timecard vms
 
         public static ReturnStatus EditTimeCard(TimeCardVM card)
         {
-            ReturnStatus rs = GetTimeSheetById(card.timeId);
-            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            ReturnStatus returnable = new ReturnStatus();
+            try
             {
-                rs.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                return rs;
-            }
-            TimeSheet ts = (TimeSheet)rs.data;
-            ts.clockInTime = card.inTime;
-            ts.clockOutTime = card.outTime;
+                ReturnStatus rs = GetTimeSheetById(card.timeId);
+                if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    rs.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                    return rs;
+                }
+                TimeSheet ts = (TimeSheet)rs.data;
+                ts.clockInTime = card.inTime;
+                ts.clockOutTime = card.outTime;
 
-            return EditTimeSheet(ts);
+                returnable = EditTimeSheet(ts);
+                return returnable;
+            }
+            catch
+            {
+                returnable.errorCode = -1;
+                return returnable;
+            }
         }
 
         /// <summary>
@@ -831,23 +873,32 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus IsUserClockedIn(int userId)
         {
             //get user's timesheet
-            ReturnStatus rs = TimeSheet.GetClockedInUserTimeSheet(userId);
-            if (rs.errorCode != 0)
+            ReturnStatus rs = new ReturnStatus();
+            try
             {
-                return rs;
-            }
+                rs = TimeSheet.GetClockedInUserTimeSheet(userId);
+                if (rs.errorCode != 0)
+                {
+                    return rs;
+                }
 
-            TimeSheet userTimeSheet = (TimeSheet)rs.data;
+                TimeSheet userTimeSheet = (TimeSheet)rs.data;
 
-            //if only a default timesheet was found then the user isn't "clocked in"
-            if (userTimeSheet.Id < 0)
-            {
-                rs.data = false;
-                return rs;
+                //if only a default timesheet was found then the user isn't "clocked in"
+                if (userTimeSheet.Id < 0)
+                {
+                    rs.data = false;
+                    return rs;
+                }
+                else
+                {
+                    rs.data = true;
+                    return rs;
+                }
             }
-            else
+            catch
             {
-                rs.data = true;
+                rs.errorCode = -1;
                 return rs;
             }
         }
@@ -867,10 +918,11 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetPortalVM(int id)
         {
             ReturnStatus returnable = new ReturnStatus();
-            PortalVM portalVM = new PortalVM();
-            returnable.data = portalVM;
             try
             {
+                PortalVM portalVM = new PortalVM();
+                returnable.data = portalVM;
+            
                 ReturnStatus rs = Repository.GetUser(id);
                 if (rs.errorCode != 0)
                 {
@@ -914,10 +966,11 @@ namespace HabitatForHumanity.Models
 
         public static ReturnStatus GetPunchInVM(int userId)
         {
-            PunchInVM punch = new PunchInVM();
+           
             ReturnStatus st = new ReturnStatus();
             try
             {
+                PunchInVM punch = new PunchInVM();
                 st = User.GetUser(userId);
                 if (st.errorCode != 0)
                 {
@@ -985,48 +1038,62 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetHoursChartVMByYear()
         {
             ReturnStatus chartReturn = new ReturnStatus();
-            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
-            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
-            ReturnStatus tsArrayRS = TimeSheet.Get3YearsTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
-            // this is an array[9] that holds lists of timesheets
-            // the first 3 are restore(2yrs ago, last year, now )
-            // next 3 are awbk
-            // last 3 are homebuilds( whatever isn't restore or awbk)
-            if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
-                int year = DateTime.Today.Year;
-                string[] cats = new string[] { (year - 2).ToString(), (year - 1).ToString(), year.ToString() };
-                int[] restoreHrs = new int[3];
-                int[] awbkHrs = new int[3];
-                int[] homesHrs = new int[3];
-                int j = 0, k = 0;
-                for (int i = 0; i < 9; i++)
+                ReturnStatus restoreProjectIdListRS = Project.GetProjectIdByCategoryName("ReStore");
+                ReturnStatus abwkProjectIdListRS = Project.GetProjectIdByCategoryName("ABWK");
+                ReturnStatus homeBuildProjectIdListRS = Project.GetProjectIdByCategoryName("Home");
+
+                List<int> restoreIds = (restoreProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)restoreProjectIdListRS.data : new List<int>();
+                List<int> abwkIds = (abwkProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)abwkProjectIdListRS.data : new List<int>();
+                List<int> homeBuildIds = (homeBuildProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)homeBuildProjectIdListRS.data : new List<int>();
+
+                ReturnStatus tsArrayRS = TimeSheet.Get3YearsTimeSheetsByCategory(restoreIds, abwkIds, homeBuildIds);
+                // this is an array[9] that holds lists of timesheets
+                // the first 3 are restore(2yrs ago, last year, now )
+                // next 3 are awbk
+                // last 3 are homebuilds( whatever isn't restore or awbk)
+                if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
                 {
-                    TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
-                    if (i < 3)
+                    List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
+                    int year = DateTime.Today.Year;
+                    string[] cats = new string[] { (year - 2).ToString(), (year - 1).ToString(), year.ToString() };
+                    int[] restoreHrs = new int[3];
+                    int[] awbkHrs = new int[3];
+                    int[] homesHrs = new int[3];
+                    int j = 0, k = 0;
+                    for (int i = 0; i < 9; i++)
                     {
-                        restoreHrs[i] = (int)ts.TotalHours;
+                        TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
+                        if (i < 3)
+                        {
+                            restoreHrs[i] = (int)ts.TotalHours;
+                        }
+                        else if (i < 6)
+                        {
+                            awbkHrs[j] = (int)ts.TotalHours;
+                            j++;
+                        }
+                        else
+                        {
+                            homesHrs[k] = (int)ts.TotalHours;
+                            k++;
+                        }
                     }
-                    else if (i < 6)
-                    {
-                        awbkHrs[j] = (int)ts.TotalHours;
-                        j++;
-                    }
-                    else
-                    {
-                        homesHrs[k] = (int)ts.TotalHours;
-                        k++;
-                    }
+                    ChartVM chartVM = new ChartVM("Volunteer Hours by Year", cats, restoreHrs, awbkHrs, homesHrs);
+                    chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                    chartReturn.data = chartVM;
+                    return chartReturn;
                 }
-                ChartVM chartVM = new ChartVM("Volunteer Hours by Year", cats, restoreHrs, awbkHrs, homesHrs);
-                chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
-                chartReturn.data = chartVM;
-                return chartReturn;
+                else
+                {
+                    return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
+                }
             }
-            else
+            catch
             {
-                return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
+                chartReturn.errorCode = -1;
+                return chartReturn;
             }
 
         }
@@ -1034,136 +1101,176 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetHoursChartVMByMonth()
         {
             ReturnStatus chartReturn = new ReturnStatus();
-            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
-            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
-            ReturnStatus tsArrayRS = TimeSheet.Get12MonthsTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
-            // this is an array[36] that holds lists of timesheets
-            // the first 12 are restore(11 months ago, 10... )
-            // next 12 are awbk
-            // last 12 are homebuilds( whatever isn't restore or awbk)
-            if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
-                DateTime today = DateTime.Today;
-                string[] cats = new string[12];// { (year - 2).ToString(), (year - 1).ToString(), year.ToString() };
-                int m = 11;
-                for (int i = 0; i < 12; i++)
+                ReturnStatus restoreProjectIdListRS = Project.GetProjectIdByCategoryName("ReStore");
+                ReturnStatus abwkProjectIdListRS = Project.GetProjectIdByCategoryName("ABWK");
+                ReturnStatus homeBuildProjectIdListRS = Project.GetProjectIdByCategoryName("Home");
+
+                List<int> restoreIds = (restoreProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)restoreProjectIdListRS.data : new List<int>();
+                List<int> abwkIds = (abwkProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)abwkProjectIdListRS.data : new List<int>();
+                List<int> homeBuildIds = (homeBuildProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)homeBuildProjectIdListRS.data : new List<int>();
+
+                ReturnStatus tsArrayRS = TimeSheet.Get12MonthsTimeSheetsByCategory(restoreIds, abwkIds, homeBuildIds);
+                // this is an array[36] that holds lists of timesheets
+                // the first 12 are restore(11 months ago, 10... )
+                // next 12 are awbk
+                // last 12 are homebuilds( whatever isn't restore or awbk)
+                if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
                 {
-                    cats[i] = today.AddMonths(-m).ToString("MMMM");
-                    m--;
+                    List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
+                    DateTime today = DateTime.Today;
+                    string[] cats = new string[12];// { (year - 2).ToString(), (year - 1).ToString(), year.ToString() };
+                    int m = 11;
+                    for (int i = 0; i < 12; i++)
+                    {
+                        cats[i] = today.AddMonths(-m).ToString("MMMM");
+                        m--;
+                    }
+                    int[] restoreHrs = new int[12];
+                    int[] awbkHrs = new int[12];
+                    int[] homesHrs = new int[12];
+                    int j = 0, k = 0;
+                    for (int i = 0; i < 36; i++)
+                    {
+                        TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
+                        if (i < 12)
+                        {
+                            restoreHrs[i] = (int)ts.TotalHours;
+                        }
+                        else if (i < 24)
+                        {
+                            awbkHrs[j] = (int)ts.TotalHours;
+                            j++;
+                        }
+                        else
+                        {
+                            homesHrs[k] = (int)ts.TotalHours;
+                            k++;
+                        }
+                    }
+                    ChartVM chartVM = new ChartVM("Volunteer Hours by Month", cats, restoreHrs, awbkHrs, homesHrs);
+                    chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                    chartReturn.data = chartVM;
+                    return chartReturn;
                 }
-                int[] restoreHrs = new int[12];
-                int[] awbkHrs = new int[12];
-                int[] homesHrs = new int[12];
-                int j = 0, k = 0;
-                for (int i = 0; i < 36; i++)
+                else
                 {
-                    TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
-                    if (i < 12)
-                    {
-                        restoreHrs[i] = (int)ts.TotalHours;
-                    }
-                    else if (i < 24)
-                    {
-                        awbkHrs[j] = (int)ts.TotalHours;
-                        j++;
-                    }
-                    else
-                    {
-                        homesHrs[k] = (int)ts.TotalHours;
-                        k++;
-                    }
+                    return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
                 }
-                ChartVM chartVM = new ChartVM("Volunteer Hours by Month", cats, restoreHrs, awbkHrs, homesHrs);
-                chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
-                chartReturn.data = chartVM;
+            }
+            catch
+            {
+                chartReturn.errorCode = -1;
                 return chartReturn;
             }
-            else
-            {
-                return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
-            }
-
         }
 
         public static ReturnStatus GetHoursChartVMByWeek()
         {
             ReturnStatus chartReturn = new ReturnStatus();
-            ReturnStatus restoreIdRS = Project.GetProjectIdByName("Re-Store");
-            ReturnStatus abwkIdRS = Project.GetProjectIdByName("ABWK");
-            ReturnStatus tsArrayRS = TimeSheet.Get12WeeksTimeSheetsByCategory((int)restoreIdRS.data, (int)abwkIdRS.data);
-            // this is an array[36] that holds lists of timesheets
-            // the first 12 are restore(11 weeks ago, 10... )
-            // next 12 are awbk
-            // last 12 are homebuilds( whatever isn't restore or awbk)
-            if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
-                DateTime today = DateTime.Today;
-                string[] cats = new string[12];
-                int w = 11;
-                for (int i = 0; i < 12; i++)
+                ReturnStatus restoreProjectIdListRS = Project.GetProjectIdByCategoryName("ReStore");
+                ReturnStatus abwkProjectIdListRS = Project.GetProjectIdByCategoryName("ABWK");
+                ReturnStatus homeBuildProjectIdListRS = Project.GetProjectIdByCategoryName("Home");
+
+                List<int> restoreIds = (restoreProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)restoreProjectIdListRS.data : new List<int>();
+                List<int> abwkIds = (abwkProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)abwkProjectIdListRS.data : new List<int>();
+                List<int> homeBuildIds = (homeBuildProjectIdListRS.errorCode == ReturnStatus.ALL_CLEAR) ? (List<int>)homeBuildProjectIdListRS.data : new List<int>();
+
+                ReturnStatus tsArrayRS = TimeSheet.Get12WeeksTimeSheetsByCategory(restoreIds, abwkIds, homeBuildIds);
+                // this is an array[36] that holds lists of timesheets
+                // the first 12 are restore(11 weeks ago, 10... )
+                // next 12 are awbk
+                // last 12 are homebuilds( whatever isn't restore or awbk)
+                if (tsArrayRS.errorCode == ReturnStatus.ALL_CLEAR)
                 {
-                    DateTime myDate = today.AddDays(-w * 7);
-                    cats[i] = myDate.Month.ToString() + "/" + myDate.Day.ToString();
-                    w--;
+                    List<TimeSheet>[] sheetsArr = (List<TimeSheet>[])tsArrayRS.data;
+                    DateTime today = DateTime.Today;
+                    string[] cats = new string[12];
+                    int w = 11;
+                    for (int i = 0; i < 12; i++)
+                    {
+                        DateTime myDate = today.AddDays(-w * 7);
+                        cats[i] = myDate.Month.ToString() + "/" + myDate.Day.ToString();
+                        w--;
+                    }
+                    int[] restoreHrs = new int[12];
+                    int[] awbkHrs = new int[12];
+                    int[] homesHrs = new int[12];
+                    int j = 0, k = 0;
+                    for (int i = 0; i < 36; i++)
+                    {
+                        TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
+                        if (i < 12)
+                        {
+                            restoreHrs[i] = (int)ts.TotalHours;
+                        }
+                        else if (i < 24)
+                        {
+                            awbkHrs[j] = (int)ts.TotalHours;
+                            j++;
+                        }
+                        else
+                        {
+                            homesHrs[k] = (int)ts.TotalHours;
+                            k++;
+                        }
+                    }
+                    ChartVM chartVM = new ChartVM("Volunteer Hours by Week", cats, restoreHrs, awbkHrs, homesHrs);
+                    chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                    chartReturn.data = chartVM;
+                    return chartReturn;
                 }
-                int[] restoreHrs = new int[12];
-                int[] awbkHrs = new int[12];
-                int[] homesHrs = new int[12];
-                int j = 0, k = 0;
-                for (int i = 0; i < 36; i++)
+                else
                 {
-                    TimeSpan ts = AddTimeSheetHours(sheetsArr[i]);
-                    if (i < 12)
-                    {
-                        restoreHrs[i] = (int)ts.TotalHours;
-                    }
-                    else if (i < 24)
-                    {
-                        awbkHrs[j] = (int)ts.TotalHours;
-                        j++;
-                    }
-                    else
-                    {
-                        homesHrs[k] = (int)ts.TotalHours;
-                        k++;
-                    }
+                    return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
                 }
-                ChartVM chartVM = new ChartVM("Volunteer Hours by Week", cats, restoreHrs, awbkHrs, homesHrs);
-                chartReturn.errorCode = ReturnStatus.ALL_CLEAR;
-                chartReturn.data = chartVM;
-                return chartReturn;
             }
-            else
+            catch
             {
-                return new ReturnStatus() { errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE, data = null };
+                chartReturn.errorCode = -1;
+                return chartReturn;
             }
 
         }
         #endregion Dashboard Barchart
 
         #region Project Reports
+        /// <summary>
+        /// Gets a row of volunteer demographics data for each of the 3 project categories
+        /// for the number of months defined by @period
+        /// </summary>
+        /// <param name="period">Number of months to go back for data</param>
+        /// <returns></returns>
         public static ReturnStatus GetProjectDemographicsReport(int period)
         {
             ReturnStatus listOfListsRS = new ReturnStatus();
-            List<List<ProjDemogReportVM>> reports = new List<List<ProjDemogReportVM>>();
-            for (int i = 0; i < period; i++)
+            try
             {
-                ReturnStatus aListRS = Project.GetProjectDemographicsReport(i);
-                if(aListRS.errorCode != ReturnStatus.ALL_CLEAR)
+                List<List<ProjDemogReportVM>> reports = new List<List<ProjDemogReportVM>>();
+                for (int i = 0; i < period; i++)
                 {
-                    listOfListsRS.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                    return listOfListsRS;
+                    ReturnStatus aListRS = Project.GetProjectDemographicsReport(i);
+                    if (aListRS.errorCode != ReturnStatus.ALL_CLEAR)
+                    {
+                        listOfListsRS.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                        return listOfListsRS;
+                    }
+                    reports.Add((List<ProjDemogReportVM>)aListRS.data);
                 }
-                reports.Add((List<ProjDemogReportVM>)aListRS.data);
-            }
-            listOfListsRS.errorCode = ReturnStatus.ALL_CLEAR;
-            listOfListsRS.data = reports;
-            return listOfListsRS;
-            
+                listOfListsRS.errorCode = ReturnStatus.ALL_CLEAR;
+                listOfListsRS.data = reports;
+                return listOfListsRS;
 
-            //return Project.GetProjectDemographicsReport(period);
+                //return Project.GetProjectDemographicsReport(period);
+            }
+            catch
+            {
+                listOfListsRS.errorCode = -1;
+                return listOfListsRS;
+            }
         }
 
         #endregion Project Reports
@@ -1236,21 +1343,23 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetDemographicsForPie(string gender)
         {
             ReturnStatus st = new ReturnStatus();
-            st.data = new List<User.Demog>();
             try
             {
+                st.data = new List<User.Demog>();
+           
                 st = User.GetDemographicsForPie(gender);
                 if (st.errorCode != ReturnStatus.ALL_CLEAR)
                 {
                     st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                     return st;
                 }
+                return User.GetDemographicsForPie(gender);
             }
             catch
             {
-                //log something
-            }
-            return User.GetDemographicsForPie(gender);
+                st.errorCode = -1;
+                return st;
+            }           
         }
 
         public static ReturnStatus GetNumBadPunches()
@@ -1268,34 +1377,42 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus getTotalHoursLoggedIntoProject(int projectId)
         {
             ReturnStatus hoursLogged = new ReturnStatus();
-            hoursLogged.data = 0.0;
-
-
-            DateTime userClockedIn = DateTime.Today.AddDays(1);
-            List<TimeSheet> temp = new List<TimeSheet>();
-            List<TimeSheet> volunteerHours = new List<TimeSheet>();
-            ReturnStatus st = new ReturnStatus();
-            st.data = new List<TimeSheet>();
-
-            st = GetAllTimeSheetsByProjectId(projectId);
-            if (st.errorCode != ReturnStatus.ALL_CLEAR)
+            try
             {
-                st.data = 0.0;
-                return st;
-            }
-            temp = (List<TimeSheet>)st.data;
-            if (temp != null && temp.Count() > 0)
-            {
-                foreach (TimeSheet ts in temp)
+                hoursLogged.data = 0.0;
+
+
+                DateTime userClockedIn = DateTime.Today.AddDays(1);
+                List<TimeSheet> temp = new List<TimeSheet>();
+                List<TimeSheet> volunteerHours = new List<TimeSheet>();
+                ReturnStatus st = new ReturnStatus();
+                st.data = new List<TimeSheet>();
+
+                st = GetAllTimeSheetsByProjectId(projectId);
+                if (st.errorCode != ReturnStatus.ALL_CLEAR)
                 {
-                    if (ts.clockOutTime != userClockedIn)
-                        volunteerHours.Add(ts);
+                    st.data = 0.0;
+                    return st;
                 }
-                TimeSpan totalHours = AddTimeSheetHours(volunteerHours);
-                hoursLogged.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
-            }
+                temp = (List<TimeSheet>)st.data;
+                if (temp != null && temp.Count() > 0)
+                {
+                    foreach (TimeSheet ts in temp)
+                    {
+                        if (ts.clockOutTime != userClockedIn)
+                            volunteerHours.Add(ts);
+                    }
+                    TimeSpan totalHours = AddTimeSheetHours(volunteerHours);
+                    hoursLogged.data = Math.Round(totalHours.TotalHours, 2, MidpointRounding.AwayFromZero);
+                }
 
-            return hoursLogged;
+                return hoursLogged;
+            }
+            catch
+            {
+                hoursLogged.errorCode = -1;
+                return hoursLogged;
+            }
         }
 
         #endregion
@@ -1304,100 +1421,116 @@ namespace HabitatForHumanity.Models
 
         public static ReturnStatus GetAdminViewOfUser(int id)
         {
-            AdminUserVM vm = new AdminUserVM();
             ReturnStatus vmToReturn = new ReturnStatus();
-            ReturnStatus userRS = GetUser(id);
-            if(userRS.errorCode != ReturnStatus.ALL_CLEAR)
-            {
-                vmToReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-                return vmToReturn;
-            }
-            User user = (User)userRS.data;
-
-            // set user info
-            vm.userInfo.userInfoId = user.Id;
-            vm.userInfo.firstName = user.firstName;
-            vm.userInfo.lastName = user.lastName;
-            vm.userInfo.homePhone = user.homePhoneNumber;
-            vm.userInfo.workPhone = user.workPhoneNumber;
-            vm.userInfo.email = user.emailAddress;
-            vm.userInfo.streetAddress = user.streetAddress;
-            vm.userInfo.city = user.city;
-            vm.userInfo.zip = user.zip;
-            vm.userInfo.birthDate = user.birthDate;
-            vm.userInfo.isAdmin = (user.isAdmin == 1) ? true : false;
-            vm.userInfo.waiverSignDate = user.waiverSignDate;
             try
             {
-                vm.userInfo.hoursToDate = (double)getTotalHoursWorkedByVolunteer(user.Id).data;
+                AdminUserVM vm = new AdminUserVM();
+                ReturnStatus userRS = GetUser(id);
+                if (userRS.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    vmToReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                    return vmToReturn;
+                }
+                User user = (User)userRS.data;
+
+                // set user info
+                vm.userInfo.userInfoId = user.Id;
+                vm.userInfo.firstName = user.firstName;
+                vm.userInfo.lastName = user.lastName;
+                vm.userInfo.homePhone = user.homePhoneNumber;
+                vm.userInfo.workPhone = user.workPhoneNumber;
+                vm.userInfo.email = user.emailAddress;
+                vm.userInfo.streetAddress = user.streetAddress;
+                vm.userInfo.city = user.city;
+                vm.userInfo.zip = user.zip;
+                vm.userInfo.birthDate = user.birthDate;
+                vm.userInfo.isAdmin = (user.isAdmin == 1) ? true : false;
+                vm.userInfo.waiverSignDate = user.waiverSignDate;
+                try
+                {
+                    vm.userInfo.hoursToDate = (double)getTotalHoursWorkedByVolunteer(user.Id).data;
+                }
+                catch
+                {
+                    vm.userInfo.hoursToDate = 0.0;
+                }
+                vm.userInfo.waiverExpiration = user.waiverSignDate.AddYears(1);
+                vm.userInfo.waiverStatus = (vm.userInfo.waiverExpiration > DateTime.Now);
+
+                // set emergency info
+                vm.emergInfo.emergencyFirstName = user.emergencyFirstName;
+                vm.emergInfo.emergencyLastName = user.emergencyLastName;
+                vm.emergInfo.relation = user.relation;
+                vm.emergInfo.emergencyHomePhone = user.emergencyHomePhone;
+                vm.emergInfo.emergencyWorkPhone = user.emergencyWorkPhone;
+                vm.emergInfo.emergencyStreetAddress = user.emergencyStreetAddress;
+                vm.emergInfo.emergencyCity = user.emergencyCity;
+                vm.emergInfo.emergencyZip = user.emergencyZip;
+
+                // set timecards
+                ReturnStatus timeIdsRS = TimeSheet.GetTimeSheetIdsByUserId(id);
+                List<TimeCardVM> timecardVMs = new List<TimeCardVM>();
+                if (timeIdsRS.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    List<int> timeids = (List<int>)timeIdsRS.data;
+                    foreach (int timesheetId in timeids)
+                    {
+                        ReturnStatus timeVMsRS = GetTimeCardVM(timesheetId);
+                        if (timeVMsRS.errorCode == ReturnStatus.ALL_CLEAR)
+                        {
+                            timecardVMs.Add((TimeCardVM)timeVMsRS.data);
+                        }
+                    }
+                }
+                vm.timeCardVMs = timecardVMs;
+
+                vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                vmToReturn.data = vm;
+
+                return vmToReturn;
             }
             catch
             {
-                vm.userInfo.hoursToDate = 0.0;
+                vmToReturn.errorCode = -1;
+                return vmToReturn;
             }
-            vm.userInfo.waiverExpiration = user.waiverSignDate.AddYears(1);
-            vm.userInfo.waiverStatus = (vm.userInfo.waiverExpiration > DateTime.Now);
-
-            // set emergency info
-            vm.emergInfo.emergencyFirstName = user.emergencyFirstName;
-            vm.emergInfo.emergencyLastName = user.emergencyLastName;
-            vm.emergInfo.relation = user.relation;
-            vm.emergInfo.emergencyHomePhone = user.emergencyHomePhone;
-            vm.emergInfo.emergencyWorkPhone = user.emergencyWorkPhone;
-            vm.emergInfo.emergencyStreetAddress = user.emergencyStreetAddress;
-            vm.emergInfo.emergencyCity = user.emergencyCity;
-            vm.emergInfo.emergencyZip = user.emergencyZip;
-
-            // set timecards
-            ReturnStatus timeIdsRS = TimeSheet.GetTimeSheetIdsByUserId(id);
-            List<TimeCardVM> timecardVMs = new List<TimeCardVM>();
-            if (timeIdsRS.errorCode == ReturnStatus.ALL_CLEAR)
-            {
-                List<int> timeids = (List<int>)timeIdsRS.data;
-                foreach(int timesheetId in timeids)
-                {
-                    ReturnStatus timeVMsRS = GetTimeCardVM(timesheetId);
-                    if(timeVMsRS.errorCode == ReturnStatus.ALL_CLEAR)
-                    {
-                        timecardVMs.Add((TimeCardVM)timeVMsRS.data);
-                    }
-                }            
-            }
-            vm.timeCardVMs = timecardVMs;
-
-            vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
-            vmToReturn.data = vm;
-
-            return vmToReturn;
         }
 
         public static ReturnStatus AdminEditUser(UserInfo u)
         {
             ReturnStatus result = new ReturnStatus();
-            ReturnStatus userRS = GetUser(u.userInfoId);
-            if(userRS.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                User user = (User)userRS.data;
-                user.firstName = u.firstName;
-                user.lastName = u.lastName;
-                user.homePhoneNumber = u.homePhone;
-                user.workPhoneNumber = u.workPhone;
-                //if ((bool)EmailExists(u.email).data)
-                //{
-                //    result.errorCode = -1;
-                //    return result;
-                //}
-                user.emailAddress = u.email;
-                user.streetAddress = u.streetAddress;
-                user.city = u.city;
-                user.zip = u.zip;
-                user.birthDate = u.birthDate;
-                user.isAdmin = (u.isAdmin) ? 1 : 0;
-                user.waiverSignDate = u.waiverSignDate;
-                return EditUser(user);
+                ReturnStatus userRS = GetUser(u.userInfoId);
+                if (userRS.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    User user = (User)userRS.data;
+                    user.firstName = u.firstName;
+                    user.lastName = u.lastName;
+                    user.homePhoneNumber = u.homePhone;
+                    user.workPhoneNumber = u.workPhone;
+                    //if ((bool)EmailExists(u.email).data)
+                    //{
+                    //    result.errorCode = -1;
+                    //    return result;
+                    //}
+                    user.emailAddress = u.email;
+                    user.streetAddress = u.streetAddress;
+                    user.city = u.city;
+                    user.zip = u.zip;
+                    user.birthDate = u.birthDate;
+                    user.isAdmin = (u.isAdmin) ? 1 : 0;
+                    user.waiverSignDate = u.waiverSignDate;
+                    return EditUser(user);
+                }
+                result.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
+                return result;
             }
-            result.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
-            return result;
+            catch
+            {
+                result.errorCode = -1;
+                return result;
+            }
         }
         #endregion Admin --> User
 
@@ -1430,5 +1563,21 @@ namespace HabitatForHumanity.Models
 
 
         #endregion
+
+        #region WaiverHistory
+            public static WaiverHistoryByUser getWaiverHistoryByUserId(int id)
+        {
+            WaiverHistoryByUser waiverHistory = new WaiverHistoryByUser();
+            waiverHistory.waiverList = WaiverHistory.getWaiverHistoryByUserId(id);
+
+            return waiverHistory;
+        }
+
+        public static ReturnStatus GetAWaiverById(int id)
+        {
+            return WaiverHistory.GetWaiverByID(id);
+        }
+        #endregion
+
     }
 }

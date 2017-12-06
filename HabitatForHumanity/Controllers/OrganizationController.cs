@@ -19,52 +19,59 @@ namespace HabitatForHumanity.Controllers
 
 
 
-        public ActionResult GetOrganizations()
-        {
-            return View();
-        }
+        //public ActionResult GetOrganizations()
+        //{
+        //    return View();
+        //}
 
 
 
 
         // GET: Organization
-        public ActionResult Index()
-        {
-            return View(db.organizations.ToList());
-        }
+        //public ActionResult Index()
+        //{
+        //    return View(db.organizations.ToList());
+        //}
 
         // GET: Organization/Details/5
         public ActionResult Details(int? id)
         {
-            int orgId = 0;
-            orgId = (int)id;
-
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+                int orgId = 0;
+                orgId = (int)id;
 
-            Organization organization = new Organization();
-            OrganizationVM organizationVM = new OrganizationVM();
-            //TODO: add error checking
-            organization = (Organization)Repository.GetOrganizationById(orgId).data;
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
 
-            organizationVM._Id = organization.Id;
-            organizationVM._name = organization.name;
-            if (organization.status == 1)
-            {
-                organizationVM._status = true;
-            }
-            else
-            {
-                organizationVM._status = false;
-            }
+                Organization organization = new Organization();
+                OrganizationVM organizationVM = new OrganizationVM();
+                //TODO: add error checking
+                organization = (Organization)Repository.GetOrganizationById(orgId).data;
 
-            if (organizationVM == null)
-            {
-                return HttpNotFound();
+                organizationVM._Id = organization.Id;
+                organizationVM._name = organization.name;
+                if (organization.status == 1)
+                {
+                    organizationVM._status = true;
+                }
+                else
+                {
+                    organizationVM._status = false;
+                }
+
+                if (organizationVM == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(organizationVM);
             }
-            return View(organizationVM);
+            catch
+            {
+                return View("Error");
+            }
         }
 
         // GET: Organization/Create
@@ -80,54 +87,68 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,name")] Organization organization)
         {
-            if (ModelState.IsValid)
+            try
             {
-                db.organizations.Add(organization);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+                if (ModelState.IsValid)
+                {
+                    db.organizations.Add(organization);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
 
-            return View(organization);
+                return View(organization);
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
 
         // GET: Organization/Edit/5
         public ActionResult Edit(int? id)
         {
-            int orgId = 0;
-            orgId = (int)id;
-
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+                int orgId = 0;
+                orgId = (int)id;
 
-            Organization organization = new Organization();
-            OrganizationVM organizationVM = new OrganizationVM();
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
 
-            ReturnStatus rs = Repository.GetOrganizationById(orgId);
-            if(rs.errorCode != 0)
-            {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
-                return View();
-            }
-            organization = (Organization)rs.data;
+                Organization organization = new Organization();
+                OrganizationVM organizationVM = new OrganizationVM();
 
-            organizationVM._Id = organization.Id;
-            organizationVM._name = organization.name;
-            if (organization.status == 1)
-            {
-                organizationVM._status = true;
-            }
-            else
-            {
-                organizationVM._status = false;
-            }
+                ReturnStatus rs = Repository.GetOrganizationById(orgId);
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                    return View();
+                }
+                organization = (Organization)rs.data;
 
-            if (organizationVM == null)
-            {
-                return HttpNotFound();
+                organizationVM._Id = organization.Id;
+                organizationVM._name = organization.name;
+                if (organization.status == 1)
+                {
+                    organizationVM._status = true;
+                }
+                else
+                {
+                    organizationVM._status = false;
+                }
+
+                if (organizationVM == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(organizationVM);
             }
-            return View(organizationVM);
+            catch
+            {
+                return View("Error");
+            }
         }
 
         // POST: Organization/Edit/5
@@ -137,38 +158,52 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(OrganizationVM organizationVM)
         {
-            if (ModelState.IsValid)
+            try
             {
-                Organization organization = new Organization();
+                if (ModelState.IsValid)
+                {
+                    Organization organization = new Organization();
 
-                organization.Id = organizationVM._Id;
-                if (organizationVM._name != null)
-                {
-                    organization.name = organizationVM._name;
-                }
+                    organization.Id = organizationVM._Id;
+                    if (organizationVM._name != null)
+                    {
+                        organization.name = organizationVM._name;
+                    }
 
-                if (organizationVM._status == true)
-                {
-                    organization.status = 1;
+                    if (organizationVM._status == true)
+                    {
+                        organization.status = 1;
+                    }
+                    else
+                    {
+                        organization.status = 0;
+                    }
+                    db.Entry(organization).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
                 }
-                else
-                {
-                    organization.status = 0;
-                }
-                db.Entry(organization).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return View(organizationVM);
             }
-            return View(organizationVM);
+            catch
+            {
+                return View("Error");
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            try
             {
-                db.Dispose();
+                if (disposing)
+                {
+                    db.Dispose();
+                }
+                base.Dispose(disposing);
             }
-            base.Dispose(disposing);
+            catch
+            {
+                //not sure what to do here
+            }
         }
     }
 }

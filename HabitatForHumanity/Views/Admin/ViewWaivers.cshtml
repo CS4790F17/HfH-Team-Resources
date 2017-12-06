@@ -1,0 +1,161 @@
+﻿@model HabitatForHumanity.ViewModels.WaiverHistoryByUser
+
+@{
+    ViewBag.Title = "ViewWaivers";
+}
+
+<h2>View Waivers</h2>
+
+@*<p>
+    @Html.ActionLink("Create New", "Create")
+</p>*@
+<table class="table">
+    <tr>
+        @*<th>
+            @Html.DisplayNameFor(model => model.waiverList[0].user_Id)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].firstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].lastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].homePhoneNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].workPhoneNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].emailAddress)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.waiverList[0].streetAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].city)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].zip)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].birthDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].gender)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].waiverSignDate)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.waiverList[0].emergencyFirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].emergencyLastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].relation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].emergencyHomePhone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].emergencyWorkPhone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].emergencyStreetAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].emergencyCity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].emergencyZip)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.waiverList[0].signatureName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model.waiverList) {
+    <tr>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.user_Id)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.firstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.lastName)
+        </td>
+        <td>
+            @*@Html.DisplayFor(modelItem => item.homePhoneNumber)*@
+            @string.Format("({0}) {1}-{2}"
+            , item.homePhoneNumber.Substring(0, 3)
+            , item.homePhoneNumber.Substring(3, 3)
+            , item.homePhoneNumber.Substring(6, item.homePhoneNumber.Length - 6))
+        </td>
+        <td>
+            @*@Html.DisplayFor(modelItem => item.workPhoneNumber)*@
+            @string.Format("({0}) {1}-{2}"
+            , item.workPhoneNumber.Substring(0, 3)
+            , item.workPhoneNumber.Substring(3, 3)
+            , item.workPhoneNumber.Substring(6, item.workPhoneNumber.Length - 6))
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.emailAddress)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.streetAddress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.city)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.zip)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.birthDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.gender)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.waiverSignDate)
+        </td>
+        @*<td>
+         @Html.DisplayFor(modelItem => item.emergencyFirstName)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyLastName)
+     </td>
+    <td>
+         @Html.DisplayFor(modelItem => item.relation)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyHomePhone)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyWorkPhone)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyStreetAddress)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyCity)
+     </td>
+     <td>
+         @Html.DisplayFor(modelItem => item.emergencyZip)
+     </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.signatureName)
+        </td>
+        <td>
+            @* @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |*@
+            @Html.ActionLink("Details", "WaiverDetails", new { id=item.Id })
+            @*@Html.ActionLink("Delete", "Delete", new { id=item.Id })*@
+        </td>
+    </tr>
+}
+
+</table>
