@@ -350,6 +350,18 @@ namespace HabitatForHumanity.Controllers
                 return View("Error");
             }
         }
+
+        public ActionResult WaiverDetails(int? id)
+        {
+            ReturnStatus rs = Repository.GetAWaiverById((int)id);
+            WaiverHistory waiver = new Models.WaiverHistory();
+            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                waiver = (WaiverHistory)rs.data;
+            }
+            return View(waiver);
+        }
+        
         #endregion Manage Volunteer
 
         #region Timecards
