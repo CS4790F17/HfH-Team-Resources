@@ -53,7 +53,7 @@
 
         </div>
         <div class="col-md-1">
-
+            
 
         </div>
 
@@ -69,15 +69,16 @@
 
     $(document).ready(function () {
         getHoursChart("Month");
-     //   getDemographicsPie("All");
-     //   getBadPunches();
+        //   getDemographicsPie("All");
+        //   getBadPunches();
     });
 
     function getHoursChart(period) {
-        var path = "/Admin/GetHoursChartBy/";
+        //var path = "/Admin/GetHoursChartBy/";
+        //var path = @Url.Action("GetHoursChartBy", "Admin");
         var data = { "period": period };
         $.ajax({
-            url: path,
+            url: "@Url.Action("GetHoursChartBy", "Admin")",
             data, data,
             success: function (result) {
                 $("#divHoursChart").html(result);

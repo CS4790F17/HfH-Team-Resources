@@ -36,145 +36,154 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult GetBadPunches()
         {
-            ReturnStatus rs = Repository.GetNumBadPunches();
-            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            try
             {
-                return PartialView("_Error");
+                ReturnStatus rs = Repository.GetNumBadPunches();
+                if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    return PartialView("_Error");
+                }
+                int numBadPunches = (int)rs.data;
+                return PartialView("_BadPunches", numBadPunches);
             }
-            int numBadPunches = (int)rs.data;
-            return PartialView("_BadPunches", numBadPunches);
+            catch
+            {
+                return View("_Error");
+            }
         }
 
         #region Get and Build Hours Bar Chart
         public ActionResult GetHoursChartBy(string period)
         {
-            //Highcharts chart = new Highcharts("chart")
-            //    .InitChart(new Chart { DefaultSeriesType = ChartTypes.Bar })
-            //    .SetTitle(new Title { Text = "Historic World Population by Region" })
-            //    .SetSubtitle(new Subtitle { Text = "Source: Wikipedia.org" })
-            //    .SetXAxis(new XAxis
-            //    {
-            //        Categories = new[] { "Africa", "America", "Asia", "Europe", "Oceania" },
-            //        Title = new XAxisTitle { Text = string.Empty }
-            //    })
-            //    .SetYAxis(new YAxis
-            //    {
-            //        Min = 0,
-            //        Title = new YAxisTitle
-            //        {
-            //            Text = "Population (millions)",
-            //            Align = AxisTitleAligns.High
-            //        }
-            //    })
-            //    .SetTooltip(new Tooltip { Formatter = "function() { return ''+ this.series.name +': '+ this.y +' millions'; }" })
-            //    .SetPlotOptions(new PlotOptions
-            //    {
-            //        Bar = new PlotOptionsBar
-            //        {
-            //            DataLabels = new PlotOptionsBarDataLabels { Enabled = true }
-            //        }
-            //    })
-            //    .SetLegend(new Legend
-            //    {
-            //        Layout = Layouts.Vertical,
-            //        Align = HorizontalAligns.Right,
-            //        VerticalAlign = VerticalAligns.Top,
-            //        X = -100,
-            //        Y = 100,
-            //        Floating = true,
-            //        BorderWidth = 1,
-            //        BackgroundColor = new BackColorOrGradient(ColorTranslator.FromHtml("#FFFFFF")),
-            //        Shadow = true
-            //    })
-            //    .SetCredits(new Credits { Enabled = false })
-            //    .SetSeries(new[]
-            //    {
-            //        new Series { Name = "Year 1800", Data = new Data(new object[] { 107, 31, 635, 203, 2 }) },
-            //        new Series { Name = "Year 1900", Data = new Data(new object[] { 133, 156, 947, 408, 6 }) },
-            //        new Series { Name = "Year 2008", Data = new Data(new object[] { 973, 914, 4054, 732, 34 }) }
-            //    });
-
-            if (period == null)
+            try
             {
-                period = "Month";
-            }
+                //Highcharts chart = new Highcharts("chart")
+                //    .InitChart(new Chart { DefaultSeriesType = ChartTypes.Bar })
+                //    .SetTitle(new Title { Text = "Historic World Population by Region" })
+                //    .SetSubtitle(new Subtitle { Text = "Source: Wikipedia.org" })
+                //    .SetXAxis(new XAxis
+                //    {
+                //        Categories = new[] { "Africa", "America", "Asia", "Europe", "Oceania" },
+                //        Title = new XAxisTitle { Text = string.Empty }
+                //    })
+                //    .SetYAxis(new YAxis
+                //    {
+                //        Min = 0,
+                //        Title = new YAxisTitle
+                //        {
+                //            Text = "Population (millions)",
+                //            Align = AxisTitleAligns.High
+                //        }
+                //    })
+                //    .SetTooltip(new Tooltip { Formatter = "function() { return ''+ this.series.name +': '+ this.y +' millions'; }" })
+                //    .SetPlotOptions(new PlotOptions
+                //    {
+                //        Bar = new PlotOptionsBar
+                //        {
+                //            DataLabels = new PlotOptionsBarDataLabels { Enabled = true }
+                //        }
+                //    })
+                //    .SetLegend(new Legend
+                //    {
+                //        Layout = Layouts.Vertical,
+                //        Align = HorizontalAligns.Right,
+                //        VerticalAlign = VerticalAligns.Top,
+                //        X = -100,
+                //        Y = 100,
+                //        Floating = true,
+                //        BorderWidth = 1,
+                //        BackgroundColor = new BackColorOrGradient(ColorTranslator.FromHtml("#FFFFFF")),
+                //        Shadow = true
+                //    })
+                //    .SetCredits(new Credits { Enabled = false })
+                //    .SetSeries(new[]
+                //    {
+                //        new Series { Name = "Year 1800", Data = new Data(new object[] { 107, 31, 635, 203, 2 }) },
+                //        new Series { Name = "Year 1900", Data = new Data(new object[] { 133, 156, 947, 408, 6 }) },
+                //        new Series { Name = "Year 2008", Data = new Data(new object[] { 973, 914, 4054, 732, 34 }) }
+                //    });
 
-            ReturnStatus chartRS = new ReturnStatus();
-
-            if (period.Equals("Year"))
-            {
-                chartRS = Repository.GetHoursChartVMByYear();
-            }
-            else if (period.Equals("Week"))
-            {
-                chartRS = Repository.GetHoursChartVMByWeek();
-            }
-            else
-            {
-                // monthly
-                chartRS = Repository.GetHoursChartVMByMonth();
-            }
-            if (chartRS.errorCode != ReturnStatus.ALL_CLEAR)
-            {
-                return null;
-            }
-            ChartVM chartVM = (ChartVM)chartRS.data;
-            Highcharts columnChart = new Highcharts("columnchart");
-
-            columnChart.InitChart(new Chart()
-            {
-                Type = DotNet.Highcharts.Enums.ChartTypes.Column,
-                BackgroundColor = new BackColorOrGradient(System.Drawing.Color.AliceBlue),
-                Style = "fontWeight: 'bold', fontSize: '17px'",
-                BorderColor = System.Drawing.Color.LightBlue,
-                BorderRadius = 0,
-                BorderWidth = 2
-
-            });
-
-            columnChart.SetTitle(new Title()
-            {
-                //Text = "Volunteer Hours"
-                Text = chartVM._title
-            });
-
-            //columnChart.SetSubtitle(new Subtitle()
-            //{
-            //    //Text = "Subtitle here"
-            //    Text = chartVM._subtitle
-            //});
-
-            columnChart.SetXAxis(new XAxis()
-            {
-                Type = AxisTypes.Category,
-                //Title = new XAxisTitle() { Text = "X axis stuff", Style = "fontWeight: 'bold', fontSize: '17px'" },
-                Categories = chartVM._categories
-            });
-
-            columnChart.SetYAxis(new YAxis()
-            {
-                Title = new YAxisTitle()
+                if (period == null)
                 {
-                    Text = "Hours",
-                    Style = "fontWeight: 'bold', fontSize: '17px'"
-                },
-                ShowFirstLabel = true,
-                ShowLastLabel = true,
-                Min = 0
-            });
+                    period = "Month";
+                }
 
-            columnChart.SetLegend(new Legend
-            {
-                Enabled = true,
-                BorderColor = System.Drawing.Color.CornflowerBlue,
-                BorderRadius = 6,
-                BackgroundColor = new BackColorOrGradient(ColorTranslator.FromHtml("#FFADD8E6"))
-            });
+                ReturnStatus chartRS = new ReturnStatus();
+
+                if (period.Equals("Year"))
+                {
+                    chartRS = Repository.GetHoursChartVMByYear();
+                }
+                else if (period.Equals("Week"))
+                {
+                    chartRS = Repository.GetHoursChartVMByWeek();
+                }
+                else
+                {
+                    // monthly
+                    chartRS = Repository.GetHoursChartVMByMonth();
+                }
+                if (chartRS.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    return null;
+                }
+                ChartVM chartVM = (ChartVM)chartRS.data;
+                Highcharts columnChart = new Highcharts("columnchart");
+
+                columnChart.InitChart(new Chart()
+                {
+                    Type = DotNet.Highcharts.Enums.ChartTypes.Column,
+                    BackgroundColor = new BackColorOrGradient(System.Drawing.Color.AliceBlue),
+                    Style = "fontWeight: 'bold', fontSize: '17px'",
+                    BorderColor = System.Drawing.Color.LightBlue,
+                    BorderRadius = 0,
+                    BorderWidth = 2
+
+                });
+
+                columnChart.SetTitle(new Title()
+                {
+                    //Text = "Volunteer Hours"
+                    Text = chartVM._title
+                });
+
+                //columnChart.SetSubtitle(new Subtitle()
+                //{
+                //    //Text = "Subtitle here"
+                //    Text = chartVM._subtitle
+                //});
+
+                columnChart.SetXAxis(new XAxis()
+                {
+                    Type = AxisTypes.Category,
+                    //Title = new XAxisTitle() { Text = "X axis stuff", Style = "fontWeight: 'bold', fontSize: '17px'" },
+                    Categories = chartVM._categories
+                });
+
+                columnChart.SetYAxis(new YAxis()
+                {
+                    Title = new YAxisTitle()
+                    {
+                        Text = "Hours",
+                        Style = "fontWeight: 'bold', fontSize: '17px'"
+                    },
+                    ShowFirstLabel = true,
+                    ShowLastLabel = true,
+                    Min = 0
+                });
+
+                columnChart.SetLegend(new Legend
+                {
+                    Enabled = true,
+                    BorderColor = System.Drawing.Color.CornflowerBlue,
+                    BorderRadius = 6,
+                    BackgroundColor = new BackColorOrGradient(ColorTranslator.FromHtml("#FFADD8E6"))
+                });
 
 
-            columnChart.SetSeries(new Series[]
-            //columnChart.SetSeries(new Series[] = chartVM._series;
-            {
+                columnChart.SetSeries(new Series[]
+                //columnChart.SetSeries(new Series[] = chartVM._series;
+                {
 
                 new Series
                 {
@@ -193,68 +202,79 @@ namespace HabitatForHumanity.Controllers
                    Name = chartVM._series[2]._name,
                    Data = new Data(chartVM._series[2]._data)
                 }
+                }
+                );
+                return PartialView("_HoursMonthChart", columnChart);// chart);
             }
-            );
-            return PartialView("_HoursMonthChart", columnChart);// chart);
+            catch
+            {
+                return View("_Error");
+            }
         }
         #endregion
 
         #region Get and Build Demographics Pie
         public ActionResult GetHoursDemogPieBy(string gender)
         {
-
-            /* gender options from javascript radios       
-            All, M, F, O */
-            ReturnStatus st = new ReturnStatus();
-            st.data = new List<User.Demog>();
             try
             {
-                st = Repository.GetDemographicsForPie(gender);
-                // if data problem or no results
-                if(st.errorCode != ReturnStatus.ALL_CLEAR)
+                /* gender options from javascript radios       
+                All, M, F, O */
+                ReturnStatus st = new ReturnStatus();
+                st.data = new List<User.Demog>();
+                try
                 {
+                    st = Repository.GetDemographicsForPie(gender);
+                    // if data problem or no results
+                    if (st.errorCode != ReturnStatus.ALL_CLEAR)
+                    {
+                        return null;
+                    }
+                    Demog[] demogs = ((List<Demog>)st.data).ToArray();
+                    object[] outer = new object[demogs.Length];
+                    for (int i = 0; i < demogs.Length; i++)
+                    {
+                        outer[i] = new object[] { demogs[i].ageBracket, demogs[i].numPeople };
+                    }
+
+
+                    Highcharts chart = new Highcharts("chart")
+                        .InitChart(new Chart { PlotShadow = false })
+                        .SetTitle(new Title { Text = "" })
+                        .SetTooltip(new Tooltip { Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }" })
+                        .SetPlotOptions(new PlotOptions
+                        {
+                            Pie = new PlotOptionsPie
+                            {
+                                AllowPointSelect = true,
+                                Cursor = Cursors.Pointer,
+                                DataLabels = new PlotOptionsPieDataLabels
+                                {
+                                    Color = ColorTranslator.FromHtml("#000000"),
+                                    ConnectorColor = ColorTranslator.FromHtml("#000000"),
+                                    Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }"
+                                }
+                            }
+                        })
+                        .SetSeries(
+                             new Series
+                             {
+                                 Type = ChartTypes.Pie,
+                                 Name = "xyz",
+                                 Data = new Data(outer)
+                             }
+                       );
+                    return PartialView("_DemographicsPie", chart);
+                }
+                catch
+                {
+                    ViewBag.status = awwSnapMsg;
                     return null;
                 }
-                Demog[] demogs = ((List<Demog>)st.data).ToArray();
-                object[] outer = new object[demogs.Length];
-                for (int i = 0; i < demogs.Length; i++)
-                {
-                    outer[i] = new object[] { demogs[i].ageBracket, demogs[i].numPeople };
-                }
-
-
-                Highcharts chart = new Highcharts("chart")
-                    .InitChart(new Chart { PlotShadow = false })
-                    .SetTitle(new Title { Text = "" })
-                    .SetTooltip(new Tooltip { Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }" })
-                    .SetPlotOptions(new PlotOptions
-                    {
-                        Pie = new PlotOptionsPie
-                        {
-                            AllowPointSelect = true,
-                            Cursor = Cursors.Pointer,
-                            DataLabels = new PlotOptionsPieDataLabels
-                            {
-                                Color = ColorTranslator.FromHtml("#000000"),
-                                ConnectorColor = ColorTranslator.FromHtml("#000000"),
-                                Formatter = "function() { return '<b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(1) +' %'; }"
-                            }
-                        }
-                    })
-                    .SetSeries(
-                         new Series
-                         {
-                             Type = ChartTypes.Pie,
-                             Name = "xyz",
-                             Data = new Data(outer)
-                         }
-                   );
-                return PartialView("_DemographicsPie", chart);
             }
             catch
             {
-                ViewBag.status = awwSnapMsg;
-                return null;
+                return View("_Error");
             }
         }
         #endregion
@@ -264,115 +284,150 @@ namespace HabitatForHumanity.Controllers
         #region Volunteers
         public ActionResult Volunteers(VolunteerSearchModel vsm, string excMsg)
         {
-            if (!string.IsNullOrEmpty(excMsg))
+            try
             {
-                ViewBag.status = excMsg;
-            }
-            if (vsm.projects == null)
-            {
-                vsm = new VolunteerSearchModel();
-                return View(vsm);
-            }
-            ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId, vsm.orgId);
-
-            if (rs.errorCode != 0)
-            {
-                ViewBag.status = awwSnapMsg;
-                return View(vsm);
-            }
-
-            List<UsersVM> allVols = (List<UsersVM>)rs.data;
-            List<UsersVM> filteredVols = new List<UsersVM>();
-
-            if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
-            {
-                foreach (UsersVM u in allVols)
+                if (!string.IsNullOrEmpty(excMsg))
                 {
-                    if (u != null && vsm.queryString != null)
+                    ViewBag.status = excMsg;
+                }
+                if (vsm.projects == null)
+                {
+                    vsm = new VolunteerSearchModel();
+                    return View(vsm);
+                }
+                ReturnStatus rs = Repository.GetAllVolunteers(vsm.projectId, vsm.orgId);
+
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = awwSnapMsg;
+                    return View(vsm);
+                }
+
+                List<UsersVM> allVols = (List<UsersVM>)rs.data;
+                List<UsersVM> filteredVols = new List<UsersVM>();
+
+                if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
+                {
+                    foreach (UsersVM u in allVols)
                     {
-                        if (u.email.ToLower().Contains(vsm.queryString.ToLower()) || u.volunteerName.ToLower().Contains(vsm.queryString.ToLower()))
+                        if (u != null && vsm.queryString != null)
                         {
-                            filteredVols.Add(u);
+                            if (u.email.ToLower().Contains(vsm.queryString.ToLower()) || u.volunteerName.ToLower().Contains(vsm.queryString.ToLower()))
+                            {
+                                filteredVols.Add(u);
+                            }
                         }
                     }
+                    var pageIndex = vsm.Page ?? 1;
+                    vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
                 }
-                var pageIndex = vsm.Page ?? 1;
-                vsm.SearchResults = filteredVols.ToPagedList(pageIndex, RecordsPerPage);
+                else
+                {
+                    var pageIndex = vsm.Page ?? 1;
+                    vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
+                }
+                return View(vsm);
             }
-            else
+            catch
             {
-                var pageIndex = vsm.Page ?? 1;
-                vsm.SearchResults = allVols.ToPagedList(pageIndex, RecordsPerPage);
+                return View("Error");
             }
-            return View(vsm);
         }
         #endregion
 
         #region Manage Volunteer
         public ActionResult ManageVolunteer(int id, string excMsg)
         {
-            ViewBag.status = (string.IsNullOrEmpty(excMsg) ? null : excMsg);
-            ReturnStatus rs = Repository.GetAdminViewOfUser(id);
-            AdminUserVM vm = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (AdminUserVM)rs.data : new AdminUserVM();
-            return View(vm);
+            try
+            {
+                ViewBag.status = (string.IsNullOrEmpty(excMsg) ? null : excMsg);
+                ReturnStatus rs = Repository.GetAdminViewOfUser(id);
+                AdminUserVM vm = (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (AdminUserVM)rs.data : new AdminUserVM();
+                return View(vm);
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
         #endregion Manage Volunteer
 
         #region Timecards
         public ActionResult TimeCards(TimeCardSearchModel tsm)
         {
-            ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
-            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                var pageIndex = tsm.Page ?? 1;
-                List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
-                tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
-                tsm.Page = tsm.SearchResults.PageNumber;
+                ReturnStatus rs = Repository.GetTimeCardPageWithFilter(tsm.Page, tsm.orgId, tsm.projId, tsm.rangeStart, tsm.rangeEnd, tsm.queryString);
+                if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    var pageIndex = tsm.Page ?? 1;
+                    List<TimeCardVM> pagedCards = (List<TimeCardVM>)rs.data;
+                    tsm.SearchResults = pagedCards.ToPagedList(pageIndex, RecordsPerPage);
+                    tsm.Page = tsm.SearchResults.PageNumber;
+                    return View(tsm);
+                }
+                //else if(rs.errorCode == ReturnStatus.ERROR_WHILE_ACCESSING_DATA)
+                //{
+                //    ViewBag.status = "debug, trouble in data layer -  ";
+                //    return View(tsm);
+                //}
+                ViewBag.status = "No results for that time period";// awwSnapMsg;
                 return View(tsm);
             }
-            //else if(rs.errorCode == ReturnStatus.ERROR_WHILE_ACCESSING_DATA)
-            //{
-            //    ViewBag.status = "debug, trouble in data layer -  ";
-            //    return View(tsm);
-            //}
-            ViewBag.status = "No results for that time period";// awwSnapMsg;
-            return View(tsm);
+            catch
+            {
+                return View("Error");
+            }
 
         }
 
         public ActionResult EditTimeCard(int id)
         {
-            ReturnStatus rs = Repository.GetTimeCardVM(id);
-            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            try
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
-                //TODO: change this to return some sort of error partial or the modal will blow up
-                return View();
-            }
+                ReturnStatus rs = Repository.GetTimeCardVM(id);
+                if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                    //TODO: change this to return some sort of error partial or the modal will blow up
+                    return View();
+                }
 
-            return PartialView("_EditTimeCard", (TimeCardVM)rs.data);
+                return PartialView("_EditTimeCard", (TimeCardVM)rs.data);
+            }
+            catch
+            {
+                return View("_Error");
+            }
         }
 
         [HttpPost]
         public ActionResult EditTimeCard(TimeCardVM card)
         {
-            TimeSpan span = card.outTime.Subtract(card.inTime);
-            if (span.TotalHours > 24 || span.TotalMinutes < 0)
+            try
             {
-                // this doesn't work -- hah, does now -blake
-                ViewBag.status = "Time can't be more than 24 hours or less than zero.";
-                return PartialView("_EditTimeCard", card);
+                TimeSpan span = card.outTime.Subtract(card.inTime);
+                if (span.TotalHours > 24 || span.TotalMinutes < 0)
+                {
+                    // this doesn't work -- hah, does now -blake
+                    ViewBag.status = "Time can't be more than 24 hours or less than zero.";
+                    return PartialView("_EditTimeCard", card);
+                }
+                ReturnStatus rs = Repository.EditTimeCard(card);
+                if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    ViewBag.status = "Failed to update time card, please try again later.";
+                    return PartialView("_EditTimeCard", card);
+                }
+                //return RedirectToAction("Timecards");
+                //return succes partial view instead of redirect that way the redirect doesn't populate the modal
+                //also gives the user some feedback
+                return PartialView("TimeCardPartialViews/_TimeCardSuccess");
             }
-            ReturnStatus rs = Repository.EditTimeCard(card);
-            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+            catch
             {
-                ViewBag.status = "Failed to update time card, please try again later.";
-                return PartialView("_EditTimeCard", card);
+                return View("_Error");
             }
-            //return RedirectToAction("Timecards");
-            //return succes partial view instead of redirect that way the redirect doesn't populate the modal
-            //also gives the user some feedback
-            return PartialView("TimeCardPartialViews/_TimeCardSuccess");
         }
         #endregion     
 
@@ -380,63 +435,70 @@ namespace HabitatForHumanity.Controllers
         // GET: Admin/EditVolunteer
         public ActionResult EditVolunteer(int id)
         {
-            ReturnStatus getUser = Repository.GetUser(id);
-            ReturnStatus getTimeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
-
-            if (getUser.errorCode != 0 || getTimeSheets.errorCode != 0)
+            try
             {
-                return RedirectToAction("Volunteers", "Admin", new { excMsg = awwSnapMsg });
+                ReturnStatus getUser = Repository.GetUser(id);
+                ReturnStatus getTimeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
+
+                if (getUser.errorCode != 0 || getTimeSheets.errorCode != 0)
+                {
+                    return RedirectToAction("Volunteers", "Admin", new { excMsg = awwSnapMsg });
+                }
+                else
+                {
+                    User user = new User();
+                    user = (User)getUser.data;
+
+                    UsersVM volunteer = new UsersVM();
+                    volunteer.userNumber = user.Id;
+                    // force all name to not be null for simple comparison in controller
+                    volunteer.volunteerName = user.firstName + " " + user.lastName;
+                    volunteer.email = user.emailAddress;
+                    volunteer.waiverSignDate = user.waiverSignDate;
+                    volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
+                    volunteer.waiverStatus = (volunteer.waiverExpiration > DateTime.Now);
+                    volunteer.isAdmin = (user.isAdmin == 1) ? true : false;
+                    try
+                    {
+                        volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
+                    }
+                    catch
+                    {
+                        volunteer.hoursToDate = 0.0;
+                    }
+                    volunteer.emergencyFirstName = user.emergencyFirstName;
+                    volunteer.emergencyLastName = user.emergencyLastName;
+                    volunteer.relation = user.relation;
+                    volunteer.emergencyHomePhone = user.emergencyHomePhone;
+                    volunteer.emergencyWorkPhone = user.emergencyWorkPhone;
+                    volunteer.emergencyStreetAddress = user.emergencyStreetAddress;
+                    volunteer.emergencyCity = user.emergencyCity;
+                    volunteer.emergencyZip = user.emergencyZip;
+
+                    List<TimeSheet> timeSheets = new List<TimeSheet>();
+                    timeSheets = (List<TimeSheet>)getTimeSheets.data;
+                    List<TimeCardVM> test = new List<TimeCardVM>();
+
+                    foreach (TimeSheet t in timeSheets)
+                    {
+                        TimeCardVM temp = new TimeCardVM();
+                        temp.timeId = t.Id;
+                        temp.volName = volunteer.volunteerName;
+                        ReturnStatus orgRS = Repository.GetOrganizationById(t.org_Id);
+                        temp.orgName = (orgRS.errorCode == 0) ? ((Organization)orgRS.data).name : "---";
+                        ReturnStatus projRS = Repository.GetProjectById(t.project_Id);
+                        temp.projName = (projRS.errorCode == 0) ? ((Project)projRS.data).name : "---";
+                        temp.inTime = t.clockInTime;
+                        temp.outTime = t.clockOutTime;
+                        test.Add(temp);
+                    }
+                    volunteer.timeCardVM = test;
+                    return View(volunteer);
+                }
             }
-            else
+            catch
             {
-                User user = new User();
-                user = (User)getUser.data;
-
-                UsersVM volunteer = new UsersVM();
-                volunteer.userNumber = user.Id;
-                // force all name to not be null for simple comparison in controller
-                volunteer.volunteerName = user.firstName + " " + user.lastName;
-                volunteer.email = user.emailAddress;
-                volunteer.waiverSignDate = user.waiverSignDate;
-                volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
-                volunteer.waiverStatus = (volunteer.waiverExpiration > DateTime.Now);
-                volunteer.isAdmin = (user.isAdmin == 1) ? true : false;
-                try
-                {
-                    volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
-                }
-                catch
-                {
-                    volunteer.hoursToDate = 0.0;
-                }
-                volunteer.emergencyFirstName = user.emergencyFirstName;
-                volunteer.emergencyLastName = user.emergencyLastName;
-                volunteer.relation = user.relation;
-                volunteer.emergencyHomePhone = user.emergencyHomePhone;
-                volunteer.emergencyWorkPhone = user.emergencyWorkPhone;
-                volunteer.emergencyStreetAddress = user.emergencyStreetAddress;
-                volunteer.emergencyCity = user.emergencyCity;
-                volunteer.emergencyZip = user.emergencyZip;
-
-                List<TimeSheet> timeSheets = new List<TimeSheet>();
-                timeSheets = (List<TimeSheet>)getTimeSheets.data;
-                List<TimeCardVM> test = new List<TimeCardVM>();
-
-                foreach (TimeSheet t in timeSheets)
-                {
-                    TimeCardVM temp = new TimeCardVM();
-                    temp.timeId = t.Id;
-                    temp.volName = volunteer.volunteerName;
-                    ReturnStatus orgRS = Repository.GetOrganizationById(t.org_Id);
-                    temp.orgName = (orgRS.errorCode == 0) ? ((Organization)orgRS.data).name : "---";
-                    ReturnStatus projRS = Repository.GetProjectById(t.project_Id);
-                    temp.projName = (projRS.errorCode == 0) ? ((Project)projRS.data).name : "---";
-                    temp.inTime = t.clockInTime;
-                    temp.outTime = t.clockOutTime;
-                    test.Add(temp);
-                }
-                volunteer.timeCardVM = test;
-                return View(volunteer);
+                return View("Error");
             }
         }
 
@@ -445,72 +507,93 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email, isAdmin, waiverSignDate")] UsersVM usersVM)
         {
-            if (ModelState.IsValid)
+            try
             {
-                ReturnStatus rs = Repository.GetUser(usersVM.userNumber);
-                if (rs.errorCode != 0)
+                if (ModelState.IsValid)
                 {
-                    ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
-                    return View("EditVolunteer");
-                }
-                else
-                {
-                    User user = (User)rs.data;
-                    user.Id = usersVM.userNumber;
-                    String[] tempName = usersVM.volunteerName.Split(' ');
-                    user.firstName = (tempName.Length > 0 && !string.IsNullOrEmpty(tempName[0])) ? tempName[0] : "";
-                    user.lastName = (tempName.Length > 1 && !string.IsNullOrEmpty(tempName[0])) ? tempName[1] : "";
-
-                    user.emailAddress = usersVM.email;
-
-                    if (usersVM.isAdmin == true)
+                    ReturnStatus rs = Repository.GetUser(usersVM.userNumber);
+                    if (rs.errorCode != 0)
                     {
-                        user.isAdmin = 1;
+                        ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                        return View("EditVolunteer");
                     }
                     else
                     {
-                        user.isAdmin = 0;
-                    }
+                        User user = (User)rs.data;
+                        user.Id = usersVM.userNumber;
+                        String[] tempName = usersVM.volunteerName.Split(' ');
+                        user.firstName = (tempName.Length > 0 && !string.IsNullOrEmpty(tempName[0])) ? tempName[0] : "";
+                        user.lastName = (tempName.Length > 1 && !string.IsNullOrEmpty(tempName[0])) ? tempName[1] : "";
 
-                    user.waiverSignDate = usersVM.waiverSignDate;
+                        user.emailAddress = usersVM.email;
 
-                    ReturnStatus us = new ReturnStatus();
-                    us = Repository.EditUser(user);
-                    if (us.errorCode != 0)
-                    {
-                        ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
-                        return View(usersVM);
+                        if (usersVM.isAdmin == true)
+                        {
+                            user.isAdmin = 1;
+                        }
+                        else
+                        {
+                            user.isAdmin = 0;
+                        }
+
+                        user.waiverSignDate = usersVM.waiverSignDate;
+
+                        ReturnStatus us = new ReturnStatus();
+                        us = Repository.EditUser(user);
+                        if (us.errorCode != 0)
+                        {
+                            ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
+                            return View(usersVM);
+                        }
                     }
+                    return RedirectToAction("Volunteers");
                 }
-                return RedirectToAction("Volunteers");
+                return View(usersVM);
             }
-            return View(usersVM);
+            catch
+            {
+                return View("Error");
+            }
         }
 
         /*************************************/
         public ActionResult AdminEditUser(int id)
         {
-            ReturnStatus rs = Repository.GetAdminViewOfUser(id);
-            UserInfo userInfo = new UserInfo();
-            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                AdminUserVM vm = (AdminUserVM)rs.data;
-                userInfo = vm.userInfo;
-            }
+                ReturnStatus rs = Repository.GetAdminViewOfUser(id);
+                UserInfo userInfo = new UserInfo();
+                if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    AdminUserVM vm = (AdminUserVM)rs.data;
+                    userInfo = vm.userInfo;
+                }
 
-            return PartialView("_AdminEditVolunteer", userInfo);
+                return PartialView("_AdminEditVolunteer", userInfo);
+            }
+            catch
+            {
+                return View("_Error");
+            }
         }
 
         [HttpPost]
         public ActionResult AdminEditUser(UserInfo userInfo)
         {
-            ReturnStatus rs = Repository.AdminEditUser(userInfo);
-            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
+                ReturnStatus rs = Repository.AdminEditUser(userInfo);
+                if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    return PartialView("_GenericModalSuccess");
+                }
+                // uhh, idk
                 return PartialView("_GenericModalSuccess");
             }
-            // uhh, idk
-            return PartialView("_GenericModalSuccess");
+            catch
+            {
+                return View("_Error");
+            }
         }
         /****************************************/
         #endregion Edit Volunteer
@@ -522,26 +605,33 @@ namespace HabitatForHumanity.Controllers
         [HttpGet]
         public ActionResult DeleteTimeCard(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            //TimeSheet timeSheet = db.timeSheets.Find(id);
-            //if (timeSheet == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            //return View(timeSheet);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                //TimeSheet timeSheet = db.timeSheets.Find(id);
+                //if (timeSheet == null)
+                //{
+                //    return HttpNotFound();
+                //}
+                //return View(timeSheet);
 
-            ReturnStatus rs = Repository.GetTimeCardVM((int)id);
-            if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+                ReturnStatus rs = Repository.GetTimeCardVM((int)id);
+                if (rs.errorCode != ReturnStatus.ALL_CLEAR)
+                {
+                    ViewBag.status = "Sorry, something went wrong while retrieving information.";
+                    //TODO: change this to return some sort of error partial or the modal will blow up
+                    return View();
+                }
+
+                return PartialView("TimeCardPartialViews/_DeleteTimeCard", (TimeCardVM)rs.data);
+            }
+            catch
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information.";
-                //TODO: change this to return some sort of error partial or the modal will blow up
-                return View();
+                return View("_Error");
             }
-
-            return PartialView("TimeCardPartialViews/_DeleteTimeCard", (TimeCardVM)rs.data);
         }
 
         // POST: TimeSheet/Delete/5
@@ -551,107 +641,156 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteTimeCard(TimeCardVM model)
         {
-            ReturnStatus rs = Repository.AdminDeleteTimeCard(model);
-            if (rs.errorCode != 0)
+            try
             {
-                return PartialView("_Error");
+                ReturnStatus rs = Repository.AdminDeleteTimeCard(model);
+                if (rs.errorCode != 0)
+                {
+                    return PartialView("_Error");
+                }
+                return PartialView("TimeCardPartialViews/_DeleteTimeCardSuccess");
             }
-            return PartialView("TimeCardPartialViews/_DeleteTimeCardSuccess");
+            catch
+            {
+                return View("_Error");
+            }
         }
         #endregion
 
         #region Manage Organization
         public ActionResult ViewOrganizations(OrganizationSearchModel model)
         {
-            List<Organization> orgs = new List<Organization>();
-            ReturnStatus st = new ReturnStatus();
-
-            switch (model.statusChoice)
+            try
             {
-                case 0:
-                    st = Repository.GetOrganizationByNameSQL(model.queryString);
-                    break;
-                case 1: //active organizations
-                    st = Repository.GetOrganizationSQL(model.queryString, 1);
-                    break;
-                case 2: //inactive organizations
-                    st = Repository.GetOrganizationSQL(model.queryString, 0);
-                    break;
-            }
-            var pageIndex = model.Page ?? 1;
+                List<Organization> orgs = new List<Organization>();
+                ReturnStatus st = new ReturnStatus();
 
-            if (st.errorCode != 0)
-            {
-                //fill search results with empty list                              
-                model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
-            }
-            else
-            {
-                orgs = (List<Organization>)st.data;
-                model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
-            }
+                switch (model.statusChoice)
+                {
+                    case 0:
+                        st = Repository.GetOrganizationByNameSQL(model.queryString);
+                        break;
+                    case 1: //active organizations
+                        st = Repository.GetOrganizationSQL(model.queryString, 1);
+                        break;
+                    case 2: //inactive organizations
+                        st = Repository.GetOrganizationSQL(model.queryString, 0);
+                        break;
+                }
+                var pageIndex = model.Page ?? 1;
 
-            return View(model);
+                if (st.errorCode != 0)
+                {
+                    //fill search results with empty list                              
+                    model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
+                }
+                else
+                {
+                    orgs = (List<Organization>)st.data;
+                    model.SearchResults = orgs.ToPagedList(pageIndex, RecordsPerPage);
+                }
+
+                return View(model);
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
 
         [HttpGet]
         public ActionResult EditOrganization(int id)
         {
-            ReturnStatus rs = Repository.GetOrganizationById(id);
-            if (rs.errorCode != 0)
+            try
             {
-                ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
-                return View();
+                ReturnStatus rs = Repository.GetOrganizationById(id);
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, something went wrong while retrieving information. System is down. If problem persists, contact Support.";
+                    return View();
+                }
+                return PartialView("OrganizationPartialViews/_EditOrganization", (Organization)rs.data);
             }
-            return PartialView("OrganizationPartialViews/_EditOrganization", (Organization)rs.data);
+            catch
+            {
+                return View("_Error");
+            }
         }
 
         [HttpPost]
         public ActionResult EditOrganization(Organization org)
         {
-            if (ModelState.IsValid)
+            try
             {
-                //save org
-                Repository.EditOrganization(org);
-                return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+                if (ModelState.IsValid)
+                {
+                    //save org
+                    Repository.EditOrganization(org);
+                    return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+                }
+                return PartialView("OrganizationPartialViews/_EditOrganization", org);
             }
-            return PartialView("OrganizationPartialViews/_EditOrganization", org);
+            catch
+            {
+                return View("_Error");
+            }
 
         }
 
         [HttpPost]
         public void ChangeOrganizationStatus(int id, int status)
         {
-            ReturnStatus st = Repository.GetOrganizationById(id);
+            try
+            {
+                ReturnStatus st = Repository.GetOrganizationById(id);
 
-            if (st.errorCode == ReturnStatus.ALL_CLEAR)
-            {
-                ((Organization)st.data).status = status;
-                Repository.EditOrganization((Organization)st.data);
+                if (st.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    ((Organization)st.data).status = status;
+                    Repository.EditOrganization((Organization)st.data);
+                }
+                else
+                {
+                    ViewBag.status = "Error while attempting to change organization status.";
+                }
             }
-            else
+            catch
             {
-                ViewBag.status = "Error while attempting to change organization status.";
+               //not sure what to put here
             }
         }
 
         [HttpGet]
         public ActionResult AddOrganization()
         {
-            Organization org = new Organization();
-            return PartialView("OrganizationPartialViews/_AddOrganization", org);
+            try
+            {
+                Organization org = new Organization();
+                return PartialView("OrganizationPartialViews/_AddOrganization", org);
+            }
+            catch
+            {
+                return View("_Error");
+            }
         }
 
         [HttpPost]
         public ActionResult AddOrganization([Bind(Include = "name, comments")]Organization org)
         {
-            if (ModelState.IsValid)
+            try
             {
-                org.status = 0; //inactive by default
-                Repository.AddOrganization(org);
-                return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+                if (ModelState.IsValid)
+                {
+                    org.status = 0; //inactive by default
+                    Repository.AddOrganization(org);
+                    return PartialView("OrganizationPartialViews/_OrganizationSuccess");
+                }
+                return PartialView("OrganizationPartialViews/_AddOrganization", org);
             }
-            return PartialView("OrganizationPartialViews/_AddOrganization", org);
+            catch
+            {
+                return View("_Error");
+            }
         }
         #endregion
 
@@ -661,15 +800,22 @@ namespace HabitatForHumanity.Controllers
         
         public ActionResult ManageProjects(ProjectSearchModel model)
         {
-            if (String.IsNullOrEmpty(model.queryString))
-                model.queryString = ""; //keeps the paged list from being empty
+            try
+            {
+                if (String.IsNullOrEmpty(model.queryString))
+                    model.queryString = ""; //keeps the paged list from being empty
 
 
-            model.SearchResults = Repository.GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString, model.categorySelection);
-            // model.Page = model.SearchResults.PageNumber;
-            model.Page = 1;
+                model.SearchResults = Repository.GetProjectPageWithFilter(model.Page, model.statusChoice, model.queryString, model.categorySelection);
+                // model.Page = model.SearchResults.PageNumber;
+                model.Page = 1;
 
-            return View(model);
+                return View(model);
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
 
         [HttpGet]
@@ -681,23 +827,37 @@ namespace HabitatForHumanity.Controllers
         [HttpPost]
         public ActionResult CreateProject([Bind(Include = "Id,name,description,beginDate,categoryId")] Project proj)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return PartialView("ProjectPartialViews/_CreateProject", proj);
+                if (!ModelState.IsValid)
+                {
+                    return PartialView("ProjectPartialViews/_CreateProject", proj);
+                }
+                proj.status = 0;
+                Repository.AddProject(proj);
+                return PartialView("ProjectPartialViews/_ProjectSuccess");
             }
-            proj.status = 0;
-            Repository.AddProject(proj);
-            return PartialView("ProjectPartialViews/_ProjectSuccess");
+            catch
+            {
+                return View("_Error");
+            }
         }
 
         [HttpPost]
         public void ChangeProjectStatus(int id, int status)
         {
-            ReturnStatus st = Repository.GetProjectById(id);
-            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                ((Project)st.data).status = status;
-                Repository.EditProject((Project)st.data);
+                ReturnStatus st = Repository.GetProjectById(id);
+                if (st.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    ((Project)st.data).status = status;
+                    Repository.EditProject((Project)st.data);
+                }
+            }
+            catch
+            {
+                //not sure what to put here
             }
         }
 
@@ -722,25 +882,39 @@ namespace HabitatForHumanity.Controllers
         [HttpGet]
         public ActionResult EditProject(int id)
         {
-            ReturnStatus st = Repository.GetProjectById(id);
-            if (st.errorCode == 0)
+            try
             {
-                return PartialView("ProjectPartialViews/_EditProject", (Project)st.data);
+                ReturnStatus st = Repository.GetProjectById(id);
+                if (st.errorCode == 0)
+                {
+                    return PartialView("ProjectPartialViews/_EditProject", (Project)st.data);
+                }
+                //if no edit was found return create
+                return CreateProject();
             }
-            //if no edit was found return create
-            return CreateProject();
+            catch
+            {
+                return View("_Error");
+            }
         }
 
         [HttpPost]
         public ActionResult EditProject([Bind(Include = "Id,name,description,beginDate,categoryId,status")] Project proj)
         {
-            //if model state isn't valid
-            if (!ModelState.IsValid)
+            try
             {
-                return PartialView("ProjectPartialViews/_EditProject", proj);
+                //if model state isn't valid
+                if (!ModelState.IsValid)
+                {
+                    return PartialView("ProjectPartialViews/_EditProject", proj);
+                }
+                Repository.EditProject(proj);
+                return PartialView("ProjectPartialViews/_ProjectSuccess");
             }
-            Repository.EditProject(proj);
-            return PartialView("ProjectPartialViews/_ProjectSuccess");
+            catch
+            {
+                return View("_Error");
+            }
         }
 
 
@@ -751,9 +925,16 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult ManageProjectCategory(CategorySearchModel cm)
         {
-            var page = cm.Page ?? 1;
-            cm.SearchResults = Repository.GetAllCategoriesByPageSize(page, RecordsPerPage);
-            return View(cm);
+            try
+            {
+                var page = cm.Page ?? 1;
+                cm.SearchResults = Repository.GetAllCategoriesByPageSize(page, RecordsPerPage);
+                return View(cm);
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
 
         [HttpGet]
@@ -766,18 +947,37 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AddCategory(ProjectCategory pc)
         {
-            if (ModelState.IsValid)
+            try
             {
-                Repository.CreateProjectCategory(pc);
+                if (ModelState.IsValid)
+                {
+                    Repository.CreateProjectCategory(pc);
+                }
+                else
+                {
+                    return PartialView("ProjectCategoryPartialViews/_AddCategory", pc);
+                }
+                return PartialView("ProjectCategoryPartialViews/_CategorySuccess");
             }
-            else
+            catch
             {
-                return PartialView("ProjectCategoryPartialViews/_AddCategory", pc);
+                return View("_Error");
             }
-            return PartialView("ProjectCategoryPartialViews/_CategorySuccess");
         }
 
         #endregion
+
+        #region WaiverHistory
+            
+        public ActionResult WaiverHistory(int id)
+        {
+            WaiverHistoryByUser waiverHistory = Repository.getWaiverHistoryByUserId(id);
+
+            return View("ViewWaivers", waiverHistory);
+        }
+        #endregion
+
+
 
 
 

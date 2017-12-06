@@ -86,7 +86,7 @@
     $("#editButton").click(function () {
         var path = "/User/_EditProfile/"
         $.ajax({
-            url: path,
+            url: "@Url.Action("_EditProfile", "User")",
             type: 'GET',
             success: function (response) {
                 $("#profile").html(response);

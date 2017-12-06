@@ -38,7 +38,11 @@ namespace HabitatForHumanity.Models
         public String emergencyZip { get; set; }
         public String signatureName { get; set; }
 
-
+        /// <summary>
+        /// Writes newly created waiver to WaiverHistory table 
+        /// </summary>
+        /// <param name="snapshot"></param>
+        /// <returns></returns>
         public static ReturnStatus saveWaiverSnapshot(WaiverHistory snapshot)
         {
             ReturnStatus st = new ReturnStatus();
@@ -57,6 +61,13 @@ namespace HabitatForHumanity.Models
                 st.errorMessage = e.ToString();
                 return st;
             }
+        }
+
+        public static List<WaiverHistory> getWaiverHistoryByUserId(int id)
+        {
+            VolunteerDbContext db = new VolunteerDbContext();
+            List<WaiverHistory> waiverHistory = db.waiverHistory.Where(wh => wh.user_Id == id).ToList();
+            return waiverHistory;
         }
     }
 }
