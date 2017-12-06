@@ -27,6 +27,8 @@ namespace HabitatForHumanity.Models
         public String zip { get; set; }
         public DateTime birthDate { get; set; }
         public String gender { get; set; }
+        [DisplayFormat(DataFormatString = "{0:M/d/yy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.DateTime)]
         public DateTime waiverSignDate { get; set; }
         public String emergencyFirstName { get; set; }
         public String emergencyLastName { get; set; }
