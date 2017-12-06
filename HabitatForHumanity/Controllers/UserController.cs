@@ -806,34 +806,34 @@ namespace HabitatForHumanity.Controllers
         #endregion
 
         #region Delete
-        [AdminFilter]
-        [AuthorizationFilter]
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = db.users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
+        //[AdminFilter]
+        //[AuthorizationFilter]
+        //public ActionResult Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    User user = db.users.Find(id);
+        //    if (user == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(user);
+        //}
 
         // POST: User/Delete/5
-        [AdminFilter]
-        [AuthorizationFilter]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            User user = db.users.Find(id);
-            db.users.Remove(user);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+        //[AdminFilter]
+        //[AuthorizationFilter]
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult DeleteConfirmed(int id)
+        //{
+        //    User user = db.users.Find(id);
+        //    db.users.Remove(user);
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
         #endregion
 
         #region Search, Is this being used?
@@ -848,15 +848,23 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult VolunteerSearch([Bind(Include = "firstName,lastName")] User user)
         {
-            //TODO: add error checking
-            ReturnStatus rs = Repository.GetUsersByName(user.firstName, user.lastName);
-            if(rs.errorCode != 0)
+            try
             {
-                ViewBag.status = "Sorry, system is temporarily down. Please try again later";
-                return View(user);
+                //TODO: add error checking
+                ReturnStatus rs = Repository.GetUsersByName(user.firstName, user.lastName);
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, system is temporarily down. Please try again later";
+                    return View(user);
+                }
+                List<User> users = (List<User>)rs.data;
+                return View("VolunteerSearchResults", users);
             }
-            List<User> users = (List<User>)rs.data;
-            return View("VolunteerSearchResults", users);
+            catch
+            {
+                return View("Error");
+            }
+
         }
 
         /// <summary>
@@ -869,36 +877,43 @@ namespace HabitatForHumanity.Controllers
         [AuthorizationFilter]
         public ActionResult UserTimeDetails(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
 
-            SearchTimeDetailVM userTimeDetails = new SearchTimeDetailVM();
-            ReturnStatus rs = Repository.GetUser(id.Value);
-            if(rs.errorCode != 0)
-            {
-                ViewBag.status = "Sorry, system is temporarily down. Please try again later";
-                return View();
+                SearchTimeDetailVM userTimeDetails = new SearchTimeDetailVM();
+                ReturnStatus rs = Repository.GetUser(id.Value);
+                if (rs.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, system is temporarily down. Please try again later";
+                    return View();
+                }
+                User user = (User)rs.data;
+                userTimeDetails.userId = user.Id;
+                userTimeDetails.firstName = user.firstName;
+                userTimeDetails.lastName = user.lastName;
+                userTimeDetails.emailAddress = user.emailAddress;
+                //TODO: add error checking
+                ReturnStatus st = Repository.GetAllTimeSheetsByVolunteer(id.Value);
+                if (st.errorCode != 0)
+                {
+                    ViewBag.status = "Sorry, system is temporarily down. Please try again later";
+                    return View();
+                }
+                userTimeDetails.timeSheets = (List<TimeSheet>)st.data;
+                if (userTimeDetails == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(userTimeDetails);
             }
-            User user = (User)rs.data;
-            userTimeDetails.userId = user.Id;
-            userTimeDetails.firstName = user.firstName;
-            userTimeDetails.lastName = user.lastName;
-            userTimeDetails.emailAddress = user.emailAddress;
-            //TODO: add error checking
-            ReturnStatus st = Repository.GetAllTimeSheetsByVolunteer(id.Value);
-            if(st.errorCode != 0)
+            catch
             {
-                ViewBag.status = "Sorry, system is temporarily down. Please try again later";
-                return View();
+                return View("Error");
             }
-            userTimeDetails.timeSheets = (List<TimeSheet>)st.data;
-            if (userTimeDetails == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userTimeDetails);
         }
         #endregion
 
@@ -906,14 +921,21 @@ namespace HabitatForHumanity.Controllers
         [AuthorizationFilter]
         public ActionResult DemographicsSurvey()
         {
-            string email = Session["UserName"].ToString();
-            ReturnStatus rs = Repository.GetDemographicsSurveyVM(email);
-            DemographicsVM demographicsVM = new DemographicsVM();
-            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            try
             {
-                demographicsVM = (DemographicsVM)rs.data;
+                string email = Session["UserName"].ToString();
+                ReturnStatus rs = Repository.GetDemographicsSurveyVM(email);
+                DemographicsVM demographicsVM = new DemographicsVM();
+                if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    demographicsVM = (DemographicsVM)rs.data;
+                }
+                return View(demographicsVM);
             }
-            return View(demographicsVM);
+            catch
+            {
+                return View("Error");
+            }
         }
 
         [AuthorizationFilter]
@@ -921,35 +943,56 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DemographicsSurvey(DemographicsVM dvm)
         {
-            Repository.SaveDemographicsSurvey(dvm);
-            return RedirectToAction("VolunteerPortal", new { excMsg = "Thanks for your input!." });
+            try
+            {
+                Repository.SaveDemographicsSurvey(dvm);
+                return RedirectToAction("VolunteerPortal", new { excMsg = "Thanks for your input!." });
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
 
 
         #endregion Demographics survey
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            try
             {
-                db.Dispose();
+                if (disposing)
+                {
+                    db.Dispose();
+                }
+                base.Dispose(disposing);
             }
-            base.Dispose(disposing);
+            catch
+            {
+                //not really sure what to do here
+            }
         }
 
         public static string RenderViewToString(ControllerContext context, string viewName, object model)
         {
-            if (string.IsNullOrEmpty(viewName))
-                viewName = context.RouteData.GetRequiredString("action");
-
-            var viewData = new ViewDataDictionary(model);
-
-            using (var sw = new StringWriter())
+            try
             {
-                var viewResult = ViewEngines.Engines.FindPartialView(context, viewName);
-                var viewContext = new ViewContext(context, viewResult.View, viewData, new TempDataDictionary(), sw);
-                viewResult.View.Render(viewContext, sw);
+                if (string.IsNullOrEmpty(viewName))
+                    viewName = context.RouteData.GetRequiredString("action");
 
-                return sw.GetStringBuilder().ToString();
+                var viewData = new ViewDataDictionary(model);
+
+                using (var sw = new StringWriter())
+                {
+                    var viewResult = ViewEngines.Engines.FindPartialView(context, viewName);
+                    var viewContext = new ViewContext(context, viewResult.View, viewData, new TempDataDictionary(), sw);
+                    viewResult.View.Render(viewContext, sw);
+
+                    return sw.GetStringBuilder().ToString();
+                }
+            }
+            catch
+            {
+                return awwSnapMsg;
             }
         }
 
