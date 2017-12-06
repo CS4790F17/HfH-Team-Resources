@@ -306,6 +306,9 @@ namespace HabitatForHumanity.Controllers
                 List<UsersVM> allVols = (List<UsersVM>)rs.data;
                 List<UsersVM> filteredVols = new List<UsersVM>();
 
+                if (vsm.queryString == null)
+                    vsm.queryString = ""; //no name contains null, turn into empty string instead
+
                 if (!string.IsNullOrEmpty(vsm.queryString) || vsm.Page.HasValue)
                 {
                     foreach (UsersVM u in allVols)
