@@ -58,11 +58,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="itextsharp, Version=5.5.12.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
@@ -207,12 +207,9 @@
     <Compile Include="ViewModels\VolunteerSearchModel.cs" />
     <Compile Include="ViewModels\UserProfileVM.cs" />
     <Compile Include="ViewModels\VolunteerSignupVM.cs" />
+    <Compile Include="ViewModels\WaiverHistoryByUser.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\Volunteer.mdf" />
-    <Content Include="App_Data\Volunteer_log.ldf">
-      <DependentUpon>Volunteer.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -331,10 +328,10 @@
     <Content Include="Views\Organization\Details.cshtml" />
     <Content Include="Views\Organization\Edit.cshtml" />
     <Content Include="Views\Organization\Index.cshtml" />
-    <Content Include="Views\Project\Create.cshtml" />
-    <Content Include="Views\Project\Details.cshtml" />
-    <Content Include="Views\Project\Edit.cshtml" />
-    <Content Include="Views\Project\Index.cshtml" />
+    <Content Include="Views\Organization\Project\Create.cshtml" />
+    <Content Include="Views\Organization\Project\Details.cshtml" />
+    <Content Include="Views\Organization\Project\Edit.cshtml" />
+    <Content Include="Views\Organization\Project\Index.cshtml" />
     <Content Include="Views\TimeSheet\Create.cshtml" />
     <Content Include="Views\TimeSheet\Delete.cshtml" />
     <Content Include="Views\TimeSheet\Details.cshtml" />
@@ -393,8 +390,11 @@
     <Content Include="Views\Admin\_AdminViewUserTimecards.cshtml" />
     <Content Include="Views\Admin\_AdminViewUserEmergency.cshtml" />
     <Content Include="Views\Admin\_GenericModalSuccess.cshtml" />
+    <Content Include="Views\Admin\ViewWaivers.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
       <SubType>Designer</SubType>

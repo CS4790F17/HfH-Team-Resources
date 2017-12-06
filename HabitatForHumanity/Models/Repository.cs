@@ -1457,5 +1457,16 @@ namespace HabitatForHumanity.Models
 
 
         #endregion
+
+        #region WaiverHistory
+            public static WaiverHistoryByUser getWaiverHistoryByUserId(int id)
+        {
+            WaiverHistoryByUser waiverHistory = new WaiverHistoryByUser();
+            waiverHistory.waiverList = WaiverHistory.getWaiverHistoryByUserId(id);
+
+            return waiverHistory;
+        }
+        #endregion
+
     }
 }

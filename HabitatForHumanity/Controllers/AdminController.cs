@@ -779,6 +779,18 @@ namespace HabitatForHumanity.Controllers
 
         #endregion
 
+        #region WaiverHistory
+            
+        public ActionResult WaiverHistory(int id)
+        {
+            WaiverHistoryByUser waiverHistory = Repository.getWaiverHistoryByUserId(id);
+
+            return View("ViewWaivers", waiverHistory);
+        }
+        #endregion
+
+
+
 
 
     }
