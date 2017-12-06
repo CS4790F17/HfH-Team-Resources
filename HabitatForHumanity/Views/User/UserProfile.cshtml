@@ -37,7 +37,7 @@
     function _ViewProfile() {
         var path = "/User/_ViewProfile/"
         $.ajax({
-            url: path,
+            url: "@Url.Action("_ViewProfile", "User")",
             success: function (response) {
                 $("#profile").html(response);
             }
