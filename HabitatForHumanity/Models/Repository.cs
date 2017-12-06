@@ -1572,6 +1572,11 @@ namespace HabitatForHumanity.Models
 
             return waiverHistory;
         }
+
+        public static ReturnStatus GetAWaiverById(int id)
+        {
+            return WaiverHistory.GetWaiverByID(id);
+        }
         #endregion
 
     }
