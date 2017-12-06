@@ -1,10 +1,35 @@
+
+CREATE TABLE [dbo].[Organization] (
+    [Id]       INT          PRIMARY KEY IDENTITY (1, 1) NOT NULL,
+    [name]     VARCHAR (100) NULL,
+    [status]   INT           DEFAULT ((1)) NULL,
+    [comments] VARCHAR (MAX) NULL,
+    UNIQUE ([name])
+);
+GO
+CREATE TABLE [dbo].[ProjectCategory] (
+    [Id]           INT        PRIMARY KEY  IDENTITY (1, 1) NOT NULL,
+    [categoryType] VARCHAR (50) NOT NULL
+);
+GO
+CREATE TABLE [dbo].[Project] (
+    [Id]          INT           PRIMARY KEY IDENTITY (1, 1) NOT NULL,
+    [name]        VARCHAR (50)  NOT NULL,
+    [description] VARCHAR (MAX) NULL,
+    [beginDate]   DATETIME      NOT NULL,
+    [status]      INT           DEFAULT ((1)) NOT NULL,
+    [categoryId]  INT           NOT NULL,
+    CONSTRAINT [PK_Project] UNIQUE ([name], [beginDate]),
+	CONSTRAINT [FK_PROJCAT] FOREIGN KEY (categoryId) REFERENCES ProjectCategory(Id)
+);
+GO
 CREATE TABLE [dbo].[User] (
-    [Id]                     INT           IDENTITY (1, 1) NOT NULL,
+    [Id]                     INT       PRIMARY KEY    IDENTITY (1, 1) NOT NULL,
     [firstName]              VARCHAR (50)  NULL,
     [lastName]               VARCHAR (50)  NULL,
     [homePhoneNumber]        VARCHAR (10)  NULL,
     [workPhoneNumber]        VARCHAR (10)  NULL,
-    [emailAddress]           VARCHAR (50)  NULL UNIQUE,
+    [emailAddress]           VARCHAR (50)  NULL,
     [streetAddress]          VARCHAR (50)  NULL,
     [city]                   VARCHAR (50)  NULL,
     [zip]                    VARCHAR (50)  NULL,
@@ -20,47 +45,17 @@ CREATE TABLE [dbo].[User] (
     [emergencyWorkPhone]     VARCHAR (10)  NULL,
     [emergencyStreetAddress] VARCHAR (50)  NULL,
     [emergencyCity]          VARCHAR (50)  NULL,
-    [emergencyZip]           VARCHAR (50)  NULL
+    [emergencyZip]           VARCHAR (50)  NULL,
+    [incomeTier]             VARCHAR (50)  NULL,
+    [ethnicity]              VARCHAR (50)  NULL,
+    [collegeStatus]          VARCHAR (50)  NULL,
+    [veteranStatus]          VARCHAR (50)  NULL,
+    [disabledStatus]         VARCHAR (50)  NULL,
+    UNIQUE ([emailAddress])
 );
-
 GO
-
-CREATE TABLE [dbo].[TimeSheet] (
-    [Id]           INT      IDENTITY (1, 1) NOT NULL,
-    [user_Id]      INT      NOT NULL,
-    [project_Id]   INT      NOT NULL,
-	[org_Id]	   INT		NOT NULL,
-    [clockInTime]  DATETIME DEFAULT (getdate()) NOT NULL,
-    [clockOutTime] DATETIME DEFAULT (CONVERT (DATETIME, CONVERT (DATE, getdate() + (1)))) NOT NULL,
-    CONSTRAINT PK_TimeSheet PRIMARY KEY (user_Id, project_Id, org_Id, clockInTime)
-);
-
-
-GO
-
-CREATE TABLE [dbo].[Project] (
-    [Id]          INT           IDENTITY (1, 1) NOT NULL,
-    [name]        VARCHAR (50) NOT NULL,
-    [description] VARCHAR (MAX) NULL,
-    [beginDate]   DATETIME     NOT NULL,
-    [status]      INT           DEFAULT ((1)) NOT NULL,
-    CONSTRAINT PK_Project PRIMARY KEY (name, beginDate)
-);
-
-GO
-
-CREATE TABLE [dbo].[Organization] (
-    [Id]   INT           IDENTITY (1, 1) NOT NULL,
-    [name] VARCHAR (100) NULL UNIQUE,
-	[status] INT         DEFAULT ((1)) NULL,
-	[comments] VARCHAR(MAX) NULL,
-	UNIQUE NONCLUSTERED ([name]) ASC
-);
-
- GO
-
 CREATE TABLE [dbo].[WaiverHistory] (
-    [Id]                     INT           IDENTITY (1, 1) NOT NULL,
+    [Id]                     INT     PRIMARY KEY      IDENTITY (1, 1) NOT NULL,
     [user_Id]                INT           NOT NULL,
     [firstName]              VARCHAR (50)  NOT NULL,
     [lastName]               VARCHAR (50)  NOT NULL,
@@ -81,8 +76,24 @@ CREATE TABLE [dbo].[WaiverHistory] (
     [emergencyStreetAddress] VARCHAR (50)  NOT NULL,
     [emergencyCity]          VARCHAR (50)  NOT NULL,
     [emergencyZip]           VARCHAR (50)  NOT NULL,
-    [signatureName]          VARCHAR (100) NOT NULL
+    [signatureName]          VARCHAR (100) NOT NULL,
+	CONSTRAINT [FK_WAIVER_USER] FOREIGN KEY ([user_Id]) REFERENCES [User](Id)
+);
+
+CREATE TABLE [dbo].[TimeSheet] (
+    [Id]           INT      IDENTITY (1, 1) NOT NULL,
+    [user_Id]      INT      NOT NULL,
+    [project_Id]   INT      NOT NULL,
+    [org_Id]       INT      NOT NULL,
+    [clockInTime]  DATETIME DEFAULT (getdate()) NOT NULL,
+    [clockOutTime] DATETIME DEFAULT (CONVERT([datetime],CONVERT([date],getdate()+(1)))) NOT NULL,
+    CONSTRAINT [PK_TimeSheet] UNIQUE ([user_Id], [project_Id], [org_Id], [clockInTime]),
+	CONSTRAINT [FK_TIMESHEET_USER] FOREIGN KEY ([user_Id]) REFERENCES [User](Id),
+	CONSTRAINT [FK_TIMESHEET_PROJECT] FOREIGN KEY ([project_Id]) REFERENCES [Project](Id),
+	CONSTRAINT [FK_TIMESHEET_ORG] FOREIGN KEY ([org_Id]) REFERENCES [Organization](Id)
 );
 
 GO
+
+
 

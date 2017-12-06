@@ -216,12 +216,7 @@
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\PagedList.css" />
-    <Content Include="DBscripts\demographicsUpdateDatabase.txt" />
-    <Content Include="DBscripts\ProjectCategory.sql" />
-    <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
-    <Content Include="DBscripts\ageBracketsByGender.txt" />
     <Content Include="DBscripts\VolunteerDBscript.txt" />
-    <Content Include="DBscripts\WaiverHistory.txt" />
     <Content Include="Docs\adminFlow.png" />
     <Content Include="Docs\adminFlow.xml" />
     <Content Include="favicon.ico" />
@@ -244,6 +239,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="DBscripts\MockData12_5_17.xlsx" />
     <None Include="Properties\PublishProfiles\steve-julien.com - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\steve-julien.com - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\steve-julien.com - Web Deploy %282%29.pubxml" />

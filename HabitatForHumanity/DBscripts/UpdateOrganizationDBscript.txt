@@ -1,3 +1,0 @@
-﻿ALTER TABLE Organization
-ADD status int DEFAULT 1;
-GO
