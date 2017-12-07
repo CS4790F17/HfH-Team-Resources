@@ -22,6 +22,8 @@
     }
     var projectId = "project" + project.Id;
     var categoryName = Repository.GetProjectCategoryName(project.categoryId);
+    var projectVolunteerCount = Repository.GetProjectVolunteerCount(project.Id);
+    var projectHours = Repository.GetProjectHours(project.Id);
     <div id="@projectId" class="row well well-sm" style="margin:5px;opacity:@opac">
         <!--Table Head-->
         <div class="row">
@@ -63,14 +65,29 @@
 
         <div id="@project.Id" class="collapse" data-toggle="collapse" data-target="#@project.Id">
             <div class="col-md-6">@project.description</div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Begin Date: </label>
+                        @project.beginDate.ToString("MM-dd-yyyy")
 
-            <div class="row">
-                <div class="col-md-3">
-                    <label>Begin Date: </label>
-                    @project.beginDate.ToString("MM-dd-yyyy")
+                    </div>
+                    <div class="col-md-4">@ToolKitVM.ModalEditButtonGlyph("editProjectButton", "editProjectModal", project.Id.ToString(), "Edit")</div>
                 </div>
-                <div class="col-md-1">@ToolKitVM.ModalEditButtonGlyph("editProjectButton", "editProjectModal", project.Id.ToString(), "Edit")</div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Hours to Date: </label>
+                        <strong> @projectHours</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Total Volunteers:  </label>
+                        <strong> @projectVolunteerCount </strong>
+                    </div>
+                </div>
             </div>
+           
         </div>
     </div>
 }

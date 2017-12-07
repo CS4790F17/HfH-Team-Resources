@@ -697,5 +697,45 @@ namespace HabitatForHumanity.Models
             }
             return rs;
         }
+
+        public static ReturnStatus GetProjectVolunteerCount(int projectId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                string sql = " SELECT COUNT(DISTINCT T.[User_ID]) FROM TimeSheet T WHERE T.project_Id = @projId";
+            
+                VolunteerDbContext db = new VolunteerDbContext();
+                var projId = new SqlParameter("@projId", projectId);
+                var numVolunteers = db.Database.SqlQuery<int>(sql,projId).ToList().FirstOrDefault();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = numVolunteers;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
+
+        public static ReturnStatus GetProjectHours(int projectId)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                string sql = " SELECT CONVERT(INT,SUM(CONVERT(DECIMAL(12, 1), DATEDIFF(mi, T.CLOCKINTIME, T.CLOCKOUTTIME) / 60.0))) " +
+                            " FROM TimeSheet T WHERE T.project_Id = @projId ";
+                VolunteerDbContext db = new VolunteerDbContext();
+                var projId = new SqlParameter("@projId", projectId);
+                var numHours = db.Database.SqlQuery<int>(sql, projId).ToList().FirstOrDefault();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = numHours;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
     }
 }
