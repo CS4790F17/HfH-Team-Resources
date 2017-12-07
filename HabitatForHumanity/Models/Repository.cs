@@ -221,27 +221,6 @@ namespace HabitatForHumanity.Models
             return User.GetUserByEmail(email);
         }
 
-
-
-        /// <summary>
-        /// Gets all the users with matching names. To be used when you know one name, but not the other. 
-        /// </summary>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <returns>List of users</returns>
-        public static ReturnStatus GetUsersByName(string firstName, string lastName)
-        {
-            if (firstName != null)
-                firstName = firstName.ToLower();
-            if (lastName != null)
-                lastName = lastName.ToLower();
-
-
-            //set both names to lowercase to avoid errors
-            return User.GetUsersByName(firstName, lastName);
-        }
-
-
         /// <summary>
         /// Changes the user password and hashes it.
         /// </summary>
