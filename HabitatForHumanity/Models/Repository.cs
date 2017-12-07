@@ -517,14 +517,14 @@ namespace HabitatForHumanity.Models
 
         public static int GetProjectVolunteerCount(int? projectId)
         {
-            if(projectId == null) { return 0; }
+            if(projectId == null || projectId < 1) { return 0; }
             ReturnStatus rs = TimeSheet.GetProjectVolunteerCount((int)projectId);
             return (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
         }
 
         public static int GetProjectHours(int? projectId)
         {
-            if (projectId == null) { return 0; }
+            if (projectId == null || projectId < 1) { return 0; }
             ReturnStatus rs = TimeSheet.GetProjectHours((int)projectId);
             return (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
         }
