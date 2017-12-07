@@ -791,36 +791,7 @@ namespace HabitatForHumanity.Controllers
         //}
         #endregion
 
-        #region Search, Is this being used?
-        public ActionResult VolunteerSearch()
-        {
-            return View();
-        }
-
-        [AdminFilter]
-        [AuthorizationFilter]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult VolunteerSearch([Bind(Include = "firstName,lastName")] User user)
-        {
-            try
-            {
-                //TODO: add error checking
-                ReturnStatus rs = Repository.GetUsersByName(user.firstName, user.lastName);
-                if (rs.errorCode != 0)
-                {
-                    ViewBag.status = "Sorry, system is temporarily down. Please try again later";
-                    return View(user);
-                }
-                List<User> users = (List<User>)rs.data;
-                return View("VolunteerSearchResults", users);
-            }
-            catch
-            {
-                return View("Error");
-            }
-
-        }
+        #region UserTimeDetails, Is this being used?
 
         /// <summary>
         /// This gives all time sheet details for selected user in VolunteerSearchResukts
