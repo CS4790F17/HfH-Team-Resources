@@ -34,36 +34,7 @@ namespace HabitatForHumanity.Controllers
 {
     public class UserController : Controller
     {
-        private VolunteerDbContext db = new VolunteerDbContext();
         private const string awwSnapMsg = "Sorry, We're experiencing technical difficulties, please try again later";
-     
-
-        #region Index
-        //[AdminFilter]
-        //[AuthorizationFilter]
-        //public ActionResult Index()
-        //{
-        //    return View(db.users.ToList());
-        //}
-        #endregion
-
-        #region Details
-        //[AdminFilter]
-        //[AuthorizationFilter]
-        //public ActionResult Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    User user = db.users.Find(id);
-        //    if (user == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(user);
-        //}
-        #endregion
 
         #region VolunteerPortal
         [AuthorizationFilter]
@@ -222,19 +193,11 @@ namespace HabitatForHumanity.Controllers
         #endregion
 
         #region Create
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
-
-        // GET: User/VolunteerSignup
         public ActionResult VolunteerSignup()
         {
             return View();
         }
-        // POST: User/VolunteerSignup
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult VolunteerSignup([Bind(
@@ -264,14 +227,7 @@ namespace HabitatForHumanity.Controllers
                         user.lastName = volunteerSignupVM.lastName;
                         user.password = volunteerSignupVM.password;
                         user.streetAddress = volunteerSignupVM.streetAddress;
-                        if (volunteerSignupVM.workPhoneNumber != null) //not sure this is the best solution
-                        {
-                            user.workPhoneNumber = volunteerSignupVM.workPhoneNumber;
-                        }
-                        else
-                        {
-                            user.workPhoneNumber = volunteerSignupVM.homePhoneNumber;
-                        }
+                        user.workPhoneNumber = (string.IsNullOrEmpty(volunteerSignupVM.workPhoneNumber)) ? "" : volunteerSignupVM.workPhoneNumber;
                         user.zip = volunteerSignupVM.zip;
                         user.isAdmin = 0;
                         user.waiverSignDate = DateTime.Now.AddYears(-2);
@@ -284,29 +240,29 @@ namespace HabitatForHumanity.Controllers
                         Session["isAdmin"] = user.isAdmin;
                         Session["UserName"] = user.emailAddress;
 
-                        ////gmail smtp server  
-                        //WebMail.SmtpServer = "smtp.gmail.com";
-                        ////gmail port to send emails  
-                        //WebMail.SmtpPort = 587;
-                        //WebMail.SmtpUseDefaultCredentials = true;
-                        ////sending emails with secure protocol  
-                        //WebMail.EnableSsl = true;
-                        ////EmailId used to send emails from application  
-                        //WebMail.UserName = "hfhdwvolunteer@gmail.com";
-                        //WebMail.Password = "3BlindMice";
-                        ////Sender email address.  
-                        //WebMail.From = "hfhdwvolunteer@gmail.com";
-                        ////Send email  
-                        //string body = "New user created at email: " + user.emailAddress;
-                        //try
-                        //{
-                        //    WebMail.Send(to: "trevororgill@weber.edu", subject: "New Volunteer", body: body, isBodyHtml: false);
-                        //}
-                        //catch
-                        //{
-                        //    //not sure what to do here
-                        //    //ViewBag.status = "Email not sent.";
-                        //}
+                        //gmail smtp server  
+                        WebMail.SmtpServer = "smtp.gmail.com";
+                        //gmail port to send emails  
+                        WebMail.SmtpPort = 587;
+                        WebMail.SmtpUseDefaultCredentials = true;
+                        //sending emails with secure protocol  
+                        WebMail.EnableSsl = true;
+                        //EmailId used to send emails from application  
+                        WebMail.UserName = "hfhdwvolunteer@gmail.com";
+                        WebMail.Password = "3BlindMice";
+                        //Sender email address.  
+                        WebMail.From = "hfhdwvolunteer@gmail.com";
+                        //Send email  
+                        string body = "New user created at email: " + user.emailAddress;
+                        try
+                        {
+                            WebMail.Send(to: "hfhdwvolunteer@gmail.com", subject: "New Volunteer", body: body, isBodyHtml: false);
+                        }
+                        catch
+                        {
+                            // log an error message
+                            //ViewBag.status = "Email not sent.";
+                        }
                         return RedirectToAction("SignWaiver", "User");
                     }
                     else
@@ -354,9 +310,6 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
-        // POST: User/SignWaiver
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [AuthorizationFilter]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -964,7 +917,7 @@ namespace HabitatForHumanity.Controllers
             {
                 if (disposing)
                 {
-                    db.Dispose();
+                    // call dispose Repo -> Data layer?  db.Dispose();
                 }
                 base.Dispose(disposing);
             }

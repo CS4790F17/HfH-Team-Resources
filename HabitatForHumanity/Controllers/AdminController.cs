@@ -444,174 +444,6 @@ namespace HabitatForHumanity.Controllers
                 return View("_Error");
             }
         }
-        #endregion     
-
-        #region Edit Volunteer
-        // GET: Admin/EditVolunteer
-        public ActionResult EditVolunteer(int id)
-        {
-            try
-            {
-                ReturnStatus getUser = Repository.GetUser(id);
-                ReturnStatus getTimeSheets = Repository.GetAllTimeSheetsByVolunteer(id);
-
-                if (getUser.errorCode != 0 || getTimeSheets.errorCode != 0)
-                {
-                    return RedirectToAction("Volunteers", "Admin", new { excMsg = awwSnapMsg });
-                }
-                else
-                {
-                    User user = new User();
-                    user = (User)getUser.data;
-
-                    UsersVM volunteer = new UsersVM();
-                    volunteer.userNumber = user.Id;
-                    // force all name to not be null for simple comparison in controller
-                    volunteer.volunteerName = user.firstName + " " + user.lastName;
-                    volunteer.email = user.emailAddress;
-                    volunteer.waiverSignDate = user.waiverSignDate;
-                    volunteer.waiverExpiration = user.waiverSignDate.AddYears(1);
-                    volunteer.waiverStatus = (volunteer.waiverExpiration > DateTime.Now);
-                    volunteer.isAdmin = (user.isAdmin == 1) ? true : false;
-                    try
-                    {
-                        volunteer.hoursToDate = (double)Repository.getTotalHoursWorkedByVolunteer(user.Id).data;
-                    }
-                    catch
-                    {
-                        volunteer.hoursToDate = 0.0;
-                    }
-                    volunteer.emergencyFirstName = user.emergencyFirstName;
-                    volunteer.emergencyLastName = user.emergencyLastName;
-                    volunteer.relation = user.relation;
-                    volunteer.emergencyHomePhone = user.emergencyHomePhone;
-                    volunteer.emergencyWorkPhone = user.emergencyWorkPhone;
-                    volunteer.emergencyStreetAddress = user.emergencyStreetAddress;
-                    volunteer.emergencyCity = user.emergencyCity;
-                    volunteer.emergencyZip = user.emergencyZip;
-
-                    List<TimeSheet> timeSheets = new List<TimeSheet>();
-                    timeSheets = (List<TimeSheet>)getTimeSheets.data;
-                    List<TimeCardVM> test = new List<TimeCardVM>();
-
-                    foreach (TimeSheet t in timeSheets)
-                    {
-                        TimeCardVM temp = new TimeCardVM();
-                        temp.timeId = t.Id;
-                        temp.volName = volunteer.volunteerName;
-                        ReturnStatus orgRS = Repository.GetOrganizationById(t.org_Id);
-                        temp.orgName = (orgRS.errorCode == 0) ? ((Organization)orgRS.data).name : "---";
-                        ReturnStatus projRS = Repository.GetProjectById(t.project_Id);
-                        temp.projName = (projRS.errorCode == 0) ? ((Project)projRS.data).name : "---";
-                        temp.inTime = t.clockInTime;
-                        temp.outTime = t.clockOutTime;
-                        test.Add(temp);
-                    }
-                    volunteer.timeCardVM = test;
-                    return View(volunteer);
-                }
-            }
-            catch
-            {
-                return View("Error");
-            }
-        }
-
-        // POST: Admin/EditVolunteer
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditVolunteer([Bind(Include = "userNumber, volunteerName, email, isAdmin, waiverSignDate")] UsersVM usersVM)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    ReturnStatus rs = Repository.GetUser(usersVM.userNumber);
-                    if (rs.errorCode != 0)
-                    {
-                        ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
-                        return View("EditVolunteer");
-                    }
-                    else
-                    {
-                        User user = (User)rs.data;
-                        user.Id = usersVM.userNumber;
-                        String[] tempName = usersVM.volunteerName.Split(' ');
-                        user.firstName = (tempName.Length > 0 && !string.IsNullOrEmpty(tempName[0])) ? tempName[0] : "";
-                        user.lastName = (tempName.Length > 1 && !string.IsNullOrEmpty(tempName[0])) ? tempName[1] : "";
-
-                        user.emailAddress = usersVM.email;
-
-                        if (usersVM.isAdmin == true)
-                        {
-                            user.isAdmin = 1;
-                        }
-                        else
-                        {
-                            user.isAdmin = 0;
-                        }
-
-                        user.waiverSignDate = usersVM.waiverSignDate;
-
-                        ReturnStatus us = new ReturnStatus();
-                        us = Repository.EditUser(user);
-                        if (us.errorCode != 0)
-                        {
-                            ViewBag.status = "Sorry, the system is temporarily down. Please try again later.";
-                            return View(usersVM);
-                        }
-                    }
-                    return RedirectToAction("Volunteers");
-                }
-                return View(usersVM);
-            }
-            catch
-            {
-                return View("Error");
-            }
-        }
-
-        /*************************************/
-        public ActionResult AdminEditUser(int id)
-        {
-            try
-            {
-                ReturnStatus rs = Repository.GetAdminViewOfUser(id);
-                UserInfo userInfo = new UserInfo();
-                if (rs.errorCode == ReturnStatus.ALL_CLEAR)
-                {
-                    AdminUserVM vm = (AdminUserVM)rs.data;
-                    userInfo = vm.userInfo;
-                }
-
-                return PartialView("_AdminEditVolunteer", userInfo);
-            }
-            catch
-            {
-                return View("_Error");
-            }
-        }
-
-        [HttpPost]
-        public ActionResult AdminEditUser(UserInfo userInfo)
-        {
-            try
-            {
-                ReturnStatus rs = Repository.AdminEditUser(userInfo);
-                if (rs.errorCode == ReturnStatus.ALL_CLEAR)
-                {
-                    return PartialView("_GenericModalSuccess");
-                }
-                // uhh, idk
-                return PartialView("_GenericModalSuccess");
-            }
-            catch
-            {
-                return View("_Error");
-            }
-        }
-        /****************************************/
-        #endregion Edit Volunteer
 
         #region Delete Timecard
         // GET: TimeSheet/Delete/5
@@ -671,6 +503,50 @@ namespace HabitatForHumanity.Controllers
             }
         }
         #endregion
+
+        #endregion     
+
+        #region Edit Volunteer
+        public ActionResult AdminEditUser(int id)
+        {
+            try
+            {
+                ReturnStatus rs = Repository.GetAdminViewOfUser(id);
+                UserInfo userInfo = new UserInfo();
+                if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    AdminUserVM vm = (AdminUserVM)rs.data;
+                    userInfo = vm.userInfo;
+                }
+
+                return PartialView("_AdminEditVolunteer", userInfo);
+            }
+            catch
+            {
+                return View("_Error");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AdminEditUser(UserInfo userInfo)
+        {
+            try
+            {
+                ReturnStatus rs = Repository.AdminEditUser(userInfo);
+                if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    return PartialView("_GenericModalSuccess");
+                }
+                // uhh, idk
+                return PartialView("_GenericModalSuccess");
+            }
+            catch
+            {
+                return View("_Error");
+            }
+        }
+
+        #endregion Edit Volunteer
 
         #region Manage Organization
         public ActionResult ViewOrganizations(OrganizationSearchModel model)

@@ -216,12 +216,7 @@
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\PagedList.css" />
-    <Content Include="DBscripts\demographicsUpdateDatabase.txt" />
-    <Content Include="DBscripts\ProjectCategory.sql" />
-    <Content Include="DBscripts\UpdateOrganizationDBscript.txt" />
-    <Content Include="DBscripts\ageBracketsByGender.txt" />
     <Content Include="DBscripts\VolunteerDBscript.txt" />
-    <Content Include="DBscripts\WaiverHistory.txt" />
     <Content Include="Docs\adminFlow.png" />
     <Content Include="Docs\adminFlow.xml" />
     <Content Include="favicon.ico" />
@@ -244,6 +239,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="DBscripts\MockData12_5_17.xlsx" />
     <None Include="Properties\PublishProfiles\steve-julien.com - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\steve-julien.com - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\steve-julien.com - Web Deploy %282%29.pubxml" />
@@ -344,19 +340,13 @@
     <Content Include="Views\Admin\_HoursMonthChart.cshtml" />
     <Content Include="Views\Admin\_DemographicsPie.cshtml" />
     <Content Include="Views\Admin\_BadPunches.cshtml" />
-    <Content Include="Views\User\VolunteerPortalOut.cshtml" />
     <Content Include="Views\Shared\_SharedLayoutUser.cshtml" />
     <Content Include="Views\Shared\_PunchIn.cshtml" />
     <Content Include="Views\User\_PunchOut.cshtml" />
-    <Content Include="Views\User\VolunteerSearch.cshtml" />
-    <Content Include="Views\User\VolunteerSearchResults.cshtml" />
-    <Content Include="Views\User\UserTimeDetails.cshtml" />
     <Content Include="Views\User\VolunteerSignup.cshtml" />
     <Content Include="Views\User\SignWaiver.cshtml" />
-    <Content Include="Views\Admin\GetUsersByQuery.cshtml" />
     <Content Include="Views\Admin\Volunteers.cshtml" />
     <Content Include="Views\Admin\TimeCards.cshtml" />
-    <Content Include="Views\Admin\EditVolunteer.cshtml" />
     <Content Include="Views\User\UserProfile.cshtml" />
     <Content Include="Views\User\_EditProfile.cshtml" />
     <Content Include="Views\User\_ViewProfile.cshtml" />
@@ -391,7 +381,6 @@
     <Content Include="Views\Admin\_AdminViewUserEmergency.cshtml" />
     <Content Include="Views\Admin\_GenericModalSuccess.cshtml" />
     <Content Include="Views\Admin\ViewWaivers.cshtml" />
-    <Content Include="Views\Admin\Test.cshtml" />
     <Content Include="Views\Admin\WaiverDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
