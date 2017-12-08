@@ -221,27 +221,6 @@ namespace HabitatForHumanity.Models
             return User.GetUserByEmail(email);
         }
 
-
-
-        /// <summary>
-        /// Gets all the users with matching names. To be used when you know one name, but not the other. 
-        /// </summary>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <returns>List of users</returns>
-        public static ReturnStatus GetUsersByName(string firstName, string lastName)
-        {
-            if (firstName != null)
-                firstName = firstName.ToLower();
-            if (lastName != null)
-                lastName = lastName.ToLower();
-
-
-            //set both names to lowercase to avoid errors
-            return User.GetUsersByName(firstName, lastName);
-        }
-
-
         /// <summary>
         /// Changes the user password and hashes it.
         /// </summary>
@@ -536,7 +515,19 @@ namespace HabitatForHumanity.Models
             return ProjectCategory.GetProjectCategoryName(id);
         }
 
+        public static int GetProjectVolunteerCount(int? projectId)
+        {
+            if(projectId == null || projectId < 1) { return 0; }
+            ReturnStatus rs = TimeSheet.GetProjectVolunteerCount((int)projectId);
+            return (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
+        }
 
+        public static int GetProjectHours(int? projectId)
+        {
+            if (projectId == null || projectId < 1) { return 0; }
+            ReturnStatus rs = TimeSheet.GetProjectHours((int)projectId);
+            return (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
+        }
 
         /// <summary>
         /// Deletes a project from the database.
