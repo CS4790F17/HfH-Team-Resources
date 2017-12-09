@@ -6,7 +6,7 @@
 }
 
 @ToolKitVM.ModalPreventDefault("createCategoryModal", "Create a new Category", "createPartialTarget", "addCategoryForm")
-
+@ToolKitVM.ModalPreventDefault("editCategoryModal", "Edit Category", "editPartialTarget", "editCategoryForm")
 <p>
     @*@Html.ActionLink("Create New", "Create")*@
     @ToolKitVM.GenericModalOpenButton("createCategory", "createCategoryModal", "", "Create new Category", "glyphicon-plus", false)
@@ -26,6 +26,7 @@
                 @Html.DisplayFor(modelItem => item.categoryType)
             </td>
             <td>
+                @ToolKitVM.ModalEditButtonGlyph("categoryEditButton","editCategoryModal", item.Id.ToString(), "Edit")
                 @*@Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                 @Html.ActionLink("Details", "Details", new { id = item.Id }) |
                 @Html.ActionLink("Delete", "Delete", new { id = item.Id })*@
@@ -36,4 +37,4 @@
 
 @Html.PagedListPager(Model.SearchResults, page => Url.Action("ManageProjectCategory", new RouteValueDictionary() { { "Page", page } }), PagedListRenderOptions.PageNumbersOnly)
 @Html.GetPartialViewButtonScript("createCategory", "AddCategory", "Admin", "createPartialTarget")
-
+@Html.GetPartialViewButtonScript("categoryEditButton", "EditCategory", "Admin", "editPartialTarget")

@@ -59,7 +59,7 @@ namespace HabitatForHumanity.Models
                 DateTime periodEnd = firstThisMonth.AddMonths(-monthsAgo);
                 DateTime periodStart = periodEnd.AddMonths(-1);
 
-                string q = 
+                string q =
                     " SELECT MAX(T.CLOCKINTIME) AS monthName, " +
                     " PC.CATEGORYTYPE AS category, " +
                     " COUNT(U.ID) AS numVolunteers, " +
@@ -85,7 +85,7 @@ namespace HabitatForHumanity.Models
                     " GROUP BY " +
                     " PC.CATEGORYTYPE ";
                 var projectDemographics = db.Database.SqlQuery<ProjDemogReportVM>(q
-                   
+
                     ).ToList();
 
                 reportReturn.errorCode = 0;
@@ -330,17 +330,17 @@ namespace HabitatForHumanity.Models
 
             //if statement is terrible bandaid fix 
             //TODO: redo logic
-            if(categorySelection > 0)
-            { 
-            proj = (from p in db.projects
-                    where p.status.Equals(statusChoice) &&
-                    p.name.Contains(queryString) &&
-                    p.categoryId == categorySelection
-                    orderby p.status descending
-                    select p)
-                    .Skip(itemsPerPage * page)
-                    .Take(itemsPerPage).ToList();
-            totalProjects = db.projects.Count(x => x.status.Equals(statusChoice) && x.name.Contains(queryString));
+            if (categorySelection > 0)
+            {
+                proj = (from p in db.projects
+                        where p.status.Equals(statusChoice) &&
+                        p.name.Contains(queryString) &&
+                        p.categoryId == categorySelection
+                        orderby p.status descending
+                        select p)
+                        .Skip(itemsPerPage * page)
+                        .Take(itemsPerPage).ToList();
+                totalProjects = db.projects.Count(x => x.status.Equals(statusChoice) && x.name.Contains(queryString));
             }
             else
             {
@@ -449,6 +449,44 @@ namespace HabitatForHumanity.Models
                 st.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
                 st.errorMessage = e.ToString();
                 st.data = pc;
+            }
+            return st;
+        }
+
+        public static ReturnStatus GetProjectCategoryById(int id)
+        {
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.projectCategories.Find(id);
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch (Exception e)
+            {
+                st.data = new ProjectCategory();
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorMessage = e.ToString();
+            }
+
+            return st;
+        }
+
+        public static ReturnStatus EditProjectCategory(ProjectCategory cat)
+        {
+            ReturnStatus st = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                db.Entry(cat).State = EntityState.Modified;
+                db.SaveChanges();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.FAIL_ON_INSERT;
+                st.errorMessage = e.Message;
+                st.data = "";
             }
             return st;
         }

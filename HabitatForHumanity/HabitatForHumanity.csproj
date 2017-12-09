@@ -383,6 +383,7 @@
     <Content Include="Views\Admin\ViewWaivers.cshtml" />
     <Content Include="Views\Admin\WaiverDetails.cshtml" />
     <Content Include="Views\Admin\ManageProjectCategory.cshtml" />
+    <Content Include="Views\Admin\ProjectCategoryPartialViews\_EditCategory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
