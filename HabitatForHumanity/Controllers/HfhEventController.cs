@@ -61,7 +61,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult AddProjectsToEvent(List<EventAddRemoveProjectVM> vmList)
         {
             ReturnStatus rs = Repository.AddProjectsToEvent(vmList);
-            return RedirectToAction("Index");
+            return RedirectToAction("ManageEvent", new { id = vmList.First().hfhEventId });
         }
         // GET: HfhEvent/Create
         public ActionResult Create()
@@ -80,7 +80,7 @@ namespace HabitatForHumanity.Controllers
             {
                 // notify removal failed
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("ManageEvent", new { id = vm.hfhEventId });
         }
 
         // POST: HfhEvent/Create
