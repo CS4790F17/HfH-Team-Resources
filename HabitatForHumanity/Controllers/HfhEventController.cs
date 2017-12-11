@@ -56,6 +56,12 @@ namespace HabitatForHumanity.Controllers
             return View(hfhEvent);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddProjectsToEvent(List<EventAddRemoveProjectVM> vmList)
+        {
+            return RedirectToAction("Index");
+        }
         // GET: HfhEvent/Create
         public ActionResult Create()
         {

@@ -1,29 +1,28 @@
-﻿@model IEnumerable<HabitatForHumanity.ViewModels.EventAddRemoveProjectVM>
+﻿@model List<HabitatForHumanity.ViewModels.EventAddRemoveProjectVM>
+
 <div>Select projects to add to event</div>
-
-
    
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("AddProjectsToEvent", "HfhEvent"))
 {
     @Html.AntiForgeryToken()
     <div class="form-horizontal">
-        @foreach (var item in Model)
+        @for(int i=0;i<Model.Count();i++)
         {
-            @Html.HiddenFor(modelItem => item.hfhEventId)
-            @Html.HiddenFor(modelItem => item.projectId)
+            @Html.HiddenFor(modelItem => Model[i].hfhEventId)
+            @Html.HiddenFor(modelItem => Model[i].projectId)
             <div class="form-group">
-                @Html.LabelFor(modelItem => item.isSelected, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(modelItem => Model[i].isSelected, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(modelItem => item.isSelected, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(modelItem => item.isSelected, "", new { @class = "text-danger" })
+                    @Html.EditorFor(modelItem => Model[i].isSelected, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(modelItem => Model[i].isSelected, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
-                @Html.LabelFor(modelItem => item.projectName, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(modelItem => Model[i].projectName, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(modelItem => item.projectName, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(modelItem => item.projectName, "", new { @class = "text-danger" })
+                    @Html.EditorFor(modelItem => Model[i].projectName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(modelItem => Model[i].projectName, "", new { @class = "text-danger" })
                 </div>
             </div>
             @*<tr>
