@@ -164,7 +164,6 @@ namespace HabitatForHumanity.Models
             }
         }
 
-
         /// <summary>
         /// Creates a volunteer user
         /// </summary>
@@ -1571,6 +1570,11 @@ namespace HabitatForHumanity.Models
         #endregion
 
         #region Event
+
+        public static ReturnStatus CreateEvent(HfhEvent hfhEvent)
+        {
+            return HfhEvent.CreateEvent(hfhEvent);
+        }
         public static ReturnStatus GetManageEventVmById(int id)
         {
             ReturnStatus vmToReturn = new ReturnStatus();

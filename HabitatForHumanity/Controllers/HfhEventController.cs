@@ -63,11 +63,7 @@ namespace HabitatForHumanity.Controllers
             ReturnStatus rs = Repository.AddProjectsToEvent(vmList);
             return RedirectToAction("ManageEvent", new { id = vmList.First().hfhEventId });
         }
-        // GET: HfhEvent/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+
 
         public ActionResult RemoveEventProject(EventAddRemoveProjectVM vm)
         {
@@ -83,6 +79,12 @@ namespace HabitatForHumanity.Controllers
             return RedirectToAction("ManageEvent", new { id = vm.hfhEventId });
         }
 
+        // GET: HfhEvent/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
         // POST: HfhEvent/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -92,9 +94,11 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.hfhEvents.Add(hfhEvent);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ReturnStatus rs = Repository.CreateEvent(hfhEvent);
+                if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    return RedirectToAction("Index");
+                }              
             }
 
             return View(hfhEvent);
