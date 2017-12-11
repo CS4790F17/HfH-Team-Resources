@@ -191,8 +191,10 @@
     <Compile Include="ViewModels\CategorySearchModel.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\DemographicsVM.cs" />
+    <Compile Include="ViewModels\EventAddRemoveProjectVM.cs" />
     <Compile Include="ViewModels\IsEditingVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\ManageEventVM.cs" />
     <Compile Include="ViewModels\OrganizationSearchModel.cs" />
     <Compile Include="ViewModels\OrganizationVM.cs" />
     <Compile Include="ViewModels\ProjDemogReportVM.cs" />
@@ -389,6 +391,9 @@
     <Content Include="Views\HfhEvent\Details.cshtml" />
     <Content Include="Views\HfhEvent\Edit.cshtml" />
     <Content Include="Views\HfhEvent\Index.cshtml" />
+    <Content Include="Views\HfhEvent\ManageEvent.cshtml" />
+    <Content Include="Views\HfhEvent\_EventProjects.cshtml" />
+    <Content Include="Views\HfhEvent\_ProjectsToAdd.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

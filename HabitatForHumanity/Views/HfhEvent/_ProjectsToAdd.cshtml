@@ -1,0 +1,16 @@
+﻿@model IEnumerable<HabitatForHumanity.ViewModels.EventAddRemoveProjectVM>
+<div>Select projects to add to event</div>
+@foreach (var item in Model)
+{
+    @Html.HiddenFor(modelItem => item.hfhEventId)
+    @Html.HiddenFor(modelItem => item.projectId)
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.isSelected)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.projectName)
+        </td>
+
+    </tr>
+}

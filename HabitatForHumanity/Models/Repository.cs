@@ -1570,5 +1570,47 @@ namespace HabitatForHumanity.Models
         }
         #endregion
 
+        #region Event
+        public static ReturnStatus GetManageEventVmById(int id)
+        {
+            ReturnStatus vmToReturn = new ReturnStatus();
+            ManageEventVM vm = new ManageEventVM();
+            ReturnStatus eventRS = HfhEvent.GetHfhEventById(id);
+            if(eventRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                vm.hfhEvent = (HfhEvent)eventRS.data;
+            }
+            else
+            {
+                vmToReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return vmToReturn;
+            }
+            //empty project lists should be okay...
+            ReturnStatus eventProjectsRS = HfhEvent.GetEventProjectsByEventId(id);
+            if (eventProjectsRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                vm.eventProjects = (List<EventAddRemoveProjectVM>)eventProjectsRS.data;
+            }
+            else
+            {
+                vm.eventProjects = new List<EventAddRemoveProjectVM>();
+                //vm.eventProjects.Add(new EventAddRemoveProjectVM());
+            }
+            ReturnStatus addableProjectsRS = HfhEvent.GetNotHfhEventProjects(id);
+            if(addableProjectsRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                vm.addableProjects = (List<EventAddRemoveProjectVM>)addableProjectsRS.data; 
+            }
+            else
+            {
+                vm.addableProjects = new List<EventAddRemoveProjectVM>();
+            }
+           
+            vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+            vmToReturn.data = vm;
+            return vmToReturn;
+        }
+        #endregion Event
+
     }
 }

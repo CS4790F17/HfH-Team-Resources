@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
+using HabitatForHumanity.ViewModels;
 
 namespace HabitatForHumanity.Controllers
 {
@@ -14,6 +15,26 @@ namespace HabitatForHumanity.Controllers
     {
         private VolunteerDbContext db = new VolunteerDbContext();
 
+        public ActionResult ManageEvent(int? id)
+        {
+            ManageEventVM vm = new ManageEventVM();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ReturnStatus rs = Repository.GetManageEventVmById((int)id);
+            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                vm = (ManageEventVM)rs.data;
+            }
+            else
+            {
+                return RedirectToAction("Index");//TODO:
+            }
+       
+            return View(vm);
+            
+        }
         // GET: HfhEvent
         public ActionResult Index()
         {

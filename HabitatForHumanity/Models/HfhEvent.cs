@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HabitatForHumanity.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -190,6 +191,79 @@ namespace HabitatForHumanity.Models
             }
            
             return st;
+        }
+
+        public static ReturnStatus GetEventProjectsByEventId(int id)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            string sql = " SELECT " +
+                "H.Id AS hfhEventId, " +
+                "PE.project_Id AS projectId, " +
+                "P.name AS projectName, " +
+                "CAST(1 AS bit) AS isSelected " +
+                "FROM " +
+                "HfhEvent H " +
+                "LEFT JOIN ProjectEvent PE " +
+                "ON H.Id = PE.event_Id " +
+                "LEFT JOIN Project P " +
+                "ON PE.project_Id = P.Id " +
+                "WHERE " +
+                "PE.project_Id IS NOT NULL " +
+                "AND " +
+                "H.Id = @hfhEventId ";
+            //string sql = " SELECT H.Id AS hfhEventId, " +
+            //    " PE.project_Id AS projectId, " +
+            //    " P.name AS projectName, " +
+            //    " CAST(1 AS bit) AS isSelected " +
+            //    " FROM HfhEvent H LEFT JOIN ProjectEvent PE ON H.Id = PE.event_Id " +
+            //    " LEFT JOIN Project P ON PE.project_Id = P.Id " +
+            //    " WHERE H.Id = @hfhEventId ";
+            var evId = new SqlParameter("@hfhEventId", id);
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var projects = db.Database.SqlQuery<EventAddRemoveProjectVM>(sql, evId).ToList();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = projects;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
+        }
+
+        public static ReturnStatus GetNotHfhEventProjects(int id)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            string sql = " SELECT " +
+                " @hfhEventId AS hfhEventId, " +
+                " P.Id AS projectId, " +
+                " P.name AS projectName, " +
+                " CAST(0 AS bit) AS isSelected " +
+                " FROM Project P " +
+                " WHERE " +
+                " P.Id NOT IN( " +
+                    " SELECT " +
+                    " PE.project_Id " +
+                    " FROM " +
+                    " ProjectEvent PE " +
+                    " WHERE " +
+                    " PE.project_Id IS NOT NULL " +
+                    " AND PE.event_Id = @hfhEventId )";
+            var evId = new SqlParameter("@hfhEventId", id);
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                var projects = db.Database.SqlQuery<EventAddRemoveProjectVM>(sql, evId).ToList();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = projects;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
         }
 
         #endregion

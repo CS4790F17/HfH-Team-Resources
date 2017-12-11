@@ -1,0 +1,59 @@
+﻿@model HabitatForHumanity.ViewModels.ManageEventVM
+@{
+    ViewBag.Title = "Manage Event";
+}
+
+<h2>ManageEvent</h2>
+<h2>Details</h2>
+
+<div>
+    <h4>HfhEvent</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.hfhEvent.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.hfhEvent.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.hfhEvent.description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.hfhEvent.description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.hfhEvent.eventPartner)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.hfhEvent.eventPartner)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.hfhEvent.startDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.hfhEvent.startDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.hfhEvent.endDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.hfhEvent.endDate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
+@Html.Partial("_EventProjects", Model.eventProjects)
+@Html.Partial("_ProjectsToAdd", Model.addableProjects)
