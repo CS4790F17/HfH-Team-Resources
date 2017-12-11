@@ -1588,26 +1588,28 @@ namespace HabitatForHumanity.Models
             //empty project lists should be okay...
             ReturnStatus eventProjectsRS = HfhEvent.GetEventProjectsByEventId(id);
             if (eventProjectsRS.errorCode == ReturnStatus.ALL_CLEAR)
-            {
+            {        
                 vm.eventProjects = (List<EventAddRemoveProjectVM>)eventProjectsRS.data;
             }
             else
             {
-                vm.eventProjects = new List<EventAddRemoveProjectVM>();
-                //vm.eventProjects.Add(new EventAddRemoveProjectVM());
+                vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return vmToReturn;
             }
             ReturnStatus addableProjectsRS = HfhEvent.GetNotHfhEventProjects(id);
             if(addableProjectsRS.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                vm.addableProjects = (List<EventAddRemoveProjectVM>)addableProjectsRS.data; 
+                vm.addableProjects = (List<EventAddRemoveProjectVM>)addableProjectsRS.data;
+                // all went well
+                vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                vmToReturn.data = vm;
             }
             else
             {
-                vm.addableProjects = new List<EventAddRemoveProjectVM>();
-            }
-           
-            vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
-            vmToReturn.data = vm;
+                vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return vmToReturn;
+            }     
+
             return vmToReturn;
         }
         public static ReturnStatus AddProjectsToEvent(List<EventAddRemoveProjectVM> vmList)

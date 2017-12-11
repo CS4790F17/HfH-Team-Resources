@@ -3,21 +3,13 @@
     ViewBag.Title = "Manage Event";
 }
 
-<h2>ManageEvent</h2>
-<h2>Details</h2>
+<h2 class="text-center">@Model.hfhEvent.name</h2>
+
 <div class="row">
     <div class="col-md-4">
-        <h4>HfhEvent</h4>
+        <h4 class="text-center">Details</h4>
         <hr />
         <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.hfhEvent.name)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.hfhEvent.name)
-            </dd>
-
             <dt>
                 @Html.DisplayNameFor(model => model.hfhEvent.description)
             </dt>
@@ -51,9 +43,19 @@
             </dd>
 
         </dl>
-        <p>
-            @Html.ActionLink("Back to List", "Index")
-        </p>
+        <div class="text-center">
+            
+            <p>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.hfhEvent.Id })
+            </p>
+            <p>
+                @Html.ActionLink("Report", "HfhEventReport", new { id = Model.hfhEvent.Id })
+            </p>
+            <p>
+                @Html.ActionLink("Delete", "Delete", new { id = Model.hfhEvent.Id })
+            </p>
+        </div>
+
     </div>
 
     <div class="col-md-4">
@@ -64,4 +66,7 @@
         @Html.Partial("_ProjectsToAdd", Model.addableProjects)
     </div>
 </div>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
 
