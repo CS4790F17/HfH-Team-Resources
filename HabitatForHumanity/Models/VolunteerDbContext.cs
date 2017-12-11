@@ -15,5 +15,6 @@ namespace HabitatForHumanity.Models
         public DbSet<ProjectCategory> projectCategories { get; set; }
         public DbSet<WaiverHistory> waiverHistory { get; set; }
         public DbSet<HfhEvent> hfhEvents { get; set; }
+        public DbSet<ProjectEvent> eventProjects { get; set; }
     }
 }

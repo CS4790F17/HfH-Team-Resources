@@ -1610,6 +1610,24 @@ namespace HabitatForHumanity.Models
             vmToReturn.data = vm;
             return vmToReturn;
         }
+        public static ReturnStatus AddProjectsToEvent(List<EventAddRemoveProjectVM> vmList)
+        {
+            int numToUpdate = 0;
+            int numUpdated = 0;
+            foreach(EventAddRemoveProjectVM vm in vmList)
+            {
+                if(vm.isSelected == true)
+                {
+                    numToUpdate++;
+                    ProjectEvent pe = new ProjectEvent();
+                    pe.project_Id = vm.projectId;
+                    pe.event_Id = vm.hfhEventId;
+                    ReturnStatus rs = HfhEvent.AddProjectToEvent(pe);
+                    numUpdated += (rs.errorCode == ReturnStatus.ALL_CLEAR) ? 1 : 0;
+                }
+            }
+            return new ReturnStatus() { errorCode = (numToUpdate == numUpdated) ? ReturnStatus.ALL_CLEAR : ReturnStatus.COULD_NOT_UPDATE_DATABASE };
+        }
         #endregion Event
 
     }

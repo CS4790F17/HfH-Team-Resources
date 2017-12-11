@@ -266,6 +266,24 @@ namespace HabitatForHumanity.Models
             return rs;
         }
 
+        public static ReturnStatus AddProjectToEvent(ProjectEvent pe)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            VolunteerDbContext db = new VolunteerDbContext();
+            try
+            {
+                db.eventProjects.Add(pe);
+                db.SaveChanges();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
+            }
+       
+            return rs;
+        }
+
         #endregion
     }
 
