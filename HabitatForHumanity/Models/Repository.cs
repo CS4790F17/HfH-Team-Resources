@@ -1628,6 +1628,11 @@ namespace HabitatForHumanity.Models
             }
             return new ReturnStatus() { errorCode = (numToUpdate == numUpdated) ? ReturnStatus.ALL_CLEAR : ReturnStatus.COULD_NOT_UPDATE_DATABASE };
         }
+
+        public static ReturnStatus RemoveEventProject(EventAddRemoveProjectVM vm)
+        {
+            return HfhEvent.RemoveEventProject(vm);
+        }
         #endregion Event
 
     }

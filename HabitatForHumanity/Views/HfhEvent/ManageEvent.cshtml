@@ -5,55 +5,63 @@
 
 <h2>ManageEvent</h2>
 <h2>Details</h2>
+<div class="row">
+    <div class="col-md-4">
+        <h4>HfhEvent</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.hfhEvent.name)
+            </dt>
 
-<div>
-    <h4>HfhEvent</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.hfhEvent.name)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.hfhEvent.name)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.hfhEvent.name)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.hfhEvent.description)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.hfhEvent.description)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.hfhEvent.description)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.hfhEvent.description)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.hfhEvent.eventPartner)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.hfhEvent.eventPartner)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.hfhEvent.eventPartner)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.hfhEvent.eventPartner)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.hfhEvent.startDate)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.hfhEvent.startDate)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.hfhEvent.startDate)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.hfhEvent.startDate)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.hfhEvent.endDate)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.hfhEvent.endDate)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.hfhEvent.endDate)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.hfhEvent.endDate)
-        </dd>
+        </dl>
+        <p>
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </div>
 
-    </dl>
+    <div class="col-md-4">
+        @Html.Partial("_EventProjects", Model.eventProjects)
+    </div>
+    <div class="col-md-4">
+
+        @Html.Partial("_ProjectsToAdd", Model.addableProjects)
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Back to List", "Index")
-</p>
-@Html.Partial("_EventProjects", Model.eventProjects)
-@Html.Partial("_ProjectsToAdd", Model.addableProjects)
+

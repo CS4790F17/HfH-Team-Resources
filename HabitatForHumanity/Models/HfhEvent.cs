@@ -284,6 +284,25 @@ namespace HabitatForHumanity.Models
             return rs;
         }
 
+        public static ReturnStatus RemoveEventProject(EventAddRemoveProjectVM vm)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            VolunteerDbContext db = new VolunteerDbContext();
+            try
+            {
+                ProjectEvent pe = db.eventProjects.Where(e => e.project_Id == vm.projectId && e.event_Id == vm.hfhEventId).ToList().FirstOrDefault();
+                db.eventProjects.Remove(pe);
+                db.SaveChanges();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
+            }
+
+            return rs;
+        }
+
         #endregion
     }
 

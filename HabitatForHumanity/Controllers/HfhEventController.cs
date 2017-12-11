@@ -69,6 +69,20 @@ namespace HabitatForHumanity.Controllers
             return View();
         }
 
+        public ActionResult RemoveEventProject(EventAddRemoveProjectVM vm)
+        {
+            ReturnStatus rs = Repository.RemoveEventProject(vm);
+            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                // notify project removed
+            }
+            else
+            {
+                // notify removal failed
+            }
+            return RedirectToAction("Index");
+        }
+
         // POST: HfhEvent/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
