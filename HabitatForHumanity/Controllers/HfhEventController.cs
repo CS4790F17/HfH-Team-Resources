@@ -142,12 +142,15 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            HfhEvent hfhEvent = db.hfhEvents.Find(id);
-            if (hfhEvent == null)
+            ReturnStatus rs = Repository.GetHfhEvent((int)id);
+            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                return View((HfhEvent)rs.data);
+            }
+            else
             {
                 return HttpNotFound();
             }
-            return View(hfhEvent);
         }
 
         // POST: HfhEvent/Delete/5
@@ -155,10 +158,12 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            HfhEvent hfhEvent = db.hfhEvents.Find(id);
-            db.hfhEvents.Remove(hfhEvent);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            ReturnStatus rs = Repository.DeleteHfhEventById(id);
+            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                return RedirectToAction("Index");
+            }
+            return View("Error");
         }
 
         protected override void Dispose(bool disposing)

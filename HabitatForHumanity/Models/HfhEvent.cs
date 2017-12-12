@@ -320,6 +320,29 @@ namespace HabitatForHumanity.Models
             return rs;
        
         }
+        public static ReturnStatus DeleteEvent(int id)
+        {
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                // get rid of all foreign key relationships first
+                var joinsToRemove = db.eventProjects.Where(ep => ep.event_Id == id);
+                db.eventProjects.RemoveRange(joinsToRemove);
+                db.SaveChanges();
+
+                // remove the event itself
+                HfhEvent hfhEvent = db.hfhEvents.Find(id);
+                db.hfhEvents.Remove(hfhEvent);
+                db.SaveChanges();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
+            }
+            return rs;
+        }
 
         #endregion
     }

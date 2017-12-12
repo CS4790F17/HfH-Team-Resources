@@ -1575,6 +1575,12 @@ namespace HabitatForHumanity.Models
         {
             return HfhEvent.CreateEvent(hfhEvent);
         }
+
+
+        public static ReturnStatus GetHfhEvent(int id)
+        {
+            return HfhEvent.GetHfhEventById(id);
+        }
         public static ReturnStatus GetManageEventVmById(int id)
         {
             ReturnStatus vmToReturn = new ReturnStatus();
@@ -1638,6 +1644,11 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus RemoveEventProject(EventAddRemoveProjectVM vm)
         {
             return HfhEvent.RemoveEventProject(vm);
+        }
+
+        public static ReturnStatus DeleteHfhEventById(int id)
+        {
+            return HfhEvent.DeleteEvent(id);
         }
         #endregion Event
 
