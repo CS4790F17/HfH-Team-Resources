@@ -1595,7 +1595,6 @@ namespace HabitatForHumanity.Models
                 vmToReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 return vmToReturn;
             }
-            //empty project lists should be okay...
             ReturnStatus eventProjectsRS = HfhEvent.GetEventProjectsByEventId(id);
             if (eventProjectsRS.errorCode == ReturnStatus.ALL_CLEAR)
             {        
@@ -1619,7 +1618,6 @@ namespace HabitatForHumanity.Models
                 vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 return vmToReturn;
             }     
-
             return vmToReturn;
         }
         public static ReturnStatus AddProjectsToEvent(List<EventAddRemoveProjectVM> vmList)

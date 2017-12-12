@@ -17,7 +17,7 @@ namespace HabitatForHumanity.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Enter Event Name")]
-        [Display(Name = "Event Name*")]
+        [Display(Name = "Event Name")]
         public string name { get; set; }
 
         [Display(Name = "Description")]
@@ -27,12 +27,12 @@ namespace HabitatForHumanity.Models
         public string eventPartner { get; set; }
 
         [Required(ErrorMessage = "Start Date is Required")]
-        [Display(Name = "Start Date*")]
+        [Display(Name = "Start Date")]
         [DataType(DataType.Date)]
         public DateTime startDate { get; set; }
 
         [Required(ErrorMessage = "End Date is Required")]
-        [Display(Name = "End Date*")]
+        [Display(Name = "End Date")]
         [DataType(DataType.Date)]
         public DateTime endDate { get; set; }
 
@@ -116,83 +116,11 @@ namespace HabitatForHumanity.Models
         }
 
         /// <summary>
-        /// Deletes an event from the database.
+        /// Gets a list of Projects that have a relationship 
+        /// to the HfhEvent
         /// </summary>
-        /// <param name="hfhEvent">The event object to delete</param>
-        public static ReturnStatus DeleteHfhEvent(HfhEvent hfhEvent)
-        {
-            ReturnStatus st = new ReturnStatus();
-            st.data = null;
-            try
-            {
-                VolunteerDbContext db = new VolunteerDbContext();
-                db.hfhEvents.Attach(hfhEvent);
-                db.hfhEvents.Remove(hfhEvent);
-                db.SaveChanges();
-
-                st.errorCode = (int)ReturnStatus.ALL_CLEAR;
-                return st;
-
-            }
-            catch (Exception e)
-            {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
-                return st;
-            }
-        }
-
-        /// <summary>
-        /// Deletes an organization from the database by id.
-        /// </summary>
-        /// <param name="id">The id of the organization to delete.</param>
-        public static ReturnStatus DeleteHfhEventById(int id)
-        {
-            ReturnStatus st = new ReturnStatus();
-            st.data = null;
-            try
-            {
-                VolunteerDbContext db = new VolunteerDbContext();
-                HfhEvent hfhEvent = db.hfhEvents.Find(id);
-                if (hfhEvent != null)
-                {
-                    db.hfhEvents.Remove(hfhEvent);
-                    db.SaveChanges();
-
-                    st.errorCode = ReturnStatus.ALL_CLEAR;
-                    return st;
-                }
-                st.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
-                return st;
-            }
-            catch (Exception e)
-            {
-                st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
-                st.errorMessage = e.ToString();
-                return st;
-            }
-        }
-
-        public static ReturnStatus GetHfhEventByNameSQL(string name)
-        {
-            VolunteerDbContext db = new VolunteerDbContext();
-            ReturnStatus st = new ReturnStatus();
-            try
-            {
-                var hfhName = new SqlParameter("@Name", "%" + name + "%");
-                var events = db.hfhEvents.SqlQuery("SELECT * FROM HfhEvent WHERE HfhEvent.name LIKE @Name", hfhName).OrderByDescending(x => x.startDate).ToList();
-
-                st.data = events;
-                st.errorCode = ReturnStatus.ALL_CLEAR;
-            }
-            catch
-            {
-                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
-            }
-           
-            return st;
-        }
-
+        /// <param name="id">The Id of the HfhEvent</param>
+        /// <returns>List of Project view models</returns>
         public static ReturnStatus GetEventProjectsByEventId(int id)
         {
             ReturnStatus rs = new ReturnStatus();
@@ -211,13 +139,6 @@ namespace HabitatForHumanity.Models
                 "PE.project_Id IS NOT NULL " +
                 "AND " +
                 "H.Id = @hfhEventId ";
-            //string sql = " SELECT H.Id AS hfhEventId, " +
-            //    " PE.project_Id AS projectId, " +
-            //    " P.name AS projectName, " +
-            //    " CAST(1 AS bit) AS isSelected " +
-            //    " FROM HfhEvent H LEFT JOIN ProjectEvent PE ON H.Id = PE.event_Id " +
-            //    " LEFT JOIN Project P ON PE.project_Id = P.Id " +
-            //    " WHERE H.Id = @hfhEventId ";
             var evId = new SqlParameter("@hfhEventId", id);
             try
             {
@@ -233,6 +154,13 @@ namespace HabitatForHumanity.Models
             return rs;
         }
 
+        /// <summary>
+        /// Gets a list of Projects that are possible candidates
+        /// to add to an HfhEvent. This includes all Projects that
+        /// are not currently joined to the HfhEvent.
+        /// </summary>
+        /// <param name="id">The HfhEvent Id</param>
+        /// <returns>List of EventAddRemoveProjectVM view models</returns>
         public static ReturnStatus GetNotHfhEventProjects(int id)
         {
             ReturnStatus rs = new ReturnStatus();
@@ -266,6 +194,12 @@ namespace HabitatForHumanity.Models
             return rs;
         }
 
+        /// <summary>
+        /// Creates a joining relationship for a Project 
+        /// to an HfhEvent
+        /// </summary>
+        /// <param name="pe">A joining object with the id's of the two objects to join</param>
+        /// <returns>Returns an ErrorCode indicating the result of the db insert</returns>
         public static ReturnStatus AddProjectToEvent(ProjectEvent pe)
         {
             ReturnStatus rs = new ReturnStatus();
@@ -284,6 +218,12 @@ namespace HabitatForHumanity.Models
             return rs;
         }
 
+        /// <summary>
+        /// Deletes the relationship between an HfhEvent 
+        /// and a Project
+        /// </summary>
+        /// <param name="vm">An EventAddRemoveProjectVM</param>
+        /// <returns>Returns an errorCode describing the result from the database</returns>
         public static ReturnStatus RemoveEventProject(EventAddRemoveProjectVM vm)
         {
             ReturnStatus rs = new ReturnStatus();
@@ -320,6 +260,12 @@ namespace HabitatForHumanity.Models
             return rs;
        
         }
+        /// <summary>
+        /// Deletes an HfhEvent and any relationships
+        /// it has to Projects from the database 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>ErrorCode describing result of delete action</returns>
         public static ReturnStatus DeleteEvent(int id)
         {
             ReturnStatus rs = new ReturnStatus();
