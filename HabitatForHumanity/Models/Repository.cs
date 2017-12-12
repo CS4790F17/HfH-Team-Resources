@@ -1577,10 +1577,22 @@ namespace HabitatForHumanity.Models
         }
 
 
-        public static ReturnStatus GetHfhEvent(int id)
+        public static ReturnStatus GetHfhEventById(int id)
         {
             return HfhEvent.GetHfhEventById(id);
         }
+
+
+        public static ReturnStatus GetAllHfhEvents()
+        {
+            return HfhEvent.GetAllHfhEvents();
+        }
+
+        public static ReturnStatus EditHfhEvent(HfhEvent hfhEvent)
+        {
+            return HfhEvent.EditHfhEvent(hfhEvent);
+        }
+
         public static ReturnStatus GetManageEventVmById(int id)
         {
             ReturnStatus vmToReturn = new ReturnStatus();

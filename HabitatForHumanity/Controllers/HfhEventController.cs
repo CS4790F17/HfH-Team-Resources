@@ -13,8 +13,12 @@ namespace HabitatForHumanity.Controllers
 {
     public class HfhEventController : Controller
     {
-        private VolunteerDbContext db = new VolunteerDbContext();
-
+        public ActionResult ListHfhEvents()
+        {     
+            ReturnStatus rs = Repository.GetAllHfhEvents();
+            List<HfhEvent> hfhEvents = (rs.errorCode==ReturnStatus.ALL_CLEAR) ? (List<HfhEvent>)rs.data : new List<HfhEvent>();
+            return View(hfhEvents);
+        }
         public ActionResult ManageEvent(int? id)
         {
             ManageEventVM vm = new ManageEventVM();
@@ -29,31 +33,9 @@ namespace HabitatForHumanity.Controllers
             }
             else
             {
-                return RedirectToAction("Index");//TODO:
-            }
-       
-            return View(vm);
-            
-        }
-        // GET: HfhEvent
-        public ActionResult Index()
-        {
-            return View(db.hfhEvents.ToList());
-        }
-
-        // GET: HfhEvent/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            HfhEvent hfhEvent = db.hfhEvents.Find(id);
-            if (hfhEvent == null)
-            {
-                return HttpNotFound();
-            }
-            return View(hfhEvent);
+                return RedirectToAction("ListHfhEvents");//TODO: manage errors
+            }      
+            return View(vm);       
         }
 
         [HttpPost]
@@ -61,6 +43,7 @@ namespace HabitatForHumanity.Controllers
         public ActionResult AddProjectsToEvent(List<EventAddRemoveProjectVM> vmList)
         {
             ReturnStatus rs = Repository.AddProjectsToEvent(vmList);
+            // TODO: manage bad results
             return RedirectToAction("ManageEvent", new { id = vmList.First().hfhEventId });
         }
 
@@ -70,11 +53,11 @@ namespace HabitatForHumanity.Controllers
             ReturnStatus rs = Repository.RemoveEventProject(vm);
             if(rs.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                // notify project removed
+                // TODO: notify project removed
             }
             else
             {
-                // notify removal failed
+                // TODO: notify removal failed
             }
             return RedirectToAction("ManageEvent", new { id = vm.hfhEventId });
         }
@@ -97,7 +80,7 @@ namespace HabitatForHumanity.Controllers
                 ReturnStatus rs = Repository.CreateEvent(hfhEvent);
                 if(rs.errorCode == ReturnStatus.ALL_CLEAR)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("ListHfhEvents");
                 }              
             }
 
@@ -111,12 +94,9 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            HfhEvent hfhEvent = db.hfhEvents.Find(id);
-            if (hfhEvent == null)
-            {
-                return HttpNotFound();
-            }
-            return View(hfhEvent);
+            ReturnStatus rs = Repository.GetHfhEventById((int)id);
+
+            return (rs.errorCode == ReturnStatus.ALL_CLEAR) ? View((HfhEvent)rs.data) : View("_Error");
         }
 
         // POST: HfhEvent/Edit/5
@@ -128,9 +108,11 @@ namespace HabitatForHumanity.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(hfhEvent).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ReturnStatus rs = Repository.EditHfhEvent(hfhEvent);
+                if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+                {
+                    return RedirectToAction("ListHfhEvents");
+                }          
             }
             return View(hfhEvent);
         }
@@ -142,14 +124,14 @@ namespace HabitatForHumanity.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ReturnStatus rs = Repository.GetHfhEvent((int)id);
+            ReturnStatus rs = Repository.GetHfhEventById((int)id);
             if(rs.errorCode == ReturnStatus.ALL_CLEAR)
             {
                 return View((HfhEvent)rs.data);
             }
             else
             {
-                return HttpNotFound();
+                return View("_Error");
             }
         }
 
@@ -161,18 +143,9 @@ namespace HabitatForHumanity.Controllers
             ReturnStatus rs = Repository.DeleteHfhEventById(id);
             if (rs.errorCode == ReturnStatus.ALL_CLEAR)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("ListHfhEvents");
             }
-            return View("Error");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
+            return View("_Error");
         }
     }
 }

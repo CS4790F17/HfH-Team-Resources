@@ -389,12 +389,11 @@
     <Content Include="Views\Admin\WaiverDetails.cshtml" />
     <Content Include="Views\HfhEvent\Create.cshtml" />
     <Content Include="Views\HfhEvent\Delete.cshtml" />
-    <Content Include="Views\HfhEvent\Details.cshtml" />
     <Content Include="Views\HfhEvent\Edit.cshtml" />
-    <Content Include="Views\HfhEvent\Index.cshtml" />
     <Content Include="Views\HfhEvent\ManageEvent.cshtml" />
     <Content Include="Views\HfhEvent\_EventProjects.cshtml" />
     <Content Include="Views\HfhEvent\_ProjectsToAdd.cshtml" />
+    <Content Include="Views\HfhEvent\ListHfhEvents.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
