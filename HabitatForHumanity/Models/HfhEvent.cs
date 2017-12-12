@@ -29,11 +29,13 @@ namespace HabitatForHumanity.Models
         [Required(ErrorMessage = "Start Date is Required")]
         [Display(Name = "Start Date")]
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime startDate { get; set; }
 
         [Required(ErrorMessage = "End Date is Required")]
         [Display(Name = "End Date")]
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime endDate { get; set; }
 
         #region Database methods
