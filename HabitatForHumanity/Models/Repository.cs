@@ -422,6 +422,11 @@ namespace HabitatForHumanity.Models
             return Project.GetProjectByNameAndDate(name, date);
         }
 
+        public static ReturnStatus GetActiveOrganizations()
+        {
+            return Organization.GetActiveOrganizations();
+        }
+
         /// <summary>
         /// Inserts a project into the database.
         /// </summary>
