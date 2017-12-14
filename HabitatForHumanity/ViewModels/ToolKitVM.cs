@@ -11,6 +11,12 @@ namespace HabitatForHumanity.ViewModels
     public static class ToolKitVM
     {
         #region Better Modals
+
+        public enum ModalButtonType
+        {
+            Submit = 0,
+            Delete = 1
+        }
         /// <summary>
         /// Constructs a generic modal with the given attributes. Modal body content is made up of an empty div. 
         /// Target the empty div with an ajax repsonse to populate the modal content. Also useful for when you need
@@ -21,12 +27,25 @@ namespace HabitatForHumanity.ViewModels
         /// <param name="partialTargetId">The id of the innermost div for partial pages.</param>
         /// <param name="formId">The id of the form to submit. This lets the form button exist outside of the form.</param>
         /// <returns>An html string of the modal.</returns>
-        public static IHtmlString Modal(string modalId, string titleText, string partialTargetId, string formId)
+        public static IHtmlString Modal(string modalId, string titleText, string partialTargetId, string formId, ModalButtonType type = ModalButtonType.Submit)
         {
 
             //Structure from outer most to inner is as follows
             //modal(dialog(content(header(close, title), body(partial), footer))) 
 
+            string modalFooterSubmit;
+            switch(type)
+            {
+                case ModalButtonType.Submit:
+                    modalFooterSubmit = "<button type='submit' form='{0}' class='btn btn-primary modalSubmitButton'>Save changes</button>";
+                    break;
+                case ModalButtonType.Delete:
+                    modalFooterSubmit = "<button type='submit' form='{0}' class='btn btn-primary modalSubmitButton modalDeleteButton'>Delete</button>";
+                    break;
+                default:
+                    modalFooterSubmit = "<button type='submit' form='{0}' class='btn btn-primary modalSubmitButton'>Save changes</button>";
+                    break;
+            }
 
             string partialTarget = "<div id='{0}'></div>";
             string modalBody = "<div class='modal-body'>{0}</div>";
@@ -37,7 +56,7 @@ namespace HabitatForHumanity.ViewModels
             string modalDialog = "<div class='modal-dialog' role='document'>{0}</div>";
             string modalFooter = "<div class='modal-footer'>{0}{1}</div>";
             string modalFooterClose = "<button type='button' class='btn btn-default modalCloseButton' data-dismiss='modal'>Close</button>";
-            string modalFooterSubmit = "<button type='submit' form='{0}' class='btn btn-primary modalSubmitButton'>Save changes</button>";
+           // string modalFooterSubmit = "<button type='submit' form='{0}' class='btn btn-primary modalSubmitButton'>Save changes</button>";
             string modal = "<div class='modal fade' id='{0}' tabindex='-1' role='dialog' aria-labelledby='{0}Label'>{1}</div>"; //0 = myModal 1= 
 
             //string fullModal = String.Format(modal, modalId, modalDialog);
@@ -80,7 +99,7 @@ namespace HabitatForHumanity.ViewModels
         /// <param name="partialTargetId">The id of the innermost div for partial pages.</param>
         /// <param name="formId">The id of the form to submit. This lets the form button exist outside of the form.</param>
         /// <returns>An html string of the modal.</returns>
-        public static IHtmlString ModalPreventDefault(string modalId, string titleText, string partialTargetId, string formId)
+        public static IHtmlString ModalPreventDefault(string modalId, string titleText, string partialTargetId, string formId, ModalButtonType type = ModalButtonType.Submit)
         {
 
             //0 is modalId, 1 is formId ,2 is ajax
@@ -104,7 +123,7 @@ namespace HabitatForHumanity.ViewModels
 
             script = String.Format(script, function);
 
-            IHtmlString modal = Modal(modalId, titleText, partialTargetId, formId);
+            IHtmlString modal = Modal(modalId, titleText, partialTargetId, formId, type);
 
             string modalWithJS = String.Format("{0}{1}", modal.ToString(), script);
 
