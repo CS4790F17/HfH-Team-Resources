@@ -164,7 +164,6 @@ namespace HabitatForHumanity.Models
             }
         }
 
-
         /// <summary>
         /// Creates a volunteer user
         /// </summary>
@@ -220,27 +219,6 @@ namespace HabitatForHumanity.Models
         {
             return User.GetUserByEmail(email);
         }
-
-
-
-        /// <summary>
-        /// Gets all the users with matching names. To be used when you know one name, but not the other. 
-        /// </summary>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <returns>List of users</returns>
-        public static ReturnStatus GetUsersByName(string firstName, string lastName)
-        {
-            if (firstName != null)
-                firstName = firstName.ToLower();
-            if (lastName != null)
-                lastName = lastName.ToLower();
-
-
-            //set both names to lowercase to avoid errors
-            return User.GetUsersByName(firstName, lastName);
-        }
-
 
         /// <summary>
         /// Changes the user password and hashes it.
@@ -443,6 +421,11 @@ namespace HabitatForHumanity.Models
             return Project.GetProjectByNameAndDate(name, date);
         }
 
+        public static ReturnStatus GetActiveOrganizations()
+        {
+            return Organization.GetActiveOrganizations();
+        }
+
         /// <summary>
         /// Inserts a project into the database.
         /// </summary>
@@ -536,7 +519,19 @@ namespace HabitatForHumanity.Models
             return ProjectCategory.GetProjectCategoryName(id);
         }
 
+        public static int GetProjectVolunteerCount(int? projectId)
+        {
+            if(projectId == null || projectId < 1) { return 0; }
+            ReturnStatus rs = TimeSheet.GetProjectVolunteerCount((int)projectId);
+            return (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
+        }
 
+        public static int GetProjectHours(int? projectId)
+        {
+            if (projectId == null || projectId < 1) { return 0; }
+            ReturnStatus rs = TimeSheet.GetProjectHours((int)projectId);
+            return (rs.errorCode == ReturnStatus.ALL_CLEAR) ? (int)rs.data : 0;
+        }
 
         /// <summary>
         /// Deletes a project from the database.
@@ -1578,6 +1573,99 @@ namespace HabitatForHumanity.Models
             return WaiverHistory.GetWaiverByID(id);
         }
         #endregion
+
+        #region Event
+
+        public static ReturnStatus CreateEvent(HfhEvent hfhEvent)
+        {
+            return HfhEvent.CreateEvent(hfhEvent);
+        }
+
+
+        public static ReturnStatus GetHfhEventById(int id)
+        {
+            return HfhEvent.GetHfhEventById(id);
+        }
+
+
+        public static ReturnStatus GetAllHfhEvents()
+        {
+            return HfhEvent.GetAllHfhEvents();
+        }
+
+        public static ReturnStatus EditHfhEvent(HfhEvent hfhEvent)
+        {
+            return HfhEvent.EditHfhEvent(hfhEvent);
+        }
+
+        public static ReturnStatus GetManageEventVmById(int id)
+        {
+            ReturnStatus vmToReturn = new ReturnStatus();
+            ManageEventVM vm = new ManageEventVM();
+            ReturnStatus eventRS = HfhEvent.GetHfhEventById(id);
+            if(eventRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                vm.hfhEvent = (HfhEvent)eventRS.data;
+            }
+            else
+            {
+                vmToReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return vmToReturn;
+            }
+            ReturnStatus eventProjectsRS = HfhEvent.GetEventProjectsByEventId(id);
+            if (eventProjectsRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {        
+                vm.eventProjects = (List<EventAddRemoveProjectVM>)eventProjectsRS.data;
+            }
+            else
+            {
+                vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return vmToReturn;
+            }
+            ReturnStatus addableProjectsRS = HfhEvent.GetNotHfhEventProjects(id);
+            if(addableProjectsRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                vm.addableProjects = (List<EventAddRemoveProjectVM>)addableProjectsRS.data;
+                // all went well
+                vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                vmToReturn.data = vm;
+            }
+            else
+            {
+                vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return vmToReturn;
+            }     
+            return vmToReturn;
+        }
+        public static ReturnStatus AddProjectsToEvent(List<EventAddRemoveProjectVM> vmList)
+        {
+            int numToUpdate = 0;
+            int numUpdated = 0;
+            foreach(EventAddRemoveProjectVM vm in vmList)
+            {
+                if(vm.isSelected == true)
+                {
+                    numToUpdate++;
+                    ProjectEvent pe = new ProjectEvent();
+                    pe.project_Id = vm.projectId;
+                    pe.event_Id = vm.hfhEventId;
+                    ReturnStatus rs = HfhEvent.AddProjectToEvent(pe);
+                    numUpdated += (rs.errorCode == ReturnStatus.ALL_CLEAR) ? 1 : 0;
+                }
+            }
+            return new ReturnStatus() { errorCode = (numToUpdate == numUpdated) ? ReturnStatus.ALL_CLEAR : ReturnStatus.COULD_NOT_UPDATE_DATABASE };
+        }
+
+        public static ReturnStatus RemoveEventProject(EventAddRemoveProjectVM vm)
+        {
+            return HfhEvent.RemoveEventProject(vm);
+        }
+
+        public static ReturnStatus DeleteHfhEventById(int id)
+        {
+            return HfhEvent.DeleteEvent(id);
+        }
+        #endregion Event
 
     }
 }

@@ -1,0 +1,54 @@
+﻿@model IEnumerable<HabitatForHumanity.Models.HfhEvent>
+
+@{
+    ViewBag.Title = "HfH Events";
+}
+
+<h2 class="text-center">Events</h2>
+<div class="row">
+
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "HfhEvent")'" style="margin-bottom:10px">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true" style="font-size:18px;color:white;" aria-label="Remove"> Create Event</span>
+    </button>
+</div>
+
+
+<div class="col-md-10 col-md-offset-2">
+    <div>
+        <div class="row hidden-xs">
+            <div class="col-md-4">
+                Event
+            </div>
+            <div class="col-md-4">
+                Event Partner
+            </div>
+            <div class="col-md-2">
+                Start
+            </div>
+            <div class="col-md-2">
+                End
+            </div>
+        </div>
+        @foreach (var item in Model)
+        {
+            <a href="@Url.Action("ManageEvent","HfhEvent", new { id = item.Id })">
+                <div class="row well well-sm" style="margin:1px; font-size:medium">
+                    <div class="col-md-4">
+                        @item.name
+                    </div>
+                    <div class="col-md-4">
+                        @item.eventPartner
+                    </div>
+                    <div class="col-md-2">
+                        @item.startDate.ToShortDateString()
+                    </div>
+                    <div class="col-md-2">
+                        @item.endDate.ToShortDateString()
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+</div>
+
+

@@ -1,0 +1,19 @@
+﻿@model IEnumerable<HabitatForHumanity.ViewModels.EventAddRemoveProjectVM> 
+<h4 class="text-center">Participating Events</h4>
+<div class="well">
+@foreach (var item in Model)
+{
+    @Html.HiddenFor(modelItem => item.hfhEventId)
+    @Html.HiddenFor(modelItem => item.projectId)
+    <div class="row">
+        <div class="col-md-7">
+            @Html.DisplayFor(modelItem => item.isSelected) @item.projectName
+        </div>
+        <div class="col-md-5">
+            <a href="@Url.Action("RemoveEventProject", "HfhEvent", item)">
+                <span class="fa fa-remove" aria-hidden="true" style="font-size:18px;color:red; border: none;background-color: transparent;outline: none;" aria-label="Remove"></span>
+            </a>
+        </div>
+    </div>
+}
+</div>

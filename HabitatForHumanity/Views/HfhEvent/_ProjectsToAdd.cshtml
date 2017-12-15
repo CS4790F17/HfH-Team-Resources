@@ -1,0 +1,53 @@
+﻿@model List<HabitatForHumanity.ViewModels.EventAddRemoveProjectVM>
+<h4 class="text-center">Add Projects to Event</h4>
+
+<div class="well">
+    @{
+        if (Model == null || Model.Count < 1)
+        {
+            <h4> No projects to add</h4>
+        }
+        else
+        {
+            using (Html.BeginForm("AddProjectsToEvent", "HfhEvent"))
+            {
+                @Html.AntiForgeryToken()
+                <div id="projectChecks" class="form-horizontal">
+                    @for (int i = 0; i < Model.Count(); i++)
+                    {
+                        @Html.HiddenFor(modelItem => Model[i].hfhEventId)
+                        @Html.HiddenFor(modelItem => Model[i].projectId)
+                        <div class="checkbox">
+                            <label>@Html.CheckBoxFor(modelItem => Model[i].isSelected)&nbsp;@Model[i].projectName</label>
+                        </div>
+                    }
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" id="btnSave" value="Save" class="btn btn-primary" disabled="disabled" />
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    }
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        function checkBoxClicked() {
+            //Get the total of selected CheckBoxes
+            var n1 = $("#projectChecks input:checked").length;
+            //Disable the button appropriately
+            if (n1 > 0) {
+                $('#btnSave').prop('disabled', false);
+            }
+            else {
+                $('#btnSave').prop('disabled', true);
+            }
+        }
+        //catch check box click events
+        $("#projectChecks :checkbox").click(checkBoxClicked);
+    });
+</script>
