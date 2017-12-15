@@ -1,0 +1,72 @@
+﻿@model HabitatForHumanity.ViewModels.ManageEventVM
+@{
+    ViewBag.Title = "Manage Event";
+}
+
+<h2 class="text-center">@Model.hfhEvent.name</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <h4 class="text-center">Details</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.hfhEvent.description)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.hfhEvent.description)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.hfhEvent.eventPartner)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.hfhEvent.eventPartner)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.hfhEvent.startDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.hfhEvent.startDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.hfhEvent.endDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.hfhEvent.endDate)
+            </dd>
+
+        </dl>
+        <div class="text-center">
+            
+            <p>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.hfhEvent.Id })
+            </p>
+            <p>
+                @Html.ActionLink("Report", "HfhEventReport", new { id = Model.hfhEvent.Id })
+            </p>
+            <p>
+                @Html.ActionLink("Delete", "Delete", new { id = Model.hfhEvent.Id })
+            </p>
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+        @Html.Partial("_EventProjects", Model.eventProjects)
+    </div>
+    <div class="col-md-4">
+
+        @Html.Partial("_ProjectsToAdd", Model.addableProjects)
+    </div>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "ListHfhEvents")
+</p>
+
