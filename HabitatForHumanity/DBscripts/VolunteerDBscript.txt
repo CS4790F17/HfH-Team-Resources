@@ -94,6 +94,26 @@ CREATE TABLE [dbo].[TimeSheet] (
 );
 
 GO
+CREATE TABLE [dbo].[HfhEvent] (
+	[Id]			INT				PRIMARY KEY IDENTITY (1, 1) NOT NULL,
+    [name]			VARCHAR (50)	NOT NULL,
+    [description]	VARCHAR (MAX)	NULL,
+	[eventPartner]	VARCHAR (50)	NULL,
+    [startDate]		DATETIME		NOT NULL,    
+	[endDate]		DATETIME		NOT NULL,
+    CONSTRAINT [PK_Event] UNIQUE ([name], [startDate])
+);
+
+GO
+CREATE TABLE [dbo].[ProjectEvent] (
+    [Id]           INT     PRIMARY KEY    IDENTITY (1, 1) NOT NULL,
+    [project_Id]   INT      NOT NULL,
+    [event_Id]       INT      NOT NULL,
+	CONSTRAINT [PK_Project_Event] UNIQUE ([project_Id], [event_Id]),
+	CONSTRAINT [FK_ProjectEvent_Project] FOREIGN KEY ([project_Id]) REFERENCES [Project](Id),
+	CONSTRAINT [FK_ProjectEvent_Event] FOREIGN KEY ([event_Id]) REFERENCES [HfhEvent](Id)
+);
+GO
 
 
 

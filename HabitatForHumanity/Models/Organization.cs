@@ -111,10 +111,24 @@ namespace HabitatForHumanity.Models
         /// Gets all the currently active organizations
         /// </summary>
         /// <returns>A list of all organizatinos that are currently active.</returns>
-        public static List<Organization> GetActiveOrganizations()
+        public static ReturnStatus GetActiveOrganizations()
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            return db.organizations.Where(x => x.status == 1).ToList();
+            ReturnStatus st = new ReturnStatus();
+
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                st.data = db.organizations.Where(x => x.status == 1).ToList();
+                st.errorCode = ReturnStatus.ALL_CLEAR;
+            }
+            catch (Exception e)
+            {
+                st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                st.errorMessage = e.ToString();
+                st.data = new List<Organization>();
+            }
+
+            return st;
         }
 
         /// <summary>
@@ -236,7 +250,7 @@ namespace HabitatForHumanity.Models
             var orgs = db.organizations.SqlQuery("SELECT * FROM Organization WHERE Organization.name LIKE @Name", orgName).OrderByDescending(x => x.status).ToList<Organization>();
 
 
-            if(orgs.Count < 1)
+            if (orgs.Count < 1)
             {
                 List<Organization> orgList = new List<Organization>();
                 st.data = orgList;
@@ -254,10 +268,10 @@ namespace HabitatForHumanity.Models
             VolunteerDbContext db = new VolunteerDbContext();
             ReturnStatus st = new ReturnStatus();
 
-            
+
             var orgStatus = new SqlParameter("@Status", status);
             var orgName = new SqlParameter("@Name", "%" + queryFilter + "%");
-            
+
 
             var orgs = db.organizations.SqlQuery(
                 "SELECT * FROM Organization " +
@@ -266,7 +280,7 @@ namespace HabitatForHumanity.Models
                 "(SELECT Organization.name FROM Organization WHERE Organization.name LIKE @Name)", orgStatus, orgName).OrderByDescending(x => x.status).ToList<Organization>();
 
 
-            if(orgs.Count < 1)
+            if (orgs.Count < 1)
             {
                 List<Organization> orgList = new List<Organization>();
                 st.data = orgList;

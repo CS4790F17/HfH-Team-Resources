@@ -38,16 +38,16 @@ namespace HabitatForHumanity.ViewModels
     public class PunchInVM
     {
         public int userId { get; set; }
-        //[Required, Range(1, int.MaxValue, ErrorMessage = "Please Select an Organization")]
+       // [Required, Range(1, int.MaxValue, ErrorMessage = "Please Select an Organization")]
         [DisplayName("Organization")]
         public int orgId { get; set; }
 
         [DisplayName("Project")]
         [Range(1, int.MaxValue, ErrorMessage = "Please Select a Project")]
         public int projectId { get; set; }
-      //  public string userName { get; set; }
-        public ProjectDropDownList projects = new ProjectDropDownList();
-        public OrganizationDropDownList orgs = new OrganizationDropDownList();
+        //  public string userName { get; set; }
+        public ProjectDropDownList projects = new ProjectDropDownList(true);
+        public OrganizationDropDownList orgs = new OrganizationDropDownList(true);
 
         public PunchInVM()
         {

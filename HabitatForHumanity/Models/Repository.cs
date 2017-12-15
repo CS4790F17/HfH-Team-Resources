@@ -164,7 +164,6 @@ namespace HabitatForHumanity.Models
             }
         }
 
-
         /// <summary>
         /// Creates a volunteer user
         /// </summary>
@@ -420,6 +419,11 @@ namespace HabitatForHumanity.Models
         public static ReturnStatus GetProjectByNameAndDate(string name, string date)
         {
             return Project.GetProjectByNameAndDate(name, date);
+        }
+
+        public static ReturnStatus GetActiveOrganizations()
+        {
+            return Organization.GetActiveOrganizations();
         }
 
         /// <summary>
@@ -1579,6 +1583,99 @@ namespace HabitatForHumanity.Models
             return WaiverHistory.GetWaiverByID(id);
         }
         #endregion
+
+        #region Event
+
+        public static ReturnStatus CreateEvent(HfhEvent hfhEvent)
+        {
+            return HfhEvent.CreateEvent(hfhEvent);
+        }
+
+
+        public static ReturnStatus GetHfhEventById(int id)
+        {
+            return HfhEvent.GetHfhEventById(id);
+        }
+
+
+        public static ReturnStatus GetAllHfhEvents()
+        {
+            return HfhEvent.GetAllHfhEvents();
+        }
+
+        public static ReturnStatus EditHfhEvent(HfhEvent hfhEvent)
+        {
+            return HfhEvent.EditHfhEvent(hfhEvent);
+        }
+
+        public static ReturnStatus GetManageEventVmById(int id)
+        {
+            ReturnStatus vmToReturn = new ReturnStatus();
+            ManageEventVM vm = new ManageEventVM();
+            ReturnStatus eventRS = HfhEvent.GetHfhEventById(id);
+            if(eventRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                vm.hfhEvent = (HfhEvent)eventRS.data;
+            }
+            else
+            {
+                vmToReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
+                return vmToReturn;
+            }
+            ReturnStatus eventProjectsRS = HfhEvent.GetEventProjectsByEventId(id);
+            if (eventProjectsRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {        
+                vm.eventProjects = (List<EventAddRemoveProjectVM>)eventProjectsRS.data;
+            }
+            else
+            {
+                vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return vmToReturn;
+            }
+            ReturnStatus addableProjectsRS = HfhEvent.GetNotHfhEventProjects(id);
+            if(addableProjectsRS.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                vm.addableProjects = (List<EventAddRemoveProjectVM>)addableProjectsRS.data;
+                // all went well
+                vmToReturn.errorCode = ReturnStatus.ALL_CLEAR;
+                vmToReturn.data = vm;
+            }
+            else
+            {
+                vmToReturn.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+                return vmToReturn;
+            }     
+            return vmToReturn;
+        }
+        public static ReturnStatus AddProjectsToEvent(List<EventAddRemoveProjectVM> vmList)
+        {
+            int numToUpdate = 0;
+            int numUpdated = 0;
+            foreach(EventAddRemoveProjectVM vm in vmList)
+            {
+                if(vm.isSelected == true)
+                {
+                    numToUpdate++;
+                    ProjectEvent pe = new ProjectEvent();
+                    pe.project_Id = vm.projectId;
+                    pe.event_Id = vm.hfhEventId;
+                    ReturnStatus rs = HfhEvent.AddProjectToEvent(pe);
+                    numUpdated += (rs.errorCode == ReturnStatus.ALL_CLEAR) ? 1 : 0;
+                }
+            }
+            return new ReturnStatus() { errorCode = (numToUpdate == numUpdated) ? ReturnStatus.ALL_CLEAR : ReturnStatus.COULD_NOT_UPDATE_DATABASE };
+        }
+
+        public static ReturnStatus RemoveEventProject(EventAddRemoveProjectVM vm)
+        {
+            return HfhEvent.RemoveEventProject(vm);
+        }
+
+        public static ReturnStatus DeleteHfhEventById(int id)
+        {
+            return HfhEvent.DeleteEvent(id);
+        }
+        #endregion Event
 
     }
 }

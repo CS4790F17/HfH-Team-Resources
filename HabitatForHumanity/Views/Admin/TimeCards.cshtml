@@ -15,7 +15,7 @@
 
 @*@ToolKitVM.Modal("Edit Time Card", "editModal", "editPartial")*@
 @ToolKitVM.ModalPreventDefault("editTimeCardModal", "Edit Time Card", "editPartialDiv", "editTimeCardForm")
-@ToolKitVM.ModalPreventDefault("deleteTimeCardModal", "Delete Time Card", "deletePartialDiv", "deleteTimeCardForm")
+@ToolKitVM.ModalPreventDefault("deleteTimeCardModal", "Delete Time Card", "deletePartialDiv", "deleteTimeCardForm", ToolKitVM.ModalButtonType.Delete)
 
 
 @using (Html.BeginForm("TimeCards", "Admin", FormMethod.Get))

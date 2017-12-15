@@ -8,7 +8,7 @@
         <li><a href="#divWeekChart" onclick="getHoursChart('Week')" data-toggle="tab">Hours by Week</a></li>
         <li><a href="#divYearChart" onclick="getHoursChart('Year')" data-toggle="tab">Hours by Year</a></li>
     </ul>
-    <div id="divHoursChart"></div>
+    <div id="divHoursChart">@Html.Action("GetHoursChartBy", new { period = "Month" })</div>
 
 
 
@@ -54,7 +54,6 @@
         </div>
         <div class="col-md-1">
             
-
         </div>
 
         <div class="text-center col-md-3">
@@ -67,15 +66,7 @@
 
 <script type="text/javascript">
 
-    $(document).ready(function () {
-        getHoursChart("Month");
-        //   getDemographicsPie("All");
-        //   getBadPunches();
-    });
-
     function getHoursChart(period) {
-        //var path = "/Admin/GetHoursChartBy/";
-        //var path = @Url.Action("GetHoursChartBy", "Admin");
         var data = { "period": period };
         $.ajax({
             url: "@Url.Action("GetHoursChartBy", "Admin")",
@@ -85,46 +76,15 @@
             }
         });
     }
+
+    function getDemographicsPie(gender) {
+        var data = { "gender": gender };
+        $.ajax({
+            url: "@Url.Action("GetHoursDemogPieBy", "Admin")",
+            data, data,
+            success: function (result) {
+                $("#divHoursDemog").html(result);
+            }
+    });
+    }
 </script>
-
-
-@*<script>
-        $(document).ready(function () {
-            getHoursChart("Month");
-            getDemographicsPie("All");
-            getBadPunches();
-        });
-
-        function getHoursChart(period) {
-            var path = "/Admin/GetHoursChartBy/?period=" + period;
-            $.ajax({
-                url: path,
-                success: function (result) {
-                    $("#divHoursChart").html(result);
-                }
-            });
-        }
-
-        function getDemographicsPie(gender) {
-            var path = "/Admin/GetHoursDemogPieBy/?gender=" + gender
-            $.ajax({
-                url: path,
-                success: function (result) {
-                    $("#divHoursDemog").html(result);
-                }
-            });
-        }
-
-        function getBadPunches() {
-            $.ajax({
-                url: "/Admin/GetBadPunches",
-                success: function (result) {
-                    $("#badPunches").html(result);
-                }
-            });
-        }
-    </script>*@
-@*@section Scripts {
-        <script src="~Scripts/jquery.unobtrusive-ajax.min.js"></script>
-        <script src="~/OurScripts/Charts.js"></script>
-    }*@
