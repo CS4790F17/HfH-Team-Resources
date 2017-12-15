@@ -83,7 +83,7 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,name,description,eventPartner,startDate,endDate")] HfhEvent hfhEvent)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && hfhEvent.endDate > hfhEvent.startDate)
             {
                 ReturnStatus rs = Repository.CreateEvent(hfhEvent);
                 if(rs.errorCode == ReturnStatus.ALL_CLEAR)
@@ -91,7 +91,7 @@ namespace HabitatForHumanity.Controllers
                     return RedirectToAction("ListHfhEvents");
                 }              
             }
-
+            ViewBag.status = "No time travel allowed. End Date must come after start.";
             return View(hfhEvent);
         }
 
@@ -114,7 +114,7 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,name,description,eventPartner,startDate,endDate")] HfhEvent hfhEvent)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && hfhEvent.endDate > hfhEvent.startDate)
             {
                 ReturnStatus rs = Repository.EditHfhEvent(hfhEvent);
                 if(rs.errorCode == ReturnStatus.ALL_CLEAR)
@@ -122,6 +122,7 @@ namespace HabitatForHumanity.Controllers
                     return RedirectToAction("ListHfhEvents");
                 }          
             }
+            ViewBag.status = "No time travel allowed. End Date must come after start.";
             return View(hfhEvent);
         }
 
