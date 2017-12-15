@@ -42,9 +42,17 @@ namespace HabitatForHumanity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AddProjectsToEvent(List<EventAddRemoveProjectVM> vmList)
         {
-            ReturnStatus rs = Repository.AddProjectsToEvent(vmList);
-            // TODO: manage bad results
-            return RedirectToAction("ManageEvent", new { id = vmList.First().hfhEventId });
+            if(vmList != null && vmList.Count > 0)
+            {
+                ReturnStatus rs = Repository.AddProjectsToEvent(vmList);
+                // TODO: manage bad results
+                return RedirectToAction("ManageEvent", new { id = vmList.First().hfhEventId });
+            }
+            else
+            {
+                return Redirect(Request.UrlReferrer.ToString());
+            }
+
         }
 
 

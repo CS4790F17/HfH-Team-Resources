@@ -1,32 +1,51 @@
 ﻿@model List<HabitatForHumanity.ViewModels.EventAddRemoveProjectVM>
-
+@{ 
+    bool anySelected = false;
+}
 <h4 class="text-center">Add Projects to Event</h4>
-   
+
 <div class="well">
     @using (Html.BeginForm("AddProjectsToEvent", "HfhEvent"))
     {
         @Html.AntiForgeryToken()
-        <div class="form-horizontal">
+        <div id="projectChecks" class="form-horizontal">
             @for (int i = 0; i < Model.Count(); i++)
             {
                 @Html.HiddenFor(modelItem => Model[i].hfhEventId)
                 @Html.HiddenFor(modelItem => Model[i].projectId)
                 <div class="form-group">
                     <div class="col-md-12">
-                        @Html.EditorFor(modelItem => Model[i].isSelected)
+                        @Html.EditorFor(modelItem => Model[i].isSelected) @*, new { htmlAttributes = new { onchange = "OnChangeEvent(this)" } }*@
                         @Model[i].projectName
                     </div>
                 </div>
             }
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" />
+   
+                   <input type="submit" id="btnSave" value="Save" class="btn btn-primary" disabled ="disabled"/>
+              
+                   
                 </div>
             </div>
         </div>
-    }
+                        }
 </div>
 
-
-
-
+<script type="text/javascript">
+    $(function () {
+        function checkBoxClicked() {
+            //Get the total of selected CheckBoxes
+            var n1 = $("#projectChecks input:checked").length;
+            //Disable the button appropriately
+            if (n1 > 0) {
+                $('#btnSave').prop('disabled', false);
+            }
+            else {
+                $('#btnSave').prop('disabled', true);
+            }
+        }
+        //catch check box click events
+        $("#projectChecks :checkbox").click(checkBoxClicked);
+    });
+</script>
