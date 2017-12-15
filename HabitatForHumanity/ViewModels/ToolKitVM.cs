@@ -264,9 +264,29 @@ namespace HabitatForHumanity.ViewModels
         public string ProjectName { get; set; }
         public List<SelectListItem> Projects { get; set; }
 
-        public ProjectDropDownList()
+        //public ProjectDropDownList()
+        //{
+        //    ReturnStatus st = Repository.GetAllProjects();
+        //    createDropDownList((List<Project>)st.data);
+        //}
+
+        public ProjectDropDownList(bool getOnlyActive)
         {
-            ReturnStatus st = Repository.GetAllProjects();
+            if(getOnlyActive)
+            {
+                ReturnStatus st = Repository.GetActiveProjects();
+                createDropDownList((List<Project>)st.data);
+            }else
+            {
+                ReturnStatus st = Repository.GetAllProjects();
+                createDropDownList((List<Project>)st.data);
+            }
+        }
+
+
+        public void ActiveProjects()
+        {
+            ReturnStatus st = Repository.GetActiveProjects();
             createDropDownList((List<Project>)st.data);
         }
         /// <summary>
@@ -301,10 +321,18 @@ namespace HabitatForHumanity.ViewModels
         public string OrganizationName { get; set; }
         public List<SelectListItem> Organizations { get; set; }
 
-        public OrganizationDropDownList()
+        public OrganizationDropDownList(bool getOnlyActive)
         {
-            ReturnStatus st = Repository.GetAllOrganizations();
-            createDropDownList((List<Organization>)st.data);
+            if(getOnlyActive)
+            {
+                ReturnStatus st = Repository.GetActiveOrganizations();
+                createDropDownList((List<Organization>)st.data);
+            }
+            else
+            {
+                ReturnStatus st = Repository.GetAllOrganizations();
+                createDropDownList((List<Organization>)st.data);
+            }
         }
 
         /// <summary>
@@ -318,7 +346,7 @@ namespace HabitatForHumanity.ViewModels
             SelectList.Add(new SelectListItem
             {
                 Value = "-1",
-                Text = "No Organization"
+                Text = "Select an Organization"
             });
 
             foreach (Organization item in items)

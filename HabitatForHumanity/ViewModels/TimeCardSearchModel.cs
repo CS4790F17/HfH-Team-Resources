@@ -34,8 +34,8 @@ namespace HabitatForHumanity.ViewModels
         {
             rangeStart = DateTime.Now.AddMonths(-2);
             rangeEnd = DateTime.Now;
-            projects = new ProjectDropDownList();
-            orgs = new OrganizationDropDownList();
+            projects = new ProjectDropDownList(false);
+            orgs = new OrganizationDropDownList(false);
         }
     }
 

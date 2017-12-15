@@ -23,8 +23,8 @@ namespace HabitatForHumanity.ViewModels
 
         public VolunteerSearchModel()
         {
-            projects = new ProjectDropDownList();
-            orgs = new OrganizationDropDownList();
+            projects = new ProjectDropDownList(false);
+            orgs = new OrganizationDropDownList(false);
         }
     }
 }

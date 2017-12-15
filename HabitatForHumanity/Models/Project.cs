@@ -203,7 +203,7 @@ namespace HabitatForHumanity.Models
                 st.data = "Could not connect to database. Try again later.";
                 return st;
             }
-            st.errorCode = (int)ReturnStatus.ALL_CLEAR;
+            st.errorCode = ReturnStatus.ALL_CLEAR;
             st.errorMessage = "";
             st.data = projects;
             return st;
