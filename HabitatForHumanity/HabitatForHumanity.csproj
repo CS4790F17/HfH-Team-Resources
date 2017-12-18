@@ -210,7 +210,6 @@
     <Compile Include="ViewModels\VolunteerSearchModel.cs" />
     <Compile Include="ViewModels\UserProfileVM.cs" />
     <Compile Include="ViewModels\VolunteerSignupVM.cs" />
-    <Compile Include="ViewModels\WaiverHistoryByUser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />

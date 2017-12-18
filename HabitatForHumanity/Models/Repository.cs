@@ -1570,12 +1570,9 @@ namespace HabitatForHumanity.Models
         #endregion
 
         #region WaiverHistory
-            public static WaiverHistoryByUser getWaiverHistoryByUserId(int id)
+            public static ReturnStatus getWaiverHistoryByUserId(int id)
         {
-            WaiverHistoryByUser waiverHistory = new WaiverHistoryByUser();
-            waiverHistory.waiverList = WaiverHistory.getWaiverHistoryByUserId(id);
-
-            return waiverHistory;
+            return WaiverHistory.GetWaiverHistoryByUserId(id);
         }
 
         public static ReturnStatus GetAWaiverById(int id)
