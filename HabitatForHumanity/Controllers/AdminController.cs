@@ -358,13 +358,13 @@ namespace HabitatForHumanity.Controllers
         {
             ReturnStatus rs = Repository.GetAWaiverById((int)id);
             WaiverHistory waiver = new Models.WaiverHistory();
-            if(rs.errorCode == ReturnStatus.ALL_CLEAR)
+            if (rs.errorCode == ReturnStatus.ALL_CLEAR)
             {
                 waiver = (WaiverHistory)rs.data;
             }
             return View(waiver);
         }
-        
+
         #endregion Manage Volunteer
 
         #region Timecards
@@ -647,7 +647,7 @@ namespace HabitatForHumanity.Controllers
             }
             catch
             {
-               //not sure what to put here
+                //not sure what to put here
             }
         }
 
@@ -688,7 +688,7 @@ namespace HabitatForHumanity.Controllers
         #region Manage Projects
 
         //Main view
-        
+
         public ActionResult ManageProjects(ProjectSearchModel model)
         {
             try
@@ -856,10 +856,45 @@ namespace HabitatForHumanity.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult EditCategory(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            ReturnStatus st = Repository.GetProjectCategoryById(id.Value);
+            if (st.errorCode == ReturnStatus.ALL_CLEAR)
+            {
+                return PartialView("ProjectCategoryPartialViews/_EditCategory", (ProjectCategory)st.data);
+            }
+            else
+            {
+                return PartialView("_Error");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditCategory(ProjectCategory cat)
+        {
+            if (ModelState.IsValid)
+            {
+                // Repository.CreateProjectCategory(cat);
+                Repository.EditProjectCategory(cat);
+                return PartialView("ProjectCategoryPartialViews/_CategorySuccess");
+            }
+            else
+            {
+                return PartialView("ProjectCategoryPartialViews/_EditCategory", cat);
+            }
+        }
+
         #endregion
 
         #region WaiverHistory
-            
+
         public ActionResult WaiverHistory(int id)
         {
             WaiverHistoryByUser waiverHistory = Repository.getWaiverHistoryByUserId(id);

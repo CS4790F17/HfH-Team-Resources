@@ -842,6 +842,11 @@ namespace HabitatForHumanity.Models
             return TimeSheet.EditTimeSheet(ts);
         }
 
+        public static ReturnStatus EditProjectCategory(ProjectCategory cat)
+        {
+           return ProjectCategory.EditProjectCategory(cat);
+        }
+
         /// <summary>
         /// Deletes the TimeSheet from the database.
         /// </summary>
@@ -1554,6 +1559,11 @@ namespace HabitatForHumanity.Models
         public static void CreateProjectCategory(ProjectCategory pc)
         {
             ProjectCategory.CreateProjectCategory(pc);
+        }
+
+        public static ReturnStatus GetProjectCategoryById(int id)
+        {
+            return ProjectCategory.GetProjectCategoryById(id);
         }
 
 

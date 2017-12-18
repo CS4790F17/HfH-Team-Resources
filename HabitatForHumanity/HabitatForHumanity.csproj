@@ -387,6 +387,8 @@
     <Content Include="Views\Admin\_GenericModalSuccess.cshtml" />
     <Content Include="Views\Admin\ViewWaivers.cshtml" />
     <Content Include="Views\Admin\WaiverDetails.cshtml" />
+    <Content Include="Views\Admin\ManageProjectCategory.cshtml" />
+    <Content Include="Views\Admin\ProjectCategoryPartialViews\_EditCategory.cshtml" />
     <Content Include="Views\HfhEvent\Create.cshtml" />
     <Content Include="Views\HfhEvent\Delete.cshtml" />
     <Content Include="Views\HfhEvent\Edit.cshtml" />
@@ -394,6 +396,7 @@
     <Content Include="Views\HfhEvent\_EventProjects.cshtml" />
     <Content Include="Views\HfhEvent\_ProjectsToAdd.cshtml" />
     <Content Include="Views\HfhEvent\ListHfhEvents.cshtml" />
+
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
