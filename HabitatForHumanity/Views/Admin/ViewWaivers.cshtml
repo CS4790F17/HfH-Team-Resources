@@ -6,14 +6,8 @@
 
 <h2>View Waivers</h2>
 
-@*<p>
-    @Html.ActionLink("Create New", "Create")
-</p>*@
 <table class="table">
     <tr>
-        @*<th>
-            @Html.DisplayNameFor(model => model.waiverList[0].user_Id)
-        </th>*@
         <th>
             @Html.DisplayNameFor(model => model.First().firstName)
         </th>
@@ -30,7 +24,7 @@
             @Html.DisplayNameFor(model => model.First().emailAddress)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model[0].waiverSignDate)
+            @Html.DisplayNameFor(model => model.First().waiverSignDate)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.First().signatureName)
