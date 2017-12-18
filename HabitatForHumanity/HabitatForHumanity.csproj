@@ -188,7 +188,6 @@
     <Compile Include="Models\WaiverHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AdminUserVM.cs" />
-    <Compile Include="ViewModels\BadPunchVM.cs" />
     <Compile Include="ViewModels\CategorySearchModel.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\DemographicsVM.cs" />
@@ -396,7 +395,6 @@
     <Content Include="Views\HfhEvent\_EventProjects.cshtml" />
     <Content Include="Views\HfhEvent\_ProjectsToAdd.cshtml" />
     <Content Include="Views\HfhEvent\ListHfhEvents.cshtml" />
-
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
