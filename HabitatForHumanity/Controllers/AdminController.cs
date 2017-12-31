@@ -897,9 +897,8 @@ namespace HabitatForHumanity.Controllers
 
         public ActionResult WaiverHistory(int id)
         {
-            WaiverHistoryByUser waiverHistory = Repository.getWaiverHistoryByUserId(id);
-
-            return View("ViewWaivers", waiverHistory);
+            ReturnStatus rs = Repository.getWaiverHistoryByUserId(id);
+            return (rs.errorCode == ReturnStatus.ALL_CLEAR) ? View("ViewWaivers", (List<WaiverHistory>)rs.data) : View("_Error");
         }
         #endregion
 

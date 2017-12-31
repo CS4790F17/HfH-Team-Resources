@@ -85,11 +85,21 @@ namespace HabitatForHumanity.Models
             }
         }
 
-        public static List<WaiverHistory> getWaiverHistoryByUserId(int id)
+        public static ReturnStatus GetWaiverHistoryByUserId(int id)
         {
-            VolunteerDbContext db = new VolunteerDbContext();
-            List<WaiverHistory> waiverHistory = db.waiverHistory.Where(wh => wh.user_Id == id).ToList();
-            return waiverHistory;
+            ReturnStatus rs = new ReturnStatus();
+            try
+            {
+                VolunteerDbContext db = new VolunteerDbContext();
+                List<WaiverHistory> waiverHistory = db.waiverHistory.Where(wh => wh.user_Id == id).ToList();
+                rs.errorCode = ReturnStatus.ALL_CLEAR;
+                rs.data = waiverHistory;
+            }
+            catch
+            {
+                rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
+            }
+            return rs;
         }
 
         public static ReturnStatus GetWaiverByID(int id)
