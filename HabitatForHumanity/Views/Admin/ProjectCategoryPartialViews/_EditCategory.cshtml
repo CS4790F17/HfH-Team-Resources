@@ -1,19 +1,14 @@
-﻿@using HabitatForHumanity.ViewModels
-@model HabitatForHumanity.Models.ProjectCategory
+﻿@model HabitatForHumanity.Models.ProjectCategory
 
-
-@{ 
-    ProjectCategoryDropDownList list = new ProjectCategoryDropDownList();
-    //ProjectDropDownList list = new ProjectDropDownList();
-}
-
-@using (Html.BeginForm("AddCategory", "Admin", FormMethod.Post, new { id = "addCategoryForm" }))
+@using (Html.BeginForm("EditCategory", "Admin", FormMethod.Post, new { id = "editCategoryForm" }))
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
- 
+
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
         <div class="form-group">
             @Html.LabelFor(model => model.categoryType, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -21,9 +16,6 @@
                 @Html.ValidationMessageFor(model => model.categoryType, "", new { @class = "text-danger" })
             </div>
         </div>
-
-
     </div>
 }
-
 

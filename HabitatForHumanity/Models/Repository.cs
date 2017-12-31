@@ -842,6 +842,11 @@ namespace HabitatForHumanity.Models
             return TimeSheet.EditTimeSheet(ts);
         }
 
+        public static ReturnStatus EditProjectCategory(ProjectCategory cat)
+        {
+           return ProjectCategory.EditProjectCategory(cat);
+        }
+
         /// <summary>
         /// Deletes the TimeSheet from the database.
         /// </summary>
@@ -1556,16 +1561,18 @@ namespace HabitatForHumanity.Models
             ProjectCategory.CreateProjectCategory(pc);
         }
 
+        public static ReturnStatus GetProjectCategoryById(int id)
+        {
+            return ProjectCategory.GetProjectCategoryById(id);
+        }
+
 
         #endregion
 
         #region WaiverHistory
-            public static WaiverHistoryByUser getWaiverHistoryByUserId(int id)
+            public static ReturnStatus getWaiverHistoryByUserId(int id)
         {
-            WaiverHistoryByUser waiverHistory = new WaiverHistoryByUser();
-            waiverHistory.waiverList = WaiverHistory.getWaiverHistoryByUserId(id);
-
-            return waiverHistory;
+            return WaiverHistory.GetWaiverHistoryByUserId(id);
         }
 
         public static ReturnStatus GetAWaiverById(int id)

@@ -188,12 +188,10 @@
     <Compile Include="Models\WaiverHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AdminUserVM.cs" />
-    <Compile Include="ViewModels\BadPunchVM.cs" />
     <Compile Include="ViewModels\CategorySearchModel.cs" />
     <Compile Include="ViewModels\ChartVM.cs" />
     <Compile Include="ViewModels\DemographicsVM.cs" />
     <Compile Include="ViewModels\EventAddRemoveProjectVM.cs" />
-    <Compile Include="ViewModels\IsEditingVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\ManageEventVM.cs" />
     <Compile Include="ViewModels\OrganizationSearchModel.cs" />
@@ -212,7 +210,6 @@
     <Compile Include="ViewModels\VolunteerSearchModel.cs" />
     <Compile Include="ViewModels\UserProfileVM.cs" />
     <Compile Include="ViewModels\VolunteerSignupVM.cs" />
-    <Compile Include="ViewModels\WaiverHistoryByUser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -387,6 +384,8 @@
     <Content Include="Views\Admin\_GenericModalSuccess.cshtml" />
     <Content Include="Views\Admin\ViewWaivers.cshtml" />
     <Content Include="Views\Admin\WaiverDetails.cshtml" />
+    <Content Include="Views\Admin\ManageProjectCategory.cshtml" />
+    <Content Include="Views\Admin\ProjectCategoryPartialViews\_EditCategory.cshtml" />
     <Content Include="Views\HfhEvent\Create.cshtml" />
     <Content Include="Views\HfhEvent\Delete.cshtml" />
     <Content Include="Views\HfhEvent\Edit.cshtml" />

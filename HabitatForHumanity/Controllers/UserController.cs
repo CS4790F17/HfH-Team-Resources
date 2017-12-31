@@ -134,9 +134,7 @@ namespace HabitatForHumanity.Controllers
             {
                 if (Session["UserName"] != null)
                 {
-                    IsEditingVM isEdit = new IsEditingVM();
-                    isEdit.isEditing = false;
-                    return View(isEdit);
+                    return View();
                 }
                 else
                 {
