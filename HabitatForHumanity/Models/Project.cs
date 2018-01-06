@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using HabitatForHumanity.ViewModels;
 using System.ComponentModel;
+using HabitatForHumanity.Logging;
 
 namespace HabitatForHumanity.Models
 {
@@ -484,6 +485,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1); //ignore return
                 st.errorCode = ReturnStatus.FAIL_ON_INSERT;
                 st.errorMessage = e.Message;
                 st.data = "";

@@ -176,6 +176,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Logging\ConnectionStrings.cs" />
+    <Compile Include="Logging\LoggingMethods.cs" />
+    <Compile Include="Logging\LogHistoryMethods.cs" />
+    <Compile Include="Logging\LogLine.cs" />
+    <Compile Include="Logging\ResultStatus.cs" />
     <Compile Include="Models\HfhEvent.cs" />
     <Compile Include="Models\Organization.cs" />
     <Compile Include="Models\Project.cs" />
@@ -212,6 +217,7 @@
     <Compile Include="ViewModels\VolunteerSignupVM.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\AFAF_Log.accdb" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -394,9 +400,7 @@
     <Content Include="Views\HfhEvent\_ProjectsToAdd.cshtml" />
     <Content Include="Views\HfhEvent\ListHfhEvents.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config">
       <SubType>Designer</SubType>

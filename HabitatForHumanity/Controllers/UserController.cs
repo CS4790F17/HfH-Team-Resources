@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using HabitatForHumanity.Models;
 using HabitatForHumanity.ViewModels;
+using HabitatForHumanity.Logging;
 using System.Web.Helpers;
 using System.Net.Mail;
 using DotNet.Highcharts;
@@ -441,6 +442,8 @@ namespace HabitatForHumanity.Controllers
         {
             try
             {
+                //int b = 0;   ****** to test error logging ******
+                //int a = 21 / b;
                 LoginVM loginVm = new LoginVM();
                 if (excMsg != null)
                 {
@@ -448,8 +451,9 @@ namespace HabitatForHumanity.Controllers
                 }
                 return View(loginVm);
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 return View("Error");
             }
         }
