@@ -10,6 +10,8 @@ using DotNet.Highcharts.Options;
 using System.Drawing;
 using HabitatForHumanity.ViewModels;
 using HabitatForHumanity.Models;
+using HabitatForHumanity.Logging;
+using static HabitatForHumanity.Logging.LogHistoryMethods;
 using static HabitatForHumanity.Models.User;
 using PagedList;
 using System.Data.Entity;
@@ -900,6 +902,37 @@ namespace HabitatForHumanity.Controllers
             ReturnStatus rs = Repository.getWaiverHistoryByUserId(id);
             return (rs.errorCode == ReturnStatus.ALL_CLEAR) ? View("ViewWaivers", (List<WaiverHistory>)rs.data) : View("_Error");
         }
+        #endregion
+
+        #region ErrorLogHistory
+        //Get: Error Log
+        [AllowAnonymous]
+        public ActionResult ErrorLog(string id)
+        {
+            String verify = "4815162342";
+
+            if (id == null || id != verify)
+            {
+                return RedirectToAction("Login", "Admin");
+            }
+            else
+            {
+                var error = getLogLines();
+
+                if (error.resultCode == 0)
+                {
+                    var obj = (ICollection<LogLine>)error.innerMessage;
+                    return View(obj);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Admin", new { id = "4815162342" });
+                }
+
+            }
+
+        }
+
         #endregion
 
 

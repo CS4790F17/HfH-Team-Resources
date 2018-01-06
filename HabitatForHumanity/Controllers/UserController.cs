@@ -442,7 +442,7 @@ namespace HabitatForHumanity.Controllers
         {
             try
             {
-                //int b = 0;   ****** to test error logging ******
+                //int b = 0;   //****** to test error logging ******
                 //int a = 21 / b;
                 LoginVM loginVm = new LoginVM();
                 if (excMsg != null)

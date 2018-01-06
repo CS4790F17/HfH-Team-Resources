@@ -1,0 +1,49 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AFAF - Admin</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Styles/Admin.css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="shortcut icon"href="../images/favicon"type="image/x-icon"/>
+</head>
+<body>
+    <div class="nav navbar-fixed-top">
+        <ul class="nav nav-tabs"> 
+            @*<li role="presentation">@Html.ActionLink("Users", "Users", "Admin")</li>*@
+            <li role="presentation">@Html.ActionLink("Recipients", "Recipients", "Admin", new { id = "4815162342" }, null)</li>
+            <li role="presentation">@Html.ActionLink("Events", "Events", "Admin", new { id = "4815162342" }, null)</li>
+            @*<li role="presentation">@Html.ActionLink("Donations", "Donations", "Admin")</li>*@
+            <li role="presentation">@Html.ActionLink("Event Instance", "EventInstance", "Admin", new {id = "4815162342"}, null)</li>
+            <li role="presentation">@Html.ActionLink("View Error Log", "ErrorLog", "Admin", new { id = "4815162342" }, null)</li>
+            <li role="presentation">@Html.ActionLink("Logout", "Login", "Admin", new { id = "4815162342" }, null)</li>
+        </ul>
+    </div>
+
+    <br />
+    <br />
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Habitat for Humanity Weber/Davis</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,74 @@
+﻿@model System.Collections.Generic.ICollection<HabitatForHumanity.Logging.LogLine>
+@{
+    ViewBag.Title = "ErrorLog";
+    //Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@Scripts.Render("~/bundles/modernizr")
+@Styles.Render("~/Content/AdminForms.css")
+
+
+<div id="Error">
+    <h2>ErrorLog</h2>
+
+    <table>
+        
+        <tr>
+            <th>
+                Log ID
+            </th>
+            <th>
+                Time Stamp
+            </th>
+            <th>
+                File Name
+            </th>
+            <th>
+                Function Name
+            </th>
+            <th>
+                Line Number
+            </th>
+            <th>
+                Message
+            </th>
+            <th>
+                Status Code
+            </th>            
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.logID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.timestamp)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.fileName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.functionName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.lineNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.message)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.statusCode)
+                </td>
+                
+            </tr>
+        }
+
+    </table>
+
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/jqueryval")
+   

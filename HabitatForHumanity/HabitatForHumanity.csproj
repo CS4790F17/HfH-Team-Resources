@@ -218,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\AFAF_Log.accdb" />
+    <Content Include="Content\AdminForms.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -399,6 +400,8 @@
     <Content Include="Views\HfhEvent\_EventProjects.cshtml" />
     <Content Include="Views\HfhEvent\_ProjectsToAdd.cshtml" />
     <Content Include="Views\HfhEvent\ListHfhEvents.cshtml" />
+    <Content Include="Views\Admin\ErrorLog.cshtml" />
+    <Content Include="Views\Shared\_AdminLayout.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

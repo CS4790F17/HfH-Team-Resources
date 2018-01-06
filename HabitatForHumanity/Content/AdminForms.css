@@ -1,0 +1,74 @@
+﻿body {
+   max-width: 100%;
+}
+
+.form-horizontal, #Event, #Recipient, #Error{
+    max-width: 100%;    
+    border: solid 1px;    
+    padding: 15px;
+    margin: 0 auto;
+    background-color:#ECC5C0
+}
+
+ #state-input input{
+    width: 50px;
+}
+
+ #description-input input{
+     width: 275px;
+     height: 100px;
+     text-align:start;     
+     
+ }
+
+ 
+
+  #details-input input{
+     width: 275px;
+     height: 100px;
+ }
+
+.from-group{
+    padding: 0;
+}
+
+#NewRecipient, #NewEvent {
+    max-width: 100%;
+    /*border-left: solid 2px #000000; /*#b4b0b0*/
+    /*border-right: solid 2px #000000;*/
+    border: solid 1px;    
+    padding: 15px;
+    margin: 0 auto;
+    background-color:#945959;
+}
+
+#givingTree{
+    max-width: 90%;
+    /*border-left: solid 2px #000000; /*#b4b0b0*/
+    /*border-right: solid 2px #000000;*/
+    border: solid 1px;    
+    padding: 15px;
+    margin: 0 auto;
+    background-color:#945959;
+}
+
+table {
+  width: 100%;
+  
+}
+
+.form-control ::-webkit-input-placeholder { color: red; }
+.form-control ::-moz-placeholder {color: red; }
+.from-control :-ms-input-placeholder { color: red; } 
+/*:-o-input-placeholder { color: red; }*/ 
+
+
+/*#inner{
+    width: 50%;
+    margin: 10px auto;
+    text-align:center;
+}*/
+
+
+
+
