@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using HabitatForHumanity.ViewModels;
+using HabitatForHumanity.Logging;
 using System.Data.Entity;
 using System.Web.Helpers;
 using System.Collections.Generic;
@@ -178,8 +179,9 @@ namespace HabitatForHumanity.Models
                 rs.errorCode = 0;
                 return rs;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 rs.errorCode = -1;
                 rs.data = new List<User>();
                 return rs;
@@ -202,8 +204,9 @@ namespace HabitatForHumanity.Models
                 st.errorCode = 0;
                 return st;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = -1;
                 st.data = new List<User>();
                 return st;
@@ -221,8 +224,9 @@ namespace HabitatForHumanity.Models
                 st.errorCode = 0;
                 return st;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = -1;
                 st.data = new List<User>();
                 return st;
@@ -244,8 +248,9 @@ namespace HabitatForHumanity.Models
                 st.data = db.users.Any(u => u.emailAddress.Equals(email));
                 return st;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = -1;
                 return st;
             }
@@ -271,8 +276,9 @@ namespace HabitatForHumanity.Models
 
                 return st;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = -1;
                 return st;
             }
@@ -295,8 +301,9 @@ namespace HabitatForHumanity.Models
                 st.errorCode = 0;
                 return st;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = -1;
                 return st;
             }
@@ -320,8 +327,9 @@ namespace HabitatForHumanity.Models
                 st.errorCode = (int)ReturnStatus.ALL_CLEAR;
                 return st;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 return st;
             }
@@ -366,6 +374,7 @@ namespace HabitatForHumanity.Models
             }
             catch (ArgumentNullException e)
             {
+                LoggingMethods.logError(e, -1);  // this may have a problem because of the specific err type
                 st.errorCode = (int)ReturnStatus.NULL_ARGUMENT;
                 st.errorMessage = e.ToString();
                 return st;
@@ -404,6 +413,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
@@ -432,6 +442,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
@@ -464,6 +475,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 return st;
