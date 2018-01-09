@@ -6,8 +6,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using HabitatForHumanity.ViewModels;
-using System.ComponentModel;
 using HabitatForHumanity.Logging;
+using System.ComponentModel;
 
 namespace HabitatForHumanity.Models
 {
@@ -93,8 +93,9 @@ namespace HabitatForHumanity.Models
                 reportReturn.data = projectDemographics.ToList();
                 return reportReturn;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 reportReturn.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 return reportReturn;
             }
@@ -113,6 +114,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 st.data = "Could not connect to database. Try again later.";
@@ -134,8 +136,9 @@ namespace HabitatForHumanity.Models
                 rs.errorCode = ReturnStatus.ALL_CLEAR;
                 rs.data = pId;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
             }
             return rs;
@@ -155,8 +158,9 @@ namespace HabitatForHumanity.Models
                 rs.errorCode = ReturnStatus.ALL_CLEAR;
                 rs.data = projectIdListWithThisCategoryId;
             }
-            catch
+            catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 rs.errorCode = ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
             }
             return rs;
@@ -175,6 +179,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 st.data = "Could not connect to database. Try again later.";
@@ -199,6 +204,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 st.data = "Could not connect to database. Try again later.";
@@ -235,6 +241,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = (int)ReturnStatus.COULD_NOT_CONNECT_TO_DATABASE;
                 st.errorMessage = e.ToString();
                 st.data = "Could not connect to database. Try again later.";
@@ -260,6 +267,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = ReturnStatus.FAIL_ON_INSERT;
                 st.errorMessage = e.Message; // project data here?
                 //log some stuff
@@ -283,6 +291,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = (int)ReturnStatus.FAIL_ON_INSERT;
                 st.errorMessage = e.Message; // project data here?
                 //log some stuff
@@ -299,27 +308,34 @@ namespace HabitatForHumanity.Models
             VolunteerDbContext db = new VolunteerDbContext();
             List<Project> proj = new List<Project>();
 
-            //if statement is terrible bandaid fix 
-            //TODO: redo logic
-            if (categorySelection > 0)
+            try
             {
-                proj = (from p in db.projects
-                        where p.name.Contains(queryString) && p.categoryId == categorySelection
-                        orderby p.status descending
-                        select p)
-                        .Skip(itemsPerPage * page)
-                        .Take(itemsPerPage).ToList();
-                totalProjects = db.projects.Count(x => x.categoryId == categorySelection);
-            }
-            else
+                //if statement is terrible bandaid fix 
+                //TODO: redo logic
+                if (categorySelection > 0)
+                {
+                    proj = (from p in db.projects
+                            where p.name.Contains(queryString) && p.categoryId == categorySelection
+                            orderby p.status descending
+                            select p)
+                            .Skip(itemsPerPage * page)
+                            .Take(itemsPerPage).ToList();
+                    totalProjects = db.projects.Count(x => x.categoryId == categorySelection);
+                }
+                else
+                {
+                    proj = (from p in db.projects
+                            where p.name.Contains(queryString)
+                            orderby p.status descending
+                            select p)
+                            .Skip(itemsPerPage * page)
+                            .Take(itemsPerPage).ToList();
+                    totalProjects = db.projects.Count();
+                }
+            } catch (Exception e)
             {
-                proj = (from p in db.projects
-                        where p.name.Contains(queryString)
-                        orderby p.status descending
-                        select p)
-                        .Skip(itemsPerPage * page)
-                        .Take(itemsPerPage).ToList();
-                totalProjects = db.projects.Count();
+                LoggingMethods.logError(e, -1);
+                return new ReturnStatus { errorCode = -1, data = e.Message };
             }
             return new ReturnStatus { errorCode = ReturnStatus.ALL_CLEAR, data = proj };
         }
@@ -328,31 +344,38 @@ namespace HabitatForHumanity.Models
         {
             VolunteerDbContext db = new VolunteerDbContext();
             List<Project> proj = new List<Project>();
-
-            //if statement is terrible bandaid fix 
-            //TODO: redo logic
-            if (categorySelection > 0)
+            try
             {
-                proj = (from p in db.projects
-                        where p.status.Equals(statusChoice) &&
-                        p.name.Contains(queryString) &&
-                        p.categoryId == categorySelection
-                        orderby p.status descending
-                        select p)
-                        .Skip(itemsPerPage * page)
-                        .Take(itemsPerPage).ToList();
-                totalProjects = db.projects.Count(x => x.status.Equals(statusChoice) && x.name.Contains(queryString));
+                //if statement is terrible bandaid fix 
+                //TODO: redo logic
+                if (categorySelection > 0)
+                {
+                    proj = (from p in db.projects
+                            where p.status.Equals(statusChoice) &&
+                            p.name.Contains(queryString) &&
+                            p.categoryId == categorySelection
+                            orderby p.status descending
+                            select p)
+                            .Skip(itemsPerPage * page)
+                            .Take(itemsPerPage).ToList();
+                    totalProjects = db.projects.Count(x => x.status.Equals(statusChoice) && x.name.Contains(queryString));
+                }
+                else
+                {
+                    proj = (from p in db.projects
+                            where p.status.Equals(statusChoice) &&
+                            p.name.Contains(queryString)
+                            orderby p.status descending
+                            select p)
+            .Skip(itemsPerPage * page)
+            .Take(itemsPerPage).ToList();
+                    totalProjects = db.projects.Count(x => x.status.Equals(statusChoice) && x.name.Contains(queryString));
+                }
             }
-            else
+            catch (Exception e)
             {
-                proj = (from p in db.projects
-                        where p.status.Equals(statusChoice) &&
-                        p.name.Contains(queryString)
-                        orderby p.status descending
-                        select p)
-        .Skip(itemsPerPage * page)
-        .Take(itemsPerPage).ToList();
-                totalProjects = db.projects.Count(x => x.status.Equals(statusChoice) && x.name.Contains(queryString));
+                LoggingMethods.logError(e, -1);
+                return new ReturnStatus { errorCode = -1, data = e.Message };
             }
             return new ReturnStatus { errorCode = ReturnStatus.ALL_CLEAR, data = proj };
         }
@@ -390,6 +413,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.data = new List<ProjectCategory>();
                 st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 st.errorMessage = e.ToString();
@@ -420,6 +444,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 st.errorMessage = e.ToString();
                 st.data = new List<ProjectCategory>();
@@ -447,6 +472,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.errorCode = ReturnStatus.COULD_NOT_UPDATE_DATABASE;
                 st.errorMessage = e.ToString();
                 st.data = pc;
@@ -465,6 +491,7 @@ namespace HabitatForHumanity.Models
             }
             catch (Exception e)
             {
+                LoggingMethods.logError(e, -1);
                 st.data = new ProjectCategory();
                 st.errorCode = ReturnStatus.ERROR_WHILE_ACCESSING_DATA;
                 st.errorMessage = e.ToString();
